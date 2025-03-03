@@ -1,4 +1,4 @@
-namespace PizzaShop.ViewModels;
+namespace PizzaShopRepository.ViewModels;
 
 public class Pagination
 {

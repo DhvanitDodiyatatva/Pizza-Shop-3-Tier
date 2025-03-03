@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-namespace PizzaShop.ViewModels;
+namespace PizzaShopRepository.ViewModels;
 
 public class ChangePassword
 {
