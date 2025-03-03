@@ -1,0 +1,185 @@
+@model IEnumerable<PizzaShopRepository.ViewModels.UserList>
+
+@{
+  ViewData["Title"] = "Users";
+}
+
+<div class="Users-content my-4 p-xl-5 p-lg-4 p-md-4 p-sm-4 p-4 ">
+  <div class="d-flex align-items-center justify-content-between my-2 pt-4">
+    <div>
+      <div class="fw-bolder fs-2 page-text me-2">Users</div>
+    </div>
+    <div class="d-flex position-relative z-0">
+      <form class="d-flex align-items-center" role="search" method="get" action="@Url.Action("Users")">
+        <div class="input-group position-relative">
+          <input class="form-control" type="search" placeholder="Search" aria-label="Search" name="searchQuery"
+            value="@ViewBag.SearchQuery" />
+          <span class="search-img-desktop position-absolute">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search"
+              viewBox="0 0 16 16">
+              <path
+                d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+            </svg>
+          </span>
+        </div>
+        <input type="hidden" name="page" value="@ViewBag.CurrentPage" />
+        <input type="hidden" name="pageSize" value="@ViewBag.PageSize" />
+      </form>
+      <a asp-controller="Home" asp-action="AddNewUser"><button
+          class="btn btn-main bg-primary rounded-2 ms-1 text-white fs-6 d-none d-lg-block" type="submit">
+          +Add User
+        </button></a>
+      <a href="add-new-user.html"><button
+          class=" btn btn-main bg-primary rounded- ms-1 text-white fs-6 d-block d-lg-none" type="submit">
+          +
+        </button></a>
+    </div>
+  </div>
+  <div class="content-div rounded-2 shadow p-3">
+    <div class="row table-responsive p-3">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col" class="text-nowrap">
+              Name
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                class="bi bi-arrow-down-up" viewBox="0 0 16 16">
+                <path fill-rule="evenodd"
+                  d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5" />
+              </svg>
+            </th>
+            <th scope="col" class="text-nowrap">Email</th>
+            <th scope="col" class="text-nowrap">Phone</th>
+            <th scope="col" class="text-nowrap">Role<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                fill="currentColor" class="bi bi-arrow-down-up" viewBox="0 0 16 16">
+                <path fill-rule="evenodd"
+                  d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5" />
+              </svg></th>
+            <th scope="col" class="text-nowrap">Status</th>
+            <th scope="col" class="text-nowrap">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @foreach (var user in Model)
+          {
+            <tr>
+              <td scope="row" class="d-flex align-items-center py-3">
+                <img src="~/images/Default_pfp.svg.png" alt="default-pfp"
+                  style="max-height: 30px; aspect-ratio: 1; margin-right: 2%;" />
+                @user.FirstName @user.LastName
+              </td>
+              <td class="py-3">@user.Email</td>
+              <td class="py-3">@user.Phone</td>
+              <td class="py-3">@user.Role</td>
+              <td class="py-3">
+                <span class="badge fw-bold fs-6 px-4 py-1 rounded-5 @(user.Status ? "bg-success" : "bg-secondary")">
+                  @(user.Status ? "Active" : "Inactive")
+                </span>
+              </td>
+
+              <td class="py-3">
+                <a asp-controller="Home" asp-action="EditUser" asp-route-id="@user.Id"
+                  class="text-decoration-none text-black text-body-btn me-2">
+
+                  <!-- SVG icon for edit -->
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-pen"
+                    viewBox="0 0 16 16">
+                    <path
+                      d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001" />
+                  </svg>
+                </a>
+                <button type="button" class="btn text-body-btn p-0" data-bs-toggle="modal"
+                  data-bs-target="#deletemodal-@user.Id">
+                  <!-- SVG icon for delete -->
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash3"
+                    viewBox="0 0 16 16">
+                    <path
+                      d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
+                  </svg>
+                </button>
+
+                <!-- Delete Confirmation Modal (unique for each user) -->
+                <div class="modal fade" id="deletemodal-@user.Id" tabindex="-1"
+                  aria-labelledby="deletemodallabel-@user.Id" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="deletemodallabel-@user.Id">Delete confirmation</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body d-flex align-items-center justify-content-center flex-column">
+                        <img src="~/images/toppng.com-warning-icon-2400x2400.png" alt="DeleteModal"
+                          style="height: 80px; width: 80px">
+                        <p>Are you sure you want to delete this user?</p>
+                      </div>
+                      <div class="modal-footer d-flex justify-content-center align-items-center">
+                        <form method="post" asp-controller="Home" asp-action="Delete">
+                          <input type="hidden" name="id" value="@user.Id" />
+                          <button type="submit" class="btn btn-primary">Yes</button>
+                        </form>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+    </div>
+    <nav aria-label="Page navigation example"
+      class="d-flex align-items-center justify-content-between justify-content-lg-end flex-column flex-md-row">
+      <div class="d-flex me-2 align-items-center mb-4">
+        <p class="m-0 me-1">Items Per Page</p>
+        <div class="">
+          <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+            aria-expanded="false">
+            @ViewBag.PageSize
+          </button>
+          <ul class="dropdown-menu">
+            @foreach (var size in new int[] { 2, 5, 8, 10 })
+            {
+              <li><a class="dropdown-item" href="@Url.Action("Users", new { page = 1, pageSize = size })">@size</a></li>
+            }
+          </ul>
+        </div>
+      </div>
+
+      <ul class="pagination d-flex align-items-center mb-4">
+        @{
+          int totalPages = (int)Math.Ceiling((double)ViewBag.TotalUsers / ViewBag.PageSize);
+          int currentPage = ViewBag.CurrentPage;
+          int pageSize = ViewBag.PageSize;
+          int start = ((currentPage - 1) * pageSize) + 1;
+          int end = Math.Min(start + pageSize - 1, ViewBag.TotalUsers);
+        }
+
+        <p class="m-0 me-1">Showing @start - @end of @ViewBag.TotalUsers</p>
+
+        <!-- Previous Page -->
+        <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+          <a class="page-link text-decoration-none text-body"
+            href="@Url.Action("Users", new { page = currentPage - 1, pageSize, searchQuery = ViewBag.SearchQuery })">&lt;</a>
+        </li>
+
+        <!-- Page Numbers -->
+        @for (int i = 1; i <= totalPages; i++)
+        {
+          <li class="page-item @(i == currentPage ? "active" : "")">
+            <a class="page-link text-decoration-none text-body"
+              href="@Url.Action("Users", new { page = i, pageSize, searchQuery = ViewBag.SearchQuery })">@i</a>
+          </li>
+        }
+
+        <!-- Next Page -->
+        <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+          <a class="page-link text-decoration-none text-body"
+            href="@Url.Action("Users", new { page = currentPage + 1, pageSize, searchQuery = ViewBag.SearchQuery })">&gt;</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+  <!-- Add more rows/columns for other content -->
+</div>

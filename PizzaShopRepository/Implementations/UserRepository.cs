@@ -2,21 +2,28 @@ using Microsoft.EntityFrameworkCore;
 using PizzaShopRepository.Data;
 using PizzaShopRepository.Interfaces;
 using PizzaShopRepository.Models;
+using System.Threading.Tasks;
 
-namespace PizzaShopRepository.Implementations;
-
-public class UserRepository : IUserRepository
+namespace PizzaShopRepository.Implementations
 {
-
-    private readonly PizzaShopContext _context;
-
-    public UserRepository(PizzaShopContext context)
+    public class UserRepository : IUserRepository
     {
-        _context = context;
-    }
+        private readonly PizzaShopContext _context;
 
-    public async Task<User?> GetUserByEmailAsync(string email)
-    {
-        return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        public UserRepository(PizzaShopContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<User?> GetUserByEmailAsync(string email)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        }
+
+        public async Task UpdateUserAsync(User user)
+        {
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+        }
     }
 }

@@ -14,6 +14,7 @@ builder.Services.AddDbContext<PizzaShopContext>(options =>
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Add services to the container.

@@ -1,0 +1,117 @@
+@model PizzaShopRepository.ViewModels.MyProfile;
+
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+
+
+<div class="container mt-5 pt-3 px-4 pb-5 w-100 box-shadow">
+    <h2 class="mb-3 fw-bolder fs-2 page-text me-2">My Profile</h2>
+
+    <div class="card shadow-lg">
+        <div class="profile-header"></div>
+
+        <div class="card-body profile-container">
+            <div class="mt-1 d-flex justify-content-between">
+                <div class="d-flex">
+                    <img src="~/images/Default_pfp.svg.png" class="profile-pic" alt="Profile Picture">
+                    <span>
+                        <h5 class=" mt-4 text-black fw-bolder">&nbsp;&nbsp;@Model.FirstName @Model.LastName</h5>
+                        <p class=" fw-bold">@Model.Role</p>
+
+                    </span>
+                </div>
+                <div>
+                    <p class="text-wrap mt-4 ">@Model.Email</p>
+                </div>
+            </div>
+
+
+            <form method="post" asp-controller="Home" asp-action="UpdateProfile">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control floatingInput" id="firstName" name="FirstName"
+                                value="@Model.FirstName" placeholder="First Name" asp-for="FirstName">
+                            <label for="firstName ">First Name</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="lastName" name="LastName"
+                                placeholder="Last Name" value="@Model.LastName" asp-for="LastName">
+                            <label for="lastName">Last Name</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="userName" name="Username"
+                                placeholder="User Name" value="@Model.Username" asp-for="Username">
+                            <label for="userName">User Name</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="phone" name="Phone" placeholder="Phone"
+                                value="@Model.Phone" asp-for="Phone">
+                            <label for="phone">Phone</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <select class="form-select" id="country" name="Country" asp-for="Country">
+                                <option selected>Select Role</option>
+                                <option value="India">India</option>
+                                <option value="USA">USA</option>
+                                <option value="Japan">Japan</option>
+                            </select>
+                            <label for="country">Country</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <select class="form-select" id="state" name="State" asp-for="State">
+                                <option selected>Select Role</option>
+                                <option value="Gujarat">Gujarat</option>
+                                <option value="Los Angeles">Los Angeles</option>
+                                <option value="Tokyo">Tokyo</option>
+                            </select>
+                            <label for="state">State</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <select class="form-select" id="city" name="City" asp-for="City">
+                                <option selected>Select Role</option>
+                                <option value="Ahmedabad">Ahmedabad</option>
+                                <option value="Last Vegas">Last Vegas</option>
+                                <option value="Shinjuku">Shinjuku</option>
+                            </select>
+                            <label for="city">City</label>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="address" name="Address" placeholder="Address"
+                                value="@Model.Address" asp-for="Address">
+                            <label for="address">Address</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="zipcode" name="Zipcode" placeholder="Zipcode"
+                                value="@Model.Zipcode" asp-for="Zipcode">
+                            <label for="zipcode">Zipcode</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end mt-4">
+                    <button type="submit" class="btn btn-primary me-2">Update</button>
+                    <a type="button" class="btn btn-secondary " asp-action="Dashboard" asp-controller="Home">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

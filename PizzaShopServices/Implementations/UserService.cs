@@ -6,58 +6,68 @@ using Microsoft.IdentityModel.Tokens;
 using PizzaShopRepository.Interfaces;
 using PizzaShopRepository.ViewModels;
 using PizzaShopServices.Interfaces;
+using System.Threading.Tasks;
 
-namespace PizzaShopServices.Implementations;
-
-public class UserService : IUserService
+namespace PizzaShopServices.Implementations
 {
-    private readonly IUserRepository _authRepository;
-    private readonly IConfiguration _configuration;
+    public class UserService : IUserService
+    {
+        private readonly IUserRepository _userRepository;
+        private readonly IConfiguration _configuration;
 
-    public UserService(IUserRepository authRepository, IConfiguration configuration)
-    {
-        _authRepository = authRepository;
-        _configuration = configuration;
-    }
-    public async Task<(string Token, double ExpireHours)> ValidateUserAsync(Authenticate model)
-    {
-        // Retrieve the user using the repository
-        var user = await _authRepository.GetUserByEmailAsync(model.Email);
-        if (user == null)
+        public UserService(IUserRepository userRepository, IConfiguration configuration)
         {
-            throw new Exception("User does not exist.");
+            _userRepository = userRepository;
+            _configuration = configuration;
         }
 
-        // Validate password using BCrypt
-        bool isPasswordValid = BCrypt.Net.BCrypt.Verify(model.Password, user.Password);
-        if (!isPasswordValid)
+        public async Task<(string Token, double ExpireHours)> ValidateUserAsync(Authenticate model)
         {
-            throw new Exception("Incorrect password.");
-        }
+            var user = await _userRepository.GetUserByEmailAsync(model.Email);
+            if (user == null)
+            {
+                throw new Exception("User does not exist.");
+            }
 
-        // Create the JWT token
-        var claims = new List<Claim>
+            bool isPasswordValid = BCrypt.Net.BCrypt.Verify(model.Password, user.Password);
+            if (!isPasswordValid)
+            {
+                throw new Exception("Incorrect password.");
+            }
+
+            // Create JWT token
+            var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.Email),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
             };
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        double expireHours = _configuration.GetValue<double>("Jwt:ExpireHours");
-        var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Audience"],
-            claims: claims,
-            expires: DateTime.UtcNow.AddHours(expireHours),
-            signingCredentials: creds);
+            double expireHours = _configuration.GetValue<double>("Jwt:ExpireHours");
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.UtcNow.AddHours(expireHours),
+                signingCredentials: creds);
 
-        var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
-        return (tokenString, expireHours);
+            return (tokenString, expireHours);
+        }
+
+        public async Task ResetPasswordAsync(ResetPassword model)
+        {
+            var user = await _userRepository.GetUserByEmailAsync(model.Email);
+            if (user == null)
+            {
+                throw new Exception("Invalid request.");
+            }
+
+            user.Password = BCrypt.Net.BCrypt.HashPassword(model.NewPassword, 12);
+            await _userRepository.UpdateUserAsync(user);
+        }
     }
-
-
 }
-

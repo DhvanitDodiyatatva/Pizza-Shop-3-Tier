@@ -1,8 +1,11 @@
 using PizzaShopRepository.Models;
+using System.Threading.Tasks;
 
-namespace PizzaShopRepository.Interfaces;
-
-public interface IUserRepository
+namespace PizzaShopRepository.Interfaces
 {
-        Task<User?> GetUserByEmailAsync(string email);
+        public interface IUserRepository
+        {
+                Task<User?> GetUserByEmailAsync(string email);
+                Task UpdateUserAsync(User user);
+        }
 }
