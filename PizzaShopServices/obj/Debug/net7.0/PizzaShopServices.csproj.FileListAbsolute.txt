@@ -1,4 +1,5 @@
 D:\PizzaShop 3-Tier\PizzaShopServices\bin\Debug\net7.0\PizzaShopServices.deps.json
+D:\PizzaShop 3-Tier\PizzaShopServices\bin\Debug\net7.0\PizzaShopServices.runtimeconfig.json
 D:\PizzaShop 3-Tier\PizzaShopServices\bin\Debug\net7.0\PizzaShopServices.dll
 D:\PizzaShop 3-Tier\PizzaShopServices\bin\Debug\net7.0\PizzaShopServices.pdb
 D:\PizzaShop 3-Tier\PizzaShopServices\bin\Debug\net7.0\PizzaShopRepository.dll
@@ -12,6 +13,5 @@ D:\PizzaShop 3-Tier\PizzaShopServices\obj\Debug\net7.0\PizzaShopServices.csproj.
 D:\PizzaShop 3-Tier\PizzaShopServices\obj\Debug\net7.0\PizzaShopServices.dll
 D:\PizzaShop 3-Tier\PizzaShopServices\obj\Debug\net7.0\refint\PizzaShopServices.dll
 D:\PizzaShop 3-Tier\PizzaShopServices\obj\Debug\net7.0\PizzaShopServices.pdb
-D:\PizzaShop 3-Tier\PizzaShopServices\obj\Debug\net7.0\ref\PizzaShopServices.dll
-D:\PizzaShop 3-Tier\PizzaShopServices\bin\Debug\net7.0\PizzaShopServices.runtimeconfig.json
 D:\PizzaShop 3-Tier\PizzaShopServices\obj\Debug\net7.0\PizzaShopServices.genruntimeconfig.cache
+D:\PizzaShop 3-Tier\PizzaShopServices\obj\Debug\net7.0\ref\PizzaShopServices.dll

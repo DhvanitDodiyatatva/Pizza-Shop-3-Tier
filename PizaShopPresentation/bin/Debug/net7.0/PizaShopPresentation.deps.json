@@ -8,6 +8,8 @@
     ".NETCoreApp,Version=v7.0": {
       "PizaShopPresentation/1.0.0": {
         "dependencies": {
+          "BCrypt.Net-Next": "4.0.3",
+          "Microsoft.AspNetCore.Authentication.JwtBearer": "7.0.20",
           "Microsoft.EntityFrameworkCore.Design": "7.0.20",
           "Microsoft.EntityFrameworkCore.Tools": "7.0.20",
           "Npgsql.EntityFrameworkCore.PostgreSQL": "7.0.18",

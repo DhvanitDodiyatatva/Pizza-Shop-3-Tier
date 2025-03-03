@@ -1,6 +1,8 @@
 D:\PizzaShop 3-Tier\PizzaShopRepository\bin\Debug\net7.0\PizzaShopRepository.deps.json
+D:\PizzaShop 3-Tier\PizzaShopRepository\bin\Debug\net7.0\PizzaShopRepository.runtimeconfig.json
 D:\PizzaShop 3-Tier\PizzaShopRepository\bin\Debug\net7.0\PizzaShopRepository.dll
 D:\PizzaShop 3-Tier\PizzaShopRepository\bin\Debug\net7.0\PizzaShopRepository.pdb
+D:\PizzaShop 3-Tier\PizzaShopRepository\obj\Debug\net7.0\PizzaShopRepository.csproj.AssemblyReference.cache
 D:\PizzaShop 3-Tier\PizzaShopRepository\obj\Debug\net7.0\PizzaShopRepository.GeneratedMSBuildEditorConfig.editorconfig
 D:\PizzaShop 3-Tier\PizzaShopRepository\obj\Debug\net7.0\PizzaShopRepository.AssemblyInfoInputs.cache
 D:\PizzaShop 3-Tier\PizzaShopRepository\obj\Debug\net7.0\PizzaShopRepository.AssemblyInfo.cs
@@ -8,7 +10,5 @@ D:\PizzaShop 3-Tier\PizzaShopRepository\obj\Debug\net7.0\PizzaShopRepository.csp
 D:\PizzaShop 3-Tier\PizzaShopRepository\obj\Debug\net7.0\PizzaShopRepository.dll
 D:\PizzaShop 3-Tier\PizzaShopRepository\obj\Debug\net7.0\refint\PizzaShopRepository.dll
 D:\PizzaShop 3-Tier\PizzaShopRepository\obj\Debug\net7.0\PizzaShopRepository.pdb
-D:\PizzaShop 3-Tier\PizzaShopRepository\obj\Debug\net7.0\ref\PizzaShopRepository.dll
-D:\PizzaShop 3-Tier\PizzaShopRepository\bin\Debug\net7.0\PizzaShopRepository.runtimeconfig.json
-D:\PizzaShop 3-Tier\PizzaShopRepository\obj\Debug\net7.0\PizzaShopRepository.csproj.AssemblyReference.cache
 D:\PizzaShop 3-Tier\PizzaShopRepository\obj\Debug\net7.0\PizzaShopRepository.genruntimeconfig.cache
+D:\PizzaShop 3-Tier\PizzaShopRepository\obj\Debug\net7.0\ref\PizzaShopRepository.dll

@@ -37,9 +37,9 @@ public partial class User
 
     public DateTime? UpdatedAt { get; set; }
 
-    public bool? IsDeleted { get; set; }
+    public bool IsDeleted { get; set; }
 
-    public bool? Status { get; set; }
+    public bool Status { get; set; }
 
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 
