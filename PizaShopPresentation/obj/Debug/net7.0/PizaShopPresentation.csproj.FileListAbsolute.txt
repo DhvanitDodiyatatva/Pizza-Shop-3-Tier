@@ -41,3 +41,17 @@ D:\PizzaShop 3-Tier\PizaShopPresentation\obj\Debug\net7.0\refint\PizaShopPresent
 D:\PizzaShop 3-Tier\PizaShopPresentation\obj\Debug\net7.0\PizaShopPresentation.pdb
 D:\PizzaShop 3-Tier\PizaShopPresentation\obj\Debug\net7.0\PizaShopPresentation.genruntimeconfig.cache
 D:\PizzaShop 3-Tier\PizaShopPresentation\obj\Debug\net7.0\ref\PizaShopPresentation.dll
+D:\PizzaShop 3-Tier\PizaShopPresentation\bin\Debug\net7.0\Humanizer.dll
+D:\PizzaShop 3-Tier\PizaShopPresentation\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Design.dll
+D:\PizzaShop 3-Tier\PizaShopPresentation\bin\Debug\net7.0\Microsoft.Extensions.DependencyModel.dll
+D:\PizzaShop 3-Tier\PizaShopPresentation\bin\Debug\net7.0\Mono.TextTemplating.dll
+D:\PizzaShop 3-Tier\PizaShopPresentation\bin\Debug\net7.0\System.CodeDom.dll
+D:\PizzaShop 3-Tier\PizaShopPresentation\bin\Debug\net7.0\BCrypt.Net-Next.dll
+D:\PizzaShop 3-Tier\PizaShopPresentation\bin\Debug\net7.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\PizzaShop 3-Tier\PizaShopPresentation\bin\Debug\net7.0\Microsoft.IdentityModel.Abstractions.dll
+D:\PizzaShop 3-Tier\PizaShopPresentation\bin\Debug\net7.0\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\PizzaShop 3-Tier\PizaShopPresentation\bin\Debug\net7.0\Microsoft.IdentityModel.Logging.dll
+D:\PizzaShop 3-Tier\PizaShopPresentation\bin\Debug\net7.0\Microsoft.IdentityModel.Protocols.dll
+D:\PizzaShop 3-Tier\PizaShopPresentation\bin\Debug\net7.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+D:\PizzaShop 3-Tier\PizaShopPresentation\bin\Debug\net7.0\Microsoft.IdentityModel.Tokens.dll
+D:\PizzaShop 3-Tier\PizaShopPresentation\bin\Debug\net7.0\System.IdentityModel.Tokens.Jwt.dll
