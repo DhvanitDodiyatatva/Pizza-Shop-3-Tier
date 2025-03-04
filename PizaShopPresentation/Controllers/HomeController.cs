@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PizaShopPresentation.Models;
+using PizzaShopRepository.Models;
 using PizzaShopRepository.ViewModels;
+using PizzaShopService.Interfaces;
 using PizzaShopServices.Interfaces;
 using System.Diagnostics;
+
 using System.Threading.Tasks;
 
 namespace PizzaShopPresentation.Controllers
@@ -14,12 +17,15 @@ namespace PizzaShopPresentation.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IUserCrudService _userCrudService;
 
-        
+        private readonly IRoleService _roleService;
 
-        public HomeController(ILogger<HomeController> logger, IUserCrudService userCrudService)
+
+
+        public HomeController(ILogger<HomeController> logger, IUserCrudService userCrudService, IRoleService roleService)
         {
             _logger = logger;
             _userCrudService = userCrudService;
+            _roleService = roleService;
         }
 
         public IActionResult Dashboard()
@@ -49,9 +55,10 @@ namespace PizzaShopPresentation.Controllers
             return View(users);
         }
 
-        public IActionResult Roles()
+        public async Task<IActionResult> Roles()
         {
-            return View();
+            List<Role> roles = await _roleService.GetUserAllUserRolesAsync();
+            return View(roles);
         }
 
         public async Task<IActionResult> MyProfile()
@@ -209,7 +216,7 @@ namespace PizzaShopPresentation.Controllers
             return RedirectToAction("Users");
         }
 
-        
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
