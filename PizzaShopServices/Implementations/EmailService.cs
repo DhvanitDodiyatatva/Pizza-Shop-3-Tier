@@ -92,5 +92,114 @@ namespace PizzaShopServices.Implementations
             mailMessage.To.Add(email);
             await smtpClient.SendMailAsync(mailMessage);
         }
+
+
+        public async Task SendEmailAsync(string toEmail, string username, string temporaryPassword)
+        {
+            var fromEmail = "test.dotnet@etatvasoft.com"; // Sender email
+            var subject = "Your Temporary Login Details for PIZZASHOP";
+            var emailBody = $@"<!DOCTYPE html>
+                        <html lang=""en"">
+                        <head>
+                            <meta charset=""UTF-8"">
+                            <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+                            <title>PIZZASHOP Email</title>
+                            <style>
+                                body {{
+                                    font-family: Arial, sans-serif;
+                                    margin: 0;
+                                    padding: 0;
+                                    background-color: #f4f4f4;
+                                }}
+                                .container {{
+                                    max-width: 600px;
+                                    margin: 20px auto;
+                                    background: #fff;
+                                    padding: 20px;
+                                    border-radius: 5px;
+                                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                                }}
+                                .header {{
+                                    background: #005a9c;
+                                    color: white;
+                                    text-align: left;
+                                    padding: 15px;
+                                    font-size: 24px;
+                                    font-weight: bold;
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 10px;
+                                }}
+                                .header img {{
+                                    height: 30px;
+                                }}
+                                .content {{
+                                    padding: 20px 0;
+                                    text-align: left;
+                                }}
+                                .login-box {{
+                                    border: 1px solid #000;
+                                    padding: 15px;
+                                    margin: 20px 0;
+                                    background: #fff;
+                                }}
+                                .login-box b {{
+                                    font-size: 16px;
+                                }}
+                                .footer {{
+                                    text-align: left;
+                                    font-size: 14px;
+                                    color: #555;
+                                    margin-top: 20px;
+                                }}
+                                @media (max-width: 600px) {{
+                                    .container {{
+                                        width: 90%;
+                                    }}
+                                    .header {{
+                                        font-size: 20px;
+                                    }}
+                                }}
+                            </style>
+                        </head>
+                        <body>
+                            <div class=""container"">
+                                <div class=""header"">
+                                    <img src=""logo.png"" alt=""PIZZASHOP Logo"">
+                                    PIZZASHOP
+                                </div>
+                                <div class=""content"">
+                                    <p>Welcome to PIZZASHOP</p>
+                                    <p>Please find the details below for login into your account.</p>
+                                    <div class=""login-box"">
+                                        <b>Login Details:</b><br><br>
+                                        <b>Username:</b> {username}<br>
+                                        <b>Temporary Password:</b> {temporaryPassword}
+                                    </div>
+                                    <p>If you encounter any issues or have any questions, please do not hesitate to contact our support team.</p>
+                                </div>
+                            </div>
+                        </body>
+                        </html>";
+
+            using (var smtpClient = new SmtpClient("mail.etatvasoft.com")
+            {
+                Port = 587,
+                Credentials = new NetworkCredential("test.dotnet@etatvasoft.com", "P}N^{z-]7Ilp"),
+                EnableSsl = true
+            })
+            {
+                var mailMessage = new MailMessage
+                {
+                    From = new MailAddress(fromEmail, "PIZZASHOP"),
+                    Subject = subject,
+                    Body = emailBody,
+                    IsBodyHtml = true
+                };
+
+                mailMessage.To.Add(toEmail);
+                await smtpClient.SendMailAsync(mailMessage);
+            }
+        }
     }
 }

@@ -14,6 +14,8 @@ namespace PizzaShopPresentation.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IUserCrudService _userCrudService;
 
+        
+
         public HomeController(ILogger<HomeController> logger, IUserCrudService userCrudService)
         {
             _logger = logger;

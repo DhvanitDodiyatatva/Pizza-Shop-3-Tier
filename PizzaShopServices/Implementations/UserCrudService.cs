@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace PizzaShopServices.Implementations
@@ -16,9 +18,12 @@ namespace PizzaShopServices.Implementations
     {
         private readonly IUserRepository _userRepository;
 
-        public UserCrudService(IUserRepository userRepository)
+        private readonly IEmailService _emailService;
+
+        public UserCrudService(IUserRepository userRepository, IEmailService emailService)
         {
             _userRepository = userRepository;
+            _emailService = emailService;
         }
 
         public async Task<(List<UserList> Users, int TotalUsers)> GetUsersAsync(string searchQuery, int page, int pageSize)
@@ -124,12 +129,14 @@ namespace PizzaShopServices.Implementations
             await _userRepository.UpdateUserAsync(user);
         }
 
-        public async Task AddNewUserAsync(AddEditUserVM model)
+        public async Task<(bool Success, string Message)> AddNewUserAsync(AddEditUserVM model)
         {
             if (await _userRepository.UserExistsAsync(model.Username, model.Email))
             {
                 throw new Exception("Username or Email already exists.");
             }
+
+            String temporaryPassword = model.Password;
 
             var newUser = new User
             {
@@ -137,7 +144,7 @@ namespace PizzaShopServices.Implementations
                 LastName = model.LastName,
                 Username = model.Username,
                 Email = model.Email,
-                Password = BCrypt.Net.BCrypt.HashPassword(model.Password),
+                Password = BCrypt.Net.BCrypt.HashPassword(temporaryPassword),
                 Role = model.Role,
                 Phone = model.Phone,
                 Address = model.Address,
@@ -150,7 +157,21 @@ namespace PizzaShopServices.Implementations
                 Status = true
             };
 
-            await _userRepository.AddUserAsync(newUser);
+
+
+
+            try
+            {
+                await _userRepository.AddUserAsync(newUser);
+                // Send an email with the username and temporary password.
+                await _emailService.SendEmailAsync(newUser.Email, newUser.Username, temporaryPassword);
+                return (true, "User added successfully.");
+            }
+            catch (Exception ex)
+            {
+                return (false, "Failed to add user: " + ex.Message);
+            }
+
         }
 
         public async Task<AddEditUserVM> GetUserForEditAsync(int id)
@@ -235,6 +256,7 @@ namespace PizzaShopServices.Implementations
             user.IsDeleted = true;
             await _userRepository.UpdateUserAsync(user);
         }
+
 
 
     }
