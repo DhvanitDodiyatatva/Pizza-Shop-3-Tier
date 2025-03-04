@@ -71,11 +71,8 @@
 
                 <div class="col-md-4">
                     <div class="form-floating">
-                        <select asp-for="Country" class="form-select">
+                        <select asp-for="Country" class="form-select" id="selectCountry">
                             <option selected>Select Country</option>
-                            <option value="India">India</option>
-                            <option value="USA">USA</option>
-                            <option value="Japan">Japan</option>
                         </select>
                         <label asp-for="Country">Country</label>
                         <span asp-validation-for="Country" class="text-danger"></span>
@@ -83,11 +80,8 @@
                 </div>
                 <div class="col-md-4">
                     <div class="form-floating">
-                        <select asp-for="State" class="form-select">
+                        <select asp-for="State" class="form-select" id="selectState">
                             <option selected>Select State</option>
-                            <option value="Gujarat">Gujarat</option>
-                            <option value="Los Angeles">Los Angeles</option>
-                            <option value="Tokyo">Tokyo</option>
                         </select>
                         <label asp-for="State">State</label>
                         <span asp-validation-for="State" class="text-danger"></span>
@@ -95,11 +89,8 @@
                 </div>
                 <div class="col-md-4">
                     <div class="form-floating">
-                        <select asp-for="City" class="form-select">
+                        <select asp-for="City" class="form-select" id="selectCity">
                             <option selected>Select City</option>
-                            <option value="Ahmedabad">Ahmedabad</option>
-                            <option value="Last Vegas">Last Vegas</option>
-                            <option value="Shinjuku">Shinjuku</option>
                         </select>
                         <label asp-for="City">City</label>
                         <span asp-validation-for="City" class="text-danger"></span>
@@ -141,3 +132,94 @@
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let countryDropdown = document.getElementById("selectCountry");
+        let stateDropdown = document.getElementById("selectState");
+        let cityDropdown = document.getElementById("selectCity");
+
+        let selectedCountry = "@Model.Country";
+        let selectedState = "@Model.State";
+        let selectedCity = "@Model.City";
+
+        // Load Countries
+        fetch("https://restcountries.com/v3.1/all")
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(country => {
+                    let option = document.createElement("option");
+                    option.value = country.name.common;
+                    option.textContent = country.name.common;
+                    if (country.name.common === selectedCountry) {
+                        option.selected = true;
+                    }
+                    countryDropdown.appendChild(option);
+                });
+
+                if (selectedCountry) {
+                    loadStates(selectedCountry);
+                }
+            })
+            .catch(error => console.error("Error fetching countries:", error));
+
+        // Load States based on Selected Country
+        function loadStates(country) {
+            fetch("https://countriesnow.space/api/v0.1/countries/states", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ country: country })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    stateDropdown.innerHTML = '<option value="">Select State</option>';
+                    data.data.states.forEach(state => {
+                        let option = document.createElement("option");
+                        option.value = state.name;
+                        option.textContent = state.name;
+                        if (state.name === selectedState) {
+                            option.selected = true;
+                        }
+                        stateDropdown.appendChild(option);
+                    });
+
+                    if (selectedState) {
+                        loadCities(selectedCountry, selectedState);
+                    }
+                })
+                .catch(error => console.error("Error fetching states:", error));
+        }
+
+        // Load Cities based on Selected State
+        function loadCities(country, state) {
+            fetch("https://countriesnow.space/api/v0.1/countries/state/cities", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ country: country, state: state })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    cityDropdown.innerHTML = '<option value="">Select City</option>';
+                    data.data.forEach(city => {
+                        let option = document.createElement("option");
+                        option.value = city;
+                        option.textContent = city;
+                        if (city === selectedCity) {
+                            option.selected = true;
+                        }
+                        cityDropdown.appendChild(option);
+                    });
+                })
+                .catch(error => console.error("Error fetching cities:", error));
+        }
+
+        // Change events
+        countryDropdown.addEventListener("change", function () {
+            loadStates(this.value);
+        });
+
+        stateDropdown.addEventListener("change", function () {
+            loadCities(countryDropdown.value, this.value);
+        });
+    });
+</script>
