@@ -5,10 +5,12 @@ using Microsoft.IdentityModel.Tokens;
 using PizzaShopRepository.Data;
 using PizzaShopRepository.Implementations;
 using PizzaShopRepository.Interfaces;
-using PizzaShopService.Interfaces;
+using PizzaShopRepository.Repositories;
+using PizzaShopRepository.Services;
+// using PizzaShopService.Interfaces;
 using PizzaShopServices.Implementations;
 using PizzaShopServices.Interfaces;
-using RmsServices.Implementations;
+// using RmsServices.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,9 +24,10 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IUserCrudService, UserCrudService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+// builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+// builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IRoleService, RoleService>();
-
 
 // Configure JWT authentication
 builder.Services.AddAuthentication(options =>

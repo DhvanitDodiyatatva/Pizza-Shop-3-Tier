@@ -2,8 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using PizaShopPresentation.Models;
 using PizzaShopRepository.Models;
+using PizzaShopRepository.Services;
 using PizzaShopRepository.ViewModels;
-using PizzaShopService.Interfaces;
+// using PizzaShopService.Interfaces;
 using PizzaShopServices.Interfaces;
 using System.Diagnostics;
 
@@ -17,8 +18,9 @@ namespace PizzaShopPresentation.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IUserCrudService _userCrudService;
 
-        private readonly IRoleService _roleService;
+        // private readonly IRoleService _roleService;
 
+        private readonly IRoleService _roleService;
 
 
         public HomeController(ILogger<HomeController> logger, IUserCrudService userCrudService, IRoleService roleService)
@@ -53,12 +55,6 @@ namespace PizzaShopPresentation.Controllers
             ViewBag.SearchQuery = searchQuery;
 
             return View(users);
-        }
-
-        public async Task<IActionResult> Roles()
-        {
-            List<Role> roles = await _roleService.GetUserAllUserRolesAsync();
-            return View(roles);
         }
 
         public async Task<IActionResult> MyProfile()
@@ -215,6 +211,47 @@ namespace PizzaShopPresentation.Controllers
 
             return RedirectToAction("Users");
         }
+
+        //  public async Task<IActionResult> Roles()
+        // {
+        //     List<Role> roles = await _roleService.GetUserAllUserRolesAsync();
+        //     return View(roles);
+        // }
+
+        // public IActionResult Permissions()
+        // {
+        //     return View();
+        // }
+
+        public IActionResult Roles()
+        {
+            var roles = _roleService.GetAllRoles();
+            return View(roles);
+        }
+
+        public IActionResult Permissions(int roleId)
+        {
+            var viewModel = _roleService.GetRolePermissions(roleId);
+            if (viewModel == null)
+            {
+                return NotFound();
+            }
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public IActionResult UpdatePermissions(RolePermissionVM model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("Permissions", model);
+            }
+
+            _roleService.UpdateRolePermissions(model);
+            return RedirectToAction("Roles");
+        }
+
+
 
 
 

@@ -257,23 +257,6 @@ input:checked {
   transform: translateX(0) !important;
 }
 
-/* .form-floating > .form-control-plaintext ~ label,
-.form-floating > .form-control:focus ~ label,
-.form-floating > .form-control:not(:placeholder-shown) ~ label,
-.form-floating > .form-select ~ label {
-  color: rgba(var(--bs-body-color-rgb), 0.65);
-  transform: scale(0.85) translateY(-1.6rem) translateX(0.15rem);
-} */
-
-.form-floating > .form-control:disabled ~ label::after,
-.form-floating > :disabled ~ label::after {
-  background-color: #f2f2f2;
-}
-
-/* .content-div{
-  max-height: 60dvh;
-} */
-
 .category-option a {
   color: #76777e;
 }
