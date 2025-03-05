@@ -79,7 +79,7 @@ namespace PizzaShopRepository.Services
             _roleRepository.RemoveRolePermissions(existingPermissions);
 
             var newPermissions = model.Permissions
-                .Where(p => p.CanView || p.CanAddEdit || p.CanDelete)
+                .Where(p => p.IsSelected)
                 .Select(p => new RolePermission
                 {
                     RoleId = model.RoleId,
