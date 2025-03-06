@@ -1,5 +1,4 @@
 using PizzaShopRepository.ViewModels;
-using PizzaShopRepository.ViewModels;
 using System.Collections.Generic;
 
 namespace PizzaShop.Services.Interfaces

@@ -65,6 +65,10 @@
       "PackagePath": "staticwebassets\\images\\dominos_background.jpg"
     },
     {
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\grid.png",
+      "PackagePath": "staticwebassets\\images\\grid.png"
+    },
+    {
       "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\icons\\customer.svg",
       "PackagePath": "staticwebassets\\images\\icons\\customer.svg"
     },
@@ -127,6 +131,10 @@
     {
       "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\logos\\pizzashop_logo.png",
       "PackagePath": "staticwebassets\\images\\logos\\pizzashop_logo.png"
+    },
+    {
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\pencil.png",
+      "PackagePath": "staticwebassets\\images\\pencil.png"
     },
     {
       "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\profile_div_bg.jpg",

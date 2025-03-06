@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "SI+zrP7eG7EayzbBR2B0BL0/mZAJewQcoJhPFINqnpg=",
+  "Hash": "4teux+odvpIiUbr+2fRymwgCK/Qupm8oXYjjexb3BHU=",
   "Source": "PizaShopPresentation",
   "BasePath": "_content/PizaShopPresentation",
   "Mode": "Default",
@@ -270,6 +270,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\dominos_background.jpg"
+    },
+    {
+      "Identity": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\grid.png",
+      "SourceId": "PizaShopPresentation",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\",
+      "BasePath": "_content/PizaShopPresentation",
+      "RelativePath": "images/grid.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\grid.png"
     },
     {
       "Identity": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\icons\\customer.svg",
@@ -542,6 +559,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\logos\\pizzashop_logo.png"
+    },
+    {
+      "Identity": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\pencil.png",
+      "SourceId": "PizaShopPresentation",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\",
+      "BasePath": "_content/PizaShopPresentation",
+      "RelativePath": "images/pencil.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\pencil.png"
     },
     {
       "Identity": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\profile_div_bg.jpg",
