@@ -11,10 +11,10 @@ namespace PizzaShopServices.Interfaces
         Task<MyProfile> GetUserProfileAsync(string email);
         Task UpdateUserProfileAsync(string email, MyProfile model);
         Task ChangePasswordAsync(string email, ChangePassword model);
-        Task <(bool Success, string Message)> AddNewUserAsync(AddEditUserVM model);
+        Task<(bool Success, string Message)> AddNewUserAsync(AddEditUserVM model);
         Task<AddEditUserVM> GetUserForEditAsync(int id);
         Task UpdateUserAsync(AddEditUserVM model, IFormFile profileImg, string host);
         Task SoftDeleteUserAsync(int id);
-       
+
     }
 }

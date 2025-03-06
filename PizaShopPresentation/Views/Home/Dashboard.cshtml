@@ -2,6 +2,16 @@
     ViewData["Title"] = "Dashboard";
 }
 
+@if (TempData["successMessage"] != null)
+{
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script type="text/javascript">
+        toastr.success("@TempData["successMessage"]");
+    </script>
+}
+
 <div class="dashboard-content mt-0 p-5">
     <div class="d-flex align-items-center justify-content-between my-2">
         <h2 class="mb-3 fw-bolder fs-2 page-text me-2">Dashboard</h2>

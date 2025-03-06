@@ -81,6 +81,8 @@ namespace PizzaShopPresentation.Controllers
                     Expires = DateTime.UtcNow.AddHours(expireHours)
                 });
 
+                TempData["successMessage"] = "User Logged in successfully !";
+
                 // Redirect to the provided returnUrl if valid; otherwise, redirect to the dashboard
                 if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                 {
