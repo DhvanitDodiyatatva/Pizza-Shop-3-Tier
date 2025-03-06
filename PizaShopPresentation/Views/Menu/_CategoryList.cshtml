@@ -1,0 +1,23 @@
+@model PizzaShopRepository.ViewModels.MenuViewModel
+
+
+<div style="overflow: auto; height: 50dvh;" class="custom-scrollbar">
+    <div class="row g-0 category-side">
+        @foreach (var category in Model.Categories.Where(c => c.IsDeleted != true))
+        {
+            <div class="row my-2 g-0">
+                <div class="d-flex align-items-center justify-content-between category-option">
+                    <a href="#" class="category-link" data-category-id="@category.Id">
+                        <img src="~/images/grid.png" alt="" style="height: 20px; width: 20px;"> @category.Name
+                    </a>
+                    <div class="edit-category">
+                        <a href="#" class="edit-category-link" data-category-id="@category.Id" data-bs-toggle="modal"
+                            data-bs-target="#editCategoryModal">
+                            <img src="~/images/pencil.png" alt="" class="pe-2" style="height: 20px; width: 20px;">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

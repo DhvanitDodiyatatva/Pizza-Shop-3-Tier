@@ -212,17 +212,6 @@ namespace PizzaShopPresentation.Controllers
             return RedirectToAction("Users");
         }
 
-        //  public async Task<IActionResult> Roles()
-        // {
-        //     List<Role> roles = await _roleService.GetUserAllUserRolesAsync();
-        //     return View(roles);
-        // }
-
-        // public IActionResult Permissions()
-        // {
-        //     return View();
-        // }
-
         public IActionResult Roles()
         {
             var roles = _roleService.GetAllRoles();
@@ -251,7 +240,7 @@ namespace PizzaShopPresentation.Controllers
             return RedirectToAction("Roles");
         }
 
-
+       
 
 
 

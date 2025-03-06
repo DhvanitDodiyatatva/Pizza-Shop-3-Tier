@@ -1,14 +1,3 @@
-// using PizzaShopRepository.Models;
-
-
-// namespace PizzaShopService.Interfaces
-// {
-//     public interface IRoleService
-//     {
-//         Task<List<Role>> GetUserAllUserRolesAsync();
-//     }
-// }
-
 using PizzaShopRepository.ViewModels;
 using System.Collections.Generic;
 

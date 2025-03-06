@@ -11,7 +11,7 @@ public partial class Category
 
     public string? Description { get; set; }
 
-    public bool? IsDeleted { get; set; }
+    public bool IsDeleted { get; set; }
 
     public virtual ICollection<Item> Items { get; set; } = new List<Item>();
 }
