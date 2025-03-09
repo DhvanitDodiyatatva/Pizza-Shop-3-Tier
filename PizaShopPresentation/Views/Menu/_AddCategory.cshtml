@@ -1,0 +1,109 @@
+@* @model PizzaShopRepository.ViewModels.CreateCategoryVM
+
+<div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Add Category</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addCategoryForm">
+                    @Html.AntiForgeryToken()
+                    <div class="form-floating mb-3">
+                        <input asp-for="Name" class="form-control" id="floatingInputName" placeholder="Sandwich" />
+                        <label for="floatingInputName">Name</label>
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input asp-for="Description" class="form-control" id="floatingInputDesc" placeholder="This is a sandwich category" />
+                        <label for="floatingInputDesc">Description</label>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="submitAddCategory()">Save</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+} *@
+
+@model PizzaShopRepository.ViewModels.CreateCategoryVM
+
+<div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Add Category</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addCategoryForm" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="form-floating mb-3">
+                        <input asp-for="Name" class="form-control" id="floatingInputName" placeholder="Sandwich" />
+                        <label for="floatingInputName">Name</label>
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input asp-for="Description" class="form-control" id="floatingInputDesc"
+                            placeholder="This is a sandwich category" />
+                        <label for="floatingInputDesc">Description</label>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="saveCategoryBtn">Save</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_AddCategory" />
+    @* <script>
+        $(document).ready(function () {
+            $("#saveCategoryBtn").on("click", function (e) {
+                e.preventDefault(); // Prevent any default button behavior
+                submitAddCategory();
+            });
+        });
+
+        function submitAddCategory() {
+            // Validate form before submission
+            if (!$("#addCategoryForm")[0].checkValidity()) {
+                $("#addCategoryForm")[0].reportValidity();
+                return;
+            }
+
+            $.ajax({
+                url: '@Url.Action("CreateCategory", "Menu")',
+                type: 'POST',
+                data: $("#addCategoryForm").serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        $("#exampleModal1").modal("hide"); // Hide the modal
+                        loadCategories(); // Refresh category list
+                        // Reset the form
+                        $("#addCategoryForm")[0].reset();
+                    } else {
+                        // If validation fails, update modal body with returned partial view
+                        $("#exampleModal1 .modal-body").html(response);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error adding category:", error);
+                    alert("Error adding category. Please try again.");
+                }
+            });
+        }
+    </script> *@
+}

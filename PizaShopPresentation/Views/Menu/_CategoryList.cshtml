@@ -5,10 +5,45 @@
     {
         <div class="row my-2 g-0">
             <div class="d-flex align-items-center justify-content-between category-option" data-category-id="@category.Id">
-                <a href="#" onclick="loadItems(@category.Id)"><img src="~/images/grid.png" style="height: 20px; width: 20px;" alt="">@category.Name</a>
-                <div class="edit-category"><img src="~/images/edit.svg" alt="" class="pe-2"></div>
+                <a href="#" onclick="loadItems(@category.Id)"><img src="~/images/grid.png"
+                        style="height: 20px; width: 20px;" alt="">@category.Name</a>
+                <div class="edit-category d-none">
+                    <button class="btn p-0" onclick="showEditCategory(@category.Id)">
+                        <img src="~/images/edit.png" alt="Edit" class="pe-2" style="height: 20px; width: 20px;">
+                    </button>
+                    <button class="btn p-0" data-bs-toggle="modal" data-bs-target="#deleteModal_@category.Id">
+                        <img src="~/images/delete.png" alt="Delete" style="height: 20px; width: 20px;">
+                    </button>
+                </div>
+            </div>
+            <!-- Delete Confirmation Modal -->
+            <div class="modal fade" id="deleteModal_@category.Id" tabindex="-1"
+                aria-labelledby="deleteModalLabel_@category.Id" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="deleteModalLabel_@category.Id">Delete Confirmation</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body d-flex align-items-center justify-content-center flex-column">
+                            <img src="~/images/toppng.com-warning-icon-2400x2400.png" alt="DeleteModal"
+                                style="height: 80px; width: 80px">
+                            <p>Are you sure you want to delete '@category.Name'?</p>
+                        </div>
+                        <div class="modal-footer d-flex justify-content-center align-items-center">
+                            <button type="button" class="btn btn-primary"
+                                onclick="deleteCategory(@category.Id)">Yes</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     }
 </div>
 
+<style>
+    .category-option:hover .edit-category {
+        display: block !important;
+    }
+</style>
