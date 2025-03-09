@@ -1,110 +1,69 @@
 using Microsoft.AspNetCore.Mvc;
-using PizzaShop.Services.Interfaces;
-// using PizzaShop.ViewModels;
 using PizzaShopRepository.ViewModels;
-using System.Linq;
+using PizzaShopServices.Interfaces;
 
-namespace PizzaShop.Controllers
+public class MenuController : Controller
 {
-    public class MenuController : Controller
+    private readonly ICategoryService _categoryService;
+    private readonly IItemService _itemService;
+
+    public MenuController(ICategoryService categoryService, IItemService itemService)
     {
-        private readonly IMenuService _menuService;
-
-        public MenuController(IMenuService menuService)
-        {
-            _menuService = menuService;
-        }
-
-        public IActionResult Index()
-        {
-            var model = new MenuViewModel
-            {
-                Categories = _menuService.GetAllCategories().ToList(),
-                Items = _menuService.GetAllItems().ToList()
-            };
-            return View(model);
-        }
-
-        // AJAX endpoint to get items for a specific category
-        [HttpGet]
-        public IActionResult GetItemsByCategory(int? categoryId)
-        {
-            var items = _menuService.GetAllItems()
-                .Where(i => !i.IsDeleted && (categoryId == null || i.CategoryId == categoryId))
-                .ToList();
-            return PartialView("_ItemList", items);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult CreateCategory(CreateCategoryViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                _menuService.CreateCategory(model);
-                return RedirectToAction("Index");
-            }
-            return BadRequest(ModelState);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult UpdateCategory(UpdateCategoryViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                _menuService.UpdateCategory(model);
-                return RedirectToAction("Index");
-            }
-            return BadRequest(ModelState);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult CreateItem(CreateItemVMViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                _menuService.CreateItem(model);
-                return RedirectToAction("Index");
-            }
-            return BadRequest(ModelState);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult UpdateItem(UpdateItemVMViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                _menuService.UpdateItem(model);
-                return RedirectToAction("Index");
-            }
-            return BadRequest(ModelState);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult DeleteItem(int id)
-        {
-            var item = _menuService.GetItemById(id);
-            if (item != null)
-            {
-                _menuService.DeleteItem(id);
-                return RedirectToAction("Index");
-            }
-            return NotFound();
-        }
-
-        [HttpPost]
-        public IActionResult DeleteItems([FromBody] List<int> ids)
-        {
-            if (ids == null || !ids.Any())
-            {
-                return BadRequest("No items selected for deletion.");
-            }
-            _menuService.DeleteItems(ids);
-            return Ok();
-        }
+        _categoryService = categoryService;
+        _itemService = itemService;
     }
+
+    public IActionResult Index()
+    {
+        // Main menu page, no view model passed here
+        return View();
+    }
+
+    public async Task<IActionResult> GetCategories()
+    {
+        var categories = await _categoryService.GetAllCategoriesAsync();
+        return PartialView("_CategoryList", categories);
+    }
+
+  public async Task<IActionResult> GetItems(int? categoryId, string searchTerm, int page = 1, int pageSize = 5)
+{
+    var allItems = await _itemService.GetAllItemsAsync();
+
+    if (categoryId.HasValue)
+    {
+        allItems = allItems.Where(i => i.CategoryId == categoryId.Value).ToList();
+    }
+
+    if (!string.IsNullOrEmpty(searchTerm))
+    {
+        allItems = allItems.Where(i => i.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+    }
+
+    int totalCount = allItems.Count();
+    if (totalCount == 0)
+    {
+        return PartialView("_ItemList", new ItemPaginationViewModel
+        {
+            Items = new List<ItemVMViewModel>(),
+            CurrentPage = page,
+            PageSize = pageSize,
+            TotalCount = 0
+        });
+    }
+
+    var paginatedItems = allItems
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
+        .ToList();
+
+    var viewModel = new ItemPaginationViewModel
+    {
+        Items = paginatedItems,
+        CurrentPage = page,
+        PageSize = pageSize,
+        TotalCount = totalCount
+    };
+
+    return PartialView("_ItemList", viewModel);
+}
 }

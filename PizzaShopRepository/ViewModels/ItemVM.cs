@@ -11,7 +11,7 @@ namespace PizzaShopRepository.ViewModels
         public string ItemType { get; set; } = string.Empty;
         public int? Quantity { get; set; }
         public string? Unit { get; set; }
-        public bool? IsAvailable { get; set; }
+        public bool IsAvailable { get; set; }
         public string? ShortCode { get; set; }
         public string? ImageUrl { get; set; }
         public bool IsDeleted { get; set; }

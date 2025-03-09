@@ -1,80 +1,142 @@
-@model List<PizzaShopRepository.ViewModels.ItemVMViewModel>
+@model PizzaShopRepository.ViewModels.ItemPaginationViewModel
 
-<table class="table table-hover">
-    <thead>
-        <tr>
-            <th scope="col">
-                <div class="form-check item-checkbox">
-                    <input class="form-check-input" type="checkbox" id="selectAllItems" />
-                    <label class="form-check-label" for="selectAllItems"></label>
-                </div>
-            </th>
-            <th scope="col">Name</th>
-            <th scope="col" class="text-center text-nowrap">Item Type</th>
-            <th scope="col" class="text-center text-nowrap">Rate</th>
-            <th scope="col" class="text-center text-nowrap">Quantity</th>
-            <th scope="col" class="text-center text-nowrap">Available</th>
-            <th scope="col" class="text-center text-nowrap">Action</th>
-        </tr>
-    </thead>
-    <tbody id="itemTableBody">
-        @foreach (var item in Model)
-        {
+<div class="content-div table-responsive">
+    <table class="table table-hover">
+        <thead>
             <tr>
-                <td class="py-3 text-center text-nowrap" scope="row">
+                <th scope="col">
                     <div class="form-check item-checkbox">
-                        <input class="form-check-input" type="checkbox" value="@item.Id" name="selectedItems" />
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckIndeterminate">
+                        <label class="form-check-label" for="flexCheckIndeterminate"></label>
                     </div>
-                </td>
-                <td class="py-3 text-nowrap">
-                    <img src="~/images/dining-menu.png" alt="item-img"
-                        style="max-height: 30px; aspect-ratio: 1/1; margin-right: 3%;"
-                        onerror="this.src='~/images/dining-menu.png'"> @item.Name
-                </td>
-                @* <td class="py-3 text-center text-nowrap">@item.ItemType</td> *@
-                <td class=" py-3 text-center">
+                </th>
+                <th scope="col">Name</th>
+                <th scope="col" class="text-center text-nowrap">Item Type</th>
+                <th scope="col" class="text-center text-nowrap">Rate</th>
+                <th scope="col" class="text-center text-nowrap">Quantity</th>
+                <th scope="col" class="text-center text-nowrap">Available</th>
+                <th scope="col" class="text-center text-nowrap">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td class="py-3 text-center text-nowrap" scope="row">
+                        <div class="form-check item-checkbox">
+                            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked_@item.Id" style="height: 20px; width: 20px;" checked>
+                            <label class="form-check-label" for="flexCheckChecked_@item.Id"></label>
+                        </div>
+                    </td>
+                    <td class="py-3 text-nowrap"><img src="~/images/dining-menu.png" alt="item-img" style="max-height: 30px; aspect-ratio: 1/1; margin-right: 3%;">@item.Name</td>
+                    <td class="py-3 text-center text-nowrap">
+                        @if (item.ItemType?.ToLower() == "vegetarian")
+                        {
+                            <img src="~/images/icons/veg-icon.svg" alt="veg-img" style="height: 30px; aspect-ratio: 1/1;">
+                        }
+                        else if (item.ItemType?.ToLower() == "non_vegetarian")
+                        {
+                            <img src="~/images/icons/non-veg-icon.svg" alt="non-veg-img" style="height: 30px; aspect-ratio: 1/1;">
+                        }
+                        else if (item.ItemType?.ToLower() == "vegan")
+                        {
+                            <img src="~/images/icons/vegan-icon.svg" alt="vegan-img" style="height: 30px; aspect-ratio: 1/1;">
+                        }
+                    </td>
+                    <td class="py-3 text-center text-nowrap">@item.Price</td>
+                    <td class="py-3 text-center text-nowrap">@item.Quantity</td>
+                    <td class="py-3 text-center text-nowrap">
+                        <div class="form-check form-switch d-flex justify-content-center">
+                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked_@item.Id" style="width: 50px; height: 30px;" @(item.IsAvailable ? "checked" : "")>
+                            <label class="form-check-label" for="flexSwitchCheckChecked_@item.Id"></label>
+                        </div>
+                    </td>
+                    <td class="py-3 text-center text-nowrap">
+                        <a href="edit-user.html" class="text-decoration-none text-black">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-pen text-body-btn me-2" viewBox="0 0 16 16">
+                                <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"/>
+                            </svg>
+                        </a>
+                        <button type="button" class="btn p-0 text-body-btn" data-bs-toggle="modal" data-bs-target="#exampleModal_@item.Id">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+                                <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 0 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
+                            </svg>
+                        </button>
+                        <!-- Modal for Delete Confirmation -->
+                        <div class="modal fade" id="exampleModal_@item.Id" tabindex="-1" aria-labelledby="exampleModalLabel_@item.Id" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel_@item.Id">Delete confirmation</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body d-flex align-items-center justify-content-center flex-column">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-exclamation-triangle" viewBox="0 0 16 16">
+                                            <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.15.15 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.2.2 0 0 1-.054.06.1.1 0 0 1-.066.017H1.146a.1.1 0 0 1-.066-.017.2.2 0 0 1-.054-.06.18.18 0 0 1 .002-.183L7.884 2.073a.15.15 0 0 1 .054-.057m1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767z"/>
+                                            <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/>
+                                        </svg>
+                                        <p>Are you sure you want to delete this item?</p>
+                                    </div>
+                                    <div class="modal-footer d-flex justify-content-center align-items-center">
+                                        <button type="button" class="btn btn-primary">Yes</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                
+            }
+        </tbody>
+    </table>
 
-                    @if (item.ItemType == "vegetarian")
-                    {
-                        <img src="~/images/icons/veg-icon.svg" style="height: 20px; width: 20px;" />
-                    }
-                    else if (item.ItemType == "non_vegetarian")
-                    {
-                        <img src="~/images/icons/non-veg-icon.svg" style="height: 20px; width: 20px;" />
-                    }
-                    else if (item.ItemType == "vegan")
-                    {
-                        <img src="~/images/icons/vegan-icon.svg" style="height: 20px; width: 20px;" />
-                    }
-
-            </td>
-            <td class="py-3 text-center text-nowrap">@item.Price</td>
-            <td class="py-3 text-center text-nowrap">@item.Quantity</td>
-            <td class="py-3 text-center text-nowrap">
-                <div class="form-check form-switch d-flex justify-content-center">
-                    <input class="form-check-input" type="checkbox" role="switch" @(item.IsAvailable == true ? "checked"
-                                                : "") disabled />
-                </div>
-            </td>
-            <td class="py-3 text-center text-nowrap">
-                <a href="#" class="text-decoration-none text-black edit-item-link" data-item-id="@item.Id"
-                    data-bs-toggle="modal" data-bs-target="#editItemModal">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                        class="bi bi-pen text-body-btn me-2" viewBox="0 0 16 16">
-                        <path
-                            d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z" />
-                    </svg>
-                </a>
-                <button type="button" class="btn p-0 text-body-btn delete-item-btn" data-item-id="@item.Id"
-                    data-bs-toggle="modal" data-bs-target="#deleteItemModal">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                        class="bi bi-trash3" viewBox="0 0 16 16">
-                        <path
-                            d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
-                    </svg>
+    <!-- Pagination Controls -->
+    <nav aria-label="Page navigation example" class="d-flex align-items-center justify-content-between justify-content-lg-end flex-column flex-md-row">
+        <div class="d-flex me-2 align-items-center mb-4">
+            <p class="m-0 me-1">Items Per Page</p>
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    @Model.PageSize
                 </button>
-            </td>
-        </tr>
-                }
-    </tbody>
-</table>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#" onclick="changePageSize(2)">2</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="changePageSize(3)">3</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="changePageSize(5)">5</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="changePageSize(8)">8</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="changePageSize(10)">10</a></li>
+                </ul>
+            </div>
+        </div>
+        <ul class="pagination d-flex align-items-center mb-4">
+            <p class="m-0 me-1">Showing @((Model.CurrentPage - 1) * Model.PageSize + 1)-@Math.Min(Model.CurrentPage * Model.PageSize, Model.TotalCount) of @Model.TotalCount</p>
+            <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+                <a class="page-link text-body" href="#" onclick="loadPage(@(Model.CurrentPage - 1))"><</a>
+            </li>
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(Model.CurrentPage == i ? "active" : "")">
+                    <a class="page-link text-body" href="#" onclick="loadPage(@i)">@i</a>
+                </li>
+            }
+            <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
+                <a class="page-link text-body" href="#" onclick="loadPage(@(Model.CurrentPage + 1))">></a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+  function changePageSize(size) {
+    console.log('Changing page size to:', size, 'for category:', currentCategoryId);
+    loadItems(currentCategoryId, $('#searchInput').val(), 1, size);
+}
+
+function loadPage(page) {
+    console.log('Loading page:', page, 'with size:', currentPageSize);
+    loadItems(currentCategoryId, $('#searchInput').val(), page, currentPageSize);
+}
+</script>

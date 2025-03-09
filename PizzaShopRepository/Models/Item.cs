@@ -21,7 +21,7 @@ public partial class Item
 
     public string? Unit { get; set; }
 
-    public bool? IsAvailable { get; set; }
+    public bool IsAvailable { get; set; }
 
     public string? ShortCode { get; set; }
 

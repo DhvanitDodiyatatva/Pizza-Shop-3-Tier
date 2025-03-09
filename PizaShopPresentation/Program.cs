@@ -2,8 +2,8 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using PizzaShop.Services.Implementations;
-using PizzaShop.Services.Interfaces;
+// using PizzaShop.Services.Implementations;
+// using PizzaShop.Services.Interfaces;
 using PizzaShopRepository.Data;
 using PizzaShopRepository.Implementations;
 using PizzaShopRepository.Interfaces;
@@ -12,7 +12,7 @@ using PizzaShopRepository.Services;
 // using PizzaShopService.Interfaces;
 using PizzaShopServices.Implementations;
 using PizzaShopServices.Interfaces;
-// using RmsServices.Implementations;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,8 +28,10 @@ builder.Services.AddScoped<IUserCrudService, UserCrudService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IRoleService, RoleService>();
-builder.Services.AddScoped<IMenuRepository, MenuRepository>();
-builder.Services.AddScoped<IMenuService, MenuService>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IItemRepository, ItemRepository>();
+builder.Services.AddScoped<IItemService, ItemService>();
 
 // Configure JWT authentication
 builder.Services.AddAuthentication(options =>
