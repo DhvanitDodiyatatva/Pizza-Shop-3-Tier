@@ -7,7 +7,8 @@ namespace PizzaShopServices.Interfaces
 {
     public interface IUserCrudService
     {
-        Task<(List<UserList> Users, int TotalUsers)> GetUsersAsync(string searchQuery, int page, int pageSize);
+        // Task<(List<UserList> Users, int TotalUsers)> GetUsersAsync(string searchQuery, int page, int pageSize);
+        Task<(List<UserList> Users, int TotalUsers)> GetUsersAsync(string searchQuery, int page, int pageSize, string sortBy, string sortOrder);
         Task<MyProfile> GetUserProfileAsync(string email);
         Task UpdateUserProfileAsync(string email, MyProfile model);
         Task ChangePasswordAsync(string email, ChangePassword model);

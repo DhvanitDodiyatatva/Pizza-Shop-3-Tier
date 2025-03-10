@@ -5,7 +5,7 @@
 }
 
 <div class="Users-content mt-0 p-xl-5 p-lg-4 p-md-4 p-sm-4 p-4 ">
-  <div class="d-flex align-items-center justify-content-between my-2  z-0">
+  <div class="d-flex align-items-center justify-content-between my-2 z-0">
     <div>
       <div class="fw-bolder fs-2 page-text me-2">Users</div>
     </div>
@@ -24,15 +24,14 @@
         </div>
         <input type="hidden" name="page" value="@ViewBag.CurrentPage" />
         <input type="hidden" name="pageSize" value="@ViewBag.PageSize" />
+        <input type="hidden" name="sortBy" value="@ViewBag.SortBy" />
+        <input type="hidden" name="sortOrder" value="@ViewBag.SortOrder" />
       </form>
       <a asp-controller="Home" asp-action="AddNewUser"><button
-          class="btn btn-main bg-primary rounded-2 ms-1 text-white fs-6 d-none d-lg-block" type="submit">
-          +Add User
-        </button></a>
+          class="btn btn-main bg-primary rounded-2 ms-1 text-white fs-6 d-none d-lg-block" type="submit">+Add
+          User</button></a>
       <a asp-controller="Home" asp-action="AddNewUser"><button
-          class=" btn btn-main bg-primary rounded- ms-1 text-white fs-6 d-block d-lg-none" type="submit">
-          +
-        </button></a>
+          class="btn btn-main bg-primary rounded- ms-1 text-white fs-6 d-block d-lg-none" type="submit">+</button></a>
     </div>
   </div>
   <div class="content-div rounded-2 shadow p-3">
@@ -41,20 +40,51 @@
         <thead>
           <tr>
             <th scope="col" class="text-nowrap">
-              Name
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                class="bi bi-arrow-down-up" viewBox="0 0 16 16">
-                <path fill-rule="evenodd"
-                  d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5" />
-              </svg>
+              <a href="@Url.Action("Users", new { searchQuery = ViewBag.SearchQuery, page = ViewBag.CurrentPage, pageSize = ViewBag.PageSize, sortBy = "name", sortOrder = (ViewBag.SortBy == "name" && ViewBag.SortOrder == "asc") ? "desc" : "asc" })"
+                class="text-decoration-none text-dark">
+                Name
+                @if (ViewBag.SortBy == "name")
+                {
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi @(ViewBag.SortOrder == "asc" ? "bi-arrow-up" : "bi-arrow-down")" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                      d="@(ViewBag.SortOrder == "asc" ? "M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z" : "M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z")" />
+                  </svg>
+                }
+                else
+                {
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-arrow-down-up" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                      d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5" />
+                  </svg>
+                }
+              </a>
             </th>
             <th scope="col" class="text-nowrap">Email</th>
             <th scope="col" class="text-nowrap">Phone</th>
-            <th scope="col" class="text-nowrap">Role<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                fill="currentColor" class="bi bi-arrow-down-up" viewBox="0 0 16 16">
-                <path fill-rule="evenodd"
-                  d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5" />
-              </svg></th>
+            <th scope="col" class="text-nowrap">
+              <a href="@Url.Action("Users", new { searchQuery = ViewBag.SearchQuery, page = ViewBag.CurrentPage, pageSize = ViewBag.PageSize, sortBy = "role", sortOrder = (ViewBag.SortBy == "role" && ViewBag.SortOrder == "asc") ? "desc" : "asc" })"
+                class="text-decoration-none text-dark">
+                Role
+                @if (ViewBag.SortBy == "role")
+                {
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi @(ViewBag.SortOrder == "asc" ? "bi-arrow-up" : "bi-arrow-down")" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                      d="@(ViewBag.SortOrder == "asc" ? "M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 0 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z" : "M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z")" />
+                  </svg>
+                }
+                else
+                {
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-arrow-down-up" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                      d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5" />
+                  </svg>
+                }
+              </a>
+            </th>
             <th scope="col" class="text-nowrap">Status</th>
             <th scope="col" class="text-nowrap">Action</th>
           </tr>
@@ -76,12 +106,9 @@
                   @(user.Status ? "Active" : "Inactive")
                 </span>
               </td>
-
               <td class="py-3">
                 <a asp-controller="Home" asp-action="EditUser" asp-route-id="@user.Id"
                   class="text-decoration-none text-black text-body-btn me-2">
-
-                  <!-- SVG icon for edit -->
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-pen"
                     viewBox="0 0 16 16">
                     <path
@@ -90,15 +117,12 @@
                 </a>
                 <button type="button" class="btn text-body-btn p-0" data-bs-toggle="modal"
                   data-bs-target="#deletemodal-@user.Id">
-                  <!-- SVG icon for delete -->
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash3"
                     viewBox="0 0 16 16">
                     <path
                       d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
                   </svg>
                 </button>
-
-                <!-- Delete Confirmation Modal (unique for each user) -->
                 <div class="modal fade" id="deletemodal-@user.Id" tabindex="-1"
                   aria-labelledby="deletemodallabel-@user.Id" aria-hidden="true">
                   <div class="modal-dialog modal-dialog-centered">
@@ -127,7 +151,6 @@
           }
         </tbody>
       </table>
-
     </div>
     <nav aria-label="Page navigation example"
       class="d-flex align-items-center justify-content-between justify-content-lg-end flex-column flex-md-row">
@@ -141,12 +164,13 @@
           <ul class="dropdown-menu">
             @foreach (var size in new int[] { 2, 5, 8, 10 })
             {
-              <li><a class="dropdown-item" href="@Url.Action("Users", new { page = 1, pageSize = size })">@size</a></li>
+              <li><a class="dropdown-item"
+                  href="@Url.Action("Users", new { page = 1, pageSize = size, sortBy = ViewBag.SortBy, sortOrder = ViewBag.SortOrder })">@size</a>
+              </li>
             }
           </ul>
         </div>
       </div>
-
       <ul class="pagination d-flex align-items-center mb-4">
         @{
           int totalPages = (int)Math.Ceiling((double)ViewBag.TotalUsers / ViewBag.PageSize);
@@ -155,31 +179,24 @@
           int start = ((currentPage - 1) * pageSize) + 1;
           int end = Math.Min(start + pageSize - 1, ViewBag.TotalUsers);
         }
-
         <p class="m-0 me-1">Showing @start - @end of @ViewBag.TotalUsers</p>
-
-        <!-- Previous Page -->
         <li class="page-item @(currentPage == 1 ? "disabled" : "")">
           <a class="page-link text-decoration-none text-body"
-            href="@Url.Action("Users", new { page = currentPage - 1, pageSize, searchQuery = ViewBag.SearchQuery })">&lt;</a>
+            href="@Url.Action("Users", new { page = currentPage - 1, pageSize, searchQuery = ViewBag.SearchQuery, sortBy = ViewBag.SortBy, sortOrder = ViewBag.SortOrder })">
+            < </a>
         </li>
-
-        <!-- Page Numbers -->
         @for (int i = 1; i <= totalPages; i++)
         {
           <li class="page-item @(i == currentPage ? "active" : "")">
             <a class="page-link text-decoration-none text-body"
-              href="@Url.Action("Users", new { page = i, pageSize, searchQuery = ViewBag.SearchQuery })">@i</a>
+              href="@Url.Action("Users", new { page = i, pageSize, searchQuery = ViewBag.SearchQuery, sortBy = ViewBag.SortBy, sortOrder = ViewBag.SortOrder })">@i</a>
           </li>
         }
-
-        <!-- Next Page -->
         <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
           <a class="page-link text-decoration-none text-body"
-            href="@Url.Action("Users", new { page = currentPage + 1, pageSize, searchQuery = ViewBag.SearchQuery })">&gt;</a>
+            href="@Url.Action("Users", new { page = currentPage + 1, pageSize, searchQuery = ViewBag.SearchQuery, sortBy = ViewBag.SortBy, sortOrder = ViewBag.SortOrder })">></a>
         </li>
       </ul>
     </nav>
   </div>
-  <!-- Add more rows/columns for other content -->
 </div>

@@ -40,9 +40,26 @@ namespace PizzaShopPresentation.Controllers
             return View();
         }
 
-        public async Task<IActionResult> Users(string searchQuery = "", int page = 1, int pageSize = 5)
+        // public async Task<IActionResult> Users(string searchQuery = "", int page = 1, int pageSize = 5)
+        // {
+        //     var (users, totalUsers) = await _userCrudService.GetUsersAsync(searchQuery, page, pageSize);
+
+        //     int totalPages = (int)Math.Ceiling((double)totalUsers / pageSize);
+        //     if (page < 1) page = 1;
+        //     if (page > totalPages && totalUsers > 0) page = totalPages;
+
+        //     ViewBag.TotalUsers = totalUsers;
+        //     ViewBag.PageSize = pageSize;
+        //     ViewBag.CurrentPage = page;
+        //     ViewBag.TotalPages = totalPages;
+        //     ViewBag.SearchQuery = searchQuery;
+
+        //     return View(users);
+        // }
+
+        public async Task<IActionResult> Users(string searchQuery = "", int page = 1, int pageSize = 5, string sortBy = "Id", string sortOrder = "asc")
         {
-            var (users, totalUsers) = await _userCrudService.GetUsersAsync(searchQuery, page, pageSize);
+            var (users, totalUsers) = await _userCrudService.GetUsersAsync(searchQuery, page, pageSize, sortBy, sortOrder);
 
             int totalPages = (int)Math.Ceiling((double)totalUsers / pageSize);
             if (page < 1) page = 1;
@@ -53,6 +70,8 @@ namespace PizzaShopPresentation.Controllers
             ViewBag.CurrentPage = page;
             ViewBag.TotalPages = totalPages;
             ViewBag.SearchQuery = searchQuery;
+            ViewBag.SortBy = sortBy;
+            ViewBag.SortOrder = sortOrder;
 
             return View(users);
         }
@@ -240,7 +259,7 @@ namespace PizzaShopPresentation.Controllers
             return RedirectToAction("Roles");
         }
 
-       
+
 
 
 

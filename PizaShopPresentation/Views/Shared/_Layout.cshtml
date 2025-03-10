@@ -273,9 +273,39 @@
             </div>
         </div>
     </div>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var sidebarItems = document.querySelectorAll('.sidebar-item');
+
+
+            var activeSidebarIndex = sessionStorage.getItem('activeSidebarIndex');
+            if (activeSidebarIndex !== null) {
+                activeSidebarIndex = parseInt(activeSidebarIndex, 10);
+                sidebarItems.forEach(function (item) {
+                    item.classList.remove('active');
+                });
+                if (sidebarItems[activeSidebarIndex]) {
+                    sidebarItems[activeSidebarIndex].classList.add('active');
+                }
+            }
+
+            sidebarItems.forEach(function (item, index) {
+                item.addEventListener('click', function () {
+                    sidebarItems.forEach(function (i) {
+                        i.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    sessionStorage.setItem('activeSidebarIndex', index);
+                });
+            });
+        });
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 

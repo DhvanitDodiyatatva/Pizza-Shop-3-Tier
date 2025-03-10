@@ -26,7 +26,41 @@ namespace PizzaShopServices.Implementations
             _emailService = emailService;
         }
 
-        public async Task<(List<UserList> Users, int TotalUsers)> GetUsersAsync(string searchQuery, int page, int pageSize)
+        // public async Task<(List<UserList> Users, int TotalUsers)> GetUsersAsync(string searchQuery, int page, int pageSize)
+        // {
+        //     var query = await _userRepository.GetUsersQueryableAsync();
+
+        //     if (!string.IsNullOrEmpty(searchQuery))
+        //     {
+        //         searchQuery = searchQuery.ToLower();
+        //         query = query.Where(u =>
+        //             u.FirstName.ToLower().Contains(searchQuery) ||
+        //             u.LastName.ToLower().Contains(searchQuery) ||
+        //             u.Email.ToLower().Contains(searchQuery) ||
+        //             u.Phone.Contains(searchQuery));
+        //     }
+
+        //     int totalUsers = await query.CountAsync();
+        //     var users = await query
+        //         .OrderBy(u => u.Id)
+        //         .Skip((page - 1) * pageSize)
+        //         .Take(pageSize)
+        //         .Select(u => new UserList
+        //         {
+        //             Id = u.Id,
+        //             FirstName = u.FirstName,
+        //             LastName = u.LastName,
+        //             Email = u.Email,
+        //             Phone = u.Phone,
+        //             Role = u.Role,
+        //             Status = u.Status
+        //         })
+        //         .ToListAsync();
+
+        //     return (users, totalUsers);
+        // }
+
+        public async Task<(List<UserList> Users, int TotalUsers)> GetUsersAsync(string searchQuery, int page, int pageSize, string sortBy, string sortOrder)
         {
             var query = await _userRepository.GetUsersQueryableAsync();
 
@@ -40,9 +74,26 @@ namespace PizzaShopServices.Implementations
                     u.Phone.Contains(searchQuery));
             }
 
+            // Apply sorting
+            switch (sortBy.ToLower())
+            {
+                case "name":
+                    query = sortOrder.ToLower() == "desc"
+                        ? query.OrderByDescending(u => u.FirstName).ThenByDescending(u => u.LastName)
+                        : query.OrderBy(u => u.FirstName).ThenBy(u => u.LastName);
+                    break;
+                case "role":
+                    query = sortOrder.ToLower() == "desc"
+                        ? query.OrderByDescending(u => u.Role)
+                        : query.OrderBy(u => u.Role);
+                    break;
+                default:
+                    query = query.OrderBy(u => u.Id); // Default sorting by Id
+                    break;
+            }
+
             int totalUsers = await query.CountAsync();
             var users = await query
-                .OrderBy(u => u.Id)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .Select(u => new UserList
