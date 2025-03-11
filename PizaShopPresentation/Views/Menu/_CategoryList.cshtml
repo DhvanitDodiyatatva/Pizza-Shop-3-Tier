@@ -11,22 +11,22 @@ else
     <div class="row g-0 category-side">
         @foreach (var category in Model)
         {
-            <div class="row my-2 g-0">
+            <div class="row my-2 ">
                 <div class="d-flex align-items-center justify-content-between category-option">
                     <a class="category-link" data-category-id="@category.Id" href="#">
                         <img src="~/images/grid.png" alt="" style="height: 20px; width: 20px;">
                         @category.Name
                     </a>
                     <div class="edit-category d-none ">
-                        <div class="d-flex j">
+                        <div class="d-flex ">
                             <div class="edit-category">
-                                <button type="button" class="btn edit-category-btn" data-category-id="@category.Id">
+                                <button type="button" class="btn  p-0" data-category-id="@category.Id">
                                     <img src="~/images/edit.png" alt="" class="pe-2 text-body-btn"
                                         style="height: 20px; width: 20px;">
                                 </button>
                             </div>
                             <div class="delete-category">
-                                <button type="button" class="btn" data-bs-toggle="modal"
+                                <button type="button" class="btn p-0" data-bs-toggle="modal"
                                     data-bs-target="#deletemodal-@category.Id">
                                     <img src="~/images/delete.png" alt="" class="pe-2 text-body-btn"
                                         style="height: 20px; width: 20px;">
@@ -48,6 +48,7 @@ else
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
+                            <h1 class="modal-title fs-5">Delete confirmation</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body d-flex align-items-center justify-content-center flex-column">

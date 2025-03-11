@@ -20,7 +20,19 @@
                         <img src="~/images/Default_pfp.svg.png" class="profile-pic" alt="Profile Picture">
                         <span>
                             <h5 class="mt-4 text-black fw-bolder">  @Model.FirstName @Model.LastName</h5>
-                            <p class="fw-bold">@Model.Role</p>
+                            <p class="fw-bold">@if (@Model.Role == "super_admin")
+                                {
+                                    <span>Admin</span>
+                                }
+                                                                else if (@Model.Role == "account_manager")
+                                {
+                                    <span>Account Manager</span>
+                                }
+                                else if (@Model.Role == "chef")
+                                {
+                                    <span>Chef</span>
+                                }
+                            </p>
                         </span>
                     </div>
                     <div>

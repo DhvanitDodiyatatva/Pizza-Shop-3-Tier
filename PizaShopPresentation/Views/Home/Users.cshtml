@@ -100,7 +100,21 @@
               </td>
               <td class="py-3">@user.Email</td>
               <td class="py-3">@user.Phone</td>
-              <td class="py-3">@user.Role</td>
+              <td class="py-3">
+                @if (@user.Role == "super_admin")
+                {
+                  <span>Admin</span>
+                }
+                else if (@user.Role == "account_manager")
+                {
+                  <span>Account Manager</span>
+                }
+                else if (@user.Role == "chef")
+                {
+                  <span>Chef</span>
+                }
+
+              </td>
               <td class="py-3">
                 <span class="badge fw-bold fs-6 px-4 py-1 rounded-5 @(user.Status ? "bg-success" : "bg-secondary")">
                   @(user.Status ? "Active" : "Inactive")
