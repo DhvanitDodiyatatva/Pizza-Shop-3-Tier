@@ -1,6 +1,10 @@
 @{
     ViewData["Title"] = "Menu";
 }
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
 
 <div class="Users-content mt-0 p-xl-5 p-lg-4 p-md-4 p-sm-4 p-4">
     <div class="d-flex align-items-center justify-content-between my-2">
@@ -52,7 +56,7 @@
                             <div class="d-flex align-items-center fw-bold justify-content-between page-text">
                                 Category
                                 <button type="button" class="btn bg-white btn-outline-dark text-black"
-                                    data-bs-toggle="modal" data-bs-target="#exampleModal1" data-bs-whatever="">
+                                    data-bs-toggle="modal" data-bs-target="#exampleModal12" data-bs-whatever="">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" fill="currentColor"
                                         class="bi bi-plus-lg" viewBox="0 0 16 16">
                                         <path fill-rule="evenodd"
@@ -61,7 +65,7 @@
                                 </button>
                             </div>
                         </div>
-                        <div style="overflow: auto; height: 50dvh;" class="custom-scrollbar" id="category-list">
+                        <div style="overflow: auto; height: 50dvh;" class="custom-scrollbar" id="categoriesContainer">
                             <!-- Categories loaded here via AJAX -->
                         </div>
                     </div>
@@ -282,13 +286,37 @@
                                 </div>
                             </div>
                         </div>
-                        <div id="item-list">
-                            <!-- Items loaded here via AJAX -->
+                        <div class="content-div table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">
+                                            <div class="form-check item-checkbox">
+                                                <input class="form-check-input" type="checkbox" value=""
+                                                    id="flexCheckIndeterminate">
+                                                <label class="form-check-label" for="flexCheckIndeterminate">
+                                                </label>
+                                            </div>
+                                        </th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col" class="text-center text-nowrap">Item Type</th>
+                                        <th scope="col" class="text-center text-nowrap">Rate</th>
+                                        <th scope="col" class="text-center text-nowrap">Quantity</th>
+                                        <th scope="col" class="text-center text-nowrap">Available</th>
+                                        <th scope="col" class="text-center text-nowrap">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="GetItemList">
+                                    <!-- Items loaded here via AJAX -->
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                     <div class="category-backdrop"></div>
                 </div>
             </div>
+
+
             <!-- Modifier Tab -->
             <div class="tab-pane fade" id="modifier-tab-pane" role="tabpanel" aria-labelledby="modifier-tab">
                 <div class="row g-0">
@@ -701,23 +729,254 @@
         </div>
     </div>
 </div>
+<div id="AddCategory">
+    @* _AddCategory partial View *@
+</div>
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<partial name="_AddCategory" />
-<partial name="_EditCategory" />
-<!-- Use CDN as fallback if local files are missing -->
-<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"
-    onerror="this.onerror=null;this.src='https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js';"></script>
-<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"
-    onerror="this.onerror=null;this.src='https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js';"></script>
+<script>
+    $(document).ready(function () {
+
+        // Function to load categories
+        function loadCategories() {
+            $.ajax({
+                url: '@Url.Action("GetCategories", "Menu")',
+                type: 'GET',
+                success: function (result) {
+                    $("#categoriesContainer").html(result);
+                    // Attach click event for category links
+                    $(".category-link").on("click", function (e) {
+                        e.preventDefault();
+                        var categoryId = $(this).data("category-id");
+                        loadItems(categoryId);
+                    });
+                    // Reattach edit button handler after categories reload
+                    attachEditCategoryHandler();
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error loading categories:", error);
+                    $("#categoriesContainer").html("Failed to load categories");
+                }
+            });
+        }
+
+        $('#item-tab-pane #category-list').on('click', '.category-option', function () {
+            $('#item-tab-pane #category-list .category-option').removeClass('active');
+            $(this).addClass('active');
+            currentCategoryId = $(this).data('category-id');
+            loadItems(currentCategoryId, $('#searchInput').val(), currentPage, currentPageSize);
+        });
+
+        // Function to load items for the selected category
+        function loadItems(categoryId) {
+            $.ajax({
+                url: '@Url.Action("GetItems", "Menu")',
+                type: 'GET',
+                data: { categoryId: categoryId },
+                success: function (result) {
+                    $("#GetItemList").html(result);
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error loading items:", error);
+                    $("#GetItemList").html("Failed to load items");
+                }
+            });
+        }
+
+        // Function to load the Add Category partial view and attach its form handler
+        function loadAddCategory() {
+            $.ajax({
+                url: '@Url.Action("AddNewCategory", "Menu")',
+                type: 'GET',
+                success: function (result) {
+                    $("#AddCategory").html(result);
+                    attachAddCategoryFormHandler();
+                    $.validator.unobtrusive.parse("#addCategoryForm");
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error loading Add Category form:", error);
+                }
+            });
+        }
+
+        // Attach submit handler to the Add Category form
+        function attachAddCategoryFormHandler() {
+            $("#addCategoryForm").on("submit", function (e) {
+                e.preventDefault();
+                if (!$(this).valid()) {
+                    return;
+                }
+                var formData = $(this).serialize();
+                $.ajax({
+                    url: '@Url.Action("AddNewCategory", "Menu")',
+                    type: 'POST',
+                    data: formData,
+                    success: function (response) {
+                        if (response.success) {
+                            // On success: hide the modal, show success toast, and refresh categories
+                            var modalEl = document.getElementById('exampleModal12');
+                            if (modalEl) {
+                                var modal = bootstrap.Modal.getInstance(modalEl);
+                                if (modal) {
+                                    modal.hide();
+                                }
+                            }
+                            $('.modal-backdrop').remove();
+                            toastr.success("Category added successfully!");
+                            loadCategories();
+                        } else {
+                            // On error: show a single toastr error and ensure the modal stays open
+                            toastr.error("Failed to add category: " + response.message);
+                            var modalEl = document.getElementById('exampleModal12');
+                            if (modalEl) {
+                                var modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                                modal.show();
+                            }
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error adding category:", error);
+                        toastr.error("Error adding category. Please try again.");
+                        var modalEl = document.getElementById('exampleModal12');
+                        if (modalEl) {
+                            var modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                            modal.show();
+                        }
+                    }
+                });
+            });
+        }
+
+        // Attach edit category button handler
+        function attachEditCategoryHandler() {
+            $(".edit-category-btn").off('click').on("click", function (e) {
+                e.preventDefault();
+                var categoryId = $(this).data("category-id");
+                console.log("Clicked edit for category ID:", categoryId);
+
+                $("#editModalView").html("");
+
+                $.ajax({
+                    url: '@Url.Action("EditCategory", "Menu")',
+                    type: 'GET',
+                    data: { id: categoryId },
+                    cache: false,
+                    success: function (data) {
+                        console.log("Received data for category ID:", categoryId);
+                        $("#editModalView").html(data);
+
+                        var modalElement = document.getElementById('editModal');
+                        if (modalElement) {
+                            var editModal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+                            editModal.show();
+                            attachEditFormHandler(); // Attach form handler after modal is loaded
+                        } else {
+                            console.error("Modal element #editModal not found in DOM");
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error loading edit partial view for ID " + categoryId + ":", error);
+                    }
+                });
+            });
+        }
+
+        // Attach edit form submission handler
+        function attachEditFormHandler() {
+            $("#editCategoryForm").off('submit').on("submit", function (e) {
+                e.preventDefault();
+                if (!$(this).valid()) { // Check client-side validation
+                    return;
+                }
+                var formData = $(this).serialize();
+                $.ajax({
+                    url: '@Url.Action("UpdateCategory", "Menu")',
+                    type: 'POST',
+                    data: formData,
+                    success: function (response) {
+                        if (response.success) {
+                            // On success: close the modal, show success toast, and reload categories
+                            var modalElement = document.getElementById('editModal');
+                            var editModal = bootstrap.Modal.getInstance(modalElement);
+                            if (editModal) {
+                                editModal.hide();
+                            }
+                            toastr.success(response.message);
+                            loadCategories();
+                        } else {
+                            // On error: show a single toastr error message.
+                            toastr.error(response.message);
+                            // Optionally, if you have an inline error container in your modal (e.g. a div with id="editCategoryValidationSummary")
+                            // you could update it as well:
+                            // $("#editCategoryValidationSummary").html(response.message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error updating category:", error);
+                        toastr.error("Error updating category. Please try again.");
+                    }
+                });
+            });
+        }
+
+        // Ensure modal backdrop is removed when any modal is hidden
+        $('.modal').on('hidden.bs.modal', function () {
+            $('.modal-backdrop').remove();
+        });
+
+        // Simplified delete AJAX: attach handler to the delete form submission
+        $(document).on('submit', '.delete-category-form', function (e) {
+            e.preventDefault();
+            var form = $(this);
+            var categoryId = form.data('category-id');
+
+            $.ajax({
+                url: '@Url.Action("Delete", "Menu")',
+                type: 'POST',
+                data: form.serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        // Retrieve the delete modal element
+                        var modalEl = document.getElementById('deletemodal-' + categoryId);
+                        if (modalEl) {
+                            var modal = bootstrap.Modal.getInstance(modalEl);
+                            if (modal) {
+                                modal.hide();
+                            }
+                        }
+                        // Explicitly remove any lingering modal backdrop
+                        $('.modal-backdrop').remove();
+
+                        toastr.success("Category deleted successfully!");
+                        // Refresh the category list
+                        loadCategories();
+                        // Optionally, load items for the first category after a short delay
+                        setTimeout(function () {
+                            var firstCategory = $(".category-link").first();
+                            if (firstCategory.length) {
+                                loadItems(firstCategory.data("category-id"));
+                            }
+                        }, 300);
+                    } else {
+                        toastr.error("Error: " + response.message);
+                    }
+                },
+                error: function () {
+                    toastr.error("Failed to delete category. Please try again.");
+                }
+            });
+        });
+
+        // Initial load of categories, items, and the Add Category form
+        loadCategories();
+        loadItems(1);
+        loadAddCategory();
+    });
+</script>
 
 <script>
-    let currentCategoryId = null;
-    let currentPage = 1;
-    let currentPageSize = 5;
-
     document.getElementById("categoryToggle").addEventListener("click", function () {
         var categorySection = document.getElementById("category-section");
         var contentSection = document.getElementById("content-section");
@@ -745,144 +1004,6 @@
             }
         }
     });
-
-    $(document).ready(function () {
-        loadCategories();
-
-        $('#searchInput').on('input', function () {
-            let searchTimeout;
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                currentPage = 1;
-                if (currentCategoryId) {
-                    loadItems(currentCategoryId, $(this).val(), currentPage, currentPageSize);
-                } else {
-                    alert('Please select a category to search.');
-                }
-            }, 300);
-        });
-
-        $('#item-tab-pane #category-list').on('click', '.category-option', function () {
-            $('#item-tab-pane #category-list .category-option').removeClass('active');
-            $(this).addClass('active');
-            currentCategoryId = $(this).data('category-id');
-            loadItems(currentCategoryId, $('#searchInput').val(), currentPage, currentPageSize);
-        });
-
-        @* $('#saveCategoryBtn').on('click', function (e) {
-            e.preventDefault();
-            submitAddCategory();
-        }); *@
-    });
-
-    function loadCategories() {
-        $.ajax({
-            url: '@Url.Action("GetCategories", "Menu")',
-            type: 'GET',
-            success: function (data) {
-                $('#item-tab-pane #category-list').html(data);
-                var firstCategoryId = $('#item-tab-pane #category-list .category-option:first').data('category-id');
-                if (firstCategoryId) {
-                    currentCategoryId = firstCategoryId;
-                    loadItems(firstCategoryId, '', currentPage, currentPageSize);
-                    $('#item-tab-pane #category-list .category-option:first').addClass('active');
-                } else {
-                    loadItems(null, '', currentPage, currentPageSize);
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error("Error loading categories:", xhr.responseText);
-                alert('Error loading categories');
-            }
-        });
-    }
-
-    function loadItems(categoryId, searchTerm, page = 1, pageSize = 5) {
-        currentPage = page;
-        currentPageSize = pageSize;
-        $.ajax({
-            url: '@Url.Action("GetItems", "Menu")',
-            type: 'GET',
-            data: {
-                categoryId: categoryId,
-                searchTerm: searchTerm,
-                page: page,
-                pageSize: pageSize
-            },
-            success: function (data) {
-                $('#item-tab-pane #item-list').html(data);
-            },
-            error: function (xhr, status, error) {
-                console.error("Error loading items:", xhr.responseText);
-                alert('Error loading items');
-            }
-        });
-    }
-
-    @* function submitAddCategory() {
-        var $form = $("#addCategoryForm");
-        console.log(typeof $.fn.validate);
-        $form.validate();
-
-
-        if (!$form.valid()) {
-            return;
-        }
-
-        $.ajax({
-            url: '@Url.Action("CreateCategory", "Menu")',
-            type: 'POST',
-            data: $form.serialize(),
-            success: function (response) {
-                if (response.success) {
-                    $("#exampleModal1").modal("hide"); // This line requires Bootstrap JS
-                    loadCategories();
-                    $form[0].reset();
-                } else {
-                    $("#exampleModal1 .modal-body").html(response);
-                    $.validator.unobtrusive.parse($form);
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error("Error adding category:", xhr.responseText);
-                alert("Error adding category: " + (xhr.responseJSON?.message || "Please try again."));
-            }
-        });
-    } *@
-
-        function showEditCategory(id) {
-            $.ajax({
-                url: '@Url.Action("GetEditCategory", "Menu")',
-                type: 'GET',
-                data: { id: id },
-                success: function (data) {
-                    $('body').append(data);
-                    $('#editCategoryModal').modal('show');
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error loading edit form:", xhr.responseText);
-                    alert('Error loading edit form');
-                }
-            });
-        }
-
-    function deleteCategory(id) {
-        $.ajax({
-            url: '@Url.Action("DeleteCategory", "Menu")',
-            type: 'POST',
-            data: { id: id, __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val() },
-            success: function (response) {
-                if (response.success) {
-                    $(`#deleteModal_${id}`).modal('hide');
-                    loadCategories();
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error("Error deleting category:", xhr.responseText);
-                alert('Error deleting category');
-            }
-        });
-    }
 </script>
 
 <style>

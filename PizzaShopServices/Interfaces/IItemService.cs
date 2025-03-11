@@ -1,10 +1,11 @@
+using PizzaShopRepository.Models;
 using PizzaShopRepository.ViewModels;
 
 namespace PizzaShopServices.Interfaces;
 
 public interface IItemService
 {
-    Task<IEnumerable<ItemVMViewModel>> GetAllItemsAsync();
-    Task<IEnumerable<ItemVMViewModel>> GetItemsByCategoryIdAsync(int categoryId);
-    Task<ItemVMViewModel> GetItemByIdAsync(int id);
+    Task<List<Item>> GetItemsByCategoryAsync(int categoryId);
+    Task<List<Item>> GetAllItemsAsync();
+
 }

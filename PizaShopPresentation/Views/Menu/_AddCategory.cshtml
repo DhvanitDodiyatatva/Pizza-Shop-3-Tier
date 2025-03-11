@@ -1,93 +1,45 @@
-@model PizzaShopRepository.ViewModels.CreateCategoryVM
+@model PizzaShopRepository.ViewModels.CrudCategoryViewModel
 
-<div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+@if (TempData["ErrorMessage"] != null)
+{
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script type="text/javascript">
+        toastr.error("@TempData["ErrorMessage"]");
+    </script>
+}
+
+<div class="modal fade" id="exampleModal12" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Add Category</h1>
+                <h1 class="modal-title fs-5" id="exampleModalLabel1">Add Category</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="addCategoryForm" method="post" asp-action="CreateCategory" asp-controller="Menu">
-                    @Html.AntiForgeryToken()
+                <form id="addCategoryForm">
                     <div class="form-floating mb-3">
-                        <input asp-for="Name" class="form-control" id="floatingInputName" placeholder="Sandwich" />
-                        <label for="floatingInputName">Name</label>
-                        <span asp-validation-for="Name" class="text-danger"></span>
+                        <input type="text" class="form-control" placeholder="Sandwich" asp-for="Name" />
+                        <label for="Name">Name</label>
                     </div>
+                    <span asp-validation-for="Name" class="text-danger"></span>
                     <div class="form-floating mb-3">
-                        <input asp-for="Description" class="form-control" id="floatingInputDesc"
-                            placeholder="This is a sandwich category" />
-                        <label for="floatingInputDesc">Description</label>
-                        <span asp-validation-for="Description" class="text-danger"></span>
+                        <input type="text" class="form-control" placeholder="This is a sandwich category"
+                            asp-for="Description" />
+                        <label for="Description">Description</label>
+                    </div>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Add</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
                 </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="saveCategoryBtn">Save</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
 </div>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-    <script>
-        $(document).ready(function () {
-            $("#saveCategoryBtn").on("click", function (e) {
-                e.preventDefault();
-                submitAddCategory();
-            });
-
-            // Enable unobtrusive validation
-            $("#addCategoryForm").validate({
-                errorElement: "span",
-                errorClass: "text-danger",
-                highlight: function (element) {
-                    $(element).addClass("is-invalid");
-                },
-                unhighlight: function (element) {
-                    $(element).removeClass("is-invalid");
-                }
-            });
-        });
-
-        function submitAddCategory() {
-            var $form = $("#addCategoryForm");
-
-            // Check if form is valid
-            if (!$form.valid()) {
-                console.log("Form validation failed");
-                return;
-            }
-
-            console.log("Submitting form data:", $form.serialize());
-
-            $.ajax({
-                url: '@Url.Action("CreateCategory", "Menu")',
-                type: 'POST',
-                data: $form.serialize(),
-                cache: false,
-                success: function (response) {
-                    console.log("Server response:", response);
-                    if (response.success) {
-                        console.log("Category added successfully");
-                        $("#exampleModal1").modal("hide");
-                        loadCategories();
-                        $form[0].reset();
-                    } else {
-                        console.log("Validation failed or server error, updating modal with response");
-                        $("#exampleModal1 .modal-body").html(response);
-                        $.validator.unobtrusive.parse($form);
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error("AJAX error:", status, error);
-                    console.error("Response text:", xhr.responseText);
-                    alert("Error adding category: " + error);
-                }
-            });
-        }
-    </script>
-}
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>

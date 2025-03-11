@@ -40,23 +40,6 @@ namespace PizzaShopPresentation.Controllers
             return View();
         }
 
-        // public async Task<IActionResult> Users(string searchQuery = "", int page = 1, int pageSize = 5)
-        // {
-        //     var (users, totalUsers) = await _userCrudService.GetUsersAsync(searchQuery, page, pageSize);
-
-        //     int totalPages = (int)Math.Ceiling((double)totalUsers / pageSize);
-        //     if (page < 1) page = 1;
-        //     if (page > totalPages && totalUsers > 0) page = totalPages;
-
-        //     ViewBag.TotalUsers = totalUsers;
-        //     ViewBag.PageSize = pageSize;
-        //     ViewBag.CurrentPage = page;
-        //     ViewBag.TotalPages = totalPages;
-        //     ViewBag.SearchQuery = searchQuery;
-
-        //     return View(users);
-        // }
-
         public async Task<IActionResult> Users(string searchQuery = "", int page = 1, int pageSize = 5, string sortBy = "Id", string sortOrder = "asc")
         {
             var (users, totalUsers) = await _userCrudService.GetUsersAsync(searchQuery, page, pageSize, sortBy, sortOrder);

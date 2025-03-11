@@ -6,9 +6,14 @@ namespace PizzaShopRepository.Interfaces;
 
 public interface ICategoryRepository
 {
-    Task<IEnumerable<Category>> GetAllCategoriesAsync();
-    Task<Category> GetCategoryByIdAsync(int id);
-    Task<Category> AddCategoryAsync(Category category);
-    Task<Category> UpdateCategoryAsync(Category category);
-    Task SoftDeleteCategoryAsync(int id);
+    // Task<IEnumerable<Category>> GetAllCategoriesAsync();
+    // Task<Category> GetCategoryByIdAsync(int id);
+    // Task<Category> AddCategoryAsync(Category category);
+    // Task<Category> UpdateCategoryAsync(Category category);
+    // Task SoftDeleteCategoryAsync(int id);
+    Task<List<Category>> GetAllCategoriesAsync();
+    Task<Category?> GetCategoryByIdAsync(int id);
+    Task UpdateCategoriesAsync(Category category);
+    Task AddCategoriesAsync(Category category);
+    Task<Category?> GetCategory(string name);
 }

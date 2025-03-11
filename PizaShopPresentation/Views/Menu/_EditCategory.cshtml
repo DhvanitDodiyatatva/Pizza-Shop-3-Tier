@@ -1,6 +1,7 @@
-@model PizzaShopRepository.ViewModels.UpdateCategoryVM
+@model PizzaShopRepository.ViewModels.CrudCategoryViewModel
 
-<div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -8,29 +9,36 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="editCategoryForm">
-                    @Html.AntiForgeryToken()
-                    <input asp-for="Id" type="hidden" />
+                <form id="editCategoryForm" asp-controller="Menu" asp-action="UpdateCategory">
+                    <input type="hidden" name="Id" value="@Model?.Id" />
                     <div class="form-floating mb-3">
-                        <input asp-for="Name" class="form-control" id="floatingEditName" placeholder="Sandwich" />
-                        <label for="floatingEditName">Name</label>
+                        <input type="text" class="form-control" id="Name" name="Name" 
+                               value="@Model?.Name" placeholder="Sandwich" asp-for="Name"/>
+                        <label for="Name">Name</label>
                         <span asp-validation-for="Name" class="text-danger"></span>
                     </div>
                     <div class="form-floating mb-3">
-                        <input asp-for="Description" class="form-control" id="floatingEditDesc" placeholder="This is a sandwich category" />
-                        <label for="floatingEditDesc">Description</label>
+                        <input type="text" class="form-control" id="Description" name="Description" 
+                               value="@Model?.Description" placeholder="This is a sandwich category" asp-for="Description" />
+                        <label for="Description">Description</label>
                         <span asp-validation-for="Description" class="text-danger"></span>
                     </div>
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="text-danger">
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        </div>
+                    }
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
                 </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="submitEditCategory()">Save</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
 </div>
 
-@section Scripts {
-        <partial name="_ValidationScriptsPartial" />
-}
+<!-- Include validation scripts if not already in layout -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>

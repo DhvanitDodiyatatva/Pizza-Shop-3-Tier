@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using PizzaShopRepository.Models;
 using PizzaShopRepository.ViewModels;
 using PizzaShopServices.Interfaces;
 
@@ -19,102 +20,104 @@ public class MenuController : Controller
         return View();
     }
 
+    [HttpGet]
     public async Task<IActionResult> GetCategories()
     {
-        var categories = await _categoryService.GetAllCategoriesAsync();
+        List<Category> categories = await _categoryService.GetAllCategoriesAsync();
         return PartialView("_CategoryList", categories);
     }
 
-    public async Task<IActionResult> GetItems(int? categoryId, string searchTerm, int page = 1, int pageSize = 5)
+    [HttpGet]
+    public IActionResult AddNewCategory()
     {
-        var allItems = await _itemService.GetAllItemsAsync();
-
-        if (categoryId.HasValue)
-        {
-            allItems = allItems.Where(i => i.CategoryId == categoryId.Value).ToList();
-        }
-
-        if (!string.IsNullOrEmpty(searchTerm))
-        {
-            allItems = allItems.Where(i => i.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
-        }
-
-        int totalCount = allItems.Count();
-        if (totalCount == 0)
-        {
-            return PartialView("_ItemList", new ItemPaginationViewModel
-            {
-                Items = new List<ItemVMViewModel>(),
-                CurrentPage = page,
-                PageSize = pageSize,
-                TotalCount = 0
-            });
-        }
-
-        var paginatedItems = allItems
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .ToList();
-
-        var viewModel = new ItemPaginationViewModel
-        {
-            Items = paginatedItems,
-            CurrentPage = page,
-            PageSize = pageSize,
-            TotalCount = totalCount
-        };
-
-        return PartialView("_ItemList", viewModel);
+        // Return a fresh view model if needed.
+        return PartialView("_AddCategory", new CrudCategoryViewModel());
     }
 
-
     [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> CreateCategory(CreateCategoryVM model)
+    public async Task<IActionResult> AddNewCategory(CrudCategoryViewModel model)
     {
         if (!ModelState.IsValid)
         {
-            return PartialView("_AddCategory", model);
+            // Collect all validation errors
+            var errors = ModelState.Values
+                                   .SelectMany(v => v.Errors)
+                                   .Select(e => e.ErrorMessage)
+                                   .ToArray();
+            return Json(new { success = false, message = string.Join(" ", errors) });
         }
 
-        await _categoryService.CreateCategoryAsync(model);
-        return Json(new { success = true });
+        var result = await _categoryService.AddCategoryAsync(model);
+        if (result.Success)
+        {
+            // Return JSON indicating success
+            return Json(new { success = true, message = "Category Added Successfully" });
+        }
+        else
+        {
+            // Return JSON with the error message from your service
+            return Json(new { success = false, message = result.Message });
+        }
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetEditCategory(int id)
+    public async Task<IActionResult> GetItems(int categoryId)
     {
-        var category = await _categoryService.GetCategoryByIdAsync(id);
-        if (category == null)
-            return NotFound();
+        List<Item> items = await _itemService.GetItemsByCategoryAsync(categoryId);
+        return PartialView("_ItemList", items);
+    }
 
-        var model = new UpdateCategoryVM
+    [HttpPost]
+    public async Task<IActionResult> Delete(int id)
+    {
+        try
         {
-            Id = category.Id,
-            Name = category.Name,
-            Description = category.Description
-        };
+            await _categoryService.SoftDeleteCategoryAsync(id)
+;
+            return Json(new { success = true });
+        }
+        catch (Exception ex)
+        {
+            return Json(new { success = false, message = ex.Message });
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> EditCategory(int id)
+    {
+        var model = await _categoryService.GetCategoryForEditAsync(id)
+;
+        if (model == null)
+        {
+            return NotFound("Category not found.");
+        }
         return PartialView("_EditCategory", model);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> UpdateCategory(UpdateCategoryVM model)
+    public async Task<IActionResult> UpdateCategory(CrudCategoryViewModel model)
     {
         if (!ModelState.IsValid)
         {
-            return PartialView("_EditCategory", model);
+            // Gather validation error messages and return them as JSON.
+            var errors = ModelState.Values
+                                    .SelectMany(v => v.Errors)
+                                    .Select(e => e.ErrorMessage)
+                                    .ToArray();
+            return Json(new { success = false, message = string.Join(" ", errors) });
         }
 
-        await _categoryService.UpdateCategoryAsync(model);
-        return Json(new { success = true });
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteCategory(int id)
-    {
-        await _categoryService.SoftDeleteCategoryAsync(id);
-        return Json(new { success = true });
+        var result = await _categoryService.UpdateCategoryAsync(model);
+        if (result.Success)
+        {
+            // Return JSON indicating success.
+            return Json(new { success = true, message = "Category updated successfully!" });
+        }
+        else
+        {
+            // Return JSON with the error message.
+            return Json(new { success = false, message = result.Message });
+        }
     }
 }

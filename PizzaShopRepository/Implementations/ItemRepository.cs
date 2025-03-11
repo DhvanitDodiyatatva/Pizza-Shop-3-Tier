@@ -14,18 +14,17 @@ public class ItemRepository : IItemRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<Item>> GetAllItemsAsync()
+    public async Task<List<Item>> GetItemsByCategoryAsync(int categoryId)
     {
-        return await _context.Items.Where(i => !i.IsDeleted).ToListAsync();
+        return await _context.Items
+                             .Where(item => item.CategoryId == categoryId)
+                             .ToListAsync();
     }
 
-    public async Task<IEnumerable<Item>> GetItemsByCategoryIdAsync(int categoryId)
+    public async Task<List<Item>> GetAllItemsAsync()
     {
-        return await _context.Items.Where(i => i.CategoryId == categoryId && !i.IsDeleted).ToListAsync();
+        return await _context.Items.ToListAsync();
     }
 
-    public async Task<Item> GetItemByIdAsync(int id)
-    {
-        return await _context.Items.FirstOrDefaultAsync(i => i.Id == id && !i.IsDeleted);
-    }
+    
 }
