@@ -112,3 +112,4 @@ D:\PizzaShop 3-Tier\Pizza-Shop-3-Tier\PizaShopPresentation\obj\Debug\net7.0\scop
 D:\PizzaShop 3-Tier\Pizza-Shop-3-Tier\PizaShopPresentation\obj\Debug\net7.0\PizaShopPresentation.csproj.CopyComplete
 D:\PizzaShop 3-Tier\Pizza-Shop-3-Tier\PizaShopPresentation\obj\Debug\net7.0\PizaShopPresentation.genruntimeconfig.cache
 D:\PizzaShop 3-Tier\Pizza-Shop-3-Tier\PizaShopPresentation\obj\Debug\net7.0\ref\PizaShopPresentation.dll
+D:\PizzaShop 3-Tier\PizaShopPresentation\obj\Debug\net7.0\PizaShopPresentation.MvcApplicationPartsAssemblyInfo.cs

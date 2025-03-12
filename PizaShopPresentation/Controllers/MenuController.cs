@@ -2,7 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using PizzaShopRepository.Models;
 using PizzaShopRepository.ViewModels;
 using PizzaShopServices.Interfaces;
+using PizzaShopServices.Attributes;
 
+[CustomAuthorize("super_admin, chef, account_manager")]
 public class MenuController : Controller
 {
     private readonly ICategoryService _categoryService;

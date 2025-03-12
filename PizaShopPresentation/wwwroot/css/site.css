@@ -297,6 +297,7 @@ input:checked {
 .profile-header {
   background: url("/images/profile_div_bg.jpg") no-repeat center center;
   background-size: cover;
+  border-radius: 7px 7px 0px 0px;
   height: 65px;
 }
 .profile-pic {

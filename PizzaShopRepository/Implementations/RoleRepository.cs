@@ -21,10 +21,14 @@ namespace PizzaShopRepository.Repositories
 
         public Role GetRoleWithPermissions(int roleId)
         {
+
+
             return _context.Roles
                 .Include(r => r.RolePermissions)
                 .ThenInclude(rp => rp.Permission)
                 .FirstOrDefault(r => r.Id == roleId);
+
+
         }
 
         public void RemoveRolePermissions(IEnumerable<RolePermission> rolePermissions)

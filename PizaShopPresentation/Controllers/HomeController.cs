@@ -4,6 +4,7 @@ using PizaShopPresentation.Models;
 using PizzaShopRepository.Models;
 using PizzaShopRepository.Services;
 using PizzaShopRepository.ViewModels;
+using PizzaShopServices.Attributes;
 
 using PizzaShopServices.Interfaces;
 using System.Diagnostics;
@@ -12,7 +13,8 @@ using System.Threading.Tasks;
 
 namespace PizzaShopPresentation.Controllers
 {
-    [Authorize]
+    
+    [CustomAuthorize("super_admin, chef, account_manager")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

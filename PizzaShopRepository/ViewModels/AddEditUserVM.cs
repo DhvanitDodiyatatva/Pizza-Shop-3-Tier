@@ -43,7 +43,7 @@ public class AddEditUserVM
 
     public string? Country { get; set; }
 
-    [MaxLength(10, ErrorMessage = "Zipcode cannot exceed 10 characters.")]
+    [MaxLength(6, ErrorMessage = "Zipcode cannot exceed 6 characters.")]
     public string? Zipcode { get; set; }
 
     public string? ProfileImage { get; set; }

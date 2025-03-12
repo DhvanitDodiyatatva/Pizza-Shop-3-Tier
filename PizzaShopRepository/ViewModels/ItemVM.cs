@@ -15,7 +15,7 @@ namespace PizzaShopRepository.ViewModels
         public string? ShortCode { get; set; }
         public string? ImageUrl { get; set; }
         public bool IsDeleted { get; set; }
-        public string? CategoryName { get; set; } // Optional for display purposes
+        public string? CategoryName { get; set; } 
     }
 
 

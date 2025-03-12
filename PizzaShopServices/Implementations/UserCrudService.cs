@@ -26,39 +26,7 @@ namespace PizzaShopServices.Implementations
             _emailService = emailService;
         }
 
-        // public async Task<(List<UserList> Users, int TotalUsers)> GetUsersAsync(string searchQuery, int page, int pageSize)
-        // {
-        //     var query = await _userRepository.GetUsersQueryableAsync();
 
-        //     if (!string.IsNullOrEmpty(searchQuery))
-        //     {
-        //         searchQuery = searchQuery.ToLower();
-        //         query = query.Where(u =>
-        //             u.FirstName.ToLower().Contains(searchQuery) ||
-        //             u.LastName.ToLower().Contains(searchQuery) ||
-        //             u.Email.ToLower().Contains(searchQuery) ||
-        //             u.Phone.Contains(searchQuery));
-        //     }
-
-        //     int totalUsers = await query.CountAsync();
-        //     var users = await query
-        //         .OrderBy(u => u.Id)
-        //         .Skip((page - 1) * pageSize)
-        //         .Take(pageSize)
-        //         .Select(u => new UserList
-        //         {
-        //             Id = u.Id,
-        //             FirstName = u.FirstName,
-        //             LastName = u.LastName,
-        //             Email = u.Email,
-        //             Phone = u.Phone,
-        //             Role = u.Role,
-        //             Status = u.Status
-        //         })
-        //         .ToListAsync();
-
-        //     return (users, totalUsers);
-        // }
 
         public async Task<(List<UserList> Users, int TotalUsers)> GetUsersAsync(string searchQuery, int page, int pageSize, string sortBy, string sortOrder)
         {
@@ -252,7 +220,7 @@ namespace PizzaShopServices.Implementations
             };
         }
 
-        public async Task UpdateUserAsync(AddEditUserVM model, IFormFile profileImg, string host)
+        public async Task UpdateUserAsync(AddEditUserVM model, IFormFile ProfileImage, string host)
         {
             var user = await _userRepository.GetUserByIdAsync(model.Id);
             if (user == null)
@@ -272,10 +240,10 @@ namespace PizzaShopServices.Implementations
             user.Status = model.Status;
             user.Role = model.Role;
 
-            if (profileImg != null && profileImg.Length > 0)
+            if (ProfileImage != null && ProfileImage.Length > 0)
             {
-                var fileNameWithoutExt = Path.GetFileNameWithoutExtension(profileImg.FileName);
-                var extension = Path.GetExtension(profileImg.FileName);
+                var fileNameWithoutExt = Path.GetFileNameWithoutExtension(ProfileImage.FileName);
+                var extension = Path.GetExtension(ProfileImage.FileName);
                 var uniqueFileName = $"{fileNameWithoutExt}_{Guid.NewGuid()}{extension}";
                 var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
 
@@ -287,7 +255,7 @@ namespace PizzaShopServices.Implementations
                 var filePath = Path.Combine(uploadPath, uniqueFileName);
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
-                    await profileImg.CopyToAsync(stream);
+                    await ProfileImage.CopyToAsync(stream);
                 }
 
                 user.ProfileImage = "/images/" + uniqueFileName;

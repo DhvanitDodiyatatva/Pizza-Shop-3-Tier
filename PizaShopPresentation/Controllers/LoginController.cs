@@ -2,9 +2,11 @@ using Microsoft.AspNetCore.Mvc;
 using PizzaShopRepository.ViewModels;
 using PizzaShopServices.Interfaces;
 using System.Threading.Tasks;
+using PizzaShopServices.Attributes;
 
 namespace PizzaShopPresentation.Controllers
 {
+    [CustomAuthorize("super_admin, chef, account_manager")]
     public class LoginController : Controller
     {
         private readonly IUserService _userService;
