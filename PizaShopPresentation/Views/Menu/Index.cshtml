@@ -765,8 +765,7 @@
         $('#item-tab-pane #categoriesContainer').on('click', '.category-option', function () {
             $('#item-tab-pane #categoriesContainer .category-option').removeClass('active');
             $(this).addClass('active');
-            currentCategoryId = $(this).data('category-id');
-            loadItems(currentCategoryId, $('#searchInput').val(), currentPage, currentPageSize);
+
         });
 
         // Function to load items for the selected category

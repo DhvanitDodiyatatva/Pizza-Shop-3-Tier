@@ -6,7 +6,7 @@ using PizzaShopServices.Attributes;
 
 namespace PizzaShopPresentation.Controllers
 {
-    [CustomAuthorize("super_admin, chef, account_manager")]
+   
     public class LoginController : Controller
     {
         private readonly IUserService _userService;

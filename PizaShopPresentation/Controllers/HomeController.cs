@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace PizzaShopPresentation.Controllers
 {
-    
+
     [CustomAuthorize("super_admin, chef, account_manager")]
     public class HomeController : Controller
     {
@@ -102,12 +102,13 @@ namespace PizzaShopPresentation.Controllers
 
         public IActionResult Logout()
         {
-            if (Request.Cookies["JWT"] != null)
-            {
-                Response.Cookies.Delete("RememberEmail");
-                Response.Cookies.Delete("RememberPassword");
-                Response.Cookies.Delete("RememberMeChecked");
-            }
+
+
+            Response.Cookies.Delete("JWT");
+            Response.Cookies.Delete("RememberEmail");
+            Response.Cookies.Delete("RememberPassword");
+            Response.Cookies.Delete("RememberMeChecked");
+
             return RedirectToAction("Index", "Login");
         }
 
@@ -134,6 +135,7 @@ namespace PizzaShopPresentation.Controllers
             {
                 await _userCrudService.ChangePasswordAsync(email, model);
                 TempData["SuccessMessage"] = "Password changed successfully.";
+                Response.Cookies.Delete("JWT");
                 Response.Cookies.Delete("RememberEmail");
                 Response.Cookies.Delete("RememberPassword");
                 Response.Cookies.Delete("RememberMeChecked");
