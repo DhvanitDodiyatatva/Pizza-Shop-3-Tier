@@ -104,6 +104,9 @@ public partial class PizzaShopContext : DbContext
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("created_at");
+            entity.Property(e => e.DefaultTax)
+                .HasDefaultValueSql("false")
+                .HasColumnName("default_tax");
             entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.ImageUrl)
                 .HasMaxLength(255)
@@ -127,6 +130,7 @@ public partial class PizzaShopContext : DbContext
             entity.Property(e => e.ShortCode)
                 .HasMaxLength(20)
                 .HasColumnName("short_code");
+            entity.Property(e => e.TaxPercentage).HasColumnName("tax_percentage");
             entity.Property(e => e.Unit)
                 .HasMaxLength(20)
                 .HasColumnName("unit");

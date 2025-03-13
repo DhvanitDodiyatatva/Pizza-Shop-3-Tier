@@ -122,4 +122,74 @@ public class MenuController : Controller
             return Json(new { success = false, message = result.Message });
         }
     }
+
+    [HttpGet]
+    public async Task<IActionResult> AddNewItem()
+    {
+        var categories = await _categoryService.GetAllCategoriesAsync();
+        ViewBag.Categories = categories;
+        return PartialView("_AddItem", new ItemVM());
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> AddNewItem(ItemVM model)
+    {
+        if (!ModelState.IsValid)
+        {
+            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToArray();
+            return Json(new { success = false, message = string.Join(" ", errors) });
+        }
+
+        var result = await _itemService.AddItemAsync(model);
+        return Json(new { success = result.Success, message = result.Message });
+    }
+
+
+    public async Task<IActionResult> GetItem(int id)
+    {
+        var item = await _itemService.GetItemByIdAsync(id); // Fetch the updated item
+        if (item == null)
+        {
+            return NotFound();
+        }
+        return PartialView("_ItemPartial", item); // Return a partial view
+    }
+
+
+
+    [HttpGet]
+    public async Task<IActionResult> EditItem(int id)
+    {
+        var model = await _itemService.GetItemForEditAsync(id);
+        if (model == null)
+            return NotFound("Item not found.");
+
+        var categories = await _categoryService.GetAllCategoriesAsync();
+        ViewBag.Categories = categories;
+        return PartialView("_EditItem", model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UpdateItem(ItemVM model)
+    {
+        if (!ModelState.IsValid)
+        {
+            var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                          .Select(e => e.ErrorMessage)
+                                          .ToArray();
+            Console.WriteLine($"ModelState Errors: {string.Join(" | ", errors)}"); // Debugging
+            return Json(new { success = false, message = string.Join(" ", errors) });
+        }
+
+        var result = await _itemService.UpdateItemAsync(model);
+
+        if (!result.Success)
+        {
+            Console.WriteLine($"UpdateItemAsync Failed: {result.Message}"); // Debugging
+        }
+
+        return Json(new { success = result.Success, message = result.Message });
+    }
+
 }

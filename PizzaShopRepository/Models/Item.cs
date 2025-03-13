@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PizzaShopRepository.Models;
 
 public partial class Item
 {
+    [Key]  // Ensure this is marked as Primary Key
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)] // Auto-increment
     public int Id { get; set; }
 
     public int? CategoryId { get; set; }
@@ -32,6 +36,10 @@ public partial class Item
     public DateTime? CreatedAt { get; set; }
 
     public DateTime? UpdatedAt { get; set; }
+
+    public bool DefaultTax { get; set; }
+
+    public decimal? TaxPercentage { get; set; }
 
     public virtual Category? Category { get; set; }
 

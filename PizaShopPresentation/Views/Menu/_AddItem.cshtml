@@ -1,0 +1,215 @@
+@model PizzaShopRepository.ViewModels.ItemVM
+
+<div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Add New Menu Item</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="addItemForm">
+                <div class="modal-body">
+                    <div class="row g-2 p-1">
+                        <div class="col-xl-8 col-lg-12 col-md-12 col-12">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select" asp-for="CategoryId"
+                                            asp-items="@(new SelectList(ViewBag.Categories, "Id", "Name"))" required>
+                                            <option value="">Select Category</option>
+                                        </select>
+                                        <label for="CategoryId">Categories*</label>
+                                    </div>
+
+                                </div>
+                                <div class="col">
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" asp-for="Name" placeholder="Item Name"
+                                            required />
+                                        <label for="Name">Name*</label>
+                                    </div>
+                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 gy-2">
+                                    <div class="form-floating">
+                                        <select class="form-select" asp-for="ItemType" required>
+                                            <option value="vegetarian">Veg</option>
+                                            <option value="non_vegetarian">Non-Veg</option>
+                                            <option value="vegan">Vegan</option>
+                                        </select>
+                                        <label for="ItemType">Item Type*</label>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 gy-2">
+                                    <div class="form-floating mb-3">
+                                        <input type="number" class="form-control" asp-for="Price" placeholder="Rate"
+                                            step="0.01" required />
+                                        <label for="Price">Rate*</label>
+                                    </div>
+                                    <span asp-validation-for="Price" class="text-danger"></span>
+                                </div>
+                                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 gy-2">
+                                    <div class="form-floating">
+                                        <select class="form-select" asp-for="Unit">
+                                            <option value="">Select a Unit</option>
+                                            <option value="piece">Piece</option>
+                                            <option value="plate">Plate</option>
+                                            <option value="serving">Serving</option>
+                                            <option value="bowl">Bowl</option>
+                                            <option value="jar">Jar</option>
+                                            <option value="pie">Pie</option>
+                                            <option value="slice">Slice</option>
+                                        </select>
+                                        <label for="Unit">Unit*</label>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 gy-2">
+                                    <div class="form-floating mb-3">
+                                        <input type="number" class="form-control" asp-for="Quantity"
+                                            placeholder="Quantity" />
+                                        <label for="Quantity">Quantity*</label>
+                                    </div>
+                                    <span asp-validation-for="Quantity" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-6 gy-2">
+                                    <div class="d-flex align-items-center">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" asp-for="IsAvailable"
+                                                style="width: 50px; height: 30px;" />
+                                            <label class="form-check-label" for="IsAvailable"></label>
+                                        </div>
+                                        <div>Available</div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-6 gy-2">
+                                    <div class="d-flex align-items-center">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" asp-for="DefaultTax"
+                                                style="width: 50px; height: 30px;" />
+                                            <label class="form-check-label" for="DefaultTax"></label>
+                                        </div>
+                                        <div>DefaultTax</div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 gy-2">
+                                    <div class="form-floating mb-3">
+                                        <input type="number" class="form-control" asp-for="TaxPercentage"
+                                            placeholder="tax percentage" step="0.01" />
+                                        <label for="TaxPercentage">Tax Percentage</label>
+                                    </div>
+                                    <span asp-validation-for="TaxPercentage" class="text-danger"></span>
+                                </div>
+                                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 gy-2">
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" asp-for="ShortCode"
+                                            placeholder="short code" />
+                                        <label for="ShortCode">Short Code</label>
+                                    </div>
+                                    <span asp-validation-for="ShortCode" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-floating">
+                                    <textarea class="form-control" asp-for="Description" placeholder="description"
+                                        style="height: 100px"></textarea>
+                                    <label for="Description">Description</label>
+                                </div>
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                            </div>
+                            <div class="row p-3">
+                                <input type="file" class="d-none" id="file" asp-for="ImageUrl" />
+                                <label for="file"
+                                    class="btn-outline-danger text-center d-flex justify-content-center align-items-center fs-5 rounded-3"
+                                    style="border: 1px solid #b8bbbe; height: 100px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
+                                        class="bi bi-cloud-arrow-up" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd"
+                                            d="M7.646 5.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708z" />
+                                        <path
+                                            d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383m.653.757c-.757.653-1.153 1.44-1.153 2.056v.448l-.445.049C2.064 6.805 1 7.952 1 9.318 1 10.785 2.23 12 3.781 12h8.906C13.98 12 15 10.988 15 9.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 4.825 10.328 3 8 3a4.53 4.53 0 0 0-2.941 1.1z" />
+                                    </svg>
+                                    Browse Files
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-12 col-md-12 col-12">
+                            <div class="card h-100 bg-warning-subtle">
+                                <select class="form-select form-select-lg my-3" aria-label="Large select example">
+                                    <option selected>Select Modifier Groups(s)</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $("#addItemForm").on("submit", function (e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            $.ajax({
+                url: '@Url.Action("AddNewItem", "Menu")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        var modal = bootstrap.Modal.getInstance(document.getElementById("exampleModal2"));
+                        modal.hide(); // Close modal
+                        toastr.success("Item added successfully!");
+
+                        // Get the active category ID and reload items
+                        var categoryId = $(".category-link.active").data("category-id") || $("#CategoryId").val();
+                        loadItems(categoryId); // Reload items for the current category
+
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function () {
+                    toastr.error("Error adding item. Please try again.");
+                }
+            });
+        });
+
+        // Function to load items for the selected category
+        function loadItems(categoryId) {
+            $.ajax({
+                url: '@Url.Action("GetItems", "Menu")',
+                type: 'GET',
+                data: { categoryId: categoryId },
+                success: function (result) {
+                    $("#GetItemList").html(result);
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error loading items:", error);
+                    $("#GetItemList").html("Failed to load items");
+                }
+            });
+        }
+    });
+
+
+
+
+</script>
