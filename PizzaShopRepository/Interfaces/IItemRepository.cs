@@ -10,7 +10,7 @@ public interface IItemRepository
     Task AddItemAsync(Item item);
     Task UpdateItemAsync(Item item);
     Task<Item?> GetItemByNameAsync(string name);
-    
+    Task SoftDeleteItemsAsync(List<int> ids);    
 
 
 }

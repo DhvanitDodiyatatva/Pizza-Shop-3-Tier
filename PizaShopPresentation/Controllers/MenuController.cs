@@ -98,6 +98,21 @@ public class MenuController : Controller
         }
     }
 
+    [HttpPost]
+    public async Task<IActionResult> DeleteItems([FromBody] List<int> ids)
+    {
+        try
+        {
+            await _itemService.SoftDeleteItemsAsync(ids);
+            return Json(new { success = true });
+        }
+        catch (Exception ex)
+        {
+            return Json(new { success = false, message = ex.Message });
+        }
+    }
+
+
     [HttpGet]
     public async Task<IActionResult> EditCategory(int id)
     {

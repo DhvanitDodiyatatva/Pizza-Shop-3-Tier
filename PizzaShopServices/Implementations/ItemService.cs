@@ -151,4 +151,10 @@ public class ItemService : IItemService
         item.IsDeleted = true;
         await _itemRepository.UpdateItemAsync(item);
     }
+
+    public async Task SoftDeleteItemsAsync(List<int> ids)
+    {
+        await _itemRepository.SoftDeleteItemsAsync(ids);
+    }
+
 }

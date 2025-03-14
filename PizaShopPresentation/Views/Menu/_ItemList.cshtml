@@ -11,12 +11,12 @@ else
 {
     @foreach (var item in Model)
     {
-        <tr id="item-row-@item.Id">
+        <tr id="item-row-@item.Id" data-id="@item.Id">
 
             <td class="py-3 text-center text-nowrap" scope="row">
                 <div class="form-check item-checkbox">
-                    <input class="form-check-input" type="checkbox" value="" id="flexcheckchecked_@item.Id"
-                        style="height: 20px; width: 20px;" checked>
+                    <input type="checkbox" class="itemCheckbox text-center form-check-input" value="@item.Id"
+                        style="height: 20px; width: 20px; color: blue;" checked>
                     <label class="form-check-label" for="flexcheckchecked_@item.Id"></label>
                 </div>
             </td>

@@ -52,4 +52,22 @@ public class ItemRepository : IItemRepository
         return await _context.Items.FirstOrDefaultAsync(i => i.Name == name);
     }
 
+    public async Task SoftDeleteItemsAsync(List<int> ids)
+    {
+        var items = await _context.Items
+            .Where(i => ids.Contains(i.Id) && !i.IsDeleted)
+            .ToListAsync();
+
+        if (items.Any())
+        {
+            foreach (var item in items)
+            {
+                item.IsDeleted = true;
+            }
+
+            await _context.SaveChangesAsync();
+        }
+    }
+
+
 }
