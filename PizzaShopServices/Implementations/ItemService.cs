@@ -139,4 +139,16 @@ public class ItemService : IItemService
             return (false, $"Failed to update item: {ex.Message}");
         }
     }
+
+    public async Task SoftDeleteItemAsync(int id)
+    {
+        var item = await _itemRepository.GetItemByIdAsync(id);
+        if (item == null)
+        {
+            return;
+        }
+
+        item.IsDeleted = true;
+        await _itemRepository.UpdateItemAsync(item);
+    }
 }

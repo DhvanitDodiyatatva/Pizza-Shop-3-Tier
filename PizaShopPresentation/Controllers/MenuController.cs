@@ -84,6 +84,20 @@ public class MenuController : Controller
         }
     }
 
+    [HttpPost]
+    public async Task<IActionResult> DeleteItem(int id)
+    {
+        try
+        {
+            await _itemService.SoftDeleteItemAsync(id);
+            return Json(new { success = true });
+        }
+        catch (Exception ex)
+        {
+            return Json(new { success = false, message = ex.Message });
+        }
+    }
+
     [HttpGet]
     public async Task<IActionResult> EditCategory(int id)
     {
@@ -145,15 +159,15 @@ public class MenuController : Controller
     }
 
 
-    public async Task<IActionResult> GetItem(int id)
-    {
-        var item = await _itemService.GetItemByIdAsync(id); // Fetch the updated item
-        if (item == null)
-        {
-            return NotFound();
-        }
-        return PartialView("_ItemPartial", item); // Return a partial view
-    }
+    // public async Task<IActionResult> GetItem(int id)
+    // {
+    //     var item = await _itemService.GetItemByIdAsync(id); // Fetch the updated item
+    //     if (item == null)
+    //     {
+    //         return NotFound();
+    //     }
+    //     return PartialView("_ItemPartial", item); // Return a partial view
+    // }
 
 
 

@@ -11,7 +11,8 @@ else
 {
     @foreach (var item in Model)
     {
-        <tr>
+        <tr id="item-row-@item.Id">
+
             <td class="py-3 text-center text-nowrap" scope="row">
                 <div class="form-check item-checkbox">
                     <input class="form-check-input" type="checkbox" value="" id="flexcheckchecked_@item.Id"
@@ -87,7 +88,9 @@ else
                                 <p>Are you sure you want to delete @item.Name?</p>
                             </div>
                             <div class="modal-footer d-flex justify-content-center align-items-center">
-                                <button type="button" class="btn btn-primary">Yes</button>
+                                <button type="button" class="btn btn-primary delete-item-btn"
+                                    data-item-id="@item.Id">Yes</button>
+
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
                             </div>
                         </div>
@@ -117,5 +120,33 @@ else
                 }
             });
         });
+
+
+
+        $(".delete-item-btn").on("click", function () {
+            var itemId = $(this).data("item-id");
+
+            $.ajax({
+                url: '@Url.Action("DeleteItem", "Menu")',
+                type: 'POST',
+                data: { id: itemId },
+                success: function (response) {
+                    if (response.success) {
+                        toastr.success("Item deleted successfully.");
+                        var modal = new bootstrap.Modal(document.getElementById("examplemodal_" + itemId));
+                        modal.hide();// Close modal
+                        $('.modal-backdrop').remove(); // Remove backdrop
+                        $("#item-row-" + itemId).remove(); // Remove item row from UI
+                    } else {
+                        toastr.error("Failed to delete item: " + response.message);
+                    }
+                },
+                error: function () {
+                    toastr.error("An error occurred while deleting the item.");
+                }
+            });
+        });
     });
+
+
 </script>

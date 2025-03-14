@@ -11,5 +11,5 @@ public interface IItemService
     Task<ItemVM?> GetItemForEditAsync(int id);
     Task<(bool Success, string Message)> UpdateItemAsync(ItemVM model);
     Task<Item?> GetItemByIdAsync(int id);
-
+    Task SoftDeleteItemAsync(int id);
 }

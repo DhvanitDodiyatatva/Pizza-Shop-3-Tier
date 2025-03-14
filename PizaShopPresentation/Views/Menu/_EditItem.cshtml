@@ -165,57 +165,42 @@
 <script>
     $(document).ready(function () {
 
-        @* function loadUpdatedItem(itemId) {
+        // Submit the form using AJAX
+
+
+        $("#editItemForm_@Model.Id").on("submit", function (e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+
             $.ajax({
-                url: '/Menu/GetItem',
-                type: 'GET',
-                data: { id: itemId },
+                url: '@Url.Action("UpdateItem", "Menu")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
                 success: function (response) {
-                    if (response) {
-                        console.log("Updated item response:", response); // Debugging
-                        $("#item_" + itemId).replaceWith(response); // Ensure there's an element with this ID
+                    console.log("Server Response:", response); // Debugging
+
+                    if (response.success) {
+                        var modal = bootstrap.Modal.getInstance(document.getElementById("editItemModal_@Model.Id"));
+                        modal.hide();
+
+                        toastr.success("Item edited successfully!");
+
+
+                        // Get the active category ID and reload items
+                        var categoryId = $(".category-link.active").data("category-id") || $("#CategoryId").val();
+                        loadItems(categoryId); // Reload items for the current category
                     } else {
-                        toastr.error("Received empty response for updated item.");
+                        toastr.error(response.message);
                     }
                 },
+                error: function (xhr, status, error) {
 
+                    toastr.error("Error updating item. Please try again.");
+                }
             });
-        } *@
-
-
-            $("#editItemForm_@Model.Id").on("submit", function (e) {
-                e.preventDefault();
-                var formData = new FormData(this);
-
-                $.ajax({
-                    url: '@Url.Action("UpdateItem", "Menu")',
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function (response) {
-                        console.log("Server Response:", response); // Debugging
-
-                        if (response.success) {
-                            var modal = bootstrap.Modal.getInstance(document.getElementById("editItemModal_@Model.Id"));
-                            modal.hide();
-
-                            toastr.success("Item edited successfully!");
-
-                            // Ensure element exists before attempting to update it
-                            // Get the active category ID and reload items
-                            var categoryId = $(".category-link.active").data("category-id") || $("#CategoryId").val();
-                            loadItems(categoryId); // Reload items for the current category
-                        } else {
-                            toastr.error(response.message);
-                        }
-                    },
-                    error: function (xhr, status, error) {
-
-                        toastr.error("Error updating item. Please try again.");
-                    }
-                });
-            });
+        });
 
 
 
