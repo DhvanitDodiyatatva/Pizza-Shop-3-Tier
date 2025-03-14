@@ -165,7 +165,7 @@
 <script>
     $(document).ready(function () {
 
-        function loadUpdatedItem(itemId) {
+        @* function loadUpdatedItem(itemId) {
             $.ajax({
                 url: '/Menu/GetItem',
                 type: 'GET',
@@ -180,44 +180,60 @@
                 },
 
             });
-        }
+        } *@
 
 
-        $("#editItemForm_@Model.Id").on("submit", function (e) {
-            e.preventDefault();
-            var formData = new FormData(this);
+            $("#editItemForm_@Model.Id").on("submit", function (e) {
+                e.preventDefault();
+                var formData = new FormData(this);
 
-            $.ajax({
-                url: '@Url.Action("UpdateItem", "Menu")',
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function (response) {
-                    console.log("Server Response:", response); // Debugging
+                $.ajax({
+                    url: '@Url.Action("UpdateItem", "Menu")',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        console.log("Server Response:", response); // Debugging
 
-                    if (response.success) {
-                        var modal = bootstrap.Modal.getInstance(document.getElementById("editItemModal_@Model.Id"));
-                        modal.hide();
+                        if (response.success) {
+                            var modal = bootstrap.Modal.getInstance(document.getElementById("editItemModal_@Model.Id"));
+                            modal.hide();
 
-                        toastr.success("Item edited successfully!");
+                            toastr.success("Item edited successfully!");
 
-                        // Ensure element exists before attempting to update it
-                        if ($("#item_" + @Model.Id).length) {
-                            loadUpdatedItem(@Model.Id);
+                            // Ensure element exists before attempting to update it
+                            // Get the active category ID and reload items
+                            var categoryId = $(".category-link.active").data("category-id") || $("#CategoryId").val();
+                            loadItems(categoryId); // Reload items for the current category
                         } else {
-                            toastr.warning("Could not find the updated item in the UI.");
+                            toastr.error(response.message);
                         }
-                    } else {
-                        toastr.error(response.message);
+                    },
+                    error: function (xhr, status, error) {
+
+                        toastr.error("Error updating item. Please try again.");
                     }
+                });
+            });
+
+
+
+        // Function to load items for the selected category
+        function loadItems(categoryId) {
+            $.ajax({
+                url: '@Url.Action("GetItems", "Menu")',
+                type: 'GET',
+                data: { categoryId: categoryId },
+                success: function (result) {
+                    $("#GetItemList").html(result);
                 },
                 error: function (xhr, status, error) {
-                    console.error("AJAX Error:", xhr.responseText);
-                    toastr.error("Error updating item. Please try again.");
+                    console.error("Error loading items:", error);
+                    $("#GetItemList").html("Failed to load items");
                 }
             });
-        });
+        }
 
     });
 
