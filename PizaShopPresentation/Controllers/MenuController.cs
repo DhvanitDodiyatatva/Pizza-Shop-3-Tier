@@ -221,4 +221,19 @@ public class MenuController : Controller
         return Json(new { success = result.Success, message = result.Message });
     }
 
+    [HttpGet]
+    public async Task<IActionResult> SearchItems(string searchTerm)
+    {
+        var items = await _itemService.GetAllItemsAsync();
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            items = items.Where(i => i.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+
+        return PartialView("_ItemList", items); // Render the updated item list
+    }
+
+
+
 }
