@@ -25,7 +25,7 @@ namespace PizzaShopServices.Attributes // Adjust namespace as needed
             // Check if the user has any of the required roles (if roles are specified)
             if (_roles.Length > 0 && !_roles.Any(role => context.HttpContext.User.IsInRole(role)))
             {
-                context.Result = new RedirectToActionResult("AccessDenied", "Account", null);
+                context.Result = new RedirectToActionResult("AccessDenied", "Error", null);
             }
         }
     }

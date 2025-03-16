@@ -16,6 +16,14 @@ build_property.GenerateRazorMetadataSourceChecksumAttributes =
 build_property.MSBuildProjectDirectory = D:\PizzaShop 3-Tier\Pizza-Shop-3-Tier\PizaShopPresentation
 build_property._RazorSourceGeneratorDebug = 
 
+[D:/PizzaShop 3-Tier/Pizza-Shop-3-Tier/PizaShopPresentation/Views/Error/AccessDenied.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRXJyb3JcQWNjZXNzRGVuaWVkLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/PizzaShop 3-Tier/Pizza-Shop-3-Tier/PizaShopPresentation/Views/Error/PageNotFound.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRXJyb3JcUGFnZU5vdEZvdW5kLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/PizzaShop 3-Tier/Pizza-Shop-3-Tier/PizaShopPresentation/Views/Home/AddNewUser.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxBZGROZXdVc2VyLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 

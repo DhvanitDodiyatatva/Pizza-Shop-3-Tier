@@ -87,6 +87,15 @@ else
     app.UseHsts();
 }
 
+app.UseStatusCodePages(async context =>
+{
+    if (context.HttpContext.Response.StatusCode == 404)
+    {
+        context.HttpContext.Response.Redirect("/Error/404");
+    }
+});
+
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

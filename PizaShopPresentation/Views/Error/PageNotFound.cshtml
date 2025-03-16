@@ -1,0 +1,68 @@
+@{
+    ViewData["Title"] = "Page Not Found";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found | PIZZASHOP</title>
+    <style>
+        body {
+            background-color: rgba(215, 237, 255, 1);
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 40px;
+            color: #1e90ff;
+            margin-bottom: 20px;
+        }
+
+        .logo img {
+            vertical-align: middle;
+            width: 150px;
+            height: 150px;
+        }
+
+        .error-code {
+            font-size: 220px;
+            color: #1e90ff;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .error-message {
+            font-size: 48px;
+            color: #333;
+            margin-top: 10px;
+        }
+
+        .sub-message {
+            font-size: 32px;
+            color: #666;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="logo">
+        <img src="~/images/logos/pizzashop_logo.png" alt="PIZZASHOP Logo"> PIZZASHOP
+    </div>
+    <div class="error-code">404</div>
+    <div class="error-message">Page Not Found</div>
+    <div class="sub-message">Oops, the page you're looking for isn't here.</div>
+</body>
+
+</html>
