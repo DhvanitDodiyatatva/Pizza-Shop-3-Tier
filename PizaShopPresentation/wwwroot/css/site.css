@@ -216,6 +216,10 @@ input:checked {
   transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
 }
 
+.modifier-section {
+  transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
+}
+
 @media (max-width: 991px) {
   .category-section {
     position: absolute;
@@ -236,6 +240,42 @@ input:checked {
 
   /* Show category when class is added */
   .category-section.category-visible {
+    transform: translateX(0);
+  }
+
+  /* Content-div must be relative for absolute category */
+  .content-div {
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Move toggle button + "Items" when category opens */
+  .toggle-move {
+    transform: translateX(250px);
+    transition: transform 0.3s ease-in-out;
+  }
+}
+
+@media (max-width: 991px) {
+  .modifier-section {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 250px;
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 1) 40%,
+      rgba(215, 237, 255, 1) 100%
+    );
+    transform: translateX(-100%); /* Ensures category is hidden initially */
+    z-index: 1050;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease-in-out;
+  }
+
+  /* Show category when class is added */
+  .modifier-section.category-visible {
     transform: translateX(0);
   }
 

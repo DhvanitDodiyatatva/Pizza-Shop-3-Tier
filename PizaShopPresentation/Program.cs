@@ -32,6 +32,8 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IItemRepository, ItemRepository>();
 builder.Services.AddScoped<IItemService, ItemService>();
+builder.Services.AddScoped<IModifierGroupRepository, ModifierGroupRepository>();
+builder.Services.AddScoped<IModifierGroupService, ModifierGroupService>();
 
 // Configure JWT authentication
 builder.Services.AddAuthentication(options =>

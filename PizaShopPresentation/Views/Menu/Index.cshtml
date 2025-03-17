@@ -53,7 +53,7 @@
                     <div id="category-section" class="col-xl-3 col-lg-4 col-md-12 col-12 ps-3 pe-0 category-section"
                         style="background: rgba(215,237,255,1);">
                         <div class="row d-flex py-3 pe-3">
-                            <div class="d-flex align-items-center fw-bold justify-content-between page-text">
+                            <div class="d-flex align-items-center fw-bold justify-content-between page-text fs-5">
                                 Category
                                 <button type="button" class="btn bg-white btn-outline-dark text-black"
                                     data-bs-toggle="modal" data-bs-target="#exampleModal12" data-bs-whatever="">
@@ -166,7 +166,405 @@
             </div>
 
 
+
             <!-- Modifier Tab -->
+            <div class="tab-pane fade" id="modifier-tab-pane" role="tabpanel" aria-labelledby="modifier-tab">
+                <div class="row ">
+                    <div id="modifier-section" class="col-xl-3 col-lg-4 col-md-12 col-12 ps-3 pe-0 modifier-section"
+                        style="background: rgba(215,237,255,1);">
+                        <div class="row d-flex py-3 pe-3">
+                            <div class="d-flex align-items-center fw-bold justify-content-between page-text fs-5">
+                                Modifier Group
+                                <button type="button" class="btn bg-white btn-outline-dark text-black"
+                                    data-bs-toggle="modal" data-bs-target="#addModGroupModal" data-bs-whatever="">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" fill="currentColor"
+                                        class="bi bi-plus-lg" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd"
+                                            d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2" />
+                                    </svg>
+                                </button>
+                                <div class="modal fade" id="addModGroupModal" tabindex="-1"
+                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="exampleModalLabel">Add Modifier Group
+                                                </h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form>
+                                                    <div class="form-floating mb-3">
+                                                        <input type="email" class="form-control" id="floatingInput"
+                                                            placeholder="Sandwich">
+                                                        <label for="floatingInput">Name</label>
+                                                    </div>
+                                                    <div class="form-floating mb-3">
+                                                        <input type="email" class="form-control" id="floatingInput"
+                                                            placeholder="This is a sandwich category">
+                                                        <label for="floatingInput">Description</label>
+                                                    </div>
+                                                    <a>+ Add Existing Modifiers</a>
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-primary">Save</button>
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="overflow: auto; height: 50dvh;" class="custom-scrollbar"
+                            id="modifierGroupsContainer">
+                            <!-- ModifierGroups loaded here via AJAX -->
+                        </div>
+                    </div>
+                    <!-- Modifier Content Section -->
+                    <div id="modifier-content-section" class="col-xl-9 col-lg-8 col-md-12 col-12 p-2">
+                        <div class="row menu-content">
+                            <div class="col d-flex align-items-center" id="modifier-toggle-container">
+                                <div>
+                                    <svg id="modifierToggle" xmlns="http://www.w3.org/2000/svg" width="30" height="30"
+                                        fill="currentColor" class="bi bi-list-ul me-2" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd"
+                                            d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m-3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2m0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2m0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2" />
+                                    </svg>
+                                </div>
+                                <div class="fw-bolder fs-5 page-text">Modifiers</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="d-flex justify-content-end">
+                                <form class="d-flex align-items-center me-2 rounded-end-3" role="search">
+                                    <div class="input-group position-relative">
+                                        <input class="form-control" type="search" placeholder="Search"
+                                            aria-label="Search" />
+                                        <span class="search-img-desktop position-absolute">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21"
+                                                fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                                <path
+                                                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                                            </svg>
+                                        </span>
+                                    </div>
+                                </form>
+                                <div>
+                                    <button class="btn btn-outline-secondary rounded-2 fs-6" type="submit">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                                            fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                            <path
+                                                d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div>
+                                    <button type="button" class="btn btn-main btn-primary d-none d-lg-block ms-2"
+                                        data-bs-toggle="modal" data-bs-target="#addModifierModal"
+                                        data-bs-whatever="getbootstrap">+
+                                        New Modifier</button>
+                                    <button
+                                        class="btn btn-main bg-primary rounded-2 ms-2 text-white fs-6 d-block d-lg-none"
+                                        type="submit">+</button>
+                                    <div class="modal fade" id="addModifierModal" tabindex="-1"
+                                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered modal-xl">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Add New Menu
+                                                        Item</h1>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="row g-2 p-1">
+                                                        <div class="col-xl-8 col-lg-12 col-md-12 col-12">
+                                                            <div class="row">
+                                                                <div class="col">
+                                                                    <div class="form-floating mb-3">
+                                                                        <input type="email" class="form-control"
+                                                                            id="floatingInput"
+                                                                            placeholder="name@example.com">
+                                                                        <label for="floatingInput">Email address</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="form-floating mb-3">
+                                                                        <input type="email" class="form-control"
+                                                                            id="floatingInput"
+                                                                            placeholder="name@example.com">
+                                                                        <label for="floatingInput">Email address</label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 gy-2">
+                                                                    <div class="form-floating">
+                                                                        <select class="form-select" id="floatingSelect"
+                                                                            aria-label="Floating label select example">
+                                                                            <option selected>Open this select menu
+                                                                            </option>
+                                                                            <option value="1">One</option>
+                                                                            <option value="2">Two</option>
+                                                                            <option value="3">Three</option>
+                                                                        </select>
+                                                                        <label for="floatingSelect">Works with
+                                                                            selects</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 gy-2">
+                                                                    <div class="form-floating mb-3">
+                                                                        <input type="email" class="form-control"
+                                                                            id="floatingInput"
+                                                                            placeholder="name@example.com">
+                                                                        <label for="floatingInput">Email address</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 gy-2">
+                                                                    <div class="form-floating">
+                                                                        <select class="form-select" id="floatingSelect"
+                                                                            aria-label="Floating label select example">
+                                                                            <option selected>Open this select menu
+                                                                            </option>
+                                                                            <option value="1">One</option>
+                                                                            <option value="2">Two</option>
+                                                                            <option value="3">Three</option>
+                                                                        </select>
+                                                                        <label for="floatingSelect">Works with
+                                                                            selects</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 gy-2">
+                                                                    <div class="form-floating mb-3">
+                                                                        <input type="email" class="form-control"
+                                                                            id="floatingInput"
+                                                                            placeholder="name@example.com">
+                                                                        <label for="floatingInput">Email address</label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div
+                                                                    class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-6 gy-2">
+                                                                    <div class="d-flex align-items-center">
+                                                                        <div class="form-check form-switch">
+                                                                            <input class="form-check-input"
+                                                                                type="checkbox" role="switch"
+                                                                                id="flexSwitchCheckChecked"
+                                                                                style="width: 50px; height: 30px;">
+                                                                            <label class="form-check-label"
+                                                                                for="flexSwitchCheckChecked"></label>
+                                                                        </div>
+                                                                        <div>Available</div>
+                                                                    </div>
+                                                                </div>
+                                                                <div
+                                                                    class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-6 gy-2">
+                                                                    <div class="d-flex align-items-center">
+                                                                        <div class="form-check form-switch">
+                                                                            <input class="form-check-input"
+                                                                                type="checkbox" role="switch"
+                                                                                id="flexSwitchCheckChecked"
+                                                                                style="width: 50px; height: 30px;">
+                                                                            <label class="form-check-label"
+                                                                                for="flexSwitchCheckChecked"></label>
+                                                                        </div>
+                                                                        <div>DefaultTax</div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 gy-2">
+                                                                    <div class="form-floating mb-3">
+                                                                        <input type="email" class="form-control"
+                                                                            id="floatingInput"
+                                                                            placeholder="name@example.com">
+                                                                        <label for="floatingInput">Email address</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 gy-2">
+                                                                    <div class="form-floating mb-3">
+                                                                        <input type="email" class="form-control"
+                                                                            id="floatingInput"
+                                                                            placeholder="name@example.com">
+                                                                        <label for="floatingInput">Email address</label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="form-floating">
+                                                                    <textarea class="form-control"
+                                                                        placeholder="Leave a comment here"
+                                                                        id="floatingTextarea2"
+                                                                        style="height: 100px"></textarea>
+                                                                    <label for="floatingTextarea2">Comments</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="form-floating">
+                                                                    <textarea class="form-control"
+                                                                        placeholder="Leave a comment here"
+                                                                        id="floatingTextarea2"
+                                                                        style="height: 100px"></textarea>
+                                                                    <label for="floatingTextarea2">Comments</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xl-4 col-lg-12 col-md-12 col-12">
+                                                            <div class="card h-100 bg-warning-subtle">
+                                                                <select class="form-select form-select-lg my-3"
+                                                                    aria-label="Large select example">
+                                                                    <option selected>Select Modifier Groups(s)</option>
+                                                                    <option value="1">One</option>
+                                                                    <option value="2">Two</option>
+                                                                    <option value="3">Three</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-primary">Save</button>
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Cancel</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="content-div table-responsive">
+                            <div class="tab-content" id="tab-content" aria-orientation="vertical">
+                                <div class="tab-pane active" id="vertical-tabpanel-0" role="tabpanel"
+                                    aria-labelledby="vertical-tab-0">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">
+                                                    <div class="form-check item-checkbox">
+                                                        <input class="form-check-input" type="checkbox" value=""
+                                                            id="flexCheckIndeterminate">
+                                                        <label class="form-check-label"
+                                                            for="flexCheckIndeterminate"></label>
+                                                    </div>
+                                                </th>
+                                                <th scope="col">Name</th>
+                                                <th scope="col" class="text-center text-nowrap">Unit</th>
+                                                <th scope="col" class="text-center text-nowrap">Rate</th>
+                                                <th scope="col" class="text-center text-nowrap">Quantity</th>
+                                                <th scope="col" class="text-center text-nowrap">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="py-3 text-center text-nowrap" scope="row">
+                                                    <div class="form-check item-checkbox">
+                                                        <input class="form-check-input" type="checkbox" value=""
+                                                            id="flexCheckChecked" style="height: 20px; width: 20px;"
+                                                            checked>
+                                                        <label class="form-check-label" for="flexCheckChecked"></label>
+                                                    </div>
+                                                </td>
+                                                <td class="py-3 text-nowrap"><img src="~/images/dining-menu.png"
+                                                        alt="dining-img"
+                                                        style="max-height: 30px; aspect-ratio: 1/1; margin-right: 3%;">Punjabi
+                                                    Tadka Sandwich</td>
+                                                <td class="py-3 text-center text-nowrap">pieces</td>
+                                                <td class="py-3 text-center text-nowrap">60</td>
+                                                <td class="py-3 text-center text-nowrap">
+                                                    1
+                                                </td>
+                                                <td class="py-3 text-center text-nowrap">
+                                                    <a href="edit-user.html" class="text-decoration-none text-black">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                                            fill="currentColor" class="bi bi-pen text-body-btn me-2"
+                                                            viewBox="0 0 16 16">
+                                                            <path
+                                                                d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z" />
+                                                        </svg>
+                                                    </a>
+                                                    <button type="button" class="btn p-0 text-body-btn"
+                                                        data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                                            fill="currentColor" class="bi bi-trash3"
+                                                            viewBox="0 0 16 16">
+                                                            <path
+                                                                d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 0 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
+                                                        </svg>
+                                                    </button>
+                                                    <div class="modal fade" id="exampleModal" tabindex="-1"
+                                                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                        <div class="modal-dialog modal-dialog-centered">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h1 class="modal-title fs-5" id="exampleModalLabel">
+                                                                        Delete confirmation</h1>
+                                                                    <button type="button" class="btn-close"
+                                                                        data-bs-dismiss="modal"
+                                                                        aria-label="Close"></button>
+                                                                </div>
+                                                                <div
+                                                                    class="modal-body d-flex align-items-center justify-content-center flex-column">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="50"
+                                                                        height="50" fill="currentColor"
+                                                                        class="bi bi-exclamation-triangle"
+                                                                        viewBox="0 0 16 16">
+                                                                        <path
+                                                                            d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.15.15 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.2.2 0 0 1-.054.06.1.1 0 0 1-.066.017H1.146a.1.1 0 0 1-.066-.017.2.2 0 0 1-.054-.06.18.18 0 0 1 .002-.183L7.884 2.073a.15.15 0 0 1 .054-.057m1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767z" />
+                                                                        <path
+                                                                            d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z" />
+                                                                    </svg>
+                                                                    <p>Are you sure you want to delete these items</p>
+                                                                </div>
+                                                                <div
+                                                                    class="modal-footer d-flex justify-content-center align-items-center">
+                                                                    <button type="button"
+                                                                        class="btn btn-primary">Yes</button>
+                                                                    <button type="button" class="btn btn-secondary"
+                                                                        data-bs-dismiss="modal">No</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <nav aria-label="Page navigation example"
+                            class="d-flex align-items-center justify-content-between justify-content-lg-end flex-column flex-md-row">
+                            <div class="d-flex me-2 align-items-center mb-4">
+                                <p class="m-0 me-1">Items Per Page</p>
+                                <div class="">
+                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                        data-bs-toggle="dropdown" aria-expanded="false">5</button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#">1</a></li>
+                                        <li><a class="dropdown-item" href="#">2</a></li>
+                                        <li><a class="dropdown-item" href="#">3</a></li>
+                                        <li><a class="dropdown-item" href="#">4</a></li>
+                                        <li><a class="dropdown-item" href="#">5</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <ul class="pagination d-flex align-items-center mb-4">
+                                <p class="m-0 me-1">showing 1-5 of 14</p>
+                                <li class="page-item"><a class="page-link text-body" href="£">
+                                        < < /a>
+                                </li>
+                                <li class="page-item"><a class="page-link text-body" href="#">></a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="category-backdrop"></div>
+                </div>
+            </div>
+
+
 
         </div>
     </div>
@@ -221,19 +619,19 @@
 
                 // Previous button
                 paginationHtml += `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-                    <a class="page-link" href="#" data-page="${currentPage - 1}"> < </a>
+                    <a class="page-link text-secondary" href="#" data-page="${currentPage - 1}"> < </a>
                 </li>`;
 
                 // Page numbers (simplified: show all pages)
                 for (let i = 1; i <= totalPages; i++) {
                     paginationHtml += `<li class="page-item ${i === currentPage ? 'active' : ''}">
-                        <a class="page-link" href="#" data-page="${i}">${i}</a>
+                        <a class="page-link text-secondary" href="#" data-page="${i}">${i}</a>
                     </li>`;
                 }
 
                 // Next button
-                paginationHtml += `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-                    <a class="page-link" href="#" data-page="${currentPage + 1}"> > </a>
+                paginationHtml += `<li class="page-item  ${currentPage === totalPages ? 'disabled' : ''}">
+                    <a class="page-link text-secondary" href="#" data-page="${currentPage + 1}"> > </a>
                 </li>`;
 
                 paginationHtml += '</ul></nav>';
@@ -295,69 +693,33 @@
             loadItems(currentCategoryId, 1, pageSize);
         });
 
-        // Function to load categories
-        @* function loadCategories() {
+
+
+        $('#item-tab-pane #categoriesContainer').on('click', '.category-option', function () {
+            $('#item-tab-pane #categoriesContainer .category-option').removeClass('active');
+            $(this).addClass('active');
+
+        });
+
+
+
+
+
+        // Function to load the Add Category partial view and attach its form handler
+        function loadAddCategory() {
             $.ajax({
-                url: '@Url.Action("GetCategories", "Menu")',
+                url: '@Url.Action("AddNewCategory", "Menu")',
                 type: 'GET',
                 success: function (result) {
-                    $("#categoriesContainer").html(result);
-                    // Attach click event for category links
-                    $(".category-link").on("click", function (e) {
-                        e.preventDefault();
-                        var categoryId = $(this).data("category-id");
-                        loadItems(categoryId);
-                    });
-                    // Reattach edit button handler after categories reload
-                    attachEditCategoryHandler();
+                    $("#AddCategory").html(result);
+                    attachAddCategoryFormHandler();
+                    $.validator.unobtrusive.parse("#addCategoryForm");
                 },
                 error: function (xhr, status, error) {
-                    console.error("Error loading categories:", error);
-                    $("#categoriesContainer").html("Failed to load categories");
+                    console.error("Error loading Add Category form:", error);
                 }
             });
-        } *@
-
-            $('#item-tab-pane #categoriesContainer').on('click', '.category-option', function () {
-                $('#item-tab-pane #categoriesContainer .category-option').removeClass('active');
-                $(this).addClass('active');
-
-            });
-
-
-
-
-        // Function to load items for the selected category
-        @* function loadItems(categoryId) {
-            $.ajax({
-                url: '@Url.Action("GetItems", "Menu")',
-                type: 'GET',
-                data: { categoryId: categoryId },
-                success: function (result) {
-                    $("#GetItemList").html(result);
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error loading items:", error);
-                    $("#GetItemList").html("Failed to load items");
-                }
-            });
-        } *@
-
-            // Function to load the Add Category partial view and attach its form handler
-            function loadAddCategory() {
-                $.ajax({
-                    url: '@Url.Action("AddNewCategory", "Menu")',
-                    type: 'GET',
-                    success: function (result) {
-                        $("#AddCategory").html(result);
-                        attachAddCategoryFormHandler();
-                        $.validator.unobtrusive.parse("#addCategoryForm");
-                    },
-                    error: function (xhr, status, error) {
-                        console.error("Error loading Add Category form:", error);
-                    }
-                });
-            }
+        }
 
 
 
@@ -468,9 +830,7 @@
                         } else {
                             // On error: show a single toastr error message.
                             toastr.error(response.message);
-                            // Optionally, if you have an inline error container in your modal (e.g. a div with id="editCategoryValidationSummary")
-                            // you could update it as well:
-                            // $("#editCategoryValidationSummary").html(response.message);
+
                         }
                     },
                     error: function (xhr, status, error) {
@@ -586,27 +946,27 @@
             });
         });
 
-
-        @* $("#searchInput").on("keyup", function () {
-            var searchTerm = $(this).val().trim();
-
+        function loadModifierGroups() {
             $.ajax({
-                url: '@Url.Action("SearchItems", "Menu")',
+                url: '@Url.Action("GetModifierGroup", "Menu")',
                 type: 'GET',
-                data: { searchTerm: searchTerm },
-                success: function (response) {
-                    $("#GetItemList").html(response); // Update the item list
+                success: function (result) {
+                    $("#modifierGroupsContainer").html(result);
                 },
-                error: function () {
-                    toastr.error("Failed to search items.");
+                error: function (xhr, status, error) {
+                    console.error("Error loading categories:", error);
                 }
             });
-        }); *@
+        }
 
-            // Initial load of categories, items, and the Add Category form
-            loadCategories();
+
+
+
+        // Initial load of categories, items, and the Add Category form
+        loadCategories();
         loadItems(1);
         loadAddCategory();
+        loadModifierGroups();
     });
 </script>
 
@@ -635,6 +995,35 @@
                 categorySection.classList.add("d-none");
                 contentSection.classList.remove("col-xl-9", "col-lg-8", "col-xl-8");
                 contentSection.classList.add("col-12");
+            }
+        }
+    });
+
+
+    document.getElementById("modifierToggle").addEventListener("click", function () {
+        var modifierSection = document.getElementById("modifier-section");
+        var modifierContentSection = document.getElementById("modifier-content-section");
+        var modifierToggleContainer = document.getElementById("modifier-toggle-container");
+
+        if (window.innerWidth <= 991) {
+            modifierSection.classList.toggle("category-visible");
+            modifierToggleContainer.classList.toggle("toggle-move");
+        } else {
+            if (modifierSection.style.display === "none" || modifierSection.classList.contains("d-none")) {
+                modifierSection.style.display = "block";
+                modifierSection.classList.remove("d-none");
+                if (modifierSection.classList.contains("col-xl-3")) {
+                    modifierContentSection.classList.remove("col-12");
+                    modifierContentSection.classList.add("col-xl-9", "col-lg-8");
+                } else if (modifierSection.classList.contains("col-xl-4")) {
+                    modifierContentSection.classList.remove("col-12");
+                    modifierContentSection.classList.add("col-xl-8", "col-lg-8");
+                }
+            } else {
+                modifierSection.style.display = "none";
+                modifierSection.classList.add("d-none");
+                modifierContentSection.classList.remove("col-xl-9", "col-lg-8", "col-xl-8");
+                modifierContentSection.classList.add("col-12");
             }
         }
     });

@@ -9,11 +9,13 @@ public class MenuController : Controller
 {
     private readonly ICategoryService _categoryService;
     private readonly IItemService _itemService;
+    private readonly IModifierGroupService _modifierGroupService;
 
-    public MenuController(ICategoryService categoryService, IItemService itemService)
+    public MenuController(ICategoryService categoryService, IItemService itemService, IModifierGroupService modifierGroupService)
     {
         _categoryService = categoryService;
         _itemService = itemService;
+        _modifierGroupService = modifierGroupService;
     }
 
     public IActionResult Index()
@@ -63,7 +65,7 @@ public class MenuController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetItems(int categoryId, int page = 1, int pageSize = 10)
+    public async Task<IActionResult> GetItems(int categoryId, int page = 1, int pageSize = 5)
     {
         var items = await _itemService.GetItemsByCategoryAsync(categoryId);
         int totalItems = items.Count;
@@ -270,6 +272,12 @@ public class MenuController : Controller
         return PartialView("_ItemList", viewModel);
     }
 
+   [HttpGet]
+    public async Task<IActionResult> GetModifierGroup()
+    {
+        List<ModifierGroup> modifierGroups = await _modifierGroupService.GetAllModifierGrpAsync();
+        return PartialView("_ModifierGroupList", modifierGroups);
+    }
 
 
 }

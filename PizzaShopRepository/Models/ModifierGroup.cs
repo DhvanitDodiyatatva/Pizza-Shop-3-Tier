@@ -11,7 +11,7 @@ public partial class ModifierGroup
 
     public string? Description { get; set; }
 
-    public bool? IsDeleted { get; set; }
+    public bool IsDeleted { get; set; }
 
     public virtual ICollection<Modifier> Modifiers { get; set; } = new List<Modifier>();
 
