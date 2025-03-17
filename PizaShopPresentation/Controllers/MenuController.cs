@@ -63,10 +63,28 @@ public class MenuController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetItems(int categoryId)
+    public async Task<IActionResult> GetItems(int categoryId, int page = 1, int pageSize = 10)
     {
-        List<Item> items = await _itemService.GetItemsByCategoryAsync(categoryId);
-        return PartialView("_ItemList", items);
+        var items = await _itemService.GetItemsByCategoryAsync(categoryId);
+        int totalItems = items.Count;
+        int totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+        var pagedItems = items
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        var viewModel = new PagedItemViewModel
+        {
+            Items = pagedItems,
+            CurrentPage = page,
+            TotalPages = totalPages,
+            PageSize = pageSize,
+            TotalItems = totalItems,
+            CategoryId = categoryId
+        };
+
+        return PartialView("_ItemList", viewModel);
     }
 
     [HttpPost]
@@ -222,7 +240,7 @@ public class MenuController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> SearchItems(string searchTerm)
+    public async Task<IActionResult> SearchItems(string searchTerm, int page = 1, int pageSize = 10)
     {
         var items = await _itemService.GetAllItemsAsync();
 
@@ -231,7 +249,25 @@ public class MenuController : Controller
             items = items.Where(i => i.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
         }
 
-        return PartialView("_ItemList", items); // Render the updated item list
+        int totalItems = items.Count;
+        int totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+        var pagedItems = items
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        var viewModel = new PagedItemViewModel
+        {
+            Items = pagedItems,
+            CurrentPage = page,
+            TotalPages = totalPages,
+            PageSize = pageSize,
+            TotalItems = totalItems,
+            CategoryId = 0 // No specific category for search
+        };
+
+        return PartialView("_ItemList", viewModel);
     }
 
 

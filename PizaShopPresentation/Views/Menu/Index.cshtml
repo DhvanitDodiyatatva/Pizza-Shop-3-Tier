@@ -143,6 +143,22 @@
                                     <!-- Items loaded here via AJAX -->
                                 </tbody>
                             </table>
+                            <nav>
+                                <div class=" d-flex justify-content-end align-items-center ">
+                                    <div class="pe-2">
+                                        <label for="pageSizeSelect">Items per page:</label>
+                                        <select id="pageSizeSelect" class="form-select d-inline-block w-auto">
+                                            <option value="2">2</option>
+                                            <option value="5" selected>5</option>
+                                            <option value="8">8</option>
+                                            <option value="10">10</option>
+                                        </select>
+                                    </div>
+                                    <div id="paginationControls" class="d-flex align-items-center">
+                                        <!-- Pagination controls will be dynamically added here -->
+                                    </div>
+                                </div>
+                            </nav>
                         </div>
                     </div>
                     <div class="category-backdrop"></div>
@@ -170,8 +186,117 @@
 <script>
     $(document).ready(function () {
 
-        // Function to load categories
+        let currentPage = 1;
+        let pageSize = 5;
+        let currentCategoryId = 1;
+
+        // Function to load items with pagination
+        function loadItems(categoryId, page = 1, size = pageSize) {
+            $.ajax({
+                url: '@Url.Action("GetItems", "Menu")',
+                type: 'GET',
+                data: { categoryId: categoryId, page: page, pageSize: size },
+                success: function (result) {
+                    $("#GetItemList").html(result);
+                    currentPage = page;
+                    currentCategoryId = categoryId;
+                    updatePaginationControls();
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error loading items:", error);
+                    $("#GetItemList").html("Failed to load items");
+                }
+            });
+        }
+
+        // Function to update pagination controls
+        function updatePaginationControls() {
+            const totalPages = parseInt($("#GetItemList").find("input[name='TotalPages']").val());
+            const currentPage = parseInt($("#GetItemList").find("input[name='CurrentPage']").val());
+            let paginationHtml = '';
+
+            if (totalPages > 1) {
+                paginationHtml += '<nav aria-label="Page navigation">';
+                paginationHtml += '<ul class="pagination mb-0">';
+
+                // Previous button
+                paginationHtml += `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                    <a class="page-link" href="#" data-page="${currentPage - 1}"> < </a>
+                </li>`;
+
+                // Page numbers (simplified: show all pages)
+                for (let i = 1; i <= totalPages; i++) {
+                    paginationHtml += `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                        <a class="page-link" href="#" data-page="${i}">${i}</a>
+                    </li>`;
+                }
+
+                // Next button
+                paginationHtml += `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                    <a class="page-link" href="#" data-page="${currentPage + 1}"> > </a>
+                </li>`;
+
+                paginationHtml += '</ul></nav>';
+            }
+
+            $("#paginationControls").html(paginationHtml);
+
+            // Attach click handlers to pagination links
+            $("#paginationControls .page-link").on("click", function (e) {
+                e.preventDefault();
+                const page = $(this).data("page");
+                if (page && page > 0 && page <= totalPages) {
+                    loadItems(currentCategoryId, page);
+                }
+            });
+        }
+
+        // Load categories and attach click handlers
         function loadCategories() {
+            $.ajax({
+                url: '@Url.Action("GetCategories", "Menu")',
+                type: 'GET',
+                success: function (result) {
+                    $("#categoriesContainer").html(result);
+                    $(".category-link").on("click", function (e) {
+                        e.preventDefault();
+                        var categoryId = $(this).data("category-id");
+                        loadItems(categoryId, 1, pageSize);
+                    });
+                    attachEditCategoryHandler();
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error loading categories:", error);
+                }
+            });
+        }
+
+        // Search functionality with pagination
+        $("#searchInput").on("keyup", function () {
+            var searchTerm = $(this).val().trim();
+            $.ajax({
+                url: '@Url.Action("SearchItems", "Menu")',
+                type: 'GET',
+                data: { searchTerm: searchTerm, page: 1, pageSize: pageSize },
+                success: function (response) {
+                    $("#GetItemList").html(response);
+                    currentCategoryId = 0; // Reset category for search
+                    updatePaginationControls();
+                },
+                error: function () {
+                    toastr.error("Failed to search items.");
+                }
+            });
+        });
+
+        // Page size change handler
+        $("#pageSizeSelect").on("change", function () {
+            pageSize = parseInt($(this).val());
+            loadItems(currentCategoryId, 1, pageSize);
+        });
+
+        // Function to load categories
+        @* function loadCategories() {
             $.ajax({
                 url: '@Url.Action("GetCategories", "Menu")',
                 type: 'GET',
@@ -191,19 +316,19 @@
                     $("#categoriesContainer").html("Failed to load categories");
                 }
             });
-        }
+        } *@
 
-        $('#item-tab-pane #categoriesContainer').on('click', '.category-option', function () {
-            $('#item-tab-pane #categoriesContainer .category-option').removeClass('active');
-            $(this).addClass('active');
+            $('#item-tab-pane #categoriesContainer').on('click', '.category-option', function () {
+                $('#item-tab-pane #categoriesContainer .category-option').removeClass('active');
+                $(this).addClass('active');
 
-        });
+            });
 
 
 
 
         // Function to load items for the selected category
-        function loadItems(categoryId) {
+        @* function loadItems(categoryId) {
             $.ajax({
                 url: '@Url.Action("GetItems", "Menu")',
                 type: 'GET',
@@ -216,23 +341,23 @@
                     $("#GetItemList").html("Failed to load items");
                 }
             });
-        }
+        } *@
 
-        // Function to load the Add Category partial view and attach its form handler
-        function loadAddCategory() {
-            $.ajax({
-                url: '@Url.Action("AddNewCategory", "Menu")',
-                type: 'GET',
-                success: function (result) {
-                    $("#AddCategory").html(result);
-                    attachAddCategoryFormHandler();
-                    $.validator.unobtrusive.parse("#addCategoryForm");
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error loading Add Category form:", error);
-                }
-            });
-        }
+            // Function to load the Add Category partial view and attach its form handler
+            function loadAddCategory() {
+                $.ajax({
+                    url: '@Url.Action("AddNewCategory", "Menu")',
+                    type: 'GET',
+                    success: function (result) {
+                        $("#AddCategory").html(result);
+                        attachAddCategoryFormHandler();
+                        $.validator.unobtrusive.parse("#addCategoryForm");
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error loading Add Category form:", error);
+                    }
+                });
+            }
 
 
 
@@ -462,7 +587,7 @@
         });
 
 
-        $("#searchInput").on("keyup", function () {
+        @* $("#searchInput").on("keyup", function () {
             var searchTerm = $(this).val().trim();
 
             $.ajax({
@@ -476,10 +601,10 @@
                     toastr.error("Failed to search items.");
                 }
             });
-        });
+        }); *@
 
-        // Initial load of categories, items, and the Add Category form
-        loadCategories();
+            // Initial load of categories, items, and the Add Category form
+            loadCategories();
         loadItems(1);
         loadAddCategory();
     });
