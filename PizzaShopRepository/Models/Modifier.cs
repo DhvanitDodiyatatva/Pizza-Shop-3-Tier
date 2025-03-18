@@ -19,7 +19,7 @@ public partial class Modifier
 
     public string? Description { get; set; }
 
-    public bool? IsDeleted { get; set; }
+    public bool IsDeleted { get; set; }
 
     public virtual ModifierGroup? ModifierGroup { get; set; }
 

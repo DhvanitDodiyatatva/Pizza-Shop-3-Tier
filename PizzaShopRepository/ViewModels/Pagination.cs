@@ -11,6 +11,18 @@ namespace PizzaShopRepository.ViewModels
         public int TotalItems { get; set; }
         public int CategoryId { get; set; } // To track the current category
     }
+
+    public class PagedModifierViewModel
+    {
+        public List<Modifier> Modifiers { get; set; } = new List<Modifier>();
+        public int CurrentPage { get; set; }
+        public int TotalPages { get; set; }
+        public int PageSize { get; set; }
+        public int TotalModifiers { get; set; }
+        public int ModifierGroupId { get; set; } // To track the current modifier group
+    }
+
+
 }
 
 

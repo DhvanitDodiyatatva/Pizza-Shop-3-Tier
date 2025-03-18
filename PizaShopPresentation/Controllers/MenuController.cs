@@ -10,12 +10,14 @@ public class MenuController : Controller
     private readonly ICategoryService _categoryService;
     private readonly IItemService _itemService;
     private readonly IModifierGroupService _modifierGroupService;
+    private readonly IModifierService _modifierService;
 
-    public MenuController(ICategoryService categoryService, IItemService itemService, IModifierGroupService modifierGroupService)
+    public MenuController(ICategoryService categoryService, IItemService itemService, IModifierGroupService modifierGroupService, IModifierService modifierService)
     {
         _categoryService = categoryService;
         _itemService = itemService;
         _modifierGroupService = modifierGroupService;
+        _modifierService = modifierService;
     }
 
     public IActionResult Index()
@@ -242,7 +244,7 @@ public class MenuController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> SearchItems(string searchTerm, int page = 1, int pageSize = 10)
+    public async Task<IActionResult> SearchItems(string searchTerm, int page = 1, int pageSize = 5)
     {
         var items = await _itemService.GetAllItemsAsync();
 
@@ -272,12 +274,65 @@ public class MenuController : Controller
         return PartialView("_ItemList", viewModel);
     }
 
-   [HttpGet]
+    [HttpGet]
     public async Task<IActionResult> GetModifierGroup()
     {
         List<ModifierGroup> modifierGroups = await _modifierGroupService.GetAllModifierGrpAsync();
         return PartialView("_ModifierGroupList", modifierGroups);
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetModifiers(int modifierGroupId, int page = 1, int pageSize = 5)
+    {
+        var modifiers = await _modifierService.GetModifiersByModifierGrpAsync(modifierGroupId);
+        int totalModifiers = modifiers.Count;
+        int totalPages = (int)Math.Ceiling(totalModifiers / (double)pageSize);
+
+        var pagedModifiers = modifiers.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+        var viewModel = new PagedModifierViewModel
+        {
+            Modifiers = pagedModifiers,
+            CurrentPage = page,
+            TotalPages = totalPages,
+            PageSize = pageSize,
+            TotalModifiers = totalModifiers,
+            ModifierGroupId = modifierGroupId
+        };
+
+        return PartialView("_ModifierList", viewModel);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> SearchItemsForModifier(string searchTerm, int page = 1, int pageSize = 5)
+    {
+
+        var modifiers = await _modifierService.GetAllModifiersAsync();
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            modifiers = modifiers.Where(i => i.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+
+        int totalModifiers = modifiers.Count;
+        int totalPages = (int)Math.Ceiling(totalModifiers / (double)pageSize);
+
+        var pagedModifiers = modifiers
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        var viewModel = new PagedModifierViewModel
+        {
+            Modifiers = pagedModifiers,
+            CurrentPage = page,
+            TotalPages = totalPages,
+            PageSize = pageSize,
+            TotalModifiers = totalModifiers,
+            ModifierGroupId = 0 // No specific category for search
+        };
+
+        return PartialView("_ModifierList", viewModel);
+    }
 
 }
