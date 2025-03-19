@@ -62,19 +62,19 @@
                                 <td>@Model.Permissions[i].PermissionName</td>
                                 <td>
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" asp-for="Permissions[i].CanView"
+                                        <input class="form-check-input can-view" type="checkbox" asp-for="Permissions[i].CanView"
                                             style="width: 50px; height: 30px;">
                                     </div>
                                 </td>
                                 <td>
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" asp-for="Permissions[i].CanAddEdit"
+                                        <input class="form-check-input can-add-edit" type="checkbox" asp-for="Permissions[i].CanAddEdit"
                                             style="width: 50px; height: 30px;">
                                     </div>
                                 </td>
                                 <td>
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" asp-for="Permissions[i].CanDelete"
+                                        <input class="form-check-input can-delete" type="checkbox" asp-for="Permissions[i].CanDelete"
                                             style="width: 50px; height: 30px;">
                                     </div>
                                 </td>
@@ -95,11 +95,43 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const selectAll = document.getElementById('selectAll');
-            const checkboxes = document.querySelectorAll('.permission-checkbox');
+            const permissionCheckboxes = document.querySelectorAll('.permission-checkbox');
+            const canDeleteCheckboxes = document.querySelectorAll('.can-delete');
+            const canAddEditCheckboxes = document.querySelectorAll('.can-add-edit');
+            const canViewCheckboxes = document.querySelectorAll('.can-view');
 
+            // Select All functionality
             selectAll.addEventListener('change', function () {
-                checkboxes.forEach(checkbox => {
+                permissionCheckboxes.forEach(checkbox => {
                     checkbox.checked = selectAll.checked;
+                });
+            });
+
+            // Enforce "Can View" when "Can Delete" is checked
+            canDeleteCheckboxes.forEach((checkbox, index) => {
+                checkbox.addEventListener('change', function () {
+                    if (this.checked) {
+                        canViewCheckboxes[index].checked = true;
+                    }
+                });
+            });
+
+            // Enforce "Can View" when "Can Add/Edit" is checked
+            canAddEditCheckboxes.forEach((checkbox, index) => {
+                checkbox.addEventListener('change', function () {
+                    if (this.checked) {
+                        canViewCheckboxes[index].checked = true;
+                    }
+                });
+            });
+
+            // Optional: Prevent "Can View" from being unchecked if "Can Delete" or "Can Add/Edit" is checked
+            canViewCheckboxes.forEach((checkbox, index) => {
+                checkbox.addEventListener('change', function () {
+                    if (!this.checked && (canDeleteCheckboxes[index].checked || canAddEditCheckboxes[index].checked)) {
+                        this.checked = true; // Force it back on
+                        alert("Cannot uncheck 'Can View' when 'Can Delete' or 'Can Add/Edit' is selected.");
+                    }
                 });
             });
         });

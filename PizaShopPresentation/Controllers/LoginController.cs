@@ -6,7 +6,7 @@ using PizzaShopServices.Attributes;
 
 namespace PizzaShopPresentation.Controllers
 {
-   
+
     public class LoginController : Controller
     {
         private readonly IUserService _userService;
@@ -118,6 +118,13 @@ namespace PizzaShopPresentation.Controllers
 
             try
             {
+                var user = await _userService.GetUserByEmailAsync(email);
+                if (user == null)
+                {
+                    ViewData["ErrorMessage"] = "This email is not registered.";
+                    return View("ForgotPassword");
+                }
+
                 string resetPasswordUrl = Url.Action("ResetPassword", "Login", new { email = email }, protocol: Request.Scheme);
                 await _emailService.SendResetPasswordEmailAsync(email, resetPasswordUrl);
                 ViewData["SuccessMessage"] = "If your email is registered, you'll receive a reset link.";

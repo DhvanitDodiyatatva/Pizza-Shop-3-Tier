@@ -2,13 +2,23 @@ using System.Net;
 using System.Net.Mail;
 using PizzaShopServices.Interfaces;
 using System.Threading.Tasks;
+using PizzaShopRepository.Models;
+using PizzaShopRepository.Interfaces;
 
 namespace PizzaShopServices.Implementations
 {
     public class EmailService : IEmailService
     {
+        private readonly IUserRepository _userRepository;
+
+        public EmailService(IUserRepository userRepository)
+        {
+            _userRepository = userRepository;
+        }
         public async Task SendResetPasswordEmailAsync(string email, string resetPasswordUrl)
         {
+
+
             var smtpClient = new SmtpClient("mail.etatvasoft.com")
             {
                 Port = 587,

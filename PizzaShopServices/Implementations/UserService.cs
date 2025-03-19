@@ -7,6 +7,7 @@ using PizzaShopRepository.Interfaces;
 using PizzaShopRepository.ViewModels;
 using PizzaShopServices.Interfaces;
 using System.Threading.Tasks;
+using PizzaShopRepository.Models;
 
 namespace PizzaShopServices.Implementations
 {
@@ -33,6 +34,11 @@ namespace PizzaShopServices.Implementations
             if (!isPasswordValid)
             {
                 throw new Exception("Incorrect password.");
+            }
+
+            if (user.Status != true)
+            {
+                throw new Exception("User is inactive .");
             }
 
             // Create JWT token
@@ -69,6 +75,11 @@ namespace PizzaShopServices.Implementations
 
             user.Password = BCrypt.Net.BCrypt.HashPassword(model.NewPassword, 12);
             await _userRepository.UpdateUserAsync(user);
+        }
+
+        public async Task<User> GetUserByEmailAsync(string email)
+        {
+            return await _userRepository.GetUserByEmailAsync(email);
         }
     }
 }
