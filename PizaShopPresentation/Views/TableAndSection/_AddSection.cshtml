@@ -1,4 +1,4 @@
-@model PizzaShopRepository.ViewModels.CrudCategoryViewModel
+@model PizzaShopRepository.ViewModels.SectionViewModel
 
 @if (TempData["ErrorMessage"] != null)
 {
@@ -14,11 +14,11 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel1">Add Category</h1>
+                <h1 class="modal-title fs-5" id="exampleModalLabel1">Add Section</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="addCategoryForm">
+                <form id="addSectionForm">
                     <div class="form-floating mb-3">
                         <input type="text" class="form-control" placeholder="Sandwich" asp-for="Name" />
                         <label for="Name">Name</label>

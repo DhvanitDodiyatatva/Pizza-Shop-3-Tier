@@ -133,8 +133,8 @@
 
 </div>
 
-<div id="AddCategory">
-    @* _AddCategory partial View *@
+<div id="AddSection">
+    @* _AddSection partial View *@
 </div>
 <div id="addItemContainer">
     <!--  Add New Item Partial view will load here -->
@@ -162,9 +162,9 @@
                     $(".section-link").on("click", function (e) {
                         e.preventDefault();
                         var sectionId = $(this).data("sections-id");
-                        @* loadTables(sectionId, 1, pageSize); *@
-                        });
-                    @* attachEditCategoryHandler(); *@
+                        loadTables(sectionId, 1, pageSize);
+                    });
+                    attachEditCategoryHandler();
                 },
                 error: function (xhr, status, error) {
                     console.error("Error loading sections:", error);
@@ -173,7 +173,7 @@
         }
 
         // Function to load items with pagination
-        @* function loadTables(sectionId, page = 1, size = pageSize) {
+        function loadTables(sectionId, page = 1, size = pageSize) {
             $.ajax({
                 url: '@Url.Action("GetTables", "TableAndSection")',
                 type: 'GET',
@@ -189,10 +189,10 @@
                     $("#GetTableList").html("Failed to load items");
                 }
             });
-        } *@
+        }
 
-            // Function to update pagination controls
-            @* function updatePaginationControls() {
+        // Function to update pagination controls
+        function updatePaginationControls() {
             const totalPages = parseInt($("#GetTableList").find("input[name='TotalPages']").val());
             const currentPage = parseInt($("#GetTableList").find("input[name='CurrentPage']").val());
             let paginationHtml = '';
@@ -231,11 +231,11 @@
                     loadTables(currentSectionId, page);
                 }
             });
-        } *@
+        }
 
 
-            // Search functionality with pagination
-            @* $("#searchInput").on("keyup", function () {
+        // Search functionality with pagination
+        $("#searchInput").on("keyup", function () {
             var searchTerm = $(this).val().trim();
             $.ajax({
                 url: '@Url.Action("SearchTables", "TableAndSection")',
@@ -250,54 +250,54 @@
                     toastr.error("Failed to search tables.");
                 }
             });
-        }); *@
+        });
 
-            // Page size change handler
-            @* $("#pageSizeSelect").on("change", function () {
+        // Page size change handler
+        $("#pageSizeSelect").on("change", function () {
             pageSize = parseInt($(this).val());
             loadTables(currentSectionId, 1, pageSize);
-        }); *@
+        });
 
 
 
-            @* $('#sectionsContainer').on('click', '.category-option', function () {
+        $('#sectionsContainer').on('click', '.category-option', function () {
             $('#sectionsContainer .category-option').removeClass('active');
             $(this).addClass('active');
 
-        }); *@
+        });
 
 
 
 
 
-            // Function to load the Add Category partial view and attach its form handler
-            @* function loadAddSection() {
+        // Function to load the Add Category partial view and attach its form handler
+        function loadAddSection() {
             $.ajax({
-                url: '@Url.Action("AddNewCategory", "Menu")',
+                url: '@Url.Action("AddNewSection", "TableAndSection")',
                 type: 'GET',
                 success: function (result) {
-                    $("#AddCategory").html(result);
-                    attachAddCategoryFormHandler();
-                    $.validator.unobtrusive.parse("#addCategoryForm");
+                    $("#AddSection").html(result);
+                    attachAddSectionFormHandler();
+                    $.validator.unobtrusive.parse("#addSectionForm");
                 },
                 error: function (xhr, status, error) {
                     console.error("Error loading Add Category form:", error);
                 }
             });
-        } *@
+        }
 
 
 
-            // Attach submit handler to the Add Category form
-            @* function attachAddCategoryFormHandler() {
-            $("#addCategoryForm").on("submit", function (e) {
+        // Attach submit handler to the Add Category form
+        function attachAddSectionFormHandler() {
+            $("#addSectionForm").on("submit", function (e) {
                 e.preventDefault();
                 if (!$(this).valid()) {
                     return;
                 }
                 var formData = $(this).serialize();
                 $.ajax({
-                    url: '@Url.Action("AddNewCategory", "Menu")',
+                    url: '@Url.Action("AddNewSection", "TableAndSection")',
                     type: 'POST',
                     data: formData,
                     success: function (response) {
@@ -311,11 +311,11 @@
                                 }
                             }
                             $('.modal-backdrop').remove();
-                            toastr.success("Category added successfully!");
+                            toastr.success("Section added successfully!");
                             loadSections();
                         } else {
                             // On error: show a single toastr error and ensure the modal stays open
-                            toastr.error("Failed to add category: " + response.message);
+                            toastr.error("Failed to add section: " + response.message);
                             var modalEl = document.getElementById('exampleModal12');
                             if (modalEl) {
                                 var modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
@@ -334,10 +334,10 @@
                     }
                 });
             });
-        } *@
+        }
 
-            // Attach edit category button handler
-            @* function attachEditCategoryHandler() {
+        // Attach edit category button handler
+        function attachEditCategoryHandler() {
             $(".edit-category-btn").off('click').on("click", function (e) {
                 e.preventDefault();
                 var categoryId = $(this).data("category-id");
@@ -368,11 +368,11 @@
                     }
                 });
             });
-        } *@
+        }
 
-            // Attach edit form submission handler
-            @* function attachEditFormHandler() {
-            $("#editCategoryForm").off('submit').on("submit", function (e) {
+        // Attach edit form submission handler
+        function attachEditFormHandler() {
+            $("#editSectionForm").off('submit').on("submit", function (e) {
                 e.preventDefault();
                 if (!$(this).valid()) { // Check client-side validation
                     return;
@@ -404,21 +404,21 @@
                     }
                 });
             });
-        } *@
+        }
 
-            @* // Ensure modal backdrop is removed when any modal is hidden
+        // Ensure modal backdrop is removed when any modal is hidden
         $('.modal').on('hidden.bs.modal', function () {
             $('.modal-backdrop').remove();
-        }); *@
+        });
 
 
-            @* $("#addNewItemBtn, #addNewItemBtnMobile").on("click", function () {
+        $("#addNewItemBtn, #addNewItemBtnMobile").on("click", function () {
             $.ajax({
                 url: '@Url.Action("AddNewItem", "Menu")',
                 type: 'GET',
                 success: function (result) {
                     $("#addItemContainer").html(result);
-                    
+
                     var modal = new bootstrap.Modal(document.getElementById("exampleModal2"));
                     modal.show();
 
@@ -427,10 +427,10 @@
                     toastr.error("Failed to load add item form.");
                 }
             });
-        }); *@
+        });
 
-            // Simplified delete AJAX: attach handler to the delete form submission
-            @* $(document).on('submit', '.delete-category-form', function (e) {
+        // Simplified delete AJAX: attach handler to the delete form submission
+        $(document).on('submit', '.delete-category-form', function (e) {
             e.preventDefault();
             var form = $(this);
             var categoryId = form.data('category-id');
@@ -470,10 +470,10 @@
                     toastr.error("Failed to delete category. Please try again.");
                 }
             });
-        }); *@
+        });
 
 
-            @* $("#selectAll").click(function () {
+        $("#selectAll").click(function () {
             $(".itemCheckbox").prop("checked", this.checked);
         });
 
@@ -509,41 +509,43 @@
                     alert("An error occurred while deleting items.");
                 }
             });
-        }); *@
+        });
 
-            loadSections();
-        @* loadTables(1);
-        loadAddSection(); *@
+        loadSections();
+        loadTables(1);
+        loadAddSection();
+    });
+
 </script>
 
 <script>
-            document.getElementById("categoryToggle").addEventListener("click", function () {
-                var categorySection = document.getElementById("category-section");
-                var contentSection = document.getElementById("content-section");
-                var toggleContainer = document.getElementById("toggle-container");
+    document.getElementById("categoryToggle").addEventListener("click", function () {
+        var categorySection = document.getElementById("category-section");
+        var contentSection = document.getElementById("content-section");
+        var toggleContainer = document.getElementById("toggle-container");
 
-                if (window.innerWidth <= 991) {
-                    categorySection.classList.toggle("category-visible");
-                    toggleContainer.classList.toggle("toggle-move");
-                } else {
-                    if (categorySection.style.display === "none" || categorySection.classList.contains("d-none")) {
-                        categorySection.style.display = "block";
-                        categorySection.classList.remove("d-none");
-                        if (categorySection.classList.contains("col-xl-3")) {
-                            contentSection.classList.remove("col-12");
-                            contentSection.classList.add("col-xl-9", "col-lg-8");
-                        } else if (categorySection.classList.contains("col-xl-4")) {
-                            contentSection.classList.remove("col-12");
-                            contentSection.classList.add("col-xl-8", "col-lg-8");
-                        }
-                    } else {
-                        categorySection.style.display = "none";
-                        categorySection.classList.add("d-none");
-                        contentSection.classList.remove("col-xl-9", "col-lg-8", "col-xl-8");
-                        contentSection.classList.add("col-12");
-                    }
+        if (window.innerWidth <= 991) {
+            categorySection.classList.toggle("category-visible");
+            toggleContainer.classList.toggle("toggle-move");
+        } else {
+            if (categorySection.style.display === "none" || categorySection.classList.contains("d-none")) {
+                categorySection.style.display = "block";
+                categorySection.classList.remove("d-none");
+                if (categorySection.classList.contains("col-xl-3")) {
+                    contentSection.classList.remove("col-12");
+                    contentSection.classList.add("col-xl-9", "col-lg-8");
+                } else if (categorySection.classList.contains("col-xl-4")) {
+                    contentSection.classList.remove("col-12");
+                    contentSection.classList.add("col-xl-8", "col-lg-8");
                 }
-            });
+            } else {
+                categorySection.style.display = "none";
+                categorySection.classList.add("d-none");
+                contentSection.classList.remove("col-xl-9", "col-lg-8", "col-xl-8");
+                contentSection.classList.add("col-12");
+            }
+        }
+    });
 </script>
 
 <style>

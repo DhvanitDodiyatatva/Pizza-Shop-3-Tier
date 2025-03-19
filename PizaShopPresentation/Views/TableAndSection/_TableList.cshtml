@@ -1,8 +1,8 @@
-@model PizzaShopRepository.ViewModels.PagedItemViewModel
+@model PizzaShopRepository.ViewModels.PagedTableViewModel
 
 
 
-@if (Model == null || !Model.Items.Any())
+@if (Model == null || !Model.Tables.Any())
 {
     <div class="row g-0 category-side">
         <p>No Items available in this Category</p>
@@ -10,23 +10,21 @@
 }
 else
 {
-    @foreach (var item in Model.Items)
+    @foreach (var table in Model.Tables)
     {
-        <tr id="item-row-@item.Id" data-id="@item.Id">
+        <tr id="item-row-@table.Id" data-id="@table.Id">
             <td class="py-3 text-center text-nowrap" scope="row">
                 <div class="form-check item-checkbox">
-                    <input type="checkbox" class="itemCheckbox text-center form-check-input" value="@item.Id"
+                    <input type="checkbox" class="itemCheckbox text-center form-check-input" value="@table.Id"
                         style="height: 20px; width: 20px; color: blue;" checked>
-                    <label class="form-check-label" for="flexcheckchecked_@item.Id"></label>
+                    <label class="form-check-label" for="flexcheckchecked_@table.Id"></label>
                 </div>
             </td>
             <td class="py-3 text-nowrap">
-                <img src="@(item.ImageUrl ?? "/images/dining-menu.png")" alt="item-img"
-                    style="max-height: 30px; aspect-ratio: 1/1; margin-right: 3%;">
-                @item.Name
+                @table.Name
             </td>
-            <td class="py-3 text-center text-nowrap">
-                @switch (item.ItemType?.ToLower())
+            @* <td class="py-3 text-center text-nowrap">
+                @switch (table.ItemType?.ToLower())
                 {
                     case "vegetarian":
                         <img src="~/images/icons/veg-icon.svg" alt="veg-img" style="height: 30px; aspect-ratio: 1/1;">
@@ -41,18 +39,12 @@ else
                         <span>Unknown</span>
                         break;
                 }
-            </td>
-            <td class="py-3 text-center text-nowrap">@item.Price</td>
-            <td class="py-3 text-center text-nowrap">@item.Quantity</td>
+            </td> *@
+            <td class="py-3 text-center text-nowrap">@table.Capacity</td>
+            <td class="py-3 text-center text-nowrap">@table.Status</td>
+
             <td class="py-3 text-center text-nowrap">
-                <div class="form-check form-switch d-flex justify-content-center">
-                    <input class="form-check-input" type="checkbox" role="switch" id="flexswitchcheckchecked_@item.Id"
-                        style="width: 50px; height: 30px;" @(item.IsAvailable ? "checked" : "") disabled>
-                    <label class="form-check-label" for="flexswitchcheckchecked_@item.Id"></label>
-                </div>
-            </td>
-            <td class="py-3 text-center text-nowrap">
-                <button type="button" class="btn p-0 text-body-btn edit-item-btn" data-item-id="@item.Id">
+                <button type="button" class="btn p-0 text-body-btn edit-item-btn" data-item-id="@table.Id">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
                         class="bi bi-pen text-body-btn me-2" viewBox="0 0 16 16">
                         <path
@@ -60,7 +52,7 @@ else
                     </svg>
                 </button>
                 <button type="button" class="btn p-0 text-body-btn" data-bs-toggle="modal"
-                    data-bs-target="#examplemodal_@item.Id">
+                    data-bs-target="#examplemodal_@table.Id">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash3"
                         viewBox="0 0 16 16">
                         <path
@@ -69,12 +61,12 @@ else
                 </button>
 
                 <!-- Modal for Delete Confirmation -->
-                <div class="modal fade" id="examplemodal_@item.Id" tabindex="-1" aria-labelledby="examplemodallabel_@item.Id"
+                <div class="modal fade" id="examplemodal_@table.Id" tabindex="-1" aria-labelledby="examplemodallabel_@table.Id"
                     aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="examplemodallabel_@item.Id">Delete Confirmation</h1>
+                                <h1 class="modal-title fs-5" id="examplemodallabel_@table.Id">Delete Confirmation</h1>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body d-flex align-items-center justify-content-center flex-column">
@@ -85,11 +77,11 @@ else
                                     <path
                                         d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z" />
                                 </svg>
-                                <p>Are you sure you want to delete @item.Name?</p>
+                                <p>Are you sure you want to delete @table.Name?</p>
                             </div>
                             <div class="modal-footer d-flex justify-content-center align-items-center">
                                 <button type="button" class="btn btn-primary delete-item-btn"
-                                    data-item-id="@item.Id">Yes</button>
+                                    data-item-id="@table.Id">Yes</button>
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
                             </div>
                         </div>

@@ -1,15 +1,15 @@
-@model PizzaShopRepository.ViewModels.CrudCategoryViewModel
+@model PizzaShopRepository.ViewModels.SectionViewModel
 
 
 <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="editModalLabel">Edit Category</h1>
+                <h1 class="modal-title fs-5" id="editModalLabel">Edit Section</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="editCategoryForm" asp-controller="Menu" asp-action="UpdateCategory">
+                <form id="editSectionForm" asp-controller="TableAndSection" asp-action="UpdateSection">
                     <input type="hidden" name="Id" value="@Model?.Id" />
                     <div class="form-floating mb-3">
                         <input type="text" class="form-control" id="Name" name="Name" 
