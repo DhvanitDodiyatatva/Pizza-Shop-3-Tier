@@ -7,8 +7,6 @@ public partial class Modifier
 {
     public int Id { get; set; }
 
-    public int? ModifierGroupId { get; set; }
-
     public string Name { get; set; } = null!;
 
     public decimal Price { get; set; }
@@ -21,7 +19,7 @@ public partial class Modifier
 
     public bool IsDeleted { get; set; }
 
-    public virtual ModifierGroup? ModifierGroup { get; set; }
+    public virtual ICollection<ModifierGroupMapping> ModifierGroupMappings { get; set; } = new List<ModifierGroupMapping>();
 
     public virtual ICollection<OrderItemModifier> OrderItemModifiers { get; set; } = new List<OrderItemModifier>();
 }

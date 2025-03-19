@@ -92,8 +92,7 @@ public class CategoryService : ICategoryService
 
     public async Task SoftDeleteCategoryAsync(int id)
     {
-        var category = await _categoryRepository.GetCategoryByIdAsync(id)
-;
+        var category = await _categoryRepository.GetCategoryByIdAsync(id);
         if (category == null)
         {
             return;

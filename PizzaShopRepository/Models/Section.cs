@@ -11,7 +11,7 @@ public partial class Section
 
     public string? Description { get; set; }
 
-    public bool? IsDeleted { get; set; }
+    public bool IsDeleted { get; set; }
 
     public virtual ICollection<Table> Tables { get; set; } = new List<Table>();
 

@@ -26,6 +26,8 @@ public partial class PizzaShopContext : DbContext
 
     public virtual DbSet<ModifierGroup> ModifierGroups { get; set; }
 
+    public virtual DbSet<ModifierGroupMapping> ModifierGroupMappings { get; set; }
+
     public virtual DbSet<Order> Orders { get; set; }
 
     public virtual DbSet<OrderItem> OrderItems { get; set; }
@@ -172,7 +174,6 @@ public partial class PizzaShopContext : DbContext
             entity.Property(e => e.IsDeleted)
                 .HasDefaultValueSql("false")
                 .HasColumnName("is_deleted");
-            entity.Property(e => e.ModifierGroupId).HasColumnName("modifier_group_id");
             entity.Property(e => e.Name)
                 .HasMaxLength(100)
                 .HasColumnName("name");
@@ -183,10 +184,6 @@ public partial class PizzaShopContext : DbContext
             entity.Property(e => e.Unit)
                 .HasMaxLength(20)
                 .HasColumnName("unit");
-
-            entity.HasOne(d => d.ModifierGroup).WithMany(p => p.Modifiers)
-                .HasForeignKey(d => d.ModifierGroupId)
-                .HasConstraintName("modifiers_modifier_group_id_fkey");
         });
 
         modelBuilder.Entity<ModifierGroup>(entity =>
@@ -203,6 +200,27 @@ public partial class PizzaShopContext : DbContext
             entity.Property(e => e.Name)
                 .HasMaxLength(100)
                 .HasColumnName("name");
+        });
+
+        modelBuilder.Entity<ModifierGroupMapping>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("modifier_group_mappings_pkey");
+
+            entity.ToTable("modifier_group_mappings");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.ModifierGroupId).HasColumnName("modifier_group_id");
+            entity.Property(e => e.ModifierId).HasColumnName("modifier_id");
+
+            entity.HasOne(d => d.ModifierGroup).WithMany(p => p.ModifierGroupMappings)
+                .HasForeignKey(d => d.ModifierGroupId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("modifier_group_mappings_modifier_group_id_fkey");
+
+            entity.HasOne(d => d.Modifier).WithMany(p => p.ModifierGroupMappings)
+                .HasForeignKey(d => d.ModifierId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("modifier_group_mappings_modifier_id_fkey");
         });
 
         modelBuilder.Entity<Order>(entity =>

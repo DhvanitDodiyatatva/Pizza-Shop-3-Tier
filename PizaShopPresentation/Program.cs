@@ -36,6 +36,11 @@ builder.Services.AddScoped<IModifierGroupRepository, ModifierGroupRepository>();
 builder.Services.AddScoped<IModifierGroupService, ModifierGroupService>();
 builder.Services.AddScoped<IModifierRepository, ModifierRepository>();
 builder.Services.AddScoped<IModifierService, ModifierService>();
+builder.Services.AddScoped<ISectionRepository, SectionRepository>();
+builder.Services.AddScoped<ISectionService, SectionService>();
+builder.Services.AddScoped<ITableRepository, TableRepository>();
+builder.Services.AddScoped<ITableService, TableService>();
+
 
 // Configure JWT authentication
 builder.Services.AddAuthentication(options =>

@@ -22,7 +22,7 @@ public class MenuController : Controller
 
     public IActionResult Index()
     {
-        // Main menu page, no view model passed here
+        // Main menu page
         return View();
     }
 
@@ -281,27 +281,27 @@ public class MenuController : Controller
         return PartialView("_ModifierGroupList", modifierGroups);
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetModifiers(int modifierGroupId, int page = 1, int pageSize = 5)
-    {
-        var modifiers = await _modifierService.GetModifiersByModifierGrpAsync(modifierGroupId);
-        int totalModifiers = modifiers.Count;
-        int totalPages = (int)Math.Ceiling(totalModifiers / (double)pageSize);
+    // [HttpGet]
+    // public async Task<IActionResult> GetModifiers(int modifierGroupId, int page = 1, int pageSize = 5)
+    // {
+    //     var modifiers = await _modifierService.GetModifiersByModifierGrpAsync(modifierGroupId);
+    //     int totalModifiers = modifiers.Count;
+    //     int totalPages = (int)Math.Ceiling(totalModifiers / (double)pageSize);
 
-        var pagedModifiers = modifiers.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+    //     var pagedModifiers = modifiers.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
-        var viewModel = new PagedModifierViewModel
-        {
-            Modifiers = pagedModifiers,
-            CurrentPage = page,
-            TotalPages = totalPages,
-            PageSize = pageSize,
-            TotalModifiers = totalModifiers,
-            ModifierGroupId = modifierGroupId
-        };
+    //     var viewModel = new PagedModifierViewModel
+    //     {
+    //         Modifiers = pagedModifiers,
+    //         CurrentPage = page,
+    //         TotalPages = totalPages,
+    //         PageSize = pageSize,
+    //         TotalModifiers = totalModifiers,
+    //         ModifierGroupId = modifierGroupId
+    //     };
 
-        return PartialView("_ModifierList", viewModel);
-    }
+    //     return PartialView("_ModifierList", viewModel);
+    // }
 
     [HttpGet]
     public async Task<IActionResult> SearchItemsForModifier(string searchTerm, int page = 1, int pageSize = 5)

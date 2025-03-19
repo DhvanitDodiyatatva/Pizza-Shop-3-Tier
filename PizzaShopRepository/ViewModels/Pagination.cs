@@ -22,6 +22,16 @@ namespace PizzaShopRepository.ViewModels
         public int ModifierGroupId { get; set; } // To track the current modifier group
     }
 
+     public class PagedTableViewModel
+    {
+        public List<Table> Tables { get; set; } = new List<Table>();
+        public int CurrentPage { get; set; }
+        public int TotalPages { get; set; }
+        public int PageSize { get; set; }
+        public int TotalTables { get; set; }
+        public int SectionId { get; set; } // To track the current section
+    }
+
 
 }
 

@@ -21,9 +21,9 @@ public class ModifierService : IModifierService
         return await _modifierRepository.GetModifierByIdAsync(id);
     }
 
-    public async Task<List<Modifier>> GetModifiersByModifierGrpAsync(int modifierGroupId)
-    {
-        return await _modifierRepository.GetModifiersByModifierGrpAsync(modifierGroupId);
-    }
+    // public async Task<List<Modifier>> GetModifiersByModifierGrpAsync(int modifierGroupId)
+    // {
+    //     return await _modifierRepository.GetModifiersByModifierGrpAsync(modifierGroupId);
+    // }
 
 }

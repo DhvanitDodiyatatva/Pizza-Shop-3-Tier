@@ -22,10 +22,10 @@ public class ModifierRepository : IModifierRepository
         return await _context.Modifiers.FirstOrDefaultAsync(i => i.Id == id && !i.IsDeleted);
     }
 
-    public async Task<List<Modifier>> GetModifiersByModifierGrpAsync(int modifierGroupId)
-    {
-        return await _context.Modifiers.Where(modifier => modifier.ModifierGroupId == modifierGroupId && !modifier.IsDeleted).ToListAsync();
+    // public async Task<List<Modifier>> GetModifiersByModifierGrpAsync(int modifierGroupId)
+    // {
+    //     // return await _context.Modifiers.Where(modifier => modifier.ModifierGroupId == modifierGroupId && !modifier.IsDeleted).ToListAsync();
 
-    }
+    // }
 
 }

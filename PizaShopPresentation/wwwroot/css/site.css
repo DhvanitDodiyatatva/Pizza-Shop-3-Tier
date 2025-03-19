@@ -310,13 +310,13 @@ input:checked {
   stroke: #1f73ae !important;
 }
 
-.category-option > .edit-category {
+/* .category-option > .edit-category {
   display: none;
 }
 
 .category-option:hover > .edit-category {
   display: block;
-}
+} */
 
 .form-check-input {
   border: 1px solid #1f73ae;
