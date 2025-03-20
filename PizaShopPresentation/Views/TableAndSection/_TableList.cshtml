@@ -41,7 +41,24 @@ else
                 }
             </td> *@
             <td class="py-3 text-center text-nowrap">@table.Capacity</td>
-            <td class="py-3 text-center text-nowrap">@table.Status</td>
+            <td class="py-3 text-center text-nowrap">
+
+                @switch (table.Status?.ToLower())
+                {
+                    case "available":
+                        <span class="badge fw-bold fs-6  py-1 rounded-5 bg-success">Available</span>
+                        break;
+                    case "reserved":
+                        <span class="badge fw-bold fs-6  py-1 rounded-5 bg-warning">Reserved</span>
+                        break;
+                    case "occupied":
+                        <span class="badge fw-bold fs-6  py-1 rounded-5 bg-secondary">Occupied</span>
+                        break;
+                    default:
+                        <span>Unknown</span>
+                        break;
+                }
+            </td>
 
             <td class="py-3 text-center text-nowrap">
                 <button type="button" class="btn p-0 text-body-btn edit-item-btn" data-item-id="@table.Id">
@@ -101,11 +118,11 @@ else
         $(".edit-item-btn").on("click", function () {
             var itemId = $(this).data("item-id");
             $.ajax({
-                url: '@Url.Action("EditItem", "Menu")',
+                url: '@Url.Action("EditTable", "TableAndSection")',
                 type: 'GET',
                 data: { id: itemId },
                 success: function (result) {
-                    $("#addItemContainer").html(result);
+                    $("#addTableContainer").html(result);
                     var modal = new bootstrap.Modal(document.getElementById("editItemModal_" + itemId));
                     modal.show();
                 },
@@ -118,12 +135,12 @@ else
         $(".delete-item-btn").on("click", function () {
             var itemId = $(this).data("item-id");
             $.ajax({
-                url: '@Url.Action("DeleteItem", "Menu")',
+                url: '@Url.Action("DeleteTable", "TableAndSection")',
                 type: 'POST',
                 data: { id: itemId },
                 success: function (response) {
                     if (response.success) {
-                        toastr.success("Item deleted successfully.");
+                        toastr.success("Table deleted successfully.");
                         var modal = bootstrap.Modal.getInstance(document.getElementById("examplemodal_" + itemId));
                         modal.hide();
                         $('.modal-backdrop').remove();

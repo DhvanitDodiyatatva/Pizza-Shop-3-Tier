@@ -1,7 +1,9 @@
 @{
     ViewData["Title"] = "Table And Section";
 }
+
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
 
@@ -136,7 +138,7 @@
 <div id="AddSection">
     @* _AddSection partial View *@
 </div>
-<div id="addItemContainer">
+<div id="addTableContainer">
     <!--  Add New Item Partial view will load here -->
 </div>
 
@@ -150,27 +152,6 @@
         let currentPage = 1;
         let pageSize = 5;
         let currentSectionId = 1;
-
-        // Load categories and attach click handlers
-        function loadSections() {
-
-            $.ajax({
-                url: '@Url.Action("GetSections", "TableAndSection")',
-                type: 'GET',
-                success: function (result) {
-                    $("#sectionsContainer").html(result);
-                    $(".section-link").on("click", function (e) {
-                        e.preventDefault();
-                        var sectionId = $(this).data("sections-id");
-                        loadTables(sectionId, 1, pageSize);
-                    });
-                    attachEditCategoryHandler();
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error loading sections:", error);
-                }
-            });
-        }
 
         // Function to load items with pagination
         function loadTables(sectionId, page = 1, size = pageSize) {
@@ -233,6 +214,26 @@
             });
         }
 
+        // Load sectoins and attach click handlers
+        function loadSections() {
+            $.ajax({
+                url: '@Url.Action("GetSections", "TableAndSection")',
+                type: 'GET',
+                success: function (result) {
+                    $("#sectionsContainer").html(result);
+                    $(".section-link").on("click", function (e) {
+                        e.preventDefault();
+                        var sectionId = $(this).data("sections-id");
+                        loadTables(sectionId, 1, pageSize);
+                    });
+                    attachEditSectionHandler();
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error loading sections:", error);
+                }
+            });
+        }
+
 
         // Search functionality with pagination
         $("#searchInput").on("keyup", function () {
@@ -281,7 +282,7 @@
                     $.validator.unobtrusive.parse("#addSectionForm");
                 },
                 error: function (xhr, status, error) {
-                    console.error("Error loading Add Category form:", error);
+                    console.error("Error loading Add Section form:", error);
                 }
             });
         }
@@ -303,16 +304,18 @@
                     success: function (response) {
                         if (response.success) {
                             // On success: hide the modal, show success toast, and refresh categories
-                            var modalEl = document.getElementById('exampleModal12');
+                            @* var modalEl = document.getElementById('exampleModal12');
                             if (modalEl) {
                                 var modal = bootstrap.Modal.getInstance(modalEl);
                                 if (modal) {
                                     modal.hide();
                                 }
-                            }
+                            } *@
+                                $(".modal").hide();
                             $('.modal-backdrop').remove();
                             toastr.success("Section added successfully!");
                             loadSections();
+                            loadAddSection();
                         } else {
                             // On error: show a single toastr error and ensure the modal stays open
                             toastr.error("Failed to add section: " + response.message);
@@ -336,22 +339,22 @@
             });
         }
 
-        // Attach edit category button handler
-        function attachEditCategoryHandler() {
+        // Attach edit section button handler
+        function attachEditSectionHandler() {
             $(".edit-category-btn").off('click').on("click", function (e) {
                 e.preventDefault();
-                var categoryId = $(this).data("category-id");
-                console.log("Clicked edit for category ID:", categoryId);
+                var sectionId = $(this).data("sections-id");
+                console.log("Clicked edit for category ID:", sectionId);
 
                 $("#editModalView").html("");
 
                 $.ajax({
-                    url: '@Url.Action("EditCategory", "Menu")',
+                    url: '@Url.Action("EditSection", "TableAndSection")',
                     type: 'GET',
-                    data: { id: categoryId },
+                    data: { id: sectionId },
                     cache: false,
                     success: function (data) {
-                        console.log("Received data for category ID:", categoryId);
+                        console.log("Received data for category ID:", sectionId);
                         $("#editModalView").html(data);
 
                         var modalElement = document.getElementById('editModal');
@@ -364,7 +367,7 @@
                         }
                     },
                     error: function (xhr, status, error) {
-                        console.error("Error loading edit partial view for ID " + categoryId + ":", error);
+                        console.error("Error loading edit partial view for ID " + sectionId + ":", error);
                     }
                 });
             });
@@ -379,7 +382,7 @@
                 }
                 var formData = $(this).serialize();
                 $.ajax({
-                    url: '@Url.Action("UpdateCategory", "Menu")',
+                    url: '@Url.Action("UpdateSection", "TableAndSection")',
                     type: 'POST',
                     data: formData,
                     success: function (response) {
@@ -414,10 +417,10 @@
 
         $("#addNewItemBtn, #addNewItemBtnMobile").on("click", function () {
             $.ajax({
-                url: '@Url.Action("AddNewItem", "Menu")',
+                url: '@Url.Action("AddNewTable", "TableAndSection")',
                 type: 'GET',
                 success: function (result) {
-                    $("#addItemContainer").html(result);
+                    $("#addTableContainer").html(result);
 
                     var modal = new bootstrap.Modal(document.getElementById("exampleModal2"));
                     modal.show();
@@ -433,16 +436,16 @@
         $(document).on('submit', '.delete-category-form', function (e) {
             e.preventDefault();
             var form = $(this);
-            var categoryId = form.data('category-id');
+            var sectionId = form.data('sections-id');
 
             $.ajax({
-                url: '@Url.Action("Delete", "Menu")',
+                url: '@Url.Action("Delete", "TableAndSection")',
                 type: 'POST',
                 data: form.serialize(),
                 success: function (response) {
                     if (response.success) {
                         // Retrieve the delete modal element
-                        var modalEl = document.getElementById('deletemodal-' + categoryId);
+                        var modalEl = document.getElementById('deletemodal-' + sectionId);
                         if (modalEl) {
                             var modal = bootstrap.Modal.getInstance(modalEl);
                             if (modal) {
@@ -459,7 +462,7 @@
                         setTimeout(function () {
                             var firstCategory = $(".section-link").first();
                             if (firstCategory.length) {
-                                loadTables(firstCategory.data("category-id"));
+                                loadTables(firstCategory.data("sections-id"));
                             }
                         }, 300);
                     } else {
@@ -492,7 +495,7 @@
             }
 
             $.ajax({
-                url: "/Menu/DeleteItems",
+                url: "/TableAndSection/DeleteTables",
                 type: "POST",
                 contentType: "application/json",
                 data: JSON.stringify(selectedIds),
@@ -506,7 +509,7 @@
                     }
                 },
                 error: function () {
-                    alert("An error occurred while deleting items.");
+                    alert("An error occurred while deleting tables.");
                 }
             });
         });
