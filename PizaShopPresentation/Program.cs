@@ -9,6 +9,8 @@ using PizzaShopRepository.Implementations;
 using PizzaShopRepository.Interfaces;
 using PizzaShopRepository.Repositories;
 using PizzaShopRepository.Services;
+using PizzaShopService;
+
 // using PizzaShopService.Interfaces;
 using PizzaShopServices.Implementations;
 using PizzaShopServices.Interfaces;
@@ -32,6 +34,8 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IItemRepository, ItemRepository>();
 builder.Services.AddScoped<IItemService, ItemService>();
+builder.Services.AddScoped<IModifierGroupMappingRepository, ModifierGroupMappingRepository>();
+builder.Services.AddScoped<IModifierGroupMappingService, ModifierGroupMappingService>();
 builder.Services.AddScoped<IModifierGroupRepository, ModifierGroupRepository>();
 builder.Services.AddScoped<IModifierGroupService, ModifierGroupService>();
 builder.Services.AddScoped<IModifierRepository, ModifierRepository>();

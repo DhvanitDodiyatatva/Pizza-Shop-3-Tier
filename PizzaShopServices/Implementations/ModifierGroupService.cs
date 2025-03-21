@@ -12,8 +12,8 @@ public class ModifierGroupService : IModifierGroupService
     {
         _modifierGrpRepository = modifierGroupRepository;
     }
-    public async Task<List<ModifierGroup>> GetAllModifierGrpAsync()
+    public async Task<List<ModifierGroup>> GetAllModifierGroupAsync()
     {
-        return await _modifierGrpRepository.GetAllModifierGrpAsync();
+        return await _modifierGrpRepository.GetAllModifierGroupsAsync();
     }
 }

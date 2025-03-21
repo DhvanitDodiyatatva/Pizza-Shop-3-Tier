@@ -16,16 +16,9 @@ namespace PizzaShopRepository.Repositories
             _context = context;
         }
 
-        public async Task<List<ModifierGroup>> GetAllModifierGrpAsync()
+        public async Task<List<ModifierGroup>> GetAllModifierGroupsAsync()
         {
-            return await _context.ModifierGroups
-                                 .Where(c => !c.IsDeleted)
-                                 .ToListAsync();
-        }
-
-        public async Task<ModifierGroup?> GetModifierGrpByIdAsync(int id)
-        {
-            return await _context.ModifierGroups.FirstOrDefaultAsync(c => c.Id == id);
+            return await _context.ModifierGroups.Where(mg => !mg.IsDeleted).OrderBy(mg => mg.Id).ToListAsync();
         }
 
 

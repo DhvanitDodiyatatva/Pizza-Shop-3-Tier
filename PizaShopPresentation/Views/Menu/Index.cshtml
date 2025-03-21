@@ -167,7 +167,7 @@
 
 
 
-            @* <!-- Modifier Tab -->
+            <!-- Modifier Tab -->
             <div class="tab-pane fade" id="modifier-tab-pane" role="tabpanel" aria-labelledby="modifier-tab">
                 <div class="row ">
                     <div id="modifier-section" class="col-xl-3 col-lg-4 col-md-12 col-12 ps-3 pe-0 modifier-section"
@@ -218,8 +218,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div style="overflow: auto; height: 50dvh;" class="custom-scrollbar"
-                            id="modifierGroupsContainer">
+                        <div style="overflow: auto; height: 50dvh;" class="custom-scrollbar" id="ModifierGroupList">
                             <!-- ModifierGroups loaded here via AJAX -->
                         </div>
                     </div>
@@ -242,7 +241,7 @@
                                 <form class="d-flex align-items-center me-2 rounded-end-3" role="search">
                                     <div class="input-group position-relative">
                                         <input class="form-control" type="search" placeholder="Search"
-                                            aria-label="Search" id="SearchInputForModifier" />
+                                            aria-label="Search" id="searchModifierInput" />
                                         <span class="search-img-desktop position-absolute">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21"
                                                 fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
@@ -435,58 +434,14 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="content-div table-responsive">
-                            <div class="tab-content" id="tab-content" aria-orientation="vertical">
-                                <div class="tab-pane active" id="vertical-tabpanel-0" role="tabpanel"
-                                    aria-labelledby="vertical-tab-0">
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">
-                                                    <div class="form-check item-checkbox">
-                                                        <input class="form-check-input" type="checkbox" value=""
-                                                            id="flexCheckIndeterminate">
-                                                        <label class="form-check-label"
-                                                            for="flexCheckIndeterminate"></label>
-                                                    </div>
-                                                </th>
-                                                <th scope="col">Name</th>
-                                                <th scope="col" class="text-center text-nowrap">Unit</th>
-                                                <th scope="col" class="text-center text-nowrap">Rate</th>
-                                                <th scope="col" class="text-center text-nowrap">Quantity</th>
-                                                <th scope="col" class="text-center text-nowrap">Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="GetModifierList">
-                                            <!-- Modifiers loaded here via AJAX -->
 
-                                        </tbody>
-                                    </table>
-                                    <nav>
-                                        <div class=" d-flex justify-content-end align-items-center ">
-                                            <div class="pe-2">
-                                                <label for="pageSizeSelectForModifier">Items per page:</label>
-                                                <select id="pageSizeSelectForModifier"
-                                                    class="form-select d-inline-block w-auto">
-                                                    <option value="2">2</option>
-                                                    <option value="5" selected>5</option>
-                                                    <option value="8">8</option>
-                                                    <option value="10">10</option>
-                                                </select>
-                                            </div>
-                                            <div id="paginationControlsForModifier" class="d-flex align-items-center">
-                                                <!-- Pagination controls will be dynamically added here -->
-                                            </div>
-                                        </div>
-                                    </nav>
-                                </div>
-                            </div>
+                        <div id=" GetModifierListt" class="GetModifierList">
+                            <!--  ModifierList Partial view will load here -->fsdsfds
                         </div>
-
                     </div>
                     <div class="category-backdrop"></div>
                 </div>
-            </div> *@
+            </div>
 
 
 
@@ -511,7 +466,7 @@
         let currentPage = 1;
         let pageSize = 5;
         let currentCategoryId = 1;
-        let currentModifierGrpId = 1;
+        let currentModifierGroupId = 1;
 
         // Function to load items with pagination
         function loadItems(categoryId, page = 1, size = pageSize) {
@@ -873,104 +828,52 @@
 
         function loadModifierGroups() {
             $.ajax({
-                url: '@Url.Action("GetModifierGroup", "Menu")',
+                url: '@Url.Action("GetModifierGroups", "Menu")',
                 type: 'GET',
                 success: function (result) {
-                    $("#modifierGroupsContainer").html(result);
-                    $(".modifierGrp-link").on("click", function (e) {
+                    $("#ModifierGroupList").html(result);
+                    $(".ModifierGroup-link").off("click").on("click", function (e) {
                         e.preventDefault();
-                        var modifierGroupId = $(this).data("modifiergrp-id");
-                        loadModifiers(modifierGroupId, 1, pageSize);
+                        currentModifierGroupId = $(this).data("modifiergroupId");
+                        loadModifier(currentModifierGroupId);
                     });
+                    @* attachEditCategoryHandler(); *@
                 },
                 error: function (xhr, status, error) {
-                    console.error("Error loading Modifier Groups:", error);
+                    console.error("Error loading categories:", error);
+                    $("#ModifierGroupList").html("Failed to load categories");
                 }
             });
         }
 
-        function loadModifiers(modifierGroupId, page = 1, size = pageSize) {
+        //function to load Modifiers
+        function loadModifier() {
+            console.log("called");
+            var searchString = $('#searchModifierInput').val();
             $.ajax({
                 url: '@Url.Action("GetModifiers", "Menu")',
                 type: 'GET',
-                data: { modifierGroupId: modifierGroupId, page: page, pageSize: size },
+                data: {
+                    modifierGroupId: currentModifierGroupId,
+                    searchString: searchString,
+                    page: 1,
+                    pageSize: 5,
+                },
                 success: function (result) {
-                    $("#GetModifierList").html(result);
-                    currentPage = page;
-                    currentModifierGrpId = modifierGroupId;
-                    updatePaginationControlsForModifier();
+                    console.log("success");
+                    $(".GetModifierList").html(result);
+                    console.log(result);
+                    @* attachEditModifierHandler(); *@
+                        @* @ attachSelectAllHandler(); @ *@
                 },
                 error: function (xhr, status, error) {
                     console.error("Error loading modifiers:", error);
-                    $("#GetModifierList").html("Failed to load modifiers");
+                    $(".GetModifierListt").html("Failed to load modifiers");
                 }
             });
         }
 
-        function updatePaginationControlsForModifier() {
-            const totalPages = parseInt($("#GetModifierList").find("input[name='TotalPages']").val());
-            const currentPage = parseInt($("#GetModifierList").find("input[name='CurrentPage']").val());
-            let paginationHtml = '';
 
-            if (totalPages > 1) {
-                paginationHtml += '<nav aria-label="Page navigation">';
-                paginationHtml += '<ul class="pagination mb-0">';
-
-                // Previous button
-                paginationHtml += `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-                    <a class="page-link text-secondary" href="#" data-page="${currentPage - 1}"> < </a>
-                </li>`;
-
-                // Page numbers (simplified: show all pages)
-                for (let i = 1; i <= totalPages; i++) {
-                    paginationHtml += `<li class="page-item ${i === currentPage ? 'active' : ''}">
-                        <a class="page-link text-secondary" href="#" data-page="${i}">${i}</a>
-                    </li>`;
-                }
-
-                // Next button
-                paginationHtml += `<li class="page-item  ${currentPage === totalPages ? 'disabled' : ''}">
-                    <a class="page-link text-secondary" href="#" data-page="${currentPage + 1}"> > </a>
-                </li>`;
-
-                paginationHtml += '</ul></nav>';
-            }
-
-            $("#paginationControlsForModifier").html(paginationHtml);
-
-            // Attach click handlers to pagination links
-            $("#paginationControlsForModifier .page-link").on("click", function (e) {
-                e.preventDefault();
-                const page = $(this).data("page");
-                if (page && page > 0 && page <= totalPages) {
-                    loadModifiers(currentModifierGrpId, page);
-
-                }
-            });
-        }
-
-        // Page size change handler
-        $("#pageSizeSelectForModifier").on("change", function () {
-            pageSize = parseInt($(this).val());
-            loadModifiers(currentModifierGrpId, 1, pageSize);
-        });
-
-        $("#SearchInputForModifier").on("keyup", function () {
-            var searchTerm = $(this).val().trim();
-            $.ajax({
-                url: '@Url.Action("SearchItemsForModifier", "Menu")',
-                type: 'GET',
-                data: { searchTerm: searchTerm, page: 1, pageSize: pageSize },
-                success: function (response) {
-                    $("#GetModifierList").html(response);
-                    currentModifierGrpId = 0; // Reset modifiergrp for search
-                    updatePaginationControlsForModifier();
-                },
-                error: function () {
-                    toastr.error("Failed to search items.");
-                }
-            });
-        });
 
 
 
@@ -979,7 +882,7 @@
         loadItems(1);
         loadAddCategory();
         loadModifierGroups();
-        loadModifiers(1);
+        loadModifier();
     });
 </script>
 

@@ -209,6 +209,7 @@ public partial class PizzaShopContext : DbContext
             entity.ToTable("modifier_group_mappings");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.IsDeleted).HasColumnName("is_deleted");
             entity.Property(e => e.ModifierGroupId).HasColumnName("modifier_group_id");
             entity.Property(e => e.ModifierId).HasColumnName("modifier_id");
 

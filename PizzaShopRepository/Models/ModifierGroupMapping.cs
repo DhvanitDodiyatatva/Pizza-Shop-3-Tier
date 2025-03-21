@@ -11,6 +11,8 @@ public partial class ModifierGroupMapping
 
     public int ModifierId { get; set; }
 
+    public bool IsDeleted { get; set; }
+
     public virtual Modifier Modifier { get; set; } = null!;
 
     public virtual ModifierGroup ModifierGroup { get; set; } = null!;

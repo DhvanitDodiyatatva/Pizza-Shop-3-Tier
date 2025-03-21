@@ -4,5 +4,5 @@ namespace PizzaShopServices.Interfaces;
 
 public interface IModifierGroupService
 {
-    Task<List<ModifierGroup>> GetAllModifierGrpAsync();
+    Task<List<ModifierGroup>> GetAllModifierGroupAsync();
 }
