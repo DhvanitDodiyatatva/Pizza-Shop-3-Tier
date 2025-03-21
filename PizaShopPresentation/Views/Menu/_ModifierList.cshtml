@@ -1,6 +1,7 @@
 @model List<PizzaShopRepository.Models.Modifier>
 
-
+<input type="hidden" name="TotalPages" value="@ViewBag.TotalPages" />
+<input type="hidden" name="CurrentPage" value="@ViewBag.CurrentPage" />
 <div class="content-div table-responsive">
     <div class="tab-content" id="tab-content" aria-orientation="vertical">
         <div class="tab-pane active" id="vertical-tabpanel-0" role="tabpanel" aria-labelledby="vertical-tab-0">
@@ -83,51 +84,31 @@
                     }
                 </tbody>
             </table>
-            <nav aria-label="Page navigation example"
-                class="d-flex align-items-center justify-content-between justify-content-lg-end flex-column flex-md-row">
-                <div class="d-flex me-2 align-items-center mb-4">
-                    <p class="m-0 me-1">Items Per Page</p>
-                    <div>
-                        <button id="pageSizeButton" class="btn btn-outline-secondary dropdown-toggle" type="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            @ViewBag.PageSize
-                        </button>
-                        <ul class="dropdown-menu">
-                            @foreach (var size in new int[] { 1, 2, 3, 4, 5 })
-                            {
-                                <li>
-                                    <a class="dropdown-item pagesize-item" href="#" data-pagesize="@size">@size</a>
-                                </li>
+            <nav aria-label="Modifier page navigation">
+                <div class="d-flex justify-content-end align-items-center">
+                    <div class="pe-2">
+                        <label for="modifierPageSizeSelect">Items per page:</label>
+                        <select id="modifierPageSizeSelect" class="form-select d-inline-block w-auto">
+                            @{
+                                int[] pageSizes = { 3, 5, 8, 10 };
                             }
-                        </ul>
+                            @foreach (var size in pageSizes)
+                            {
+                                if (ViewBag.PageSize == size)
+                                {
+                                    <option value="@size" selected>@size</option>
+                                }
+                                else
+                                {
+                                    <option value="@size">@size</option>
+                                }
+                            }
+                        </select>
                     </div>
+                    <ul class="pagination mb-0">
+                        <!-- Pagination will be dynamically updated by JavaScript -->
+                    </ul>
                 </div>
-
-                <ul class="pagination d-flex align-items-center mb-4">
-                    @{
-                        int totalPages = ViewBag.TotalPages;
-                        int currentPage = ViewBag.CurrentPage;
-                        int pageSize = ViewBag.PageSize;
-                    }
-                    <!-- Previous Page -->
-                    <li class="page-item @(currentPage == 1 ? "disabled" : "")">
-                        <a class="page-link pagination-link text-decoration-none text-body" href="#"
-                            data-page="@(currentPage - 1)">&lt;</a>
-                    </li>
-                    <!-- Page Numbers -->
-                    @for (int i = 1; i <= totalPages; i++)
-                    {
-                        <li class="page-item @(i == currentPage ? "active" : "")">
-                            <a class="page-link pagination-link text-decoration-none text-body" href="#"
-                                data-page="@i">@i</a>
-                        </li>
-                    }
-                    <!-- Next Page -->
-                    <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
-                        <a class="page-link pagination-link text-decoration-none text-body" href="#"
-                            data-page="@(currentPage + 1)">&gt;</a>
-                    </li>
-                </ul>
             </nav>
 
         </div>

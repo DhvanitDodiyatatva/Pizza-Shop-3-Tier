@@ -435,8 +435,8 @@
                             </div>
                         </div>
 
-                        <div id=" GetModifierListt" class="GetModifierList">
-                            <!--  ModifierList Partial view will load here -->fsdsfds
+                        <div id=" GetModifierList" class="GetModifierList">
+                            <!--  ModifierList Partial view will load here -->
                         </div>
                     </div>
                     <div class="category-backdrop"></div>
@@ -826,7 +826,7 @@
             });
         });
 
-        function loadModifierGroups() {
+        @* function loadModifierGroups() {
             $.ajax({
                 url: '@Url.Action("GetModifierGroups", "Menu")',
                 type: 'GET',
@@ -837,7 +837,7 @@
                         currentModifierGroupId = $(this).data("modifiergroupId");
                         loadModifier(currentModifierGroupId);
                     });
-                    @* attachEditCategoryHandler(); *@
+                    attachEditCategoryHandler();
                 },
                 error: function (xhr, status, error) {
                     console.error("Error loading categories:", error);
@@ -863,15 +863,109 @@
                     console.log("success");
                     $(".GetModifierList").html(result);
                     console.log(result);
-                    @* attachEditModifierHandler(); *@
-                        @* @ attachSelectAllHandler(); @ *@
+                    attachEditModifierHandler();
+                    attachSelectAllHandler();
                 },
                 error: function (xhr, status, error) {
                     console.error("Error loading modifiers:", error);
-                    $(".GetModifierListt").html("Failed to load modifiers");
+                    $(".GetModifierList").html("Failed to load modifiers");
+                }
+            });
+        } *@
+
+
+            // Load modifier groups
+            function loadModifierGroups() {
+                $.ajax({
+                    url: '@Url.Action("GetModifierGroups", "Menu")',
+                    type: 'GET',
+                    success: function (result) {
+                        $("#ModifierGroupList").html(result);
+                        $(".ModifierGroup-link").off("click").on("click", function (e) {
+                            e.preventDefault();
+                            currentModifierGroupId = $(this).data("modifiergroup-id");
+                            loadModifier(currentModifierGroupId, 1, pageSize, "");
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error loading modifier groups:", error);
+                        $("#ModifierGroupList").html("Failed to load modifier groups");
+                    }
+                });
+            }
+
+        // Load modifiers with pagination and search
+        function loadModifier(modifierGroupId, page = 1, size = pageSize, searchString = "") {
+            $.ajax({
+                url: '@Url.Action("GetModifiers", "Menu")',
+                type: 'GET',
+                data: {
+                    modifierGroupId: modifierGroupId,
+                    page: page,
+                    pageSize: size,
+                    searchString: searchString
+                },
+                success: function (result) {
+                    $(".GetModifierList").html(result);
+                    currentPage = page;
+                    currentModifierGroupId = modifierGroupId;
+                    updateModifierPaginationControls();
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error loading modifiers:", error);
+                    $(".GetModifierList").html("Failed to load modifiers");
                 }
             });
         }
+
+        // Update modifier pagination controls
+        function updateModifierPaginationControls() {
+            const totalPages = parseInt($(".GetModifierList").find("input[name='TotalPages']").val()) || 1;
+            const currentPage = parseInt($(".GetModifierList").find("input[name='CurrentPage']").val()) || 1;
+            let paginationHtml = '';
+
+            if (totalPages > 1) {
+                paginationHtml += '<li class="page-item ' + (currentPage === 1 ? 'disabled' : '') + '">';
+                paginationHtml += '<a class="page-link text-secondary" href="#" data-page="' + (currentPage - 1) + '"> < </a>';
+                paginationHtml += '</li>';
+
+                for (let i = 1; i <= totalPages; i++) {
+                    paginationHtml += '<li class="page-item ' + (i === currentPage ? 'active' : '') + '">';
+                    paginationHtml += '<a class="page-link text-secondary" href="#" data-page="' + i + '">' + i + '</a>';
+                    paginationHtml += '</li>';
+                }
+
+                paginationHtml += '<li class="page-item ' + (currentPage === totalPages ? 'disabled' : '') + '">';
+                paginationHtml += '<a class="page-link text-secondary" href="#" data-page="' + (currentPage + 1) + '"> > </a>';
+                paginationHtml += '</li>';
+            }
+
+            $(".GetModifierList .pagination").html(paginationHtml);
+        }
+
+        // Event delegation for pagination links
+        $(document).on("click", ".GetModifierList .page-link", function (e) {
+            e.preventDefault();
+            const page = $(this).data("page");
+            const searchString = $("#searchModifierInput").val().trim();
+            const totalPages = parseInt($(".GetModifierList").find("input[name='TotalPages']").val()) || 1;
+            if (page && page > 0 && page <= totalPages) {
+                loadModifier(currentModifierGroupId, page, pageSize, searchString);
+            }
+        });
+
+        // Search modifier input handler
+        $("#searchModifierInput").on("keyup", function () {
+            const searchString = $(this).val().trim();
+            loadModifier(currentModifierGroupId, 1, pageSize, searchString);
+        });
+
+        // Page size change handler for modifiers
+        $(document).on("change", "#modifierPageSizeSelect", function () {
+            pageSize = parseInt($(this).val());
+            const searchString = $("#searchModifierInput").val().trim();
+            loadModifier(currentModifierGroupId, 1, pageSize, searchString);
+        });
 
 
 
@@ -882,7 +976,8 @@
         loadItems(1);
         loadAddCategory();
         loadModifierGroups();
-        loadModifier();
+        loadModifier(1);
+        @* loadModifier(); *@
     });
 </script>
 
