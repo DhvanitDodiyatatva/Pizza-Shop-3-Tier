@@ -252,7 +252,8 @@
                                     </div>
                                 </form>
                                 <div>
-                                    <button class="btn btn-outline-secondary rounded-2 fs-6" type="submit">
+                                    <button class="btn btn-outline-secondary rounded-2 fs-6"
+                                        id="deleteSelectedModifiers" type="button">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
                                             fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
                                             <path
@@ -262,12 +263,11 @@
                                 </div>
                                 <div>
                                     <button type="button" class="btn btn-main btn-primary d-none d-lg-block ms-2"
-                                        id="addNewModifierBtn" data-bs-toggle="modal" data-bs-target="#addModifierModal"
-                                        data-bs-whatever="getbootstrap">+
+                                        id="addNewModifierBtn">+
                                         New Modifier</button>
                                     <button
                                         class="btn btn-main bg-primary rounded-2 ms-2 text-white fs-6 d-block d-lg-none"
-                                        type="submit">+</button>
+                                        type="button" id="addNewModifierMobileBtn">+</button>
 
                                 </div>
                             </div>
@@ -426,6 +426,11 @@
 
         });
 
+        $('#modifier-tab-pane #ModifierGroupList').on('click', '.category-option', function () {
+            $('#modifier-tab-pane #ModifierGroupList .category-option').removeClass('active');
+            $(this).addClass('active');
+
+        });
 
 
 
@@ -766,7 +771,7 @@
 
 
         // Add Modifier
-        $("#addNewModifierBtn").on("click", function () {
+        $("#addNewModifierBtn , #addNewModifierMobileBtn").on("click", function () {
             $.ajax({
                 url: '@Url.Action("AddNewModifier", "Menu")',
                 type: 'GET',
@@ -904,6 +909,94 @@
                 });
             });
         }
+
+        // Select All Modifiers Checkbox
+        $(document).on("click", "#selectAllModifiers", function () {
+            $(".modifierCheckbox").prop("checked", this.checked);
+            console.log("Select All clicked, checked:", this.checked); // Debug
+        });
+
+        // Single Modifier Checkbox Toggle
+        $(document).on("change", ".modifierCheckbox", function () {
+            console.log("Checkbox changed, ID:", $(this).val(), "Checked:", $(this).is(":checked")); // Debug
+            if ($(".modifierCheckbox:checked").length === $(".modifierCheckbox").length) {
+                $("#selectAllModifiers").prop("checked", true);
+            } else {
+                $("#selectAllModifiers").prop("checked", false);
+            }
+        });
+
+        // Single Modifier Delete from Group
+        $(document).on("click", ".confirm-delete-modifier", function () {
+            var modifierId = $(this).data("modifier-id");
+            var modifierGroupId = $(this).data("modifier-group-id");
+            $.ajax({
+                url: '@Url.Action("DeleteModifier", "Menu")',
+                type: 'POST',
+                data: { id: modifierId, modifierGroupId: modifierGroupId },
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function (response) {
+                    if (response.success) {
+                        var modal = bootstrap.Modal.getInstance(document.getElementById("deleteModifierModal_" + modifierId));
+                        modal.hide();
+                        $('.modal-backdrop').remove();
+                        $('body').removeClass('modal-open'); // Ensure body class is cleared
+                        toastr.success(response.message);
+                        loadModifier(currentModifierGroupId);
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error deleting modifier:", error);
+                    toastr.error("Failed to remove modifier from group.");
+                }
+            });
+        });
+
+        // Mass Modifier Delete from Group
+        $("#deleteSelectedModifiers").on("click", function () {
+            var selectedIds = $(".modifierCheckbox:checked").map(function () {
+                return parseInt($(this).val());
+            }).get();
+
+            console.log("Selected Modifier IDs:", selectedIds); // Debug: Check selected IDs
+            console.log("Current Modifier Group ID:", currentModifierGroupId); // Debug: Verify group ID
+
+            if (selectedIds.length === 0) {
+                toastr.warning("Please select at least one modifier to remove.");
+                return;
+            }
+
+            if (!confirm("Are you sure you want to remove the selected modifiers from this group?")) {
+                return;
+            }
+
+            $.ajax({
+                url: '@Url.Action("DeleteModifiers", "Menu")',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ ids: selectedIds, modifierGroupId: currentModifierGroupId }),
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function (response) {
+                    console.log("DeleteModifiers Response:", response); // Debug: Log server response
+                    if (response.success) {
+                        toastr.success(response.message);
+                        loadModifier(currentModifierGroupId);
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error deleting modifiers:", error, "Response:", xhr.responseText); // Debug: Log error details
+                    toastr.error("Failed to remove modifiers from group.");
+                }
+            });
+        });
 
 
 

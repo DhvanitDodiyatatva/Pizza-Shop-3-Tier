@@ -36,8 +36,8 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="Name" name="Name" value="@Model.Name"
-                                    placeholder="Name" required>
+                                <input type="text" class="form-control" id="Name" name="Name" value="@Model.Name" asp-for="Name"
+                                    placeholder="Name" >
                                 <label for="Name">Name*</label>
                                 <span asp-validation-for="Name" class="text-danger"></span>
                             </div>
@@ -45,7 +45,7 @@
                         <div class="col-md-4">
                             <div class="form-floating">
                                 <input type="number" step="0.01" class="form-control" id="Price" name="Price"
-                                    value="@Model.Price" placeholder="Rate" required>
+                                    value="@Model.Price" placeholder="Rate" asp-for="Price">
                                 <label for="Price">Rate*</label>
                                 <span asp-validation-for="Price" class="text-danger"></span>
                             </div>
@@ -53,7 +53,7 @@
                         <div class="col-md-4">
                             <div class="form-floating">
                                 <input type="number" class="form-control" id="Quantity" name="Quantity"
-                                    value="@Model.Quantity" placeholder="Quantity" required>
+                                    value="@Model.Quantity" placeholder="Quantity" asp-for="Quantity">
                                 <label for="Quantity">Quantity*</label>
                                 <span asp-validation-for="Quantity" class="text-danger"></span>
                             </div>
@@ -89,3 +89,31 @@
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
 <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+<script>
+     const chBoxes =
+        document.querySelectorAll('.dropdown-menu input[type="checkbox"]');
+    const dpBtn =
+        document.getElementById('multiSelectDropdown');
+    let mySelectedListItems = [];
+
+    function handleCB() {
+        mySelectedListItems = [];
+        let mySelectedListItemsText = '';
+
+        chBoxes.forEach((checkbox) => {
+            if (checkbox.checked) {
+                mySelectedListItems.push(checkbox.value);
+                mySelectedListItemsText += checkbox.value + ', ';
+            }
+        });
+
+        dpBtn.innerText =
+            mySelectedListItems.length > 0
+                ? mySelectedListItemsText.slice(0, -2) : 'Select';
+    }
+
+    chBoxes.forEach((checkbox) => {
+        checkbox.addEventListener('change', handleCB);
+    }); 
+</script>

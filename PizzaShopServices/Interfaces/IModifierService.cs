@@ -10,6 +10,8 @@ public interface IModifierService
     Task<ModifierViewModel> AddModifierAsync(ModifierViewModel model);
     Task<ModifierViewModel?> GetModifierForEditAsync(int id);
     Task<ModifierViewModel> UpdateModifierAsync(ModifierViewModel model);
+    Task SoftDeleteModifierFromGroupAsync(int modifierId, int modifierGroupId);
+    Task SoftDeleteModifiersFromGroupAsync(List<int> modifierIds, int modifierGroupId);
 
 
 }

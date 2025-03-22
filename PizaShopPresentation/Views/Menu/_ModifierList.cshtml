@@ -2,6 +2,7 @@
 
 <input type="hidden" name="TotalPages" value="@ViewBag.TotalPages" />
 <input type="hidden" name="CurrentPage" value="@ViewBag.CurrentPage" />
+<input type="hidden" name="ModifierGroupId" value="@ViewBag.ModifierGroupId" />
 <div class="content-div table-responsive">
     <div class="tab-content" id="tab-content" aria-orientation="vertical">
         <div class="tab-pane active" id="vertical-tabpanel-0" role="tabpanel" aria-labelledby="vertical-tab-0">
@@ -10,8 +11,8 @@
                     <tr>
                         <th scope="col">
                             <div class="form-check item-checkbox">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckIndeterminate">
-                                <label class="form-check-label" for="flexCheckIndeterminate"></label>
+                                <input class="form-check-input" type="checkbox" value="" id="selectAllModifiers">
+                                <label class="form-check-label" for="selectAllModifiers"></label>
                             </div>
                         </th>
                         <th scope="col">Name</th>
@@ -24,12 +25,12 @@
                 <tbody>
                     @foreach (var modifier in Model)
                     {
-                        <tr>
+                        <tr data-id="@modifier.Id">
                             <td class="py-3 text-center text-nowrap" scope="row">
                                 <div class="form-check item-checkbox">
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked"
-                                        style="height: 20px; width: 20px;" checked>
-                                    <label class="form-check-label" for="flexCheckChecked"></label>
+                                    <input class="form-check-input modifierCheckbox" type="checkbox" value="@modifier.Id"
+                                        id="modifierCheck_@modifier.Id" style="height: 20px; width: 20px;">
+                                    <label class="form-check-label" for="modifierCheck_@modifier.Id"></label>
                                 </div>
                             </td>
                             <td class="py-3 text-nowrap">@modifier.Name</td>
@@ -46,39 +47,48 @@
                                             d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z" />
                                     </svg>
                                 </button>
-                                <button type="button" class="btn p-0 text-body-btn" data-bs-toggle="modal"
-                                    data-bs-target="#exampleModal">
+                                <button type="button" class="btn p-0 delete-modifier-btn" data-bs-toggle="modal"
+                                    data-bs-target="#deleteModifierModal_@modifier.Id" data-modifier-id="@modifier.Id"
+                                    data-modifier-group-id="@ViewBag.ModifierGroupId">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
                                         class="bi bi-trash3" viewBox="0 0 16 16">
                                         <path
                                             d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 0 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
                                     </svg>
                                 </button>
-                                @* <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                            <div class="modal-dialog modal-dialog-centered">
-                                                                <div class="modal-content">
-                                                                    <div class="modal-header">
-                                                                        <h1 class="modal-title fs-5" id="exampleModalLabel">
-                                                                            Delete confirmation</h1>
-                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                                    </div>
-                                                                    <div class="modal-body d-flex align-items-center justify-content-center flex-column">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor"
-                                                                            class="bi bi-exclamation-triangle" viewBox="0 0 16 16">
-                                                                            <path
-                                                                                d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.15.15 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.2.2 0 0 1-.054.06.1.1 0 0 1-.066.017H1.146a.1.1 0 0 1-.066-.017.2.2 0 0 1-.054-.06.18.18 0 0 1 .002-.183L7.884 2.073a.15.15 0 0 1 .054-.057m1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767z" />
-                                                                            <path
-                                                                                d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z" />
-                                                                        </svg>
-                                                                        <p>Are you sure you want to delete these items</p>
-                                                                    </div>
-                                                                    <div class="modal-footer d-flex justify-content-center align-items-center">
-                                                                        <button type="button" class="btn btn-primary">Yes</button>
-                                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div> *@
+                                <!-- Delete Confirmation Modal -->
+                                <div class="modal fade" id="deleteModifierModal_@modifier.Id" tabindex="-1"
+                                    aria-labelledby="deleteModifierModalLabel_@modifier.Id" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="deleteModifierModalLabel_@modifier.Id">
+                                                    Delete Confirmation</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div
+                                                class="modal-body d-flex align-items-center justify-content-center flex-column">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50"
+                                                    fill="currentColor" class="bi bi-exclamation-triangle"
+                                                    viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.15.15 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.2.2 0 0 1-.054.06.1.1 0 0 1-.066.017H1.146a.1.1 0 0 1-.066-.017.2.2 0 0 1-.054-.06.18.18 0 0 1 .002-.183L7.884 2.073a.15.15 0 0 1 .054-.057m1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767z" />
+                                                    <path
+                                                        d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z" />
+                                                </svg>
+                                                <p>Are you sure you want to delete '@modifier.Name'?</p>
+                                            </div>
+                                            <div class="modal-footer d-flex justify-content-center align-items-center">
+                                                <button type="button" class="btn btn-primary confirm-delete-modifier"
+                                                    data-modifier-id="@modifier.Id"
+                                                    data-modifier-group-id="@ViewBag.ModifierGroupId">Yes</button>
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">No</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                     }

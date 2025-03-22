@@ -300,6 +300,7 @@ public class MenuController : Controller
             }
 
             // If a search string is provided, filter modifiers by name (case-insensitive)
+            modifiers = modifiers.Where(m => !m.IsDeleted).ToList();
             if (!string.IsNullOrWhiteSpace(searchString))
             {
                 modifiers = modifiers.Where(m => m.Name.ToLower().Contains(searchString.ToLower())).ToList();
@@ -392,6 +393,45 @@ public class MenuController : Controller
         {
             Console.WriteLine($"UpdateModifier Exception: {ex.Message}\nStackTrace: {ex.StackTrace}");
             return Json(new { success = false, message = $"Error updating modifier: {ex.Message}" });
+        }
+    }
+
+    //Soft Delete a Single Modifier from a Specific Group
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteModifier(int id, int modifierGroupId)
+    {
+        try
+        {
+            await _modifierService.SoftDeleteModifierFromGroupAsync(id, modifierGroupId);
+            return Json(new { success = true, message = "Modifier removed from group successfully!" });
+        }
+        catch (Exception ex)
+        {
+            return Json(new { success = false, message = ex.Message });
+        }
+    }
+
+    //Mass Soft Delete Modifiers from a Specific Group
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteModifiers([FromBody] List<int> ids, int modifierGroupId)
+    {
+        if (ids == null || !ids.Any())
+        {
+            Console.WriteLine("No IDs received in DeleteModifiers");
+            return Json(new { success = false, message = "No modifiers selected for deletion." });
+        }
+
+
+        try
+        {
+            await _modifierService.SoftDeleteModifiersFromGroupAsync(ids, modifierGroupId);
+            return Json(new { success = true, message = "Modifiers removed from group successfully!" });
+        }
+        catch (Exception ex)
+        {
+            return Json(new { success = false, message = ex.Message });
         }
     }
 
