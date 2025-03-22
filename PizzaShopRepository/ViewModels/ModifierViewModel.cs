@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using PizzaShopRepository.Models;
 
 namespace PizzaShopRepository.ViewModels
 {
@@ -7,25 +6,26 @@ namespace PizzaShopRepository.ViewModels
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Name is required")]
-        [StringLength(100, ErrorMessage = "Name cannot be longer than 100 characters")]
+        [Required(ErrorMessage = "Name is required.")]
+        [StringLength(100, ErrorMessage = "Name cannot exceed 100 characters.")]
         public string Name { get; set; } = null!;
 
-        [Required(ErrorMessage = "Rate is required")]
-        [Range(0, double.MaxValue, ErrorMessage = "Rate must be a positive value")]
+        [Required(ErrorMessage = "Rate is required.")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Rate must be greater than 0.")]
         public decimal Price { get; set; }
 
-        [Required(ErrorMessage = "Quantity is required")]
-        [Range(1, int.MaxValue, ErrorMessage = "Quantity must be at least 1")]
-        public int Quantity { get; set; }
+        [StringLength(50, ErrorMessage = "Unit cannot exceed 50 characters.")]
+        public string? Unit { get; set; }
 
-        [Required(ErrorMessage = "Unit is required")]
-        public string Unit { get; set; } = null!;
+        [Required(ErrorMessage = "Quantity is required.")]
+        [Range(1, int.MaxValue, ErrorMessage = "Quantity must be at least 1.")]
+        public int? Quantity { get; set; }
 
+        [StringLength(500, ErrorMessage = "Description cannot exceed 500 characters.")]
         public string? Description { get; set; }
 
-        public List<int> ModifierGroupIds { get; set; } = new List<int>(); // For multiple modifier groups
-
-        public List<ModifierGroup> AvailableModifierGroups { get; set; } = new List<ModifierGroup>(); // For dropdown
+        // For associating with multiple ModifierGroups
+        [Required(ErrorMessage = "At least one Modifier Group must be selected.")]
+        public List<int> ModifierGroupIds { get; set; } = new List<int>();
     }
 }

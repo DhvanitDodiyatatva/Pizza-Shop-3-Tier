@@ -42,5 +42,11 @@ namespace PizzaShopRepository.Repositories
                         .Select(m => m.Modifier)
                         .ToListAsync();
         }
+
+        public async Task UpdateMappingAsync(ModifierGroupMapping mapping)
+        {
+            _context.ModifierGroupMappings.Update(mapping);
+            await _context.SaveChangesAsync();
+        }
     }
 }

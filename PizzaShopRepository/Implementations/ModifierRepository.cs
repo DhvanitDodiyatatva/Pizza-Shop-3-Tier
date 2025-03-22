@@ -21,7 +21,7 @@ public class ModifierRepository : IModifierRepository
 
     public async Task<List<Modifier>> GetAllModifierAsync()
     {
-        return await _context.Modifiers.ToListAsync();
+        return await _context.Modifiers.Where(m => !m.IsDeleted).ToListAsync();
     }
 
     public async Task<Modifier> GetModifier(string name)
@@ -32,12 +32,14 @@ public class ModifierRepository : IModifierRepository
 
     public async Task<Modifier?> GetModifierByIdAsync(int id)
     {
-        return await _context.Modifiers.FirstOrDefaultAsync(m => m.Id == id);
+        return await _context.Modifiers.FirstOrDefaultAsync(m => m.Id == id && !m.IsDeleted);
     }
-    // public async Task<List<Modifier>> GetModifiersByModifierGrpAsync(int modifierGroupId)
-    // {
-    //     // return await _context.Modifiers.Where(modifier => modifier.ModifierGroupId == modifierGroupId && !modifier.IsDeleted).ToListAsync();
 
-    // }
+    public async Task UpdateModifierAsync(Modifier modifier)
+    {
+        _context.Modifiers.Update(modifier);
+        await _context.SaveChangesAsync();
+    }
+
 
 }

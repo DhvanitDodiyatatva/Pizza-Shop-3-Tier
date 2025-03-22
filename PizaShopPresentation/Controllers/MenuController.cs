@@ -329,5 +329,71 @@ public class MenuController : Controller
         }
     }
 
+    [HttpGet]
+    public async Task<IActionResult> AddNewModifier()
+    {
+        var modifierGroups = await _modifierGroupService.GetAllModifierGroupAsync();
+        ViewBag.ModifierGroups = modifierGroups;
+        return PartialView("_AddModifier", new ModifierViewModel());
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddNewModifier(ModifierViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+            Console.WriteLine("AddNewModifier Validation Errors: " + string.Join(" | ", errors));
+            return Json(new { success = false, message = "Validation failed: " + string.Join(" ", errors) });
+        }
+
+        try
+        {
+            await _modifierService.AddModifierAsync(model);
+            return Json(new { success = true, message = "Modifier added successfully!" });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"AddNewModifier Exception: {ex.Message}\nStackTrace: {ex.StackTrace}");
+            return Json(new { success = false, message = $"Error adding modifier: {ex.Message}" });
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> EditModifier(int id)
+    {
+        var model = await _modifierService.GetModifierForEditAsync(id);
+        if (model == null)
+            return NotFound("Modifier not found.");
+
+        var modifierGroups = await _modifierGroupService.GetAllModifierGroupAsync();
+        ViewBag.ModifierGroups = modifierGroups;
+        return PartialView("_EditModifier", model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UpdateModifier(ModifierViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+            Console.WriteLine("UpdateModifier Validation Errors: " + string.Join(" | ", errors));
+            return Json(new { success = false, message = "Validation failed: " + string.Join(" ", errors) });
+        }
+
+        try
+        {
+            await _modifierService.UpdateModifierAsync(model);
+            return Json(new { success = true, message = "Modifier updated successfully!" });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"UpdateModifier Exception: {ex.Message}\nStackTrace: {ex.StackTrace}");
+            return Json(new { success = false, message = $"Error updating modifier: {ex.Message}" });
+        }
+    }
+
 
 }
