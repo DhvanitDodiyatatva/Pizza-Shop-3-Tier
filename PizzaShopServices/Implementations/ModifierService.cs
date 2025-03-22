@@ -55,7 +55,7 @@ public class ModifierService : IModifierService
         if (modifier == null) return null;
 
         var mappings = await _modifierGroupMappingRepository.GetMappingsForModifierAsync(id);
-        var modifierGroupIds = mappings.Select(m => m.ModifierGroupId).ToList();
+        var modifierGroupIds = mappings.Select(m => m.ModifierGroupId ).ToList();
 
         return new ModifierViewModel
         {

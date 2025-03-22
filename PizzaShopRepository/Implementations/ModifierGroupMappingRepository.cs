@@ -31,7 +31,7 @@ namespace PizzaShopRepository.Repositories
         public async Task<List<ModifierGroupMapping>> GetMappingsForModifierAsync(int modifierId)
         {
             return await _context.ModifierGroupMappings
-                        .Where(m => m.ModifierId == modifierId)
+                        .Where(m => m.ModifierId == modifierId && !m.IsDeleted)
                         .ToListAsync();
         }
 
