@@ -11,22 +11,24 @@ else
     <div class="row g-0 category-side">
         @foreach (var modifierGroup in Model)
         {
-            <div class="row my-2 ">
+            <div class="row my-2">
                 <div class="d-flex align-items-center justify-content-between category-option">
                     <a class="ModifierGroup-link d-flex" data-ModifierGroup-id="@modifierGroup.Id" href="#">
                         <img src="~/images/grid.png" alt="" style="height: 20px; width: 20px;">
-                        <div> &nbsp; @modifierGroup.Name</div>
+                        <div>&nbsp;@modifierGroup.Name</div>
                     </a>
-                    <div class="edit-category d-none ">
-                        <div class="d-flex ">
+                    <div class="edit-category d-none">
+                        <div class="d-flex">
                             <div class="edit-category">
-                                <button type="button " class="btn  p-0 edit-category-btn">
+                                <button type="button" class="btn p-0 edit-modifier-group-btn"
+                                    data-modifiergroup-id="@modifierGroup.Id">
                                     <img src="~/images/edit.png" alt="" class="pe-2 text-body-btn"
                                         style="height: 20px; width: 20px;">
                                 </button>
                             </div>
                             <div class="delete-category">
-                                <button type="button" class="btn p-0" data-bs-toggle="modal">
+                                <button type="button" class="btn p-0 delete-modifier-group-btn" data-bs-toggle="modal"
+                                    data-bs-target="#deletemodal-@modifierGroup.Id">
                                     <img src="~/images/delete.png" alt="" class="pe-2 text-body-btn"
                                         style="height: 20px; width: 20px;">
                                 </button>
@@ -36,35 +38,30 @@ else
                 </div>
             </div>
 
-            <!-- Modal container for edit -->
-            @* <div id="editModalView">
-                <!-- _EditCategoryPartialView will be loaded here via AJAX -->
-            </div> *@
-
-            <!-- Delete Modal for each category -->
-            @* <div class="modal fade" id="deletemodal-@category.Id" tabindex="-1" aria-labelledby="deletemodallabel-@category.Id"
-                aria-hidden="true">
+            <!-- Delete Modal for each modifier group -->
+            <div class="modal fade" id="deletemodal-@modifierGroup.Id" tabindex="-1"
+                aria-labelledby="deletemodallabel-@modifierGroup.Id" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h1 class="modal-title fs-5">Delete confirmation</h1>
+                            <h1 class="modal-title fs-5" id="deletemodallabel-@modifierGroup.Id">Delete Confirmation</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body d-flex align-items-center justify-content-center flex-column">
                             <img src="~/images/toppng.com-warning-icon-2400x2400.png" alt="DeleteModal" class="text-warning"
                                 style="max-height: 80px; aspect-ratio: 1/1;">
-                            <p>Are you sure you want to delete "@category.Name"?</p>
+                            <p>Are you sure you want to delete "@modifierGroup.Name"?</p>
                         </div>
                         <div class="modal-footer d-flex justify-content-center">
-                            <form class="delete-category-form" data-category-id="@category.Id">
-                                <input type="hidden" name="id" value="@category.Id" />
+                            <form class="delete-modifier-group-form" data-modifiergroup-id="@modifierGroup.Id">
+                                <input type="hidden" name="id" value="@modifierGroup.Id" />
                                 <button type="submit" class="btn btn-main bg-primary text-white">Yes, Delete</button>
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                             </form>
                         </div>
                     </div>
                 </div>
-            </div> *@
+            </div>
         }
     </div>
 }

@@ -1,0 +1,40 @@
+@model PizzaShopRepository.ViewModels.ModifierGroupViewModel
+
+<div class="modal fade" id="addModGroupModal" tabindex="-1" aria-labelledby="addModGroupModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="addModGroupModalLabel">Add Modifier Group</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addModifierGroupForm" asp-action="AddNewModifierGroup" asp-controller="Menu" method="post">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-floating mb-3">
+                        <input asp-for="Name" class="form-control" id="floatingInputName" placeholder="Name" />
+                        <label for="floatingInputName">Name</label>
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input asp-for="Description" class="form-control" id="floatingInputDescription"
+                            placeholder="Description" />
+                        <label for="floatingInputDescription">Description</label>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <a href="#" id="addExistingModifiersLink" data-bs-toggle="modal"
+                            data-bs-target="#selectModifiersModal">+ Add Existing Modifiers</a>
+                        <div id="selectedModifiersContainer" class="mt-2">
+                            <!-- Selected modifiers and hidden inputs will be displayed here -->
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

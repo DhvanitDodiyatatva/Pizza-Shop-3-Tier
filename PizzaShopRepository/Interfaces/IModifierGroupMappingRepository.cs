@@ -10,5 +10,6 @@ namespace PizzaShopRepository.Repositories
         Task<List<ModifierGroupMapping>> GetMappingsForModifierAsync(int modifierId);
         Task<List<Modifier>> GetModifiersByModifierGroupIdAsync(int modifierGroupId);
         Task UpdateMappingAsync(ModifierGroupMapping mapping);
+        Task<List<ModifierGroupMapping>> GetMappingsForModifierGroupAsync(int modifierGroupId);
     }
 }

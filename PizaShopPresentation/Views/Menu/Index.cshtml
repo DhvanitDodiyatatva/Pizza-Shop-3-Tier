@@ -176,46 +176,14 @@
                             <div class="d-flex align-items-center fw-bold justify-content-between page-text fs-5">
                                 Modifier Group
                                 <button type="button" class="btn bg-white btn-outline-dark text-black"
-                                    data-bs-toggle="modal" data-bs-target="#addModGroupModal" data-bs-whatever="">
+                                    id="addModifierGroupBtn">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" fill="currentColor"
                                         class="bi bi-plus-lg" viewBox="0 0 16 16">
                                         <path fill-rule="evenodd"
                                             d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2" />
                                     </svg>
                                 </button>
-                                <div class="modal fade" id="addModGroupModal" tabindex="-1"
-                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h1 class="modal-title fs-5" id="exampleModalLabel">Add Modifier Group
-                                                </h1>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form>
-                                                    <div class="form-floating mb-3">
-                                                        <input type="email" class="form-control" id="floatingInput"
-                                                            placeholder="Sandwich">
-                                                        <label for="floatingInput">Name</label>
-                                                    </div>
-                                                    <div class="form-floating mb-3">
-                                                        <input type="email" class="form-control" id="floatingInput"
-                                                            placeholder="This is a sandwich category">
-                                                        <label for="floatingInput">Description</label>
-                                                    </div>
-                                                    <a>+ Add Existing Modifiers</a>
-                                                </form>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-primary">Save</button>
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-bs-dismiss="modal">Close</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+
                             </div>
                         </div>
                         <div style="overflow: auto; height: 50dvh;" class="custom-scrollbar" id="ModifierGroupList">
@@ -298,6 +266,16 @@
 </div>
 <div id="editModifierContainer">
     <!-- Edit Modifier Partial View will load here -->
+</div>
+
+<div id="addModifierGroupContainer">
+    <!-- Add Modifier Group Partial View will load here -->
+</div>
+<div id="editModifierGroupContainer">
+    <!-- Edit Modifier Group Partial View will load here -->
+</div>
+<div id="selectModifiersContainer">
+    <!-- Select Existing Modifiers Partial View will load here -->
 </div>
 
 
@@ -683,15 +661,24 @@
                 type: 'GET',
                 success: function (result) {
                     $("#ModifierGroupList").html(result);
+
+                    // Reattach click handlers for ModifierGroup links
                     $(".ModifierGroup-link").off("click").on("click", function (e) {
                         e.preventDefault();
                         currentModifierGroupId = $(this).data("modifiergroup-id");
                         loadModifier(currentModifierGroupId, 1, pageSize, "");
                     });
+
+                    // Reattach delete form handler
+                    attachDeleteModifierGroupFormHandler();
+
+                    // After loading modifier groups, refresh the modifier list
+                    refreshModifierList();
                 },
                 error: function (xhr, status, error) {
                     console.error("Error loading modifier groups:", error);
                     $("#ModifierGroupList").html("Failed to load modifier groups");
+                    toastr.error("Error loading modifier groups.");
                 }
             });
         }
@@ -1000,14 +987,280 @@
 
 
 
+        // Load Add Modifier Group Form
+        function loadAddModifierGroup() {
+            $.ajax({
+                url: '@Url.Action("AddNewModifierGroup", "Menu")',
+                type: 'GET',
+                success: function (result) {
+                    $("#addModifierGroupContainer").html(result);
+                    var modal = new bootstrap.Modal(document.getElementById("addModGroupModal"));
+                    modal.show();
+                    attachAddModifierGroupFormHandler();
+                },
+                error: function () {
+                    toastr.error("Failed to load add modifier group form.");
+                }
+            });
+        }
+
+        // Attach Add Modifier Group Form Handler
+        function attachAddModifierGroupFormHandler() {
+            $("#addModifierGroupForm").off("submit").on("submit", function (e) {
+                e.preventDefault();
+                if (!$(this).valid()) {
+                    toastr.error("Please fill all required fields correctly.");
+                    return;
+                }
+
+                var formData = $(this).serialize();
+                $.ajax({
+                    url: '@Url.Action("AddNewModifierGroup", "Menu")',
+                    type: 'POST',
+                    data: formData,
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            var modal = bootstrap.Modal.getInstance(document.getElementById("addModGroupModal"));
+                            modal.hide();
+                            toastr.success(response.message);
+                            loadModifierGroups();
+                        } else {
+                            toastr.error(response.message);
+                        }
+                    },
+                    error: function () {
+                        toastr.error("Error adding modifier group.");
+                    }
+                });
+            });
+        }
+
+        // Load Edit Modifier Group Form
+        $(document).on("click", ".edit-modifier-group-btn", function () {
+            var modifierGroupId = $(this).data("modifiergroup-id");
+            $.ajax({
+                url: '@Url.Action("EditModifierGroup", "Menu")',
+                type: 'GET',
+                data: { id: modifierGroupId },
+                success: function (result) {
+                    $("#editModifierGroupContainer").html(result);
+                    var modal = new bootstrap.Modal(document.getElementById("editModGroupModal"));
+                    modal.show();
+                    attachEditModifierGroupFormHandler();
+                },
+                error: function () {
+                    toastr.error("Failed to load edit modifier group form.");
+                }
+            });
+        });
+
+        // Attach Edit Modifier Group Form Handler
+        function attachEditModifierGroupFormHandler() {
+            $("#editModifierGroupForm").off("submit").on("submit", function (e) {
+                e.preventDefault();
+                if (!$(this).valid()) {
+                    toastr.error("Please fill all required fields correctly.");
+                    return;
+                }
+
+                var formData = $(this).serialize();
+                $.ajax({
+                    url: '@Url.Action("UpdateModifierGroup", "Menu")',
+                    type: 'POST',
+                    data: formData,
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            var modal = bootstrap.Modal.getInstance(document.getElementById("editModGroupModal"));
+                            modal.hide();
+                            toastr.success(response.message);
+                            loadModifierGroups();
+                        } else {
+                            toastr.error(response.message);
+                        }
+                    },
+                    error: function () {
+                        toastr.error("Error updating modifier group.");
+                    }
+                });
+            });
+        }
+
+        // Load Select Existing Modifiers Modal
+        $(document).on("click", "#addExistingModifiersLink", function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: '@Url.Action("SelectExistingModifiers", "Menu")',
+                type: 'GET',
+                success: function (result) {
+                    $("#selectModifiersContainer").html(result);
+                    var modal = new bootstrap.Modal(document.getElementById("selectModifiersModal"));
+                    modal.show();
+                    attachSelectModifiersHandler();
+                },
+                error: function () {
+                    toastr.error("Failed to load modifiers list.");
+                }
+            });
+        });
+
+        // Update Hidden Inputs with Selected Modifier IDs
+        function updateSelectedModifierIds() {
+            var selectedIds = [];
+            $("#selectedModifiersContainer .badge").each(function () {
+                selectedIds.push($(this).data("modifier-id"));
+            });
+
+            // Remove existing hidden inputs for SelectedModifierIds
+            $("input[name^='SelectedModifierIds']").remove();
+
+            // Add a hidden input for each selected ID
+            selectedIds.forEach(function (id, index) {
+                $("#editModifierGroupForm").append(
+                    `<input type="hidden" name="SelectedModifierIds[${index}]" value="${id}" />`
+                );
+                $("#addModifierGroupForm").append(
+                    `<input type="hidden" name="SelectedModifierIds[${index}]" value="${id}" />`
+                );
+            });
+        }
+
+        // Handle Select Existing Modifiers
+        function attachSelectModifiersHandler() {
+            // Select All Checkbox
+            $("#selectAllExistingModifiers").on("change", function () {
+                $(".modifier-checkbox").prop("checked", $(this).prop("checked"));
+            });
+
+            // Search Functionality
+            $("#modifierSearchInput").on("keyup", function () {
+                var searchTerm = $(this).val().toLowerCase();
+                $("#modifierList tr").each(function () {
+                    var modifierName = $(this).data("modifier-name").toLowerCase();
+                    $(this).toggle(modifierName.includes(searchTerm));
+                });
+            });
+
+            // Add Selected Modifiers
+            $("#addSelectedModifiers").on("click", function () {
+                var selectedModifiers = [];
+                $(".modifier-checkbox:checked").each(function () {
+                    var modifierId = $(this).val();
+                    var modifierName = $(this).closest("tr").data("modifier-name");
+                    selectedModifiers.push({ id: modifierId, name: modifierName });
+                });
+
+                if (selectedModifiers.length === 0) {
+                    toastr.warning("Please select at least one modifier.");
+                    return;
+                }
+
+                // Update the selected modifiers container
+                var selectedContainer = $("#selectedModifiersContainer");
+                selectedContainer.empty(); // Clear existing badges
+                var selectedIds = [];
+                selectedModifiers.forEach(function (modifier) {
+                    selectedContainer.append(
+                        `<span class="badge bg-primary me-1" data-modifier-id="${modifier.id}">
+                    ${modifier.name}
+                    <button type="button" class="btn-close btn-close-white ms-1 remove-modifier" aria-label="Remove"></button>
+                </span>`
+                    );
+                    selectedIds.push(modifier.id);
+                });
+
+                // Update the hidden inputs with selected modifier IDs
+                updateSelectedModifierIds();
+
+                // Close the Select Existing Modifiers modal
+                var modal = bootstrap.Modal.getInstance(document.getElementById("selectModifiersModal"));
+                modal.hide();
+
+                // Ensure the parent modal (Add/Edit Modifier Group) remains open
+                var parentModal = bootstrap.Modal.getInstance(document.getElementById("addModGroupModal")) ||
+                    bootstrap.Modal.getInstance(document.getElementById("editModGroupModal"));
+                if (parentModal) {
+                    parentModal.show();
+                }
+            });
+
+            // Remove Modifier from Selection
+            $(document).on("click", ".remove-modifier", function () {
+                var badge = $(this).closest(".badge");
+                badge.remove();
+                updateSelectedModifierIds(); // Update the hidden inputs after removal
+            });
+        }
+
+        // Add Modifier Group Button Click Handler
+        $("#addModifierGroupBtn").on("click", function () {
+            loadAddModifierGroup();
+        });
+
+
+        // Function to refresh the modifier list after a delete operation
+        function refreshModifierList() {
+            // Check if there are any modifier groups remaining
+            var firstModifierGroup = $(".ModifierGroup-link").first();
+            if (firstModifierGroup.length) {
+                // Load modifiers for the first remaining modifier group
+                currentModifierGroupId = firstModifierGroup.data("modifiergroup-id");
+                loadModifier(currentModifierGroupId, 1, pageSize, "");
+            } else {
+                // If no modifier groups remain, clear the modifier list
+                $(".GetModifierList").html("<p>No modifiers available.</p>");
+                currentModifierGroupId = null; // Reset the currentModifierGroupId
+            }
+        }
+
+        // Attach Delete Modifier Group Form Handler
+        function attachDeleteModifierGroupFormHandler() {
+            $(".delete-modifier-group-form").off("submit").on("submit", function (e) {
+                e.preventDefault();
+                var form = $(this);
+                var modifierGroupId = form.data("modifiergroup-id");
+
+                $.ajax({
+                    url: '@Url.Action("DeleteModifierGroup", "Menu")',
+                    type: 'POST',
+                    data: form.serialize(),
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            var modal = bootstrap.Modal.getInstance(document.getElementById("deletemodal-" + modifierGroupId));
+                            if (modal) {
+                                modal.hide();
+                                $('.modal-backdrop').remove();
+                                $('body').removeClass('modal-open'); // Ensure body class is cleared
+                            }
+                            toastr.success(response.message);
+                            loadModifierGroups(); // Refresh the modifier group list
+                        } else {
+                            toastr.error(response.message);
+                        }
+                    },
+                    error: function () {
+                        toastr.error("Error deleting modifier group.");
+                    }
+                });
+            });
+        }
+
+
 
         // Initial load of categories, items, and the Add Category form
         loadCategories();
         loadItems(1);
         loadAddCategory();
         loadModifierGroups();
-        loadModifier(1);
-        @* loadModifier(); *@
+        loadModifier(3);
     });
 </script>
 

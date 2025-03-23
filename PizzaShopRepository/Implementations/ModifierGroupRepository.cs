@@ -21,6 +21,34 @@ namespace PizzaShopRepository.Repositories
             return await _context.ModifierGroups.Where(mg => !mg.IsDeleted).OrderBy(mg => mg.Id).ToListAsync();
         }
 
+        public async Task<ModifierGroup?> GetModifierGroupByIdAsync(int id)
+        {
+            return await _context.ModifierGroups
+                .FirstOrDefaultAsync(mg => mg.Id == id && !mg.IsDeleted);
+        }
+
+        public async Task AddModifierGroupAsync(ModifierGroup modifierGroup)
+        {
+            _context.ModifierGroups.Add(modifierGroup);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateModifierGroupAsync(ModifierGroup modifierGroup)
+        {
+            _context.ModifierGroups.Update(modifierGroup);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task SoftDeleteModifierGroupAsync(int id)
+        {
+            var modifierGroup = await _context.ModifierGroups.FindAsync(id);
+            if (modifierGroup != null)
+            {
+                modifierGroup.IsDeleted = true;
+                _context.ModifierGroups.Update(modifierGroup);
+                await _context.SaveChangesAsync();
+            }
+        }
 
     }
 }

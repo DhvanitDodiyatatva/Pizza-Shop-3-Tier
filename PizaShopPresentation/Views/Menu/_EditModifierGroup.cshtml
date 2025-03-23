@@ -1,0 +1,59 @@
+@model PizzaShopRepository.ViewModels.ModifierGroupViewModel
+
+<div class="modal fade" id="editModGroupModal" tabindex="-1" aria-labelledby="editModGroupModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="editModGroupModalLabel">Edit Modifier Group</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editModifierGroupForm" asp-action="UpdateModifierGroup" asp-controller="Menu" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input asp-for="Id" type="hidden" />
+                    <div class="form-floating mb-3">
+                        <input asp-for="Name" class="form-control" id="floatingInputName" placeholder="Name" />
+                        <label for="floatingInputName">Name</label>
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input asp-for="Description" class="form-control" id="floatingInputDescription"
+                            placeholder="Description" />
+                        <label for="floatingInputDescription">Description</label>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <a href="#" id="addExistingModifiersLink" data-bs-toggle="modal"
+                            data-bs-target="#selectModifiersModal">+ Add Existing Modifiers</a>
+                        <div id="selectedModifiersContainer" class="mt-2">
+                            @if (Model.SelectedModifiers != null && Model.SelectedModifiers.Any())
+                            {
+                                foreach (var modifier in Model.SelectedModifiers)
+                                {
+                                    <span class="badge bg-primary me-1" data-modifier-id="@modifier.Id">
+                                        @modifier.Name
+                                        <button type="button" class="btn-close btn-close-white ms-1 remove-modifier"
+                                            aria-label="Remove"></button>
+                                    </span>
+                                }
+                            }
+                        </div>
+                        <!-- Initialize hidden inputs for SelectedModifierIds -->
+                        @if (Model.SelectedModifierIds != null && Model.SelectedModifierIds.Any())
+                        {
+                            for (int i = 0; i < Model.SelectedModifierIds.Count; i++)
+                            {
+                                <input type="hidden" name="SelectedModifierIds[@i]" value="@Model.SelectedModifierIds[i]" />
+                            }
+                        }
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

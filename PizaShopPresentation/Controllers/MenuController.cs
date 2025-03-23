@@ -436,4 +436,85 @@ public class MenuController : Controller
     }
 
 
+    [HttpGet]
+    public IActionResult AddNewModifierGroup()
+    {
+        return PartialView("_AddModifierGroup", new ModifierGroupViewModel());
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddNewModifierGroup(ModifierGroupViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+            return Json(new { success = false, message = "Validation failed: " + string.Join(" ", errors) });
+        }
+
+        try
+        {
+            await _modifierGroupService.AddModifierGroupAsync(model);
+            return Json(new { success = true, message = "Modifier Group added successfully!" });
+        }
+        catch (Exception ex)
+        {
+            return Json(new { success = false, message = ex.Message });
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> EditModifierGroup(int id)
+    {
+        var model = await _modifierGroupService.GetModifierGroupForEditAsync(id);
+        if (model == null)
+            return NotFound("Modifier Group not found.");
+
+        return PartialView("_EditModifierGroup", model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UpdateModifierGroup(ModifierGroupViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+            return Json(new { success = false, message = "Validation failed: " + string.Join(" ", errors) });
+        }
+
+        try
+        {
+            await _modifierGroupService.UpdateModifierGroupAsync(model);
+            return Json(new { success = true, message = "Modifier Group updated successfully!" });
+        }
+        catch (Exception ex)
+        {
+            return Json(new { success = false, message = ex.Message });
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> SelectExistingModifiers()
+    {
+        var modifiers = await _modifierService.GetAllModifiersAsync();
+        return PartialView("_SelectExistingModifiers", modifiers);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteModifierGroup(int id)
+    {
+        try
+        {
+            await _modifierGroupService.DeleteModifierGroupAsync(id);
+            return Json(new { success = true, message = "Modifier Group deleted successfully!" });
+        }
+        catch (Exception ex)
+        {
+            return Json(new { success = false, message = ex.Message });
+        }
+    }
+
+
 }

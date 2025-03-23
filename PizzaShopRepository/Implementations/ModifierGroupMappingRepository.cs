@@ -48,5 +48,12 @@ namespace PizzaShopRepository.Repositories
             _context.ModifierGroupMappings.Update(mapping);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<List<ModifierGroupMapping>> GetMappingsForModifierGroupAsync(int modifierGroupId)
+        {
+            return await _context.ModifierGroupMappings
+                        .Where(m => m.ModifierGroupId == modifierGroupId && !m.IsDeleted)
+                        .ToListAsync();
+        }
     }
 }
