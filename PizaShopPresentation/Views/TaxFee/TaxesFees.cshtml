@@ -1,0 +1,207 @@
+@{
+    ViewData["Title"] = "Taxes/Fees";
+}
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<div class="Users-content mt-0 p-xl-5 p-lg-4 p-md-4 p-sm-4 p-4">
+    <div class="d-flex align-items-center justify-content-between my-2 z-0">
+        <div>
+            <div class="fw-bolder fs-2 page-text me-2">Taxes/Fees</div>
+        </div>
+        <div class="d-flex position-relative z-0">
+            <form class="d-flex align-items-center" role="search" id="searchForm">
+                <div class="input-group position-relative">
+                    <input class="form-control" type="search" placeholder="Search" aria-label="Search"
+                        id="searchInput" />
+                    <span class="search-img-desktop position-absolute">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-search" viewBox="0 0 16 16">
+                            <path
+                                d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                        </svg>
+                    </span>
+                </div>
+            </form>
+            <button class="btn btn-main bg-primary rounded-2 ms-1 text-white fs-6 d-none d-lg-block"
+                id="addNewTaxBtn">+New Tax</button>
+            <button class="btn btn-main bg-primary rounded- ms-1 text-white fs-6 d-block d-lg-none"
+                id="addNewTaxBtnMobile">+</button>
+        </div>
+    </div>
+    <div class="content-div rounded-2 shadow p-3">
+        <div id="taxFeeListContainer">
+            <!-- Tax list will be loaded here via AJAX -->
+        </div>
+        <nav aria-label="Page navigation example"
+            class="d-flex align-items-center justify-content-between justify-content-lg-end flex-column flex-md-row">
+            <div class="d-flex me-2 align-items-center mb-4">
+                <p class="m-0 me-1">Items Per Page</p>
+                <div class="">
+                    <select id="pageSizeSelect" class="form-select d-inline-block w-auto">
+                        <option value="2">2</option>
+                        <option value="5" selected>5</option>
+                        <option value="8">8</option>
+                        <option value="10">10</option>
+                    </select>
+                </div>
+            </div>
+            <div id="paginationControls" class="d-flex align-items-center mb-4">
+                <!-- Pagination controls will be dynamically added here -->
+            </div>
+        </nav>
+    </div>
+</div>
+
+<div id="addTaxFeeContainer">
+    <!-- Add New Tax modal content will load here -->
+</div>
+
+<div id="editTaxFeeContainer">
+    <!-- Edit Tax modal content will load here -->
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+<script
+    src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.12/dist/jquery.validate.unobtrusive.min.js"></script>
+
+<script>
+    // Global variables
+    let currentPage = 1;
+    let pageSize = 5;
+    let searchQuery = '';
+
+    // Global function to load taxes
+    window.loadTaxes = function (page = currentPage, size = pageSize, query = searchQuery) {
+        $.ajax({
+            url: '@Url.Action("GetTaxesFees", "TaxFee")',
+            type: 'GET',
+            data: { searchQuery: query, page: page, pageSize: size },
+            success: function (result) {
+                $("#taxFeeListContainer").html(result);
+                currentPage = page; // Update global state
+                pageSize = size;
+                searchQuery = query;
+                updatePaginationControls();
+            },
+            error: function (xhr, status, error) {
+                console.error("Error loading taxes:", error);
+                $("#taxFeeListContainer").html("Failed to load taxes");
+            }
+        });
+    };
+
+    // Function to update pagination controls
+    function updatePaginationControls() {
+        const totalPages = Math.ceil(parseInt($("#taxFeeListContainer").find("#totalRecords").val()) / pageSize);
+        const currentPageVal = parseInt($("#taxFeeListContainer").find("#currentPage").val());
+        let paginationHtml = '';
+
+        if (totalPages > 1) {
+            paginationHtml += '<ul class="pagination d-flex align-items-center mb-4">';
+            paginationHtml += `<p class="m-0 me-1">Showing ${(currentPageVal - 1) * pageSize + 1} - ${Math.min(currentPageVal * pageSize, $("#taxFeeListContainer").find("#totalRecords").val())} of ${$("#taxFeeListContainer").find("#totalRecords").val()}</p>`;
+            paginationHtml += `<li class="page-item ${currentPageVal === 1 ? 'disabled' : ''}">
+                <a class="page-link text-decoration-none text-body" href="#" data-page="${currentPageVal - 1}"> < </a>
+            </li>`;
+
+            for (let i = 1; i <= totalPages; i++) {
+                paginationHtml += `<li class="page-item ${i === currentPageVal ? 'active' : ''}">
+                    <a class="page-link text-decoration-none text-body" href="#" data-page="${i}">${i}</a>
+                </li>`;
+            }
+
+            paginationHtml += `<li class="page-item ${currentPageVal === totalPages ? 'disabled' : ''}">
+                <a class="page-link text-decoration-none text-body" href="#" data-page="${currentPageVal + 1}"> > </a>
+            </li>`;
+            paginationHtml += '</ul>';
+        }
+
+        $("#paginationControls").html(paginationHtml);
+
+        $("#paginationControls .page-link").on("click", function (e) {
+            e.preventDefault();
+            const page = $(this).data("page");
+            if (page && page > 0 && page <= totalPages) {
+                window.loadTaxes(page, pageSize, searchQuery);
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        // Search functionality
+        $("#searchInput").on("keyup", function () {
+            searchQuery = $(this).val().trim();
+            window.loadTaxes(1, pageSize, searchQuery);
+        });
+
+        // Page size change handler
+        $("#pageSizeSelect").on("change", function () {
+            pageSize = parseInt($(this).val());
+            window.loadTaxes(1, pageSize, searchQuery);
+        });
+
+        // Load the Add Tax modal
+        $("#addNewTaxBtn, #addNewTaxBtnMobile").on("click", function () {
+            $.ajax({
+                url: '@Url.Action("AddNewTaxFee", "TaxFee")',
+                type: 'GET',
+                success: function (result) {
+                    $("#addTaxFeeContainer").html(result);
+                    var modal = new bootstrap.Modal(document.getElementById("addTaxModal"));
+                    modal.show();
+                    $.validator.unobtrusive.parse("#addTaxFeeForm");
+                    attachAddTaxFormHandler();
+                },
+                error: function () {
+                    toastr.error("Failed to load add tax form.");
+                }
+            });
+        });
+
+        // Attach submit handler to the Add Tax form
+        function attachAddTaxFormHandler() {
+            $("#addTaxFeeForm").on("submit", function (e) {
+                e.preventDefault();
+                if (!$(this).valid()) {
+                    return;
+                }
+                var formData = $(this).serialize();
+                $.ajax({
+                    url: '@Url.Action("AddNewTaxFee", "TaxFee")',
+                    type: 'POST',
+                    data: formData,
+                    headers: {
+                        "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            var modal = bootstrap.Modal.getInstance(document.getElementById("addTaxModal"));
+                            modal.hide();
+                            $('.modal-backdrop').remove();
+                            toastr.success(response.message);
+                            window.loadTaxes(currentPage, pageSize, searchQuery);
+                        } else {
+                            toastr.error(response.message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error adding tax:", xhr.responseText);
+                        toastr.error("Error adding tax: " + (xhr.responseText || "Please try again."));
+                    }
+                });
+            });
+        }
+
+        // Ensure modal backdrop is removed when any modal is hidden
+        $('.modal').on('hidden.bs.modal', function () {
+            $('.modal-backdrop').remove();
+        });
+
+        // Initial load
+        window.loadTaxes();
+    });
+</script>

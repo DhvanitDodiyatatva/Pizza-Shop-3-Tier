@@ -152,6 +152,22 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGFibGVBbmRTZWN0aW9uXF9UYWJsZUxpc3QuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/PizzaShop 3-Tier/Pizza-Shop-3-Tier/PizaShopPresentation/Views/TaxFee/TaxesFees.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGF4RmVlXFRheGVzRmVlcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/PizzaShop 3-Tier/Pizza-Shop-3-Tier/PizaShopPresentation/Views/TaxFee/_AddTaxFee.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGF4RmVlXF9BZGRUYXhGZWUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/PizzaShop 3-Tier/Pizza-Shop-3-Tier/PizaShopPresentation/Views/TaxFee/_EditTaxFee.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGF4RmVlXF9FZGl0VGF4RmVlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/PizzaShop 3-Tier/Pizza-Shop-3-Tier/PizaShopPresentation/Views/TaxFee/_TaxFeeListPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGF4RmVlXF9UYXhGZWVMaXN0UGFydGlhbC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/PizzaShop 3-Tier/Pizza-Shop-3-Tier/PizaShopPresentation/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 

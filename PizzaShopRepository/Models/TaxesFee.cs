@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace PizzaShopRepository.Models;
 
-public partial class Taxis
+public partial class TaxesFee
 {
     public int Id { get; set; }
 
@@ -13,7 +13,9 @@ public partial class Taxis
 
     public decimal Value { get; set; }
 
-    public bool? IsEnabled { get; set; }
+    public bool IsEnabled { get; set; }
 
-    public bool? IsDefault { get; set; }
+    public bool IsDefault { get; set; }
+
+    public bool IsDeleted { get; set; }
 }

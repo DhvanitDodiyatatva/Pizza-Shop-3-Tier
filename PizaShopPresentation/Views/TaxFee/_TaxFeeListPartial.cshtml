@@ -1,0 +1,191 @@
+@model IEnumerable<PizzaShopRepository.ViewModels.TaxFeeViewModel>
+
+<div class="row table-responsive p-3">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col" class="text-nowrap">Name</th>
+                <th scope="col" class="text-nowrap">Type</th>
+                <th scope="col" class="text-nowrap">IsEnabled</th>
+                <th scope="col" class="text-nowrap">Default</th>
+                <th scope="col" class="text-nowrap">Tax Value</th>
+                <th scope="col" class="text-nowrap">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="6" class="text-center">No taxes/fees available.</td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var taxFee in Model)
+                {
+                    <tr id="tax-row-@taxFee.Id" data-id="@taxFee.Id">
+                        <td scope="row" class="py-3">@taxFee.Name</td>
+                        <td class="py-3">@taxFee.Type</td>
+                        <td class="py-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="isEnabled-@taxFee.Id"
+                                    style="width: 50px; height: 30px;" @(taxFee.IsEnabled ? "checked" : "") disabled />
+                            </div>
+                        </td>
+                        <td class="py-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="isDefault-@taxFee.Id"
+                                    style="width: 50px; height: 30px;" @(taxFee.IsDefault ? "checked" : "") disabled />
+                            </div>
+                        </td>
+                        <td class="py-3">
+                            @if (taxFee.Type == "percentage")
+                            {
+                                @($"{taxFee.Value:F2}%")
+                            }
+                            else
+                            {
+                                @($"₹{taxFee.Value:F2}")
+                            }
+                        </td>
+                        <td class="py-3">
+                            <button type="button" class="btn text-body-btn edit-tax-btn p-0 me-2" data-tax-id="@taxFee.Id">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                    class="bi bi-pen" viewBox="0 0 16 16">
+                                    <path
+                                        d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001" />
+                                </svg>
+                            </button>
+                            <button type="button" class="btn text-body-btn p-0" data-bs-toggle="modal"
+                                data-bs-target="#deletemodal-@taxFee.Id">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                    class="bi bi-trash3" viewBox="0 0 16 16">
+                                    <path
+                                        d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
+                                </svg>
+                            </button>
+                            <div class="modal fade" id="deletemodal-@taxFee.Id" tabindex="-1"
+                                aria-labelledby="deletemodallabel-@taxFee.Id" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="deletemodallabel-@taxFee.Id">Delete confirmation
+                                            </h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body d-flex align-items-center justify-content-center flex-column">
+                                            <img src="~/images/toppng.com-warning-icon-2400x2400.png" alt="DeleteModal"
+                                                style="height: 80px; width: 80px">
+                                            <p>Are you sure you want to delete this tax/fee?</p>
+                                        </div>
+                                        <div class="modal-footer d-flex justify-content-center align-items-center">
+                                            <button type="button" class="btn btn-primary delete-tax-btn"
+                                                data-tax-id="@taxFee.Id">Yes</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Hidden inputs to store pagination data -->
+<input type="hidden" id="totalRecords" value="@ViewBag.TotalTaxesFees" />
+<input type="hidden" id="currentPage" value="@ViewBag.CurrentPage" />
+
+<script>
+    $(document).ready(function () {
+        // Load the Edit Tax modal
+        $(".edit-tax-btn").on("click", function () {
+            var taxId = $(this).data("tax-id");
+            $.ajax({
+                url: '@Url.Action("EditTaxFee", "TaxFee")',
+                type: 'GET',
+                data: { id: taxId },
+                success: function (result) {
+                    $("#editTaxFeeContainer").empty();
+                    $("#editTaxFeeContainer").html(result);
+                    var modal = new bootstrap.Modal(document.getElementById("editTaxModal"));
+                    modal.show();
+                    $.validator.unobtrusive.parse("#editTaxFeeForm");
+                    attachEditTaxFormHandler();
+                },
+                error: function () {
+                    toastr.error("Failed to load edit tax form.");
+                }
+            });
+        });
+
+        // Attach submit handler to the Edit Tax form
+        function attachEditTaxFormHandler() {
+            $("#editTaxFeeForm").on("submit", function (e) {
+                e.preventDefault();
+                if (!$(this).valid()) {
+                    return;
+                }
+                var formData = $(this).serialize();
+                $.ajax({
+                    url: '@Url.Action("EditTaxFee", "TaxFee")',
+                    type: 'POST',
+                    data: formData,
+                    headers: {
+                        "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            var modal = bootstrap.Modal.getInstance(document.getElementById("editTaxModal"));
+                            modal.hide();
+                            $('.modal-backdrop').remove();
+                            toastr.success(response.message);
+                            window.loadTaxes(); // Refresh the list dynamically
+                        } else {
+                            toastr.error(response.message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error updating tax:", xhr.responseText);
+                        toastr.error("Error updating tax: " + (xhr.responseText || "Please try again."));
+                    }
+                });
+            });
+        }
+
+        // Handle delete operation
+        $(".delete-tax-btn").on("click", function () {
+            var taxId = $(this).data("tax-id");
+            $.ajax({
+                url: '@Url.Action("DeleteTaxFee", "TaxFee")',
+                type: 'POST',
+                data: { id: taxId },
+                headers: {
+                    "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function (response) {
+                    if (response.success) {
+                        var modal = bootstrap.Modal.getInstance(document.getElementById("deletemodal-" + taxId));
+                        modal.hide();
+                        $('.modal-backdrop').remove();
+                        toastr.success(response.message);
+                        $("#tax-row-" + taxId).remove(); // Remove the row immediately
+                        window.loadTaxes(); // Refresh the list to reflect soft delete
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error deleting tax:", xhr.responseText);
+                    var errorMsg = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : "Failed to delete tax/fee. Please try again.";
+                    toastr.error(errorMsg);
+                }
+            });
+        });
+
+
+    });
+</script>

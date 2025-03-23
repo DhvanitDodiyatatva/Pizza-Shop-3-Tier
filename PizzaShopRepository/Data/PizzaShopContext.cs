@@ -44,7 +44,7 @@ public partial class PizzaShopContext : DbContext
 
     public virtual DbSet<Table> Tables { get; set; }
 
-    public virtual DbSet<Taxis> Taxes { get; set; }
+    public virtual DbSet<TaxesFee> TaxesFees { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
@@ -417,16 +417,21 @@ public partial class PizzaShopContext : DbContext
                 .HasConstraintName("tables_section_id_fkey");
         });
 
-        modelBuilder.Entity<Taxis>(entity =>
+        modelBuilder.Entity<TaxesFee>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("taxes_pkey");
 
-            entity.ToTable("taxes");
+            entity.ToTable("taxes_fees");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("nextval('taxes_id_seq'::regclass)")
+                .HasColumnName("id");
             entity.Property(e => e.IsDefault)
                 .HasDefaultValueSql("false")
                 .HasColumnName("is_default");
+            entity.Property(e => e.IsDeleted)
+                .HasDefaultValueSql("false")
+                .HasColumnName("is_deleted");
             entity.Property(e => e.IsEnabled)
                 .HasDefaultValueSql("true")
                 .HasColumnName("is_enabled");
