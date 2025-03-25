@@ -18,9 +18,13 @@ public partial class PizzaShopContext : DbContext
 
     public virtual DbSet<Category> Categories { get; set; }
 
+    public virtual DbSet<Customer> Customers { get; set; }
+
     public virtual DbSet<CustomerReview> CustomerReviews { get; set; }
 
     public virtual DbSet<Item> Items { get; set; }
+
+    public virtual DbSet<ItemModifierGroup> ItemModifierGroups { get; set; }
 
     public virtual DbSet<Modifier> Modifiers { get; set; }
 
@@ -64,12 +68,35 @@ public partial class PizzaShopContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Description).HasColumnName("description");
-            entity.Property(e => e.IsDeleted)
-                .HasDefaultValueSql("false")
-                .HasColumnName("is_deleted");
+            entity.Property(e => e.IsDeleted).HasColumnName("is_deleted");
             entity.Property(e => e.Name)
                 .HasMaxLength(100)
                 .HasColumnName("name");
+        });
+
+        modelBuilder.Entity<Customer>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("customers_pkey");
+
+            entity.ToTable("customers");
+
+            entity.HasIndex(e => e.Email, "customers_email_key").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Date).HasColumnName("date");
+            entity.Property(e => e.Email)
+                .HasMaxLength(255)
+                .HasColumnName("email");
+            entity.Property(e => e.Name)
+                .HasMaxLength(100)
+                .HasColumnName("name");
+            entity.Property(e => e.NoOfPersons).HasColumnName("no_of_persons");
+            entity.Property(e => e.PhoneNo)
+                .HasMaxLength(20)
+                .HasColumnName("phone_no");
+            entity.Property(e => e.TotalOrders)
+                .HasDefaultValueSql("0")
+                .HasColumnName("total_orders");
         });
 
         modelBuilder.Entity<CustomerReview>(entity =>
@@ -106,19 +133,16 @@ public partial class PizzaShopContext : DbContext
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("created_at");
-            entity.Property(e => e.DefaultTax)
-                .HasDefaultValueSql("false")
-                .HasColumnName("default_tax");
+            entity.Property(e => e.DefaultTax).HasColumnName("default_tax");
             entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.ImageUrl)
                 .HasMaxLength(255)
                 .HasColumnName("image_url");
             entity.Property(e => e.IsAvailable)
+                .IsRequired()
                 .HasDefaultValueSql("true")
                 .HasColumnName("is_available");
-            entity.Property(e => e.IsDeleted)
-                .HasDefaultValueSql("false")
-                .HasColumnName("is_deleted");
+            entity.Property(e => e.IsDeleted).HasColumnName("is_deleted");
             entity.Property(e => e.ItemType)
                 .HasMaxLength(20)
                 .HasColumnName("item_type");
@@ -144,23 +168,30 @@ public partial class PizzaShopContext : DbContext
             entity.HasOne(d => d.Category).WithMany(p => p.Items)
                 .HasForeignKey(d => d.CategoryId)
                 .HasConstraintName("items_category_id_fkey");
+        });
 
-            entity.HasMany(d => d.ModifierGroups).WithMany(p => p.Items)
-                .UsingEntity<Dictionary<string, object>>(
-                    "ItemModifierGroup",
-                    r => r.HasOne<ModifierGroup>().WithMany()
-                        .HasForeignKey("ModifierGroupId")
-                        .HasConstraintName("item_modifier_groups_modifier_group_id_fkey"),
-                    l => l.HasOne<Item>().WithMany()
-                        .HasForeignKey("ItemId")
-                        .HasConstraintName("item_modifier_groups_item_id_fkey"),
-                    j =>
-                    {
-                        j.HasKey("ItemId", "ModifierGroupId").HasName("item_modifier_groups_pkey");
-                        j.ToTable("item_modifier_groups");
-                        j.IndexerProperty<int>("ItemId").HasColumnName("item_id");
-                        j.IndexerProperty<int>("ModifierGroupId").HasColumnName("modifier_group_id");
-                    });
+        modelBuilder.Entity<ItemModifierGroup>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("item_modifier_groups_pkey");
+
+            entity.ToTable("item_modifier_groups");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("id");
+            entity.Property(e => e.IsDeleted).HasColumnName("is_deleted");
+            entity.Property(e => e.ItemId).HasColumnName("item_id");
+            entity.Property(e => e.MaxLoad).HasColumnName("maxLoad");
+            entity.Property(e => e.MinLoad).HasColumnName("minLoad");
+            entity.Property(e => e.ModifierGroupId).HasColumnName("modifier_group_id");
+
+            entity.HasOne(d => d.Item).WithMany(p => p.ItemModifierGroups)
+                .HasForeignKey(d => d.ItemId)
+                .HasConstraintName("item_modifier_groups_item_id_fkey");
+
+            entity.HasOne(d => d.ModifierGroup).WithMany(p => p.ItemModifierGroups)
+                .HasForeignKey(d => d.ModifierGroupId)
+                .HasConstraintName("item_modifier_groups_modifier_group_id_fkey");
         });
 
         modelBuilder.Entity<Modifier>(entity =>
@@ -171,9 +202,7 @@ public partial class PizzaShopContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Description).HasColumnName("description");
-            entity.Property(e => e.IsDeleted)
-                .HasDefaultValueSql("false")
-                .HasColumnName("is_deleted");
+            entity.Property(e => e.IsDeleted).HasColumnName("is_deleted");
             entity.Property(e => e.Name)
                 .HasMaxLength(100)
                 .HasColumnName("name");
@@ -194,9 +223,7 @@ public partial class PizzaShopContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Description).HasColumnName("description");
-            entity.Property(e => e.IsDeleted)
-                .HasDefaultValueSql("false")
-                .HasColumnName("is_deleted");
+            entity.Property(e => e.IsDeleted).HasColumnName("is_deleted");
             entity.Property(e => e.Name)
                 .HasMaxLength(100)
                 .HasColumnName("name");
@@ -248,7 +275,7 @@ public partial class PizzaShopContext : DbContext
                 .HasMaxLength(10)
                 .HasDefaultValueSql("'pending'::character varying")
                 .HasColumnName("payment_status");
-            entity.Property(e => e.TableId).HasColumnName("table_id");
+            entity.Property(e => e.Rating).HasColumnName("rating");
             entity.Property(e => e.TotalAmount)
                 .HasPrecision(10, 2)
                 .HasColumnName("total_amount");
@@ -260,10 +287,6 @@ public partial class PizzaShopContext : DbContext
             entity.HasOne(d => d.Customer).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.CustomerId)
                 .HasConstraintName("orders_customer_id_fkey");
-
-            entity.HasOne(d => d.Table).WithMany(p => p.Orders)
-                .HasForeignKey(d => d.TableId)
-                .HasConstraintName("orders_table_id_fkey");
         });
 
         modelBuilder.Entity<OrderItem>(entity =>
@@ -384,9 +407,7 @@ public partial class PizzaShopContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Description).HasColumnName("description");
-            entity.Property(e => e.IsDeleted)
-                .HasDefaultValueSql("false")
-                .HasColumnName("is_deleted");
+            entity.Property(e => e.IsDeleted).HasColumnName("is_deleted");
             entity.Property(e => e.Name)
                 .HasMaxLength(100)
                 .HasColumnName("name");
@@ -400,9 +421,7 @@ public partial class PizzaShopContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Capacity).HasColumnName("capacity");
-            entity.Property(e => e.IsDeleted)
-                .HasDefaultValueSql("false")
-                .HasColumnName("is_deleted");
+            entity.Property(e => e.IsDeleted).HasColumnName("is_deleted");
             entity.Property(e => e.Name)
                 .HasMaxLength(50)
                 .HasColumnName("name");
@@ -426,13 +445,10 @@ public partial class PizzaShopContext : DbContext
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("nextval('taxes_id_seq'::regclass)")
                 .HasColumnName("id");
-            entity.Property(e => e.IsDefault)
-                .HasDefaultValueSql("false")
-                .HasColumnName("is_default");
-            entity.Property(e => e.IsDeleted)
-                .HasDefaultValueSql("false")
-                .HasColumnName("is_deleted");
+            entity.Property(e => e.IsDefault).HasColumnName("is_default");
+            entity.Property(e => e.IsDeleted).HasColumnName("is_deleted");
             entity.Property(e => e.IsEnabled)
+                .IsRequired()
                 .HasDefaultValueSql("true")
                 .HasColumnName("is_enabled");
             entity.Property(e => e.Name)
@@ -474,7 +490,6 @@ public partial class PizzaShopContext : DbContext
             entity.Property(e => e.FirstName)
                 .HasMaxLength(50)
                 .HasColumnName("first_name");
-            entity.Property(e => e.IsDeleted).HasDefaultValueSql("false");
             entity.Property(e => e.LastName)
                 .HasMaxLength(50)
                 .HasColumnName("last_name");
@@ -494,6 +509,7 @@ public partial class PizzaShopContext : DbContext
                 .HasMaxLength(50)
                 .HasColumnName("state");
             entity.Property(e => e.Status)
+                .IsRequired()
                 .HasDefaultValueSql("true")
                 .HasColumnName("status");
             entity.Property(e => e.UpdatedAt)

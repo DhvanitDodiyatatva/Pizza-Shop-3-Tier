@@ -1166,9 +1166,9 @@
                 var selectedIds = [];
                 selectedModifiers.forEach(function (modifier) {
                     selectedContainer.append(
-                        `<span class="badge bg-primary me-1" data-modifier-id="${modifier.id}">
+                        `<span class="badge bg-secondary-subtle text-black me-1 mb-2" data-modifier-id="${modifier.id}">
                     ${modifier.name}
-                    <button type="button" class="btn-close btn-close-white ms-1 remove-modifier" aria-label="Remove"></button>
+                    <button type="button" class="btn-close btn-close-black ms-1 remove-modifier" aria-label="Remove"></button>
                 </span>`
                     );
                     selectedIds.push(modifier.id);
@@ -1189,13 +1189,15 @@
                 }
             });
 
-            // Remove Modifier from Selection
-            $(document).on("click", ".remove-modifier", function () {
-                var badge = $(this).closest(".badge");
-                badge.remove();
-                updateSelectedModifierIds(); // Update the hidden inputs after removal
-            });
+
+
         }
+        // Remove Modifier from Selection
+        $(document).on("click", ".remove-modifier", function () {
+            var badge = $(this).closest(".badge");
+            badge.remove();
+            updateSelectedModifierIds(); // Update the hidden inputs after removal
+        });
 
         // Add Modifier Group Button Click Handler
         $("#addModifierGroupBtn").on("click", function () {

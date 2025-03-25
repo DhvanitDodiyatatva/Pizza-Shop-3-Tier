@@ -10,6 +10,10 @@ using PizzaShopRepository.Interfaces;
 using PizzaShopRepository.Repositories;
 using PizzaShopRepository.Services;
 using PizzaShopService;
+using PizzaShopService.Interfaces;
+using PizzaShopService.Services;
+
+
 
 // using PizzaShopService.Interfaces;
 using PizzaShopServices.Implementations;
@@ -46,6 +50,8 @@ builder.Services.AddScoped<ITableRepository, TableRepository>();
 builder.Services.AddScoped<ITableService, TableService>();
 builder.Services.AddScoped<ITaxFeeRepository, TaxFeeRepository>();
 builder.Services.AddScoped<ITaxFeeService, TaxFeeService>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 
 // Configure JWT authentication

@@ -1,0 +1,149 @@
+@model PizzaShopRepository.ViewModels.OrderViewModel
+
+<div class="content-div rounded-2 shadow p-3">
+    <div class="row table-responsive p-3">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col" class="text-nowrap">
+                        <a href="@Url.Action("GetOrderList", new { searchQuery = Model.SearchQuery, sortColumn = "order", sortDirection = Model.SortColumn == "order" && Model.SortDirection == "asc" ? "desc" : "asc", page = Model.CurrentPage, pageSize = Model.PageSize })" class="text-decoration-none text-dark sort-link">
+                            ORDER #
+                            @if (Model.SortColumn == "order")
+                            {
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="@(Model.SortDirection == "asc" ? "bi bi-arrow-up" : "bi bi-arrow-down")" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="@(Model.SortDirection == "asc" ? "M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z" : "M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z")" />
+                                </svg>
+                            }
+                            else
+                            {
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-up" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5" />
+                                </svg>
+                            }
+                        </a>
+                    </th>
+                    <th scope="col" class="text-nowrap">
+                        <a href="@Url.Action("GetOrderList", new { searchQuery = Model.SearchQuery, sortColumn = "date", sortDirection = Model.SortColumn == "date" && Model.SortDirection == "asc" ? "desc" : "asc", page = Model.CurrentPage, pageSize = Model.PageSize })" class="text-decoration-none text-dark sort-link">
+                            DATE
+                            @if (Model.SortColumn == "date")
+                            {
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="@(Model.SortDirection == "asc" ? "bi bi-arrow-up" : "bi bi-arrow-down")" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="@(Model.SortDirection == "asc" ? "M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z" : "M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z")" />
+                                </svg>
+                            }
+                            else
+                            {
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-up" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5" />
+                                </svg>
+                            }
+                        </a>
+                    </th>
+                    <th scope="col" class="text-nowrap">
+                        <a href="@Url.Action("GetOrderList", new { searchQuery = Model.SearchQuery, sortColumn = "customer", sortDirection = Model.SortColumn == "customer" && Model.SortDirection == "asc" ? "desc" : "asc", page = Model.CurrentPage, pageSize = Model.PageSize })" class="text-decoration-none text-dark sort-link">
+                            CUSTOMER
+                           @if (Model.SortColumn == "customer")
+                            {
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="@(Model.SortDirection == "asc" ? "bi bi-arrow-up" : "bi bi-arrow-down")" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="@(Model.SortDirection == "asc" ? "M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z" : "M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z")" />
+                                </svg>
+                            }
+                            else
+                            {
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-up" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5" />
+                                </svg>
+                            }
+                        </a>
+                    </th>
+                    <th scope="col" class="text-nowrap">STATUS</th>
+                    <th scope="col" class="text-nowrap">PAYMENT MODE</th>
+                    <th scope="col" class="text-nowrap">RATING</th>
+                    <th scope="col" class="text-nowrap">
+                        <a href="@Url.Action("GetOrderList", new { searchQuery = Model.SearchQuery, sortColumn = "total amount", sortDirection = Model.SortColumn == "total amount" && Model.SortDirection == "asc" ? "desc" : "asc", page = Model.CurrentPage, pageSize = Model.PageSize })" class="text-decoration-none text-dark sort-link">
+                            TOTAL AMOUNT
+                            @if (Model.SortColumn == "total amount")
+                            {
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="@(Model.SortDirection == "asc" ? "bi bi-arrow-up" : "bi bi-arrow-down")" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="@(Model.SortDirection == "asc" ? "M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z" : "M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z")" />
+                                </svg>
+                            }
+                            else
+                            {
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-up" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5" />
+                                </svg>
+                            }
+                        </a>
+                    </th>
+                    <th scope="col" class="text-nowrap">ACTION</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model.Orders)
+                {
+                    <tr>
+                        <td scope="row" class="py-3">#@order.Id</td>
+                        <td class="py-3">@order.CreatedAt?.ToString("yyyy-MM-dd")</td>
+                        <td class="py-3">@order.Customer?.Name</td>
+                        <td class="py-3">
+                           
+                                @order.OrderStatus
+                           
+                        </td>
+                        <td class="py-3">@order.PaymentMethod</td>
+                        <td class="py-3">
+                            <span class="text-warning">@(new string('★', order.Rating ?? 0))@(new string('☆', 5 - (order.Rating ?? 0)))</span>
+                        </td>
+                        <td class="py-3">@order.TotalAmount.ToString("C")</td>
+                        <td class="py-3">
+                            <a href="#" class="text-decoration-none text-black text-body-btn me-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                                    <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z" />
+                                    <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
+                                </svg>
+                            </a>
+                            <a href="#" class="text-decoration-none text-black text-body-btn me-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-file-earmark-pdf" viewBox="0 0 16 16">
+                                    <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
+                                    <!-- Rest of PDF icon paths -->
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <nav aria-label="Page navigation example" class="d-flex align-items-center justify-content-between justify-content-lg-end flex-column flex-md-row">
+        <div class="d-flex me-2 align-items-center mb-4">
+            <p class="m-0 me-1">Items Per Page:</p>
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    @Model.PageSize
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="@Url.Action("GetOrderList", new { searchQuery = Model.SearchQuery, sortColumn = Model.SortColumn, sortDirection = Model.SortDirection, page = Model.CurrentPage, pageSize = 2 })">2</a></li>
+                    <li><a class="dropdown-item" href="@Url.Action("GetOrderList", new { searchQuery = Model.SearchQuery, sortColumn = Model.SortColumn, sortDirection = Model.SortDirection, page = Model.CurrentPage, pageSize = 5 })">5</a></li>
+                    <li><a class="dropdown-item" href="@Url.Action("GetOrderList", new { searchQuery = Model.SearchQuery, sortColumn = Model.SortColumn, sortDirection = Model.SortDirection, page = Model.CurrentPage, pageSize = 8 })">8</a></li>
+                    <li><a class="dropdown-item" href="@Url.Action("GetOrderList", new { searchQuery = Model.SearchQuery, sortColumn = Model.SortColumn, sortDirection = Model.SortDirection, page = Model.CurrentPage, pageSize = 10 })">10</a></li>
+                </ul>
+            </div>
+        </div>
+        <ul class="pagination d-flex align-items-center mb-4">
+            <p class="m-0 me-1">Showing @(((Model.CurrentPage - 1) * Model.PageSize) + 1) - @(Model.CurrentPage * Model.PageSize > Model.TotalPages * Model.PageSize ? Model.TotalPages * Model.PageSize : Model.CurrentPage * Model.PageSize) of @(Model.TotalPages * Model.PageSize)</p>
+            <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+                <a class="page-link" href="@Url.Action("GetOrderList", new { searchQuery = Model.SearchQuery, sortColumn = Model.SortColumn, sortDirection = Model.SortDirection, page = Model.CurrentPage - 1, pageSize = Model.PageSize })"><</a>
+            </li>
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(Model.CurrentPage == i ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("GetOrderList", new { searchQuery = Model.SearchQuery, sortColumn = Model.SortColumn, sortDirection = Model.SortDirection, page = i, pageSize = Model.PageSize })">@i</a>
+                </li>
+            }
+            <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
+                <a class="page-link" href="@Url.Action("GetOrderList", new { searchQuery = Model.SearchQuery, sortColumn = Model.SortColumn, sortDirection = Model.SortDirection, page = Model.CurrentPage + 1, pageSize = Model.PageSize })">></a>
+            </li>
+        </ul>
+    </nav>
+</div>

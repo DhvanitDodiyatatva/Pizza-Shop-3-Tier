@@ -22,7 +22,7 @@ namespace PizzaShopRepository.ViewModels
         public int ModifierGroupId { get; set; } // To track the current modifier group
     }
 
-     public class PagedTableViewModel
+    public class PagedTableViewModel
     {
         public List<Table> Tables { get; set; } = new List<Table>();
         public int CurrentPage { get; set; }
@@ -30,6 +30,17 @@ namespace PizzaShopRepository.ViewModels
         public int PageSize { get; set; }
         public int TotalTables { get; set; }
         public int SectionId { get; set; } // To track the current section
+    }
+
+    public class OrderViewModel
+    {
+        public List<Order> Orders { get; set; }
+        public int CurrentPage { get; set; }
+        public int TotalPages { get; set; }
+        public int PageSize { get; set; }
+        public string SearchQuery { get; set; }
+        public string SortColumn { get; set; }
+        public string SortDirection { get; set; }
     }
 
 

@@ -7,8 +7,6 @@ public partial class Order
 {
     public int Id { get; set; }
 
-    public int? TableId { get; set; }
-
     public int? CustomerId { get; set; }
 
     public string? OrderStatus { get; set; }
@@ -23,11 +21,11 @@ public partial class Order
 
     public DateTime? UpdatedAt { get; set; }
 
-    public virtual User? Customer { get; set; }
+    public int? Rating { get; set; }
+
+    public virtual Customer? Customer { get; set; }
 
     public virtual ICollection<CustomerReview> CustomerReviews { get; set; } = new List<CustomerReview>();
 
     public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
-
-    public virtual Table? Table { get; set; }
 }

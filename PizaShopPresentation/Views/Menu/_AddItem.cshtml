@@ -138,11 +138,9 @@
                         </div>
                         <div class="col-xl-4 col-lg-12 col-md-12 col-12">
                             <div class="card h-100 bg-warning-subtle">
-                                <select class="form-select form-select-lg my-3" aria-label="Large select example">
-                                    <option selected>Select Modifier Groups(s)</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
+                                <select class="form-select"
+                                    asp-items="@(new SelectList(ViewBag.ModifierGroups, "Id", "Name"))" required>
+                                    <option value="">Select Modifier Groups</option>
                                 </select>
                             </div>
                         </div>

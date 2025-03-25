@@ -13,7 +13,7 @@ public partial class ModifierGroup
 
     public bool IsDeleted { get; set; }
 
-    public virtual ICollection<ModifierGroupMapping> ModifierGroupMappings { get; set; } = new List<ModifierGroupMapping>();
+    public virtual ICollection<ItemModifierGroup> ItemModifierGroups { get; set; } = new List<ItemModifierGroup>();
 
-    public virtual ICollection<Item> Items { get; set; } = new List<Item>();
+    public virtual ICollection<ModifierGroupMapping> ModifierGroupMappings { get; set; } = new List<ModifierGroupMapping>();
 }

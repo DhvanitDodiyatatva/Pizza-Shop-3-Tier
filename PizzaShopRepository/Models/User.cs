@@ -41,7 +41,5 @@ public partial class User
 
     public bool Status { get; set; }
 
-    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
-
     public virtual ICollection<Item> Items { get; set; } = new List<Item>();
 }

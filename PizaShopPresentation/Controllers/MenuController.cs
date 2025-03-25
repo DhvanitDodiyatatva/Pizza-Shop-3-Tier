@@ -182,6 +182,8 @@ public class MenuController : Controller
     {
         var categories = await _categoryService.GetAllCategoriesAsync();
         ViewBag.Categories = categories;
+        var modifierGroups = await _modifierGroupService.GetAllModifierGroupAsync();
+        ViewBag.ModifierGroups = modifierGroups;
         return PartialView("_AddItem", new ItemVM());
     }
 

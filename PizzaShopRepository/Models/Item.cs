@@ -39,9 +39,9 @@ public partial class Item
 
     public virtual Category? Category { get; set; }
 
-    public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+    public virtual ICollection<ItemModifierGroup> ItemModifierGroups { get; set; } = new List<ItemModifierGroup>();
 
-    public virtual ICollection<ModifierGroup> ModifierGroups { get; set; } = new List<ModifierGroup>();
+    public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 
     public virtual ICollection<User> Users { get; set; } = new List<User>();
 }
