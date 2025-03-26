@@ -13,14 +13,16 @@ public class MenuController : Controller
     private readonly IModifierGroupService _modifierGroupService;
     private readonly IModifierService _modifierService;
     private readonly IModifierGroupMappingService _modifierGroupMappingService;
+    private readonly IItemModifierGroupService _itemModifierGroupService;
 
-    public MenuController(ICategoryService categoryService, IItemService itemService, IModifierGroupService modifierGroupService, IModifierService modifierService, IModifierGroupMappingService modifierGroupMappingService)
+    public MenuController(ICategoryService categoryService, IItemService itemService, IModifierGroupService modifierGroupService, IModifierService modifierService, IModifierGroupMappingService modifierGroupMappingService, IItemModifierGroupService itemModifierGroupService)
     {
         _categoryService = categoryService;
         _itemService = itemService;
         _modifierGroupService = modifierGroupService;
         _modifierService = modifierService;
         _modifierGroupMappingService = modifierGroupMappingService;
+        _itemModifierGroupService = itemModifierGroupService;
     }
 
     public IActionResult Index()
@@ -222,6 +224,8 @@ public class MenuController : Controller
 
         var categories = await _categoryService.GetAllCategoriesAsync();
         ViewBag.Categories = categories;
+        var modifierGroups = await _modifierGroupService.GetAllModifierGroupAsync();
+        ViewBag.ModifierGroups = modifierGroups;
         return PartialView("_EditItem", model);
     }
 

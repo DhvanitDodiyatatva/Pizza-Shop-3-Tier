@@ -24,12 +24,13 @@ public class OrderRepository : IOrderRepository
     {
         var query = GetOrders();
 
-        // Search
+        // Search 
         if (!string.IsNullOrEmpty(searchQuery))
         {
-            query = query.Where(o => o.Customer.Name.Contains(searchQuery) ||
-                                   o.Id.ToString().Contains(searchQuery) ||
-                                   o.OrderStatus.Contains(searchQuery));
+            var lowerSearchQuery = searchQuery.ToLower();
+            query = query.Where(o => o.Customer.Name.ToLower().Contains(lowerSearchQuery) ||
+                                   o.Id.ToString().ToLower().Contains(lowerSearchQuery) ||
+                                   o.OrderStatus.ToLower().Contains(lowerSearchQuery));
         }
 
         // Status Filter

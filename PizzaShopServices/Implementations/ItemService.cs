@@ -3,16 +3,20 @@ using PizzaShopRepository.Interfaces;
 using PizzaShopRepository.Models;
 using PizzaShopRepository.ViewModels;
 using PizzaShopServices.Interfaces;
+using PizzaShopRepository.Data;
 
 namespace PizzaShopServices.Implementations;
 
 public class ItemService : IItemService
 {
     private readonly IItemRepository _itemRepository;
+    private readonly IItemModifierGroupService _itemModifierGroupService;
 
-    public ItemService(IItemRepository itemRepository)
+
+    public ItemService(IItemRepository itemRepository, IItemModifierGroupService itemModifierGroupService)
     {
         _itemRepository = itemRepository;
+        _itemModifierGroupService = itemModifierGroupService;
     }
 
     public async Task<List<Item>> GetItemsByCategoryAsync(int categoryId)
@@ -55,6 +59,22 @@ public class ItemService : IItemService
         try
         {
             await _itemRepository.AddItemAsync(item);
+
+            // Add ItemModifierGroup mappings
+            if (model.SelectedModifierGroupIds != null && model.SelectedModifierGroupIds.Any())
+            {
+                foreach (var modifierGroupId in model.SelectedModifierGroupIds)
+                {
+                    var config = model.ModifierGroupConfigs?.FirstOrDefault(c => c.ModifierGroupId == modifierGroupId);
+                    await _itemModifierGroupService.AddItemModifierGroupAsync(
+                        item.Id,
+                        modifierGroupId,
+                        config?.MinLoad,
+                        config?.MaxLoad
+                    );
+                }
+            }
+
             return (true, "Item added successfully!");
         }
         catch (Exception ex)
@@ -76,6 +96,8 @@ public class ItemService : IItemService
         if (item == null)
             return null;
 
+        var itemModifierGroups = await _itemModifierGroupService.GetItemModifierGroupsByItemIdAsync(id);
+
         return new ItemVM
         {
             Id = item.Id,
@@ -92,7 +114,14 @@ public class ItemService : IItemService
             TaxPercentage = item.TaxPercentage,
             DefaultTax = item.DefaultTax,
             CreatedAt = item.CreatedAt,
-            UpdatedAt = item.UpdatedAt
+            UpdatedAt = item.UpdatedAt,
+            SelectedModifierGroupIds = itemModifierGroups.Select(img => img.ModifierGroupId).ToList(),
+            ModifierGroupConfigs = itemModifierGroups.Select(img => new ModifierGroupConfig
+            {
+                ModifierGroupId = img.ModifierGroupId,
+                MinLoad = img.MinLoad,
+                MaxLoad = img.MaxLoad
+            }).ToList()
         };
     }
 
@@ -131,6 +160,46 @@ public class ItemService : IItemService
         try
         {
             await _itemRepository.UpdateItemAsync(item);
+
+            // Update ItemModifierGroup mappings
+            var existingMappings = await _itemModifierGroupService.GetItemModifierGroupsByItemIdAsync(model.Id);
+            var existingModifierGroupIds = existingMappings.Select(img => img.ModifierGroupId).ToList();
+
+            // Remove mappings that are no longer selected
+            foreach (var existingMapping in existingMappings)
+            {
+                if (!model.SelectedModifierGroupIds.Contains(existingMapping.ModifierGroupId))
+                {
+                    await _itemModifierGroupService.DeleteItemModifierGroupAsync(model.Id, existingMapping.ModifierGroupId);
+                }
+            }
+
+            // Add or update mappings for selected modifier groups
+            foreach (var modifierGroupId in model.SelectedModifierGroupIds)
+            {
+                var config = model.ModifierGroupConfigs?.FirstOrDefault(c => c.ModifierGroupId == modifierGroupId);
+                if (existingModifierGroupIds.Contains(modifierGroupId))
+                {
+                    // Update existing mapping
+                    await _itemModifierGroupService.UpdateItemModifierGroupAsync(
+                        model.Id,
+                        modifierGroupId,
+                        config?.MinLoad,
+                        config?.MaxLoad
+                    );
+                }
+                else
+                {
+                    // Add new mapping
+                    await _itemModifierGroupService.AddItemModifierGroupAsync(
+                        model.Id,
+                        modifierGroupId,
+                        config?.MinLoad,
+                        config?.MaxLoad
+                    );
+                }
+            }
+
             return (true, "Item updated successfully!");
         }
         catch (Exception ex)
@@ -150,6 +219,13 @@ public class ItemService : IItemService
 
         item.IsDeleted = true;
         await _itemRepository.UpdateItemAsync(item);
+        
+        // Soft delete associated ItemModifierGroup mappings
+        var itemModifierGroups = await _itemModifierGroupService.GetItemModifierGroupsByItemIdAsync(id);
+        foreach (var img in itemModifierGroups)
+        {
+            await _itemModifierGroupService.DeleteItemModifierGroupAsync(id, img.ModifierGroupId);
+        }
     }
 
     public async Task SoftDeleteItemsAsync(List<int> ids)

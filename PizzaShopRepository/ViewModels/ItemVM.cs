@@ -39,6 +39,16 @@ namespace PizzaShopRepository.ViewModels
         public bool DefaultTax { get; set; }
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
+
+        public List<int> SelectedModifierGroupIds { get; set; } = new List<int>();
+        public List<ModifierGroupConfig> ModifierGroupConfigs { get; set; } = new List<ModifierGroupConfig>();
+    }
+
+    public class ModifierGroupConfig
+    {
+        public int ModifierGroupId { get; set; }
+        public int? MinLoad { get; set; }
+        public int? MaxLoad { get; set; }
     }
 
 

@@ -38,6 +38,8 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IItemRepository, ItemRepository>();
 builder.Services.AddScoped<IItemService, ItemService>();
+builder.Services.AddScoped<IItemModifierGroupRepository, ItemModifierGroupRepository>();
+builder.Services.AddScoped<IItemModifierGroupService, ItemModifierGroupService>();
 builder.Services.AddScoped<IModifierGroupMappingRepository, ModifierGroupMappingRepository>();
 builder.Services.AddScoped<IModifierGroupMappingService, ModifierGroupMappingService>();
 builder.Services.AddScoped<IModifierGroupRepository, ModifierGroupRepository>();

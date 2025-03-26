@@ -129,22 +129,42 @@
                                     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
                                         class="bi bi-cloud-arrow-up" viewBox="0 0 16 16">
                                         <path fill-rule="evenodd"
-                                            d="M7.646 5.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708z" />
+                                            d="M7.646 5.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 1 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708z" />
                                         <path
                                             d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383m.653.757c-.757.653-1.153 1.44-1.153 2.056v.448l-.445.049C2.064 6.805 1 7.952 1 9.318 1 10.785 2.23 12 3.781 12h8.906C13.98 12 15 10.988 15 9.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 4.825 10.328 3 8 3a4.53 4.53 0 0 0-2.941 1.1z" />
                                     </svg>
-                                    Browse Files
+                                    Drag & Drop or Browse files
                                 </label>
                             </div>
                         </div>
                         <div class="col-xl-4 col-lg-12 col-md-12 col-12">
-                            <div class="card h-100 bg-warning-subtle">
-                                <select class="form-select form-select-lg my-3" aria-label="Large select example">
-                                    <option selected>Select Modifier Groups(s)</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
-                                </select>
+                            <div class="card h-100 bg-warning-subtle p-3">
+                                <h5>Select Modifier Group(s)</h5>
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle w-100" type="button"
+                                        id="modifierGroupDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Select Modifier Groups
+                                    </button>
+                                    <ul class="dropdown-menu w-100" aria-labelledby="modifierGroupDropdown">
+                                        @foreach (var group in ViewBag.ModifierGroups as
+                                                                                List<PizzaShopRepository.Models.ModifierGroup>)
+                                        {
+                                            var isChecked = Model.SelectedModifierGroupIds.Contains(group.Id) ? "checked" :
+                                            "";
+                                            <li>
+                                                <div class="dropdown-item">
+                                                    <input type="checkbox" class="modifier-group-checkbox" value="@group.Id"
+                                                        name="SelectedModifierGroupIds" id="modifierGroup_@group.Id"
+                                                        @isChecked />
+                                                    <label for="modifierGroup_@group.Id">@group.Name</label>
+                                                </div>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                                <div id="selectedModifierGroups" class="mt-3">
+                                    <!-- Selected modifier groups will be displayed here -->
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -164,9 +184,91 @@
 
 <script>
     $(document).ready(function () {
+        // Initialize selected modifier groups on page load
+        updateSelectedModifierGroups();
 
-        // Submit the form using AJAX
+        // Handle modifier group selection
+        $('.modifier-group-checkbox').on('change', function () {
+            updateSelectedModifierGroups();
+        });
 
+        function updateSelectedModifierGroups() {
+            var selectedGroups = [];
+            $('.modifier-group-checkbox:checked').each(function () {
+                var groupId = $(this).val();
+                var groupName = $(this).next('label').text();
+                selectedGroups.push({ id: groupId, name: groupName });
+            });
+
+            var html = '';
+            selectedGroups.forEach(function (group) {
+                // Check if there's an existing config for this group
+                var config = @Html.Raw(Json.Serialize(Model.ModifierGroupConfigs))
+                    .find(c => c.ModifierGroupId == group.id) || { MinLoad: null, MaxLoad: null };
+
+                html += `
+                    <div class="modifier-group-item mb-3" data-group-id="${group.id}">
+                        <h6>${group.name}</h6>
+                        <div class="row">
+                            <div class="col-6">
+                                <label>Min Modifiers</label>
+                                <select class="form-select min-load" name="ModifierGroupConfigs[${group.id}].MinLoad">
+                                    <option value="">Select</option>
+                                    ${generateOptions(0, 10, config.MinLoad)}
+                                </select>
+                                <input type="hidden" name="ModifierGroupConfigs[${group.id}].ModifierGroupId" value="${group.id}" />
+                            </div>
+                            <div class="col-6">
+                                <label>Max Modifiers</label>
+                                <select class="form-select max-load" name="ModifierGroupConfigs[${group.id}].MaxLoad">
+                                    <option value="">Select</option>
+                                    ${generateOptions(0, 10, config.MaxLoad)}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modifiers-list mt-2">
+                            <!-- Modifiers will be loaded via AJAX -->
+                        </div>
+                    </div>`;
+            });
+
+            $('#selectedModifierGroups').html(html);
+
+            // Load modifiers for each selected group
+            selectedGroups.forEach(function (group) {
+                loadModifiers(group.id);
+            });
+        }
+
+        function generateOptions(start, end, selectedValue) {
+            let options = '';
+            for (let i = start; i <= end; i++) {
+                let selected = i == selectedValue ? 'selected' : '';
+                options += `<option value="${i}" ${selected}>${i}</option>`;
+            }
+            return options;
+        }
+
+        function loadModifiers(groupId) {
+            $.ajax({
+                url: '@Url.Action("GetModifiers", "Menu")',
+                type: 'GET',
+                data: { modifierGroupId: groupId, page: 1, pageSize: 100 }, // Fetch all modifiers
+                success: function (result) {
+                    var modifiersHtml = '<ul>';
+                    $(result).find('.modifier-item').each(function () {
+                        var modifierName = $(this).data('modifier-name');
+                        var modifierPrice = $(this).data('modifier-price');
+                        modifiersHtml += `<li>${modifierName} - ₹${modifierPrice}</li>`;
+                    });
+                    modifiersHtml += '</ul>';
+                    $(`.modifier-group-item[data-group-id="${groupId}"] .modifiers-list`).html(modifiersHtml);
+                },
+                error: function () {
+                    $(`.modifier-group-item[data-group-id="${groupId}"] .modifiers-list`).html('<p>Failed to load modifiers.</p>');
+                }
+            });
+        }
 
         $("#editItemForm_@Model.Id").on("submit", function (e) {
             e.preventDefault();
@@ -179,32 +281,23 @@
                 processData: false,
                 contentType: false,
                 success: function (response) {
-                    console.log("Server Response:", response); // Debugging
-
+                    console.log("Server Response:", response);
                     if (response.success) {
                         var modal = bootstrap.Modal.getInstance(document.getElementById("editItemModal_@Model.Id"));
                         modal.hide();
-
                         toastr.success("Item edited successfully!");
-
-
-                        // Get the active category ID and reload items
                         var categoryId = $(".category-link.active").data("category-id") || $("#CategoryId").val();
-                        loadItems(categoryId); // Reload items for the current category
+                        loadItems(categoryId);
                     } else {
                         toastr.error(response.message);
                     }
                 },
                 error: function (xhr, status, error) {
-
                     toastr.error("Error updating item. Please try again.");
                 }
             });
         });
 
-
-
-        // Function to load items for the selected category
         function loadItems(categoryId) {
             $.ajax({
                 url: '@Url.Action("GetItems", "Menu")',
@@ -219,9 +312,5 @@
                 }
             });
         }
-
     });
-
-
-
 </script>
