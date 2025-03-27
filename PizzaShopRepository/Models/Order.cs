@@ -28,4 +28,8 @@ public partial class Order
     public virtual ICollection<CustomerReview> CustomerReviews { get; set; } = new List<CustomerReview>();
 
     public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+
+    public virtual ICollection<OrderTable> OrderTables { get; set; } = new List<OrderTable>();
+
+    public virtual ICollection<OrderTax> OrderTaxes { get; set; } = new List<OrderTax>();
 }

@@ -18,4 +18,6 @@ public partial class TaxesFee
     public bool IsDefault { get; set; }
 
     public bool IsDeleted { get; set; }
+
+    public virtual ICollection<OrderTax> OrderTaxes { get; set; } = new List<OrderTax>();
 }
