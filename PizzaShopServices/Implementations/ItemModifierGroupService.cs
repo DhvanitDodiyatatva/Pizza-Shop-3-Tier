@@ -10,6 +10,7 @@ namespace PizzaShopServices.Implementations
     {
         private readonly IItemModifierGroupRepository _itemModifierGroupRepository;
 
+        // Single constructor with the repository dependency
         public ItemModifierGroupService(IItemModifierGroupRepository itemModifierGroupRepository)
         {
             _itemModifierGroupRepository = itemModifierGroupRepository;
@@ -25,6 +26,8 @@ namespace PizzaShopServices.Implementations
                 MaxLoad = maxLoad,
                 IsDeleted = false
             };
+
+            // Delegate the addition to the repository, which will handle tracking
             await _itemModifierGroupRepository.AddItemModifierGroupAsync(itemModifierGroup);
         }
 

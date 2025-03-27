@@ -6125,11 +6125,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\PizzaShop 3-Tier\\PizzaShopServices\\PizzaShopServices.csproj",
+      "projectUniqueName": "d:\\PizzaShop 3-Tier\\PizzaShopServices\\PizzaShopServices.csproj",
       "projectName": "PizzaShopServices",
-      "projectPath": "D:\\PizzaShop 3-Tier\\PizzaShopServices\\PizzaShopServices.csproj",
+      "projectPath": "d:\\PizzaShop 3-Tier\\PizzaShopServices\\PizzaShopServices.csproj",
       "packagesPath": "C:\\Users\\pci29\\.nuget\\packages\\",
-      "outputPath": "D:\\PizzaShop 3-Tier\\PizzaShopServices\\obj\\",
+      "outputPath": "d:\\PizzaShop 3-Tier\\PizzaShopServices\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\pci29\\AppData\\Roaming\\NuGet\\NuGet.Config"

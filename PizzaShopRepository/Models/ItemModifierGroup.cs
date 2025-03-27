@@ -5,11 +5,11 @@ namespace PizzaShopRepository.Models;
 
 public partial class ItemModifierGroup
 {
+    public int Id { get; set; }
+
     public int ItemId { get; set; }
 
     public int ModifierGroupId { get; set; }
-
-    public int Id { get; set; }
 
     public int? MinLoad { get; set; }
 

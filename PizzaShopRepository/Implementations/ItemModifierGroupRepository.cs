@@ -18,6 +18,16 @@ namespace PizzaShopRepository.Repositories
 
         public async Task AddItemModifierGroupAsync(ItemModifierGroup itemModifierGroup)
         {
+            // Check for existing tracked entity and detach it if necessary
+            var existingEntity = _context.ItemModifierGroups
+                .Local
+                .FirstOrDefault(e => e.ItemId == itemModifierGroup.ItemId && e.ModifierGroupId == itemModifierGroup.ModifierGroupId);
+
+            if (existingEntity != null)
+            {
+                _context.Entry(existingEntity).State = EntityState.Detached;
+            }
+
             _context.ItemModifierGroups.Add(itemModifierGroup);
             await _context.SaveChangesAsync();
         }

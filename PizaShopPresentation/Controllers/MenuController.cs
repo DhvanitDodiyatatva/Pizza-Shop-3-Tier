@@ -292,6 +292,13 @@ public class MenuController : Controller
     }
 
     [HttpGet]
+    public async Task<IActionResult> GetModifiersByGroupForItem(int modifierGroupId)
+    {
+        var modifiers = await _modifierGroupMappingService.GetModifiersByGroupIdAsync(modifierGroupId);
+        return Json(modifiers); // Return modifiers as JSON
+    }
+
+    [HttpGet]
     public async Task<IActionResult> GetModifiers(int modifierGroupId, string searchString = "", int page = 1, int pageSize = 5)
     {
         try

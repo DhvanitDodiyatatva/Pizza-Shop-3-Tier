@@ -171,15 +171,35 @@
             });
         }
 
-        // Helper function to get query parameters from URL
         function getParameterByName(name, url) {
-            if (!url) url = window.location.href;
-            name = name.replace(/[\[\]]/g, '\\$&');
-            var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
-                results = regex.exec(url);
-            if (!results) return null;
-            if (!results[2]) return '';
-            return decodeURIComponent(results[2].replace(/\+/g, ' '));
+            if (!url) {
+                url = window.location.href;
+            }
+            // Add a question mark to the name to match it in the URL (e.g., "?page=" or "&page=")
+            var nameToFind = name + "=";
+
+            // Find the part of the URL after the "?"
+            var queryString = url.split("?")[1];
+
+            if (!queryString) {
+                return null;
+            }
+            // Split the query string into individual parameters (e.g., "page=1&sort=asc" becomes ["page=1", "sort=asc"])
+            var params = queryString.split("&");
+            // Loop through each parameter to find the one we want
+            for (var i = 0; i < params.length; i++) {
+                var param = params[i];
+                if (param.indexOf(nameToFind) === 0) {
+                    var value = param.split("=")[1];
+                    if (!value) {
+                        return "";
+                    }
+                    return decodeURIComponent(value.replace(/\+/g, " "));
+                }
+            }
+
+           
+            return null;
         }
     </script>
 }

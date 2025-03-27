@@ -136,26 +136,32 @@
                             </div>
                         </div>
                         <div class="col-xl-4 col-lg-12 col-md-12 col-12">
-                            <div class="card h-100 bg-warning-subtle p-3">
-                                <h5>Select Modifier Group(s)</h5>
-                                <div class="dropdown">
-                                    <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="modifierGroupDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Select Modifier Groups
-                                    </button>
-                                    <ul class="dropdown-menu w-100" aria-labelledby="modifierGroupDropdown">
-                                        @foreach (var group in ViewBag.ModifierGroups as List<PizzaShopRepository.Models.ModifierGroup>)
-                                        {
-                                            <li>
-                                                <div class="dropdown-item">
-                                                    <input type="checkbox" class="modifier-group-checkbox" value="@group.Id" name="SelectedModifierGroupIds" id="modifierGroup_@group.Id" />
-                                                    <label for="modifierGroup_@group.Id">@group.Name</label>
-                                                </div>
-                                            </li>
-                                        }
-                                    </ul>
-                                </div>
-                                <div id="selectedModifierGroups" class="mt-3">
-                                    <!-- Selected modifier groups will be displayed here -->
+                            <div class="card h-100 bg-warning-subtle p-3 ">
+                                <div class="custom-scrollbar" style="overflow-y: auto; max-height: 450px; min-height: 450px; overflow-x: hidden;">
+                                    <h5>Select Modifier Group(s)</h5>
+                                    <div class="dropdown">
+                                        <button class="btn btn-secondary dropdown-toggle w-100" type="button"
+                                            id="modifierGroupDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Select Modifier Groups
+                                        </button>
+                                        <ul class="dropdown-menu w-100" aria-labelledby="modifierGroupDropdown">
+                                            @foreach (var group in ViewBag.ModifierGroups as
+                                                                                    List<PizzaShopRepository.Models.ModifierGroup>)
+                                            {
+                                                <li>
+                                                    <div class="dropdown-item">
+                                                        <input type="checkbox" class="modifier-group-checkbox" value="@group.Id"
+                                                            name="SelectedModifierGroupIds" id="modifierGroup_@group.Id" />
+                                                        <label for="modifierGroup_@group.Id">@group.Name</label>
+                                                    </div>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                
+                                    <div id="selectedModifierGroups" class="mt-3">
+                                        <!-- Selected modifier groups will be displayed here -->
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -182,76 +188,181 @@
         });
 
         function updateSelectedModifierGroups() {
-            var selectedGroups = [];
-            $('.modifier-group-checkbox:checked').each(function () {
-                var groupId = $(this).val();
-                var groupName = $(this).next('label').text();
-                selectedGroups.push({ id: groupId, name: groupName });
-            });
+                var selectedGroups = [];
+                $('.modifier-group-checkbox:checked').each(function () {
+                    var groupId = $(this).val();
+                    var groupName = $(this).next('label').text();
+                    selectedGroups.push({ id: groupId, name: groupName });
+                });
 
-            var html = '';
-            selectedGroups.forEach(function (group) {
-                html += `
-                    <div class="modifier-group-item mb-3" data-group-id="${group.id}">
-                        <h6>${group.name}</h6>
-                        <div class="row">
-                            <div class="col-6">
-                                <label>Min Modifiers</label>
-                                <select class="form-select min-load" name="ModifierGroupConfigs[${group.id}].MinLoad">
-                                    <option value="">Select</option>
-                                    ${generateOptions(0, 10)}
-                                </select>
-                                <input type="hidden" name="ModifierGroupConfigs[${group.id}].ModifierGroupId" value="${group.id}" />
+                    var html = '';
+                    selectedGroups.forEach(function (group, index) { // Use index instead of group.id
+                        html += `
+                        <div class="modifier-group-item mb-3" data-group-id="${group.id}">
+                            <h6>${group.name}</h6>
+                            <div class="row">
+                                <div class="col-6">
+                                    <label>Min Modifiers</label>
+                                    <select class="form-select min-load" name="ModifierGroupConfigs[${index}].MinLoad">
+                                        ${generateOptions(0, 10)}
+                                    </select>
+                                    <input type="hidden" name="ModifierGroupConfigs[${index}].ModifierGroupId" value="${group.id}" />
+                                </div>
+                                <div class="col-6">
+                                    <label>Max Modifiers</label>
+                                    <select class="form-select max-load" name="ModifierGroupConfigs[${index}].MaxLoad">
+                                        ${generateOptions(0, 10)}
+                                    </select>
+                                </div>
                             </div>
-                            <div class="col-6">
-                                <label>Max Modifiers</label>
-                                <select class="form-select max-load" name="ModifierGroupConfigs[${group.id}].MaxLoad">
-                                    <option value="">Select</option>
-                                    ${generateOptions(0, 10)}
-                                </select>
+                            <div class="modifiers-list mt-2">
+                                <!-- Modifiers will be loaded via AJAX -->
                             </div>
-                        </div>
-                        <div class="modifiers-list mt-2">
-                            <!-- Modifiers will be loaded via AJAX -->
-                        </div>
-                    </div>`;
-            });
+                        </div>`;
+                    });
 
-            $('#selectedModifierGroups').html(html);
+                    $('#selectedModifierGroups').html(html);
+                    // Load modifiers for each selected group
+                    selectedGroups.forEach(function (group) {
+                        loadModifiers(group.id);
+                    });
+                    // Enforce Min <= Max rule
+                    enforceMinMaxRule();
+            }
 
-            // Load modifiers for each selected group
-            selectedGroups.forEach(function (group) {
-                loadModifiers(group.id);
-            });
-        }
-
-        function generateOptions(start, end) {
+        function generateOptions(start, end, selectedValue = null) {
             let options = '';
             for (let i = start; i <= end; i++) {
-                options += `<option value="${i}">${i}</option>`;
+                let selected = i == selectedValue ? 'selected' : '';
+                options += `<option value="${i}" ${selected}>${i}</option>`;
             }
             return options;
         }
 
         function loadModifiers(groupId) {
+            console.log(`Loading modifiers for group ID: ${groupId}`, $(`.modifier-group-item[data-group-id="${groupId}"] .modifiers-list`)); // Debug log
             $.ajax({
-                url: '@Url.Action("GetModifiers", "Menu")',
+                url: '@Url.Action("GetModifiersByGroupForItem", "Menu")',
                 type: 'GET',
-                data: { modifierGroupId: groupId, page: 1, pageSize: 100 }, // Fetch all modifiers
+                data: { modifierGroupId: groupId }, // Fetch all modifiers
                 success: function (result) {
+                    console.log('GetModifiers response:', result); // Debug log
+
+                    // Check if the result is an array and has items
+                    if (!Array.isArray(result) || result.length === 0) {
+                        // No modifiers found
+                        $(`.modifier-group-item[data-group-id="${groupId}"] .modifiers-list`).html('<p>No modifiers available for this group.</p>');
+                        console.log(`No modifiers found for group ID: ${groupId}`);
+
+                        // Update Min and Max Modifiers select options to 0 only
+                        updateMinMaxOptions(groupId, 0);
+                        return;
+                    }
+
+                    // Update Min and Max Modifiers select options based on the number of modifiers
+                    const modifierCount = result.length;
+                    updateMinMaxOptions(groupId, modifierCount);
+
+                    // Build the HTML for the modifiers list
                     var modifiersHtml = '<ul>';
-                    $(result).find('.modifier-item').each(function () {
-                        var modifierName = $(this).data('modifier-name');
-                        var modifierPrice = $(this).data('modifier-price');
+                    result.forEach(function (modifier) {
+                        // Assuming the modifier object has Name and Price properties
+                        var modifierName = modifier.name || 'Unknown Modifier';
+                        var modifierPrice = modifier.price !== undefined ? modifier.price : 'N/A';
                         modifiersHtml += `<li>${modifierName} - ₹${modifierPrice}</li>`;
                     });
                     modifiersHtml += '</ul>';
+                    console.log('Modifiers HTML:', modifiersHtml);
+
+                    // Update the DOM with the modifiers list
                     $(`.modifier-group-item[data-group-id="${groupId}"] .modifiers-list`).html(modifiersHtml);
                 },
-                error: function () {
-                    $(`.modifier-group-item[data-group-id="${groupId}"] .modifiers-list`).html('<p>Failed to load modifiers.</p>');
+                error: function (xhr, status, error) {
+                    console.error('Error loading modifiers:', status, error); // Debug log
+                    console.error('Response:', xhr.responseText); // Debug log
+                    $(`.modifier-group-item[data-group-id="${groupId}"] .modifiers-list`).html('<p>Failed to load modifiers. Please try again.</p>');
+
+                    // Update Min and Max Modifiers select options to 0 only
+                    updateMinMaxOptions(groupId, 0);
                 }
             });
+        }
+
+        function updateMinMaxOptions(groupId, modifierCount) {
+            // Get the current values of Min and Max Modifiers
+            const $minSelect = $(`.modifier-group-item[data-group-id="${groupId}"] .min-load`);
+            const $maxSelect = $(`.modifier-group-item[data-group-id="${groupId}"] .max-load`);
+            const currentMin = $minSelect.val() ? parseInt($minSelect.val()) : null;
+            const currentMax = $maxSelect.val() ? parseInt($maxSelect.val()) : null;
+
+            // Generate new options based on the modifier count
+            let minOptions = '<option value="">Select</option>';
+            let maxOptions = '<option value="">Select</option>';
+
+            // If there are no modifiers, only allow 0
+            if (modifierCount === 0) {
+                minOptions += '<option value="0" selected>0</option>';
+                maxOptions += '<option value="0" selected>0</option>';
+            } else {
+                // Generate options from 0 to modifierCount
+                minOptions += generateOptions(0, modifierCount, currentMin);
+                maxOptions += generateOptions(0, modifierCount, currentMax);
+            }
+
+            // Update the select elements
+            $minSelect.html(minOptions);
+            $maxSelect.html(maxOptions);
+
+            // If the current values are out of range, reset them
+            if (currentMin !== null && currentMin > modifierCount) {
+                $minSelect.val(modifierCount);
+            }
+            if (currentMax !== null && currentMax > modifierCount) {
+                $maxSelect.val(modifierCount);
+            }
+
+            // Enforce Min <= Max after updating options
+            enforceMinMaxForGroup(groupId);
+        }
+
+        function enforceMinMaxRule() {
+            // Add event listener to all Min Modifiers select elements
+            $('.min-load').off('change').on('change', function () {
+                const $minSelect = $(this);
+                const groupId = $minSelect.closest('.modifier-group-item').data('group-id');
+                enforceMinMaxForGroup(groupId);
+            });
+
+            // Add event listener to all Max Modifiers select elements
+            $('.max-load').off('change').on('change', function () {
+                const $maxSelect = $(this);
+                const groupId = $maxSelect.closest('.modifier-group-item').data('group-id');
+                enforceMinMaxForGroup(groupId);
+            });
+        }
+
+        function enforceMinMaxForGroup(groupId) {
+            const $minSelect = $(`.modifier-group-item[data-group-id="${groupId}"] .min-load`);
+            const $maxSelect = $(`.modifier-group-item[data-group-id="${groupId}"] .max-load`);
+
+            const minValue = $minSelect.val() ? parseInt($minSelect.val()) : null;
+            const maxValue = $maxSelect.val() ? parseInt($maxSelect.val()) : null;
+
+            // Get the maximum possible value (based on the number of options in the select)
+            const maxPossibleValue = parseInt($minSelect.find('option:last').val());
+
+            // If Min Modifiers is set to the maximum possible value, set Max Modifiers to the same
+            if (minValue === maxPossibleValue) {
+                $maxSelect.val(minValue);
+                return;
+            }
+
+            // If both values are set, ensure Min <= Max
+            if (minValue !== null && maxValue !== null) {
+                if (minValue > maxValue) {
+                    $maxSelect.val(minValue);
+                }
+            }
         }
 
         $("#addItemForm").on("submit", function (e) {

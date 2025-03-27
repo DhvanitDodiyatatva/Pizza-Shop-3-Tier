@@ -14,6 +14,7 @@
                 <div class="modal-body">
                     <div class="row g-2 p-1">
                         <div class="col-xl-8 col-lg-12 col-md-12 col-12">
+                            <!-- Existing form fields remain unchanged -->
                             <div class="row">
                                 <div class="col">
                                     <div class="form-floating mb-3">
@@ -129,7 +130,7 @@
                                     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
                                         class="bi bi-cloud-arrow-up" viewBox="0 0 16 16">
                                         <path fill-rule="evenodd"
-                                            d="M7.646 5.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 1 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708z" />
+                                            d="M7.646 5.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708z" />
                                         <path
                                             d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383m.653.757c-.757.653-1.153 1.44-1.153 2.056v.448l-.445.049C2.064 6.805 1 7.952 1 9.318 1 10.785 2.23 12 3.781 12h8.906C13.98 12 15 10.988 15 9.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 4.825 10.328 3 8 3a4.53 4.53 0 0 0-2.941 1.1z" />
                                     </svg>
@@ -139,31 +140,34 @@
                         </div>
                         <div class="col-xl-4 col-lg-12 col-md-12 col-12">
                             <div class="card h-100 bg-warning-subtle p-3">
-                                <h5>Select Modifier Group(s)</h5>
-                                <div class="dropdown">
-                                    <button class="btn btn-secondary dropdown-toggle w-100" type="button"
-                                        id="modifierGroupDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Select Modifier Groups
-                                    </button>
-                                    <ul class="dropdown-menu w-100" aria-labelledby="modifierGroupDropdown">
-                                        @foreach (var group in ViewBag.ModifierGroups as
-                                                                                List<PizzaShopRepository.Models.ModifierGroup>)
-                                        {
-                                            var isChecked = Model.SelectedModifierGroupIds.Contains(group.Id) ? "checked" :
-                                            "";
-                                            <li>
-                                                <div class="dropdown-item">
-                                                    <input type="checkbox" class="modifier-group-checkbox" value="@group.Id"
-                                                        name="SelectedModifierGroupIds" id="modifierGroup_@group.Id"
-                                                        @isChecked />
-                                                    <label for="modifierGroup_@group.Id">@group.Name</label>
-                                                </div>
-                                            </li>
-                                        }
-                                    </ul>
-                                </div>
-                                <div id="selectedModifierGroups" class="mt-3">
-                                    <!-- Selected modifier groups will be displayed here -->
+                                <div class="custom-scrollbar"
+                                    style="overflow-y: auto; max-height: 450px; min-height: 450px; overflow-x: hidden;">
+                                    <h5>Select Modifier Group(s)</h5>
+                                    <div class="dropdown">
+                                        <button class="btn btn-secondary dropdown-toggle w-100" type="button"
+                                            id="modifierGroupDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Select Modifier Groups
+                                        </button>
+                                        <ul class="dropdown-menu w-100" aria-labelledby="modifierGroupDropdown">
+                                            @foreach (var group in ViewBag.ModifierGroups as
+                                                                                        List<PizzaShopRepository.Models.ModifierGroup>)
+                                            {
+                                                var isChecked = Model.SelectedModifierGroupIds.Contains(group.Id) ?
+                                                "checked" : "";
+                                                <li>
+                                                    <div class="dropdown-item">
+                                                        <input type="checkbox" class="modifier-group-checkbox"
+                                                            value="@group.Id" name="SelectedModifierGroupIds"
+                                                            id="modifierGroup_@group.Id" @isChecked />
+                                                        <label for="modifierGroup_@group.Id">@group.Name</label>
+                                                    </div>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                    <div id="selectedModifierGroups" class="mt-3">
+                                        <!-- Selected modifier groups will be displayed here -->
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -195,16 +199,24 @@
         function updateSelectedModifierGroups() {
             var selectedGroups = [];
             $('.modifier-group-checkbox:checked').each(function () {
-                var groupId = $(this).val();
+                var groupId = parseInt($(this).val()); // Convert to integer
                 var groupName = $(this).next('label').text();
                 selectedGroups.push({ id: groupId, name: groupName });
             });
 
             var html = '';
-            selectedGroups.forEach(function (group) {
-                // Check if there's an existing config for this group
-                var config = @Html.Raw(Json.Serialize(Model.ModifierGroupConfigs))
-                    .find(c => c.ModifierGroupId == group.id) || { MinLoad: null, MaxLoad: null };
+            selectedGroups.forEach(function (group, index) {
+                // Log the full ModifierGroupConfigs for debugging
+                var configs = @Html.Raw(Json.Serialize(Model.ModifierGroupConfigs));
+                console.log('All ModifierGroupConfigs:', configs);
+
+                // Find config for this group using lowercase property names
+                var config = configs.find(c => parseInt(c.modifierGroupId) === group.id) || { minLoad: 0, maxLoad: 0 };
+                console.log(`Config for group ${group.id}:`, config);
+
+                // Ensure minLoad and maxLoad are numbers and not null/undefined
+                var minLoad = config.minLoad !== null && config.minLoad !== undefined ? parseInt(config.minLoad) : 0;
+                var maxLoad = config.maxLoad !== null && config.maxLoad !== undefined ? parseInt(config.maxLoad) : 0;
 
                 html += `
                     <div class="modifier-group-item mb-3" data-group-id="${group.id}">
@@ -212,17 +224,15 @@
                         <div class="row">
                             <div class="col-6">
                                 <label>Min Modifiers</label>
-                                <select class="form-select min-load" name="ModifierGroupConfigs[${group.id}].MinLoad">
-                                    <option value="">Select</option>
-                                    ${generateOptions(0, 10, config.MinLoad)}
+                                <select class="form-select min-load" name="ModifierGroupConfigs[${index}].MinLoad">
+                                    ${generateOptions(0, 10, minLoad)}
                                 </select>
-                                <input type="hidden" name="ModifierGroupConfigs[${group.id}].ModifierGroupId" value="${group.id}" />
+                                <input type="hidden" name="ModifierGroupConfigs[${index}].ModifierGroupId" value="${group.id}" />
                             </div>
                             <div class="col-6">
                                 <label>Max Modifiers</label>
-                                <select class="form-select max-load" name="ModifierGroupConfigs[${group.id}].MaxLoad">
-                                    <option value="">Select</option>
-                                    ${generateOptions(0, 10, config.MaxLoad)}
+                                <select class="form-select max-load" name="ModifierGroupConfigs[${index}].MaxLoad">
+                                    ${generateOptions(0, 10, maxLoad)}
                                 </select>
                             </div>
                         </div>
@@ -234,46 +244,118 @@
 
             $('#selectedModifierGroups').html(html);
 
-            // Load modifiers for each selected group
+            // Load modifiers for each selected group asynchronously
             selectedGroups.forEach(function (group) {
                 loadModifiers(group.id);
             });
+
+            // Enforce Min <= Max rule
+            enforceMinMaxRule();
         }
 
         function generateOptions(start, end, selectedValue) {
             let options = '';
+            // Ensure selectedValue is a valid integer
+            selectedValue = Number.isInteger(selectedValue) ? selectedValue : 0;
             for (let i = start; i <= end; i++) {
-                let selected = i == selectedValue ? 'selected' : '';
+                let selected = i === selectedValue ? 'selected' : '';
                 options += `<option value="${i}" ${selected}>${i}</option>`;
             }
             return options;
         }
 
         function loadModifiers(groupId) {
+            console.log(`Loading modifiers for group ID: ${groupId}`);
             $.ajax({
-                url: '@Url.Action("GetModifiers", "Menu")',
+                url: '@Url.Action("GetModifiersByGroupForItem", "Menu")',
                 type: 'GET',
-                data: { modifierGroupId: groupId, page: 1, pageSize: 100 }, // Fetch all modifiers
+                data: { modifierGroupId: groupId },
                 success: function (result) {
+                    console.log('GetModifiers response:', result);
+                    if (!Array.isArray(result) || result.length === 0) {
+                        $(`.modifier-group-item[data-group-id="${groupId}"] .modifiers-list`).html('<p>No modifiers available for this group.</p>');
+                        updateMinMaxOptions(groupId, 0);
+                        return;
+                    }
+
+                    const modifierCount = result.length;
+                    updateMinMaxOptions(groupId, modifierCount);
+
                     var modifiersHtml = '<ul>';
-                    $(result).find('.modifier-item').each(function () {
-                        var modifierName = $(this).data('modifier-name');
-                        var modifierPrice = $(this).data('modifier-price');
+                    result.forEach(function (modifier) {
+                        var modifierName = modifier.name || 'Unknown Modifier';
+                        var modifierPrice = modifier.price !== undefined ? modifier.price : 'N/A';
                         modifiersHtml += `<li>${modifierName} - ₹${modifierPrice}</li>`;
                     });
                     modifiersHtml += '</ul>';
                     $(`.modifier-group-item[data-group-id="${groupId}"] .modifiers-list`).html(modifiersHtml);
                 },
-                error: function () {
+                error: function (xhr, status, error) {
+                    console.error('Error loading modifiers:', status, error);
                     $(`.modifier-group-item[data-group-id="${groupId}"] .modifiers-list`).html('<p>Failed to load modifiers.</p>');
+                    updateMinMaxOptions(groupId, 0);
                 }
             });
+        }
+
+        function updateMinMaxOptions(groupId, modifierCount) {
+            const $minSelect = $(`.modifier-group-item[data-group-id="${groupId}"] .min-load`);
+            const $maxSelect = $(`.modifier-group-item[data-group-id="${groupId}"] .max-load`);
+
+            // Get the current (database) values before updating options
+            const currentMin = parseInt($minSelect.val()) || 0;
+            const currentMax = parseInt($maxSelect.val()) || 0;
+
+            // Generate new options based on modifier count, preserving current selection
+            let minOptions = modifierCount === 0 ? '<option value="0" selected>0</option>' : generateOptions(0, modifierCount, currentMin);
+            let maxOptions = modifierCount === 0 ? '<option value="0" selected>0</option>' : generateOptions(0, modifierCount, currentMax);
+
+            $minSelect.html(minOptions);
+            $maxSelect.html(maxOptions);
+
+            // Ensure the database values are set, capped at modifierCount
+            $minSelect.val(Math.min(currentMin, modifierCount));
+            $maxSelect.val(Math.min(currentMax, modifierCount));
+
+            enforceMinMaxForGroup(groupId);
+        }
+
+        function enforceMinMaxRule() {
+            $('.min-load').off('change').on('change', function () {
+                const $minSelect = $(this);
+                const groupId = $minSelect.closest('.modifier-group-item').data('group-id');
+                enforceMinMaxForGroup(groupId);
+            });
+
+            $('.max-load').off('change').on('change', function () {
+                const $maxSelect = $(this);
+                const groupId = $maxSelect.closest('.modifier-group-item').data('group-id');
+                enforceMinMaxForGroup(groupId);
+            });
+        }
+
+        function enforceMinMaxForGroup(groupId) {
+            const $minSelect = $(`.modifier-group-item[data-group-id="${groupId}"] .min-load`);
+            const $maxSelect = $(`.modifier-group-item[data-group-id="${groupId}"] .max-load`);
+
+            const minValue = parseInt($minSelect.val()) || 0;
+            const maxValue = parseInt($maxSelect.val()) || 0;
+
+            const maxPossibleValue = parseInt($minSelect.find('option:last').val());
+
+            if (minValue === maxPossibleValue) {
+                $maxSelect.val(minValue);
+                return;
+            }
+
+            if (minValue > maxValue) {
+                $maxSelect.val(minValue);
+            }
         }
 
         $("#editItemForm_@Model.Id").on("submit", function (e) {
             e.preventDefault();
             var formData = new FormData(this);
-
             $.ajax({
                 url: '@Url.Action("UpdateItem", "Menu")',
                 type: 'POST',
@@ -281,7 +363,6 @@
                 processData: false,
                 contentType: false,
                 success: function (response) {
-                    console.log("Server Response:", response);
                     if (response.success) {
                         var modal = bootstrap.Modal.getInstance(document.getElementById("editItemModal_@Model.Id"));
                         modal.hide();
@@ -292,7 +373,7 @@
                         toastr.error(response.message);
                     }
                 },
-                error: function (xhr, status, error) {
+                error: function () {
                     toastr.error("Error updating item. Please try again.");
                 }
             });
@@ -306,8 +387,7 @@
                 success: function (result) {
                     $("#GetItemList").html(result);
                 },
-                error: function (xhr, status, error) {
-                    console.error("Error loading items:", error);
+                error: function () {
                     $("#GetItemList").html("Failed to load items");
                 }
             });

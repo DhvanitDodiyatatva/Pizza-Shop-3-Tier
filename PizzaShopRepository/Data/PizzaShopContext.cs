@@ -176,9 +176,7 @@ public partial class PizzaShopContext : DbContext
 
             entity.ToTable("item_modifier_groups");
 
-            entity.Property(e => e.Id)
-                .ValueGeneratedNever()
-                .HasColumnName("id");
+            entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.IsDeleted).HasColumnName("is_deleted");
             entity.Property(e => e.ItemId).HasColumnName("item_id");
             entity.Property(e => e.MaxLoad).HasColumnName("maxLoad");
