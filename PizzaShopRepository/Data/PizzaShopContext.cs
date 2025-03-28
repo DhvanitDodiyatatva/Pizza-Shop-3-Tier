@@ -265,6 +265,9 @@ public partial class PizzaShopContext : DbContext
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("created_at");
             entity.Property(e => e.CustomerId).HasColumnName("customer_id");
+            entity.Property(e => e.InvoiceNo)
+                .HasMaxLength(50)
+                .HasColumnName("invoice_no");
             entity.Property(e => e.OrderStatus)
                 .HasMaxLength(20)
                 .HasDefaultValueSql("'pending'::character varying")

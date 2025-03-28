@@ -1,4 +1,3 @@
-// PizzaShopService/Services/OrderService.cs
 using PizzaShopRepository.Interfaces;
 using PizzaShopRepository.Models;
 using PizzaShopRepository.ViewModels;
@@ -30,5 +29,10 @@ public class OrderService : IOrderService
             SortColumn = sortColumn,
             SortDirection = sortDirection
         };
+    }
+
+    public async Task<Order?> GetOrderDetailsAsync(int id)
+    {
+        return await _orderRepository.GetOrderByIdAsync(id);
     }
 }

@@ -8,4 +8,5 @@ public interface IOrderRepository
     IQueryable<Order> GetOrders();
     Task<List<Order>> GetPaginatedOrdersAsync(string searchQuery, string statusFilter, string timeFilter, string fromDate, string toDate, string sortColumn, string sortDirection, int page, int pageSize);
     Task<int> GetTotalOrdersCountAsync(string searchQuery, string statusFilter, string timeFilter, string fromDate, string toDate);
+    Task<Order?> GetOrderByIdAsync(int id);
 }

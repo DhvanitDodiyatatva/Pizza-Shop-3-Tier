@@ -23,6 +23,8 @@ public partial class Order
 
     public int? Rating { get; set; }
 
+    public string InvoiceNo { get; set; } = null!;
+
     public virtual Customer? Customer { get; set; }
 
     public virtual ICollection<CustomerReview> CustomerReviews { get; set; } = new List<CustomerReview>();

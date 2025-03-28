@@ -1,4 +1,3 @@
-// PizzaShopRepository/Repositories/OrderRepository.cs
 using Microsoft.EntityFrameworkCore;
 using PizzaShopRepository.Data;
 using PizzaShopRepository.Interfaces;
@@ -152,5 +151,23 @@ public class OrderRepository : IOrderRepository
         }
 
         return await query.CountAsync();
+    }
+
+
+    public async Task<Order?> GetOrderByIdAsync(int id)
+    {
+        return await _context.Orders
+            .Include(o => o.Customer)
+            .Include(o => o.OrderTables)
+                .ThenInclude(ot => ot.Table)
+                .ThenInclude(t => t.Section)
+            .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Item)
+            .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.OrderItemModifiers)
+                .ThenInclude(oim => oim.Modifier)
+            .Include(o => o.OrderTaxes)
+                .ThenInclude(ot => ot.Tax)
+            .FirstOrDefaultAsync(o => o.Id == id);
     }
 }

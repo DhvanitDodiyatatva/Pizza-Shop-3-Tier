@@ -31,6 +31,18 @@ public class OrdersController : Controller
         return PartialView("_OrderList", viewModel);
     }
 
+
+    [HttpGet]
+    public async Task<IActionResult> OrderDetails(int id)
+    {
+        var order = await _orderService.GetOrderDetailsAsync(id);
+        if (order == null)
+        {
+            return NotFound();
+        }
+        return View("_OrderDetails", order);
+    }
+
     [HttpGet]
     public async Task<IActionResult> ExportOrders(string searchQuery, string statusFilter, string timeFilter, string fromDate, string toDate, string sortColumn, string sortDirection)
     {
