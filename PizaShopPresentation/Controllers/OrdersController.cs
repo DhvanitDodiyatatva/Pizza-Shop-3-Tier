@@ -44,6 +44,17 @@ public class OrdersController : Controller
     }
 
     [HttpGet]
+    public async Task<IActionResult> Invoice(int orderId)
+    {
+        var order = await _orderService.GetOrderDetailsAsync(orderId);
+        if (order == null)
+        {
+            return NotFound();
+        }
+        return View(order);
+    }
+
+    [HttpGet]
     public async Task<IActionResult> ExportOrders(string searchQuery, string statusFilter, string timeFilter, string fromDate, string toDate, string sortColumn, string sortDirection)
     {
         // Fetch all orders without pagination for export

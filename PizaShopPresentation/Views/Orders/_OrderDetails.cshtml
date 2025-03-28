@@ -5,7 +5,7 @@
 }
 
 
-<div class="Users-content mt-0 p-xl-5 p-lg-4 p-md-4 p-sm-4 p-4 d-flex justify-content-center">
+<div class=" Users-content mt-0 p-xl-5 p-lg-4 p-md-4 p-sm-4 p-4 d-flex justify-content-center ">
     <div>
 <div class="d-flex align-items-center justify-content-between my-2">
         <div>
@@ -26,14 +26,14 @@
 
     <!-- Order Summary Section -->
     <div class="card mb-4">
-        <div class="card-header d-flex justify-content-between align-items-center">
+        @* <div class="card-header d-flex justify-content-between align-items-center">
         
             <h5 class="mb-0 fw-bold fs-4">Order Summary <span class="badge bg-success-subtle">@Model.OrderStatus</span></h5>
             <a href="@Url.Action("ExportOrderDetails", "Orders", new { id = Model.Id })" class="btn btn-main text-white">
                 <i class="bi bi-download"></i> Export
             </a>
             
-        </div>
+        </div> *@
         <div class="card-body">
             <p><strong>Invoice No.:</strong> #@Model.InvoiceNo</p>
             
@@ -91,13 +91,13 @@
     </div>
 
     <!-- Order Items Section -->
-    <div class="card">
+    <div class="  card">
         <div class="card-body table table-responsive">
             <h5 class="mb-0 fw-bold fs-4">Order Items</h5><br>
-            <table class="table ">
+            <table class="table  table-hover">
                 <thead>
                     <tr>
-                        <th>Sr.No</th>
+         <th>Sr.No</th>
                         <th>Item</th>
                         <th>Quantity</th>
                         <th>Price</th>
