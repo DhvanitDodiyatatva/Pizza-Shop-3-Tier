@@ -23,36 +23,20 @@ else
             <td class="py-3 text-nowrap">
                 @table.Name
             </td>
-            @* <td class="py-3 text-center text-nowrap">
-                @switch (table.ItemType?.ToLower())
-                {
-                    case "vegetarian":
-                        <img src="~/images/icons/veg-icon.svg" alt="veg-img" style="height: 30px; aspect-ratio: 1/1;">
-                        break;
-                    case "non_vegetarian":
-                        <img src="~/images/icons/non-veg-icon.svg" alt="non-veg-img" style="height: 30px; aspect-ratio: 1/1;">
-                        break;
-                    case "vegan":
-                        <img src="~/images/icons/vegan-icon.svg" alt="vegan-img" style="height: 30px; aspect-ratio: 1/1;">
-                        break;
-                    default:
-                        <span>Unknown</span>
-                        break;
-                }
-            </td> *@
+
             <td class="py-3 text-center text-nowrap">@table.Capacity</td>
             <td class="py-3 text-center text-nowrap">
 
                 @switch (table.Status?.ToLower())
                 {
                     case "available":
-                        <span class="badge fw-bold fs-6  py-1 rounded-5 bg-success">Available</span>
+                        <span class="badge fw-bold fs-6  py-1 rounded-5 bg-success-subtle text-success">Available</span>
                         break;
                     case "reserved":
-                        <span class="badge fw-bold fs-6  py-1 rounded-5 bg-warning">Reserved</span>
+                        <span class="badge fw-bold fs-6  py-1 rounded-5 bg-warning-subtle text-warning">Reserved</span>
                         break;
                     case "occupied":
-                        <span class="badge fw-bold fs-6  py-1 rounded-5 bg-secondary">Occupied</span>
+                        <span class="badge fw-bold fs-6  py-1 rounded-5 bg-secondary-subtle text-secondary">Occupied</span>
                         break;
                     default:
                         <span>Unknown</span>

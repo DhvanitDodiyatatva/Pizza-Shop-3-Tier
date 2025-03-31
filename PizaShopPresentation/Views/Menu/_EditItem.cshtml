@@ -144,7 +144,7 @@
                                     style="overflow-y: auto; max-height: 450px; min-height: 450px; overflow-x: hidden;">
                                     <h5>Select Modifier Group(s)</h5>
                                     <div class="dropdown">
-                                        <button class="btn btn-secondary dropdown-toggle w-100" type="button"
+                                        <button class="btn bg-white dropdown-toggle w-100" type="button"
                                             id="modifierGroupDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                             Select Modifier Groups
                                         </button>
@@ -220,7 +220,7 @@
 
                 html += `
                     <div class="modifier-group-item mb-3" data-group-id="${group.id}">
-                        <h6>${group.name}</h6>
+                        <p class="fs-5 text-secondary fw-bolder">${group.name}</p>
                         <div class="row">
                             <div class="col-6">
                                 <label>Min Modifiers</label>

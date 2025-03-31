@@ -4,200 +4,197 @@
     ViewData["Title"] = $"Order Details - #{Model.Id}";
 }
 
+<div class="container mt-0 py-4 py-md-5 d-flex justify-content-center">
+    <div class="w-100" style="max-width: 1200px;">
+        <div class="d-flex flex-column flex-md-row align-items-center justify-content-between my-2">
+            <div class="mb-3 mb-md-0">
+                <div class="fw-bolder fs-2 page-text">Order-Details</div>
+            </div>
+            <div>
+                <!-- Use a relative URL or pass the URL from the controller -->
+                <a href="/Orders/Index" class="btn btn-main text-white">Back</a>
+                <button id="exportOrderDetails" class="btn btn-main text-white" data-orderid="@Model.Id">
+                    <i class="bi bi-download"></i> Export
+                </button>
+            </div>
+        </div>
 
-<div class=" Users-content mt-0 p-xl-5 p-lg-4 p-md-4 p-sm-4 p-4 d-flex justify-content-center ">
-    <div>
-<div class="d-flex align-items-center justify-content-between my-2">
         <div>
-            <div class="fw-bolder fs-2 page-text">Order-Details</div>
-        </div>
-        <div class="d-flex">
-           <a href="@Url.Action("Index", "Orders")" class="btn btn-main text-white">Back</a>
-          
-        </div>
-    </div>
-
-<div class=" ">
-    
-    <!-- Back Button -->
-    @* <div class="mb-3">
-        <a href="@Url.Action("Index", "Orders")" class="btn btn-outline-secondary">Back</a>
-    </div> *@
-
-    <!-- Order Summary Section -->
-    <div class="card mb-4">
-        @* <div class="card-header d-flex justify-content-between align-items-center">
-        
-            <h5 class="mb-0 fw-bold fs-4">Order Summary <span class="badge bg-success-subtle">@Model.OrderStatus</span></h5>
-            <a href="@Url.Action("ExportOrderDetails", "Orders", new { id = Model.Id })" class="btn btn-main text-white">
-                <i class="bi bi-download"></i> Export
-            </a>
-            
-        </div> *@
-        <div class="card-body">
-            <p><strong>Invoice No.:</strong> #@Model.InvoiceNo</p>
-            
-            <span><strong>Paid on:</strong> @Model.CreatedAt?.ToString("dd-MM-yyyy HH:mm")</span> &nbsp;&nbsp;&nbsp;
-            <span><strong>Placed on:</strong> @Model.CreatedAt?.ToString("dd-MM-yyyy HH:mm")</span>&nbsp;&nbsp;&nbsp;
-            <span><strong>Modified on:</strong> @Model.UpdatedAt?.ToString("dd-MM-yyyy HH:mm")</span>&nbsp;&nbsp;&nbsp;
-            <span><strong>Duration:</strong>
-                @{
-                    var duration = Model.UpdatedAt.HasValue && Model.CreatedAt.HasValue
-                    ? (Model.UpdatedAt.Value - Model.CreatedAt.Value).ToString(@"hh\:mm")
-                    : "N/A";
-                }
-                @duration
-            </span>
-        </div>
-    </div>
-
-    <!-- Customer and Table Details Section -->
-    <div class="row mb-4">
-        <!-- Customer Details -->
-        <div class="col-md-6 mb-2">
-            <div class="card">
-               
-                <div class="card-body">
-                     <h5 class="mb-0 fw-bold fs-4"><i class="bi bi-person-fill me-2 fw-bold fs-4"></i>Customer Details</h5><br>
-                    <p class="mb-0"><strong>Name:</strong> @Model.Customer?.Name</p>
-                    <p class="mb-0"><strong>Phone:</strong> @Model.Customer?.PhoneNo</p>
-                    <p class="mb-0"><strong>No of Person:</strong> @Model.Customer?.NoOfPersons</p>
-                    <p class="mb-0"><strong>Email:</strong> @Model.Customer?.Email</p>
+            <!-- Order Summary Section -->
+            <div class="card mb-4">
+                <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-center">
+                    <p class="mb-0 mb-2 mb-md-0 fw-bold fs-4">Order Summary <span
+                            class="badge bg-success-subtle fs-6 text-success">@Model.OrderStatus</span></p>
                 </div>
-            </div>
-        </div>
-
-        <!-- Table Details -->
-        <div class="col-md-6 mb-2">
-            <div class="card h-100">
                 <div class="card-body">
-                     <h5 class="mb-0 fw-bold fs-4"><i class="bi bi-table me-2 fw-bold fs-4"></i>Table Details</h5>
-                     <br>
-                    @if (Model.OrderTables.Any())
-                    {
-                        foreach (var orderTable in Model.OrderTables)
-                        {
-                            <p class="mb-0"><strong>Table:</strong> @orderTable.Table?.Name</p>
-                            <p class="mb-0"><strong>Section:</strong> @orderTable.Table?.Section?.Name</p>
-                        }
-                    }
-                    else
-                    {
-                        <p>No table assigned</p>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Order Items Section -->
-    <div class="  card">
-        <div class="card-body table table-responsive">
-            <h5 class="mb-0 fw-bold fs-4">Order Items</h5><br>
-            <table class="table  table-hover">
-                <thead>
-                    <tr>
-         <th>Sr.No</th>
-                        <th>Item</th>
-                        <th>Quantity</th>
-                        <th>Price</th>
-                        <th>Total Amount</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @{
-                        int srNo = 1;
-                        decimal subtotal = 0;
-                    }
-                    @foreach (var item in Model.OrderItems)
-                    {
-                        <tr>
-                            <td class="text-center">@srNo</td>
-                            <td>
-                                @item.Item?.Name
-                                @if (item.OrderItemModifiers.Any())
-                                {
-                                    <ul class=" mt-1">
-                                        @foreach (var modifier in item.OrderItemModifiers)
-                                        {
-                                            <li>  @modifier.Modifier?.Name</li>
-                                        }
-                                    </ul>
-                                }
-                            </td>
-                            <td class="text-center">
-                                @item.Quantity
-                                @if (item.OrderItemModifiers.Any())
-                                {
-                                    <ul class="list-unstyled mt-1">
-                                        @foreach (var modifier in item.OrderItemModifiers)
-                                        {
-                                            <li>  @modifier.Quantity</li>
-                                        }
-                                    </ul>
-                                }
-                            </td>
-                            <td>
-                                ₹ @item.UnitPrice.ToString("F2")
-                                @if (item.OrderItemModifiers.Any())
-                                {
-                                    <ul class="list-unstyled mt-1">
-                                        @foreach (var modifier in item.OrderItemModifiers)
-                                        {
-                                            <li>  ₹ @modifier.Price.ToString("F2")</li>
-                                        }
-                                    </ul>
-                                }
-                            </td>
-                            <td>
-                                ₹ @item.TotalPrice.ToString("F2")
-                                @if (item.OrderItemModifiers.Any())
-                                {
-                                    <ul class="list-unstyled mt-1">
-                                       
-                                        @foreach (var modifier in item.OrderItemModifiers)
-                                        {
-                                            <li>  ₹ @(modifier.Price * modifier.Quantity)</li>
-                                        }
-                                    </ul>
-                                }
-
-                                @{
-                                    decimal itemTotal = item.TotalPrice;
-                                    decimal modifierTotal = item.OrderItemModifiers.Sum(m => m.Quantity * m.Price);
-                                    decimal totalForRow = itemTotal + modifierTotal;
-                                    subtotal += totalForRow;
-                                }
-                                @* ₹ @totalForRow.ToString("F2") *@
-                            </td>
-                        </tr>
-                        srNo++;
-                    }
-                </tbody>
-            </table>
-
-            <!-- Tax and Total Summary -->
-            <div class="text-end">
-                <p><strong>Subtotal:</strong> ₹ @subtotal.ToString("F2")</p>
-                @if (Model.OrderTaxes.Any())
-                {
-                    foreach (var tax in Model.OrderTaxes)
-                    {
-                        if (tax.TaxPercentage.HasValue && tax.TaxPercentage > 0)
-                        {
-                            <p><strong>@tax.Tax?.Name:</strong> ₹ @{
-                                decimal taxAmount = subtotal * (tax.TaxPercentage.Value / 100);
-                                @taxAmount.ToString("F2")
+                    <div class="row">
+                        <div class="col-12 col-md-6 col-lg-3 mb-2">
+                            <strong>Invoice No.:</strong> #@Model.InvoiceNo
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-3 mb-2">
+                            <strong>Paid on:</strong> @Model.CreatedAt?.ToString("dd-MM-yyyy HH:mm")
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-3 mb-2">
+                            <strong>Placed on:</strong> @Model.CreatedAt?.ToString("dd-MM-yyyy HH:mm")
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-3 mb-2">
+                            <strong>Modified on:</strong> @Model.UpdatedAt?.ToString("dd-MM-yyyy HH:mm")
+                            <br>
+                            <strong>Duration:</strong>
+                            @{
+                                var duration = Model.UpdatedAt.HasValue && Model.CreatedAt.HasValue
+                                ? (Model.UpdatedAt.Value - Model.CreatedAt.Value).ToString(@"hh\:mm")
+                                : "N/A";
                             }
-                            </p>
-                    }
-                                else if (tax.TaxFlat.HasValue && tax.TaxFlat > 0)
-                    {
-                        <p><strong>@tax.Tax?.Name:</strong> ₹ @tax.TaxFlat.Value.ToString("F2")</p>
-                        }
-                    }
+                            @duration
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer and Table Details Section -->
+            <div class="row mb-4">
+                <!-- Customer Details -->
+                <div class="col-12 col-md-6 mb-3 mb-md-2">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="mb-0 fw-bold fs-4"><i class="bi bi-person-fill me-2 fw-bold fs-4"></i>Customer
+                                Details</h5><br>
+                            <p class="mb-0"><strong>Name:</strong> @Model.Customer?.Name</p>
+                            <p class="mb-0"><strong>Phone:</strong> @Model.Customer?.PhoneNo</p>
+                            <p class="mb-0"><strong>No of Person:</strong> @Model.Customer?.NoOfPersons</p>
+                            <p class="mb-0"><strong>Email:</strong> @Model.Customer?.Email</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table Details -->
+                <div class="col-12 col-md-6 mb-3 mb-md-2">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="mb-0 fw-bold fs-4"><i class="bi bi-table me-2 fw-bold fs-4"></i>Table Details
+                            </h5><br>
+                            @if (Model.OrderTables.Any())
+                            {
+                                foreach (var orderTable in Model.OrderTables)
+                                {
+                                    <p class="mb-0"><strong>Table:</strong> @orderTable.Table?.Name</p>
+                                    <p class="mb-0"><strong>Section:</strong> @orderTable.Table?.Section?.Name</p>
+                                }
+                            }
+                            else
+                            {
+                                <p>No table assigned</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Items Section -->
+            <div class="card">
+                <div class="card-body table-responsive">
+                    <h5 class="mb-0 fw-bold fs-4">Order Items</h5><br>
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Sr.No</th>
+                                <th>Item</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Total Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int srNo = 1;
+                                decimal subtotal = 0;
+                            }
+                            @foreach (var item in Model.OrderItems)
+                            {
+                                <tr>
+                                    <td class="text-center">@srNo</td>
+                                    <td>
+                                        @item.Item?.Name
+                                        @if (item.OrderItemModifiers.Any())
+                                        {
+                                            <ul class="mt-1">
+                                                @foreach (var modifier in item.OrderItemModifiers)
+                                                {
+                                                    <li>@modifier.Modifier?.Name</li>
+                                                }
+                                            </ul>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        @item.Quantity
+                                        @if (item.OrderItemModifiers.Any())
+                                        {
+                                            <ul class="list-unstyled mt-1">
+                                                @foreach (var modifier in item.OrderItemModifiers)
+                                                {
+                                                    <li>@modifier.Quantity</li>
+                                                }
+                                            </ul>
+                                        }
+                                    </td>
+                                    <td>
+                                        ₹ @item.UnitPrice.ToString("F2")
+                                        @if (item.OrderItemModifiers.Any())
+                                        {
+                                            <ul class="list-unstyled mt-1">
+                                                @foreach (var modifier in item.OrderItemModifiers)
+                                                {
+                                                    <li>₹ @modifier.Price.ToString("F2")</li>
+                                                }
+                                            </ul>
+                                        }
+                                    </td>
+                                    <td>
+                                        ₹ @item.TotalPrice.ToString("F2")
+                                        @if (item.OrderItemModifiers.Any())
+                                        {
+                                            <ul class="list-unstyled mt-1">
+                                                @foreach (var modifier in item.OrderItemModifiers)
+                                                {
+                                                    <li>₹ @(modifier.Price * modifier.Quantity)</li>
+                                                }
+                                            </ul>
+                                        }
+                                        @{
+                                            decimal itemTotal = item.TotalPrice;
+                                            decimal modifierTotal = item.OrderItemModifiers.Sum(m => m.Quantity * m.Price);
+                                            decimal totalForRow = itemTotal + modifierTotal;
+                                            subtotal += totalForRow;
+                                        }
+                                    </td>
+                                </tr>
+                                srNo++;
+                            }
+                        </tbody>
+                    </table>
+
+                    <!-- Tax and Total Summary -->
+                    <div class="text-end">
+                        <p><strong>Subtotal:</strong> ₹ @subtotal.ToString("F2")</p>
+                        @if (Model.OrderTaxes.Any())
+                        {
+                            foreach (var tax in Model.OrderTaxes)
+                            {
+                                if (tax.TaxPercentage.HasValue && tax.TaxPercentage > 0)
+                                {
+                                    <p><strong>@tax.Tax?.Name:</strong> ₹ @{
+                                        decimal taxAmount = subtotal * (tax.TaxPercentage.Value / 100);
+                                        @taxAmount.ToString("F2")
                                     }
-                    
+                                </p>
+                            }
+                                                else if (tax.TaxFlat.HasValue && tax.TaxFlat > 0)
+                            {
+                                <p><strong>@tax.Tax?.Name:</strong> ₹ @tax.TaxFlat.Value.ToString("F2")</p>
+                            }
+                        }
+                                                }
                         <p><strong>Total:</strong> ₹ @Model.TotalAmount.ToString("F2")</p>
                     </div>
                 </div>
@@ -231,3 +228,71 @@
         font-size: 1.1em;
     }
 </style>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+
+    <script>
+        $(document).ready(function () {
+            // Handle Export button click
+            $('#exportOrderDetails').on('click', function () {
+                var orderId = $(this).data("orderid");
+                console.log("Export clicked for order:", orderId);
+
+                $.ajax({
+                    url: "/Orders/Invoice",
+                    type: "GET",
+                    data: { orderId: orderId },
+                    success: function (response) {
+                        console.log("Successfully fetched invoice");
+                        var tempDiv = $("<div>").css({
+                            "position": "absolute",
+                            "left": "-9999px",
+                            "top": "-9999px",
+                            "width": "1000px",
+                            "height": "auto",
+                            "background": "white",
+                            "z-index": "-1",
+                            "contain": "strict",
+                            "overflow": "hidden"
+                        }).html(response).appendTo("body");
+
+                        setTimeout(function () {
+                            var invoiceContainer = tempDiv.find('.invoice-container')[0];
+                            if (!invoiceContainer) {
+                                console.error("Invoice container not found in the response");
+                                toastr.error("Error generating PDF: Invoice content not found.");
+                                tempDiv.remove();
+                                return;
+                            }
+
+                            html2canvas(invoiceContainer, { scale: 2, useCORS: true }).then(function (canvas) {
+                                var imgData = canvas.toDataURL("image/png");
+                                var { jsPDF } = window.jspdf;
+                                var pdf = new jsPDF("p", "mm", "a4");
+                                var imgWidth = 210;
+                                var imgHeight = (canvas.height * imgWidth) / canvas.width;
+                                pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+                                pdf.save("invoice_" + orderId + ".pdf");
+                                tempDiv.remove();
+                            }).catch(function (error) {
+                                console.error("Error rendering canvas:", error);
+                                toastr.error("Error generating PDF. Please try again.");
+                                tempDiv.remove();
+                            });
+                        }, 10);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error fetching invoice:", error);
+                        toastr.error("Error fetching invoice. Please try again.");
+                    }
+                });
+            });
+        });
+    </script>
+}
+<!-- Ensure the is properly closed -->
