@@ -54,6 +54,8 @@ builder.Services.AddScoped<ITaxFeeRepository, TaxFeeRepository>();
 builder.Services.AddScoped<ITaxFeeService, TaxFeeService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
 
 
 // Configure JWT authentication

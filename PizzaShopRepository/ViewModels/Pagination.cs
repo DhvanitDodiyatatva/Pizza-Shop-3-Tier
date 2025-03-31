@@ -43,6 +43,17 @@ namespace PizzaShopRepository.ViewModels
         public string SortDirection { get; set; }
     }
 
+    public class CustomerPaginationViewModel
+    {
+        public List<Customer> Customers { get; set; }
+        public int CurrentPage { get; set; }
+        public int TotalPages { get; set; }
+        public int PageSize { get; set; }
+        public string SearchQuery { get; set; }
+        public string SortColumn { get; set; }
+        public string SortDirection { get; set; }
+    }
+
 
 }
 
