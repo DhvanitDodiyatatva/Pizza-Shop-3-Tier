@@ -39,7 +39,7 @@
                         <thead class="">
                             <tr>
 
-                                <th>Order Date</th>
+                                <th class="text-nowrap">Order Date</th>
                                 <th class="text-nowrap">Order Type</th>
                                 <th>Payment</th>
                                 <th>Items</th>
@@ -54,9 +54,7 @@
 
                                 <tr>
 
-                                    <td>@order.CreatedAt?.ToString("dd-MM-yyyy HH:mm")
-
-                                    </td>
+                                    <td class=" text-nowrap">@order.CreatedAt?.ToString("dd-MM-yyyy HH:mm")</td>
                                     <td>@order.OrderType</td>
                                     <td>@order.PaymentStatus</td>
                                     <td>

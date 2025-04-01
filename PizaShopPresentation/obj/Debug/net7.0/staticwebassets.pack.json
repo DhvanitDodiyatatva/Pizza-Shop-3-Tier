@@ -17,6 +17,10 @@
       "PackagePath": "staticwebassets\\images\\Default_pfp.svg.png"
     },
     {
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\KOT.svg",
+      "PackagePath": "staticwebassets\\images\\KOT.svg"
+    },
+    {
       "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\QR.png",
       "PackagePath": "staticwebassets\\images\\QR.png"
     },
