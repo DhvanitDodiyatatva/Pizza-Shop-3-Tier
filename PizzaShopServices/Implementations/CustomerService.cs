@@ -13,22 +13,25 @@ namespace PizzaShopRepository.Services
             _customerRepository = customerRepository;
         }
 
-        public async Task<CustomerPaginationViewModel> GetCustomersAsync(string searchQuery, string sortColumn, string sortDirection, int page, int pageSize)
+        public async Task<CustomerPaginationViewModel> GetCustomersAsync(string searchQuery, string sortColumn,
+            string sortDirection, int page, int pageSize, string timeFilter, string fromDate, string toDate)
         {
-            var customers = await _customerRepository.GetCustomersAsync(searchQuery, sortColumn, sortDirection, page, pageSize);
-            var totalCount = await _customerRepository.GetTotalCustomersCountAsync(searchQuery);
-            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+            var customers = await _customerRepository.GetCustomersAsync(searchQuery, sortColumn,
+                sortDirection, page, pageSize, timeFilter, fromDate, toDate);
+
+            var totalCount = await _customerRepository.GetTotalCustomersCountAsync(searchQuery, timeFilter,
+                fromDate, toDate);
 
             return new CustomerPaginationViewModel
             {
                 Customers = customers,
                 CurrentPage = page,
-                TotalPages = totalPages,
                 PageSize = pageSize,
-                SearchQuery = searchQuery,
+                TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize),
                 SortColumn = sortColumn,
                 SortDirection = sortDirection
             };
         }
     }
+
 }

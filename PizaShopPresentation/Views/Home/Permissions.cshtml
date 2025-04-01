@@ -125,15 +125,15 @@
                 });
             });
 
-            // Optional: Prevent "Can View" from being unchecked if "Can Delete" or "Can Add/Edit" is checked
-            canViewCheckboxes.forEach((checkbox, index) => {
+            //  Prevent "Can View" from being unchecked if "Can Delete" or "Can Add/Edit" is checked
+            @* canViewCheckboxes.forEach((checkbox, index) => {
                 checkbox.addEventListener('change', function () {
                     if (!this.checked && (canDeleteCheckboxes[index].checked || canAddEditCheckboxes[index].checked)) {
                         this.checked = true; // Force it back on
                         alert("Cannot uncheck 'Can View' when 'Can Delete' or 'Can Add/Edit' is selected.");
                     }
                 });
-            });
+            }); *@
         });
     </script>
 }

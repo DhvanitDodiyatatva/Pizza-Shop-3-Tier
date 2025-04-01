@@ -379,9 +379,7 @@ public partial class PizzaShopContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.OrderId).HasColumnName("order_id");
-            entity.Property(e => e.TaxFlat)
-                .HasColumnType("money")
-                .HasColumnName("tax_flat");
+            entity.Property(e => e.TaxFlat).HasColumnName("tax_flat");
             entity.Property(e => e.TaxId).HasColumnName("tax_id");
             entity.Property(e => e.TaxPercentage).HasColumnName("tax_percentage");
 

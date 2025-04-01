@@ -5,6 +5,7 @@ namespace PizzaShopRepository.Services
 {
     public interface ICustomerService
     {
-        Task<CustomerPaginationViewModel> GetCustomersAsync(string searchQuery, string sortColumn, string sortDirection, int page, int pageSize);
+        Task<CustomerPaginationViewModel> GetCustomersAsync(string searchQuery, string sortColumn,
+            string sortDirection, int page, int pageSize, string timeFilter, string fromDate, string toDate);
     }
 }

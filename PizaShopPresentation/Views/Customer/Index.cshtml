@@ -2,7 +2,7 @@
     ViewData["Title"] = "Customers";
 }
 
-<div class=" mt-0 p-xl-5 p-lg-4 p-md-4 p-sm-4 p-4">
+<div class="mt-0 p-xl-5 p-lg-4 p-md-4 p-sm-4 p-4">
     <div class="my-2 z-0">
         <div class="row mb-2 align-items-center">
             <div class="col-12 col-md-3 col-lg-2 mb-2 mb-md-0">
@@ -27,20 +27,15 @@
                     </form>
                     <div class="form-floating" style="max-width: 150px;">
                         <select class="form-select" aria-label="Time filter" id="timeFilter">
-                            <option selected value="">ALL TIME</option>
-                            <option value="">
-                                <a type="button" class="btn " data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                    Custom Date
-                                </a>
-
-
-                            </option>
+                            <option value="" selected>ALL TIME</option>
                             <option value="today">Today</option>
                             <option value="this_week">This Week</option>
                             <option value="this_month">This Month</option>
+                            <option value="custom">Custom Date</option>
                         </select>
                     </div>
-                    <form id="exportForm" action="@Url.Action("ExportOrders", "Orders")" method="get">
+
+                    <form id="exportForm" action="@Url.Action("ExportCustomers", "Customer")" method="get">
                         <input type="hidden" name="searchQuery" id="exportSearchQuery" />
                         <input type="hidden" name="timeFilter" id="exportTimeFilter" />
                         <input type="hidden" name="fromDate" id="exportFromDate" />
@@ -55,46 +50,39 @@
                 </div>
             </div>
         </div>
-
-
     </div>
     <div id="CustomerListContainer">
         <!-- Customer list will be loaded here via AJAX -->
-
     </div>
 
-
     <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+    <div class="modal fade  " id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Select Date Range
-                    </h1>
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Select Date Range</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col-md-6 form-floating flex-grow-1 flex-md-grow-0" style="max-width: 350px;">
+                        <div class="col-md-6 form-floating flex-grow-1 flex-md-grow-0 mb-3" style="max-width: 350px;">
                             <input type="date" class="form-control" id="fromDate" />
                             <label for="fromDate">From date</label>
                         </div>
-                        <div class="col-md-6 form-floating flex-grow-1 flex-md-grow-0" style="max-width: 350px;">
+                        <div class="col-md-6 form-floating flex-grow-1 flex-md-grow-0 mb-3" style="max-width: 350px;">
                             <input type="date" class="form-control" id="toDate" />
                             <label for="toDate">To date</label>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary">Submit</button>
+                    <button type="button" class="btn btn-primary" id="submitDateRange">Submit</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
@@ -103,7 +91,10 @@
     let currentSortDirection = 'asc';
     let currentPage = 1;
     let currentPageSize = 5;
-    let searchTimeout; // For debouncing
+    let currentTimeFilter = '';
+    let currentFromDate = '';
+    let currentToDate = '';
+    let searchTimeout;
 
     function loadCustomerList() {
         $.ajax({
@@ -114,7 +105,10 @@
                 sortColumn: currentSortColumn,
                 sortDirection: currentSortDirection,
                 page: currentPage,
-                pageSize: currentPageSize
+                pageSize: currentPageSize,
+                timeFilter: currentTimeFilter,
+                fromDate: currentFromDate,
+                toDate: currentToDate
             },
             success: function (data) {
                 $('#CustomerListContainer').html(data);
@@ -151,14 +145,50 @@
         });
     }
 
+
+    $('#exportForm').on('submit', function () {
+        $('#exportSearchQuery').val(currentSearchQuery);
+        $('#exportTimeFilter').val(currentTimeFilter);
+        $('#exportFromDate').val(currentFromDate);
+        $('#exportToDate').val(currentToDate);
+        $('#exportSortColumn').val(currentSortColumn);
+        $('#exportSortDirection').val(currentSortDirection);
+    });
+
     $(document).ready(function () {
         $('#Search').on('keyup', function () {
-            clearTimeout(searchTimeout); // Clear previous timeout
+            clearTimeout(searchTimeout);
             searchTimeout = setTimeout(() => {
                 currentSearchQuery = $(this).val();
                 currentPage = 1;
                 loadCustomerList();
-            }, 300); // Delay search execution by 300ms for debounce
+            }, 300);
+        });
+
+        $('#timeFilter').on('change', function () {
+            currentTimeFilter = $(this).val();
+            currentFromDate = '';
+            currentToDate = '';
+
+            if (currentTimeFilter === 'custom') {
+                $('#exampleModal').modal('show');
+            } else {
+                currentPage = 1;
+                loadCustomerList();
+            }
+        });
+
+        $('#submitDateRange').on('click', function () {
+            currentFromDate = $('#fromDate').val();
+            currentToDate = $('#toDate').val();
+
+            if (currentFromDate && currentToDate) {
+                currentPage = 1;
+                loadCustomerList();
+                $('#exampleModal').modal('hide');
+            } else {
+                alert('Please select both dates');
+            }
         });
 
         loadCustomerList();
