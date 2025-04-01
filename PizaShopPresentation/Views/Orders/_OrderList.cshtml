@@ -178,19 +178,19 @@
                                 Model.PageSize > Model.TotalPages * Model.PageSize ? Model.TotalPages * Model.PageSize :
                                 Model.CurrentPage * Model.PageSize) of @(Model.TotalPages* Model.PageSize)</p>
             <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
-                <a class="page-link"
+                <a class="page-link text-secondary"
                     href="@Url.Action("GetOrderList", new { searchQuery = Model.SearchQuery, sortColumn = Model.SortColumn, sortDirection = Model.SortDirection, page = Model.CurrentPage - 1, pageSize = Model.PageSize })">
                     < </a>
             </li>
             @for (int i = 1; i <= Model.TotalPages; i++)
             {
                 <li class="page-item @(Model.CurrentPage == i ? "active" : "")">
-                    <a class="page-link"
+                    <a class="page-link text-secondary"
                         href="@Url.Action("GetOrderList", new { searchQuery = Model.SearchQuery, sortColumn = Model.SortColumn, sortDirection = Model.SortDirection, page = i, pageSize = Model.PageSize })">@i</a>
                 </li>
             }
             <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
-                <a class="page-link"
+                <a class="page-link text-secondary"
                     href="@Url.Action("GetOrderList", new { searchQuery = Model.SearchQuery, sortColumn = Model.SortColumn, sortDirection = Model.SortDirection, page = Model.CurrentPage + 1, pageSize = Model.PageSize })">></a>
             </li>
         </ul>

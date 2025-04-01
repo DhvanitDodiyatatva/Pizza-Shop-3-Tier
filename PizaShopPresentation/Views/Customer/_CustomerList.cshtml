@@ -53,7 +53,7 @@
                             }
                         </a>
                     </th>
-                    <th scope="col" class="text-nowrap">
+                    <th scope="col" class="text-nowrap text-center">
                         <a href="#" class="text-decoration-none text-black sort-link" data-column="TotalOrders"
                             data-direction="@(Model.SortColumn == "TotalOrders" && Model.SortDirection == "asc" ? "desc" : "asc")">
                             Total Order
@@ -82,12 +82,12 @@
             <tbody>
                 @foreach (var customer in Model.Customers)
                 {
-                    <tr>
-                        <td>@customer.Name</td>
-                        <td>@customer.Email</td>
-                        <td>@customer.PhoneNo</td>
-                        <td>@(customer.Date?.ToString("dd-MM-yyyy"))</td>
-                        <td>@customer.TotalOrders</td>
+                    <tr class="customer-row" data-customer-id="@customer.Id" style="cursor: pointer;">
+                        <td class="py-3 text-nowrap">@customer.Name</td>
+                        <td class="py-3">@customer.Email</td>
+                        <td class="py-3">@customer.PhoneNo</td>
+                        <td class="py-3 text-nowrap">@(customer.Date?.ToString("dd-MM-yyyy"))</td>
+                        <td class="py-3 text-center">@customer.TotalOrders</td>
                     </tr>
                 }
             </tbody>
@@ -115,17 +115,17 @@
                                         Model.PageSize > Model.TotalPages * Model.PageSize ? Model.TotalPages * Model.PageSize :
                                         Model.CurrentPage * Model.PageSize) of @(Model.TotalPages* Model.PageSize)</p>
                 <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
-                    <a class="page-link page-nav" href="#" data-page="@(Model.CurrentPage - 1)">
+                    <a class="page-link page-nav text-secondary" href="#" data-page="@(Model.CurrentPage - 1)">
                         < </a>
                 </li>
                 @for (int i = 1; i <= Model.TotalPages; i++)
                 {
                     <li class="page-item @(Model.CurrentPage == i ? "active" : "")">
-                        <a class="page-link page-nav" href="#" data-page="@i">@i</a>
+                        <a class="page-link page-nav text-secondary" href="#" data-page="@i">@i</a>
                     </li>
                 }
                 <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
-                    <a class="page-link page-nav" href="#" data-page="@(Model.CurrentPage + 1)"> > </a>
+                    <a class="page-link page-nav text-secondary" href="#" data-page="@(Model.CurrentPage + 1)"> > </a>
                 </li>
             </ul>
         </nav>

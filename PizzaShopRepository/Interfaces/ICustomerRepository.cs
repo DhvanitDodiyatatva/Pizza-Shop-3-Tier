@@ -11,5 +11,7 @@ namespace PizzaShopRepository.Repositories
 
         IQueryable<Customer> ApplyTimeFilter(IQueryable<Customer> query, string timeFilter,
            string fromDate, string toDate);
+
+        Task<Customer> GetCustomerHistoryAsync(int customerId);
     }
 }

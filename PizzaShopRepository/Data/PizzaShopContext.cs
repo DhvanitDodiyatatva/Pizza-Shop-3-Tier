@@ -272,6 +272,9 @@ public partial class PizzaShopContext : DbContext
                 .HasMaxLength(20)
                 .HasDefaultValueSql("'pending'::character varying")
                 .HasColumnName("order_status");
+            entity.Property(e => e.OrderType)
+                .HasMaxLength(50)
+                .HasColumnName("order_type");
             entity.Property(e => e.PaymentMethod)
                 .HasMaxLength(10)
                 .HasDefaultValueSql("'cash'::character varying")

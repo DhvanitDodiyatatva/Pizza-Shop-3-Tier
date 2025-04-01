@@ -143,6 +143,25 @@
             currentPage = 1;
             loadCustomerList();
         });
+
+        $('.customer-row').click(function () {
+            var customerId = $(this).data('customer-id');
+            $.ajax({
+                url: '@Url.Action("GetCustomerHistory", "Customer")',
+                type: 'GET',
+                data: { customerId: customerId },
+                success: function (data) {
+                    $('body').append(data);
+                    $('#customerHistoryModal').modal('show');
+                    $('#customerHistoryModal').on('hidden.bs.modal', function () {
+                        $(this).remove();
+                    });
+                },
+                error: function () {
+                    alert('Error loading customer history');
+                }
+            });
+        });
     }
 
 

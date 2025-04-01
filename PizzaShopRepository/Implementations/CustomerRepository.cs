@@ -91,5 +91,15 @@ namespace PizzaShopRepository.Repositories
 
             return query;
         }
+
+
+        public async Task<Customer> GetCustomerHistoryAsync(int customerId)
+        {
+            return await _context.Customers
+                .Include(c => c.Orders)
+                    .ThenInclude(o => o.OrderItems)
+                        .ThenInclude(oi => oi.Item)
+                .FirstOrDefaultAsync(c => c.Id == customerId);
+        }
     }
 }

@@ -36,6 +36,17 @@ namespace PizaShopPresentation.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> GetCustomerHistory(int customerId)
+        {
+            var viewModel = await _customerService.GetCustomerHistoryAsync(customerId);
+
+            if (viewModel == null)
+                return NotFound();
+
+            return PartialView("_CustomerHistoryModal", viewModel);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> ExportCustomers(string searchQuery, string timeFilter,
             string fromDate, string toDate, string sortColumn, string sortDirection)
         {

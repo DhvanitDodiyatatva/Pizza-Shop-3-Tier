@@ -32,6 +32,20 @@ namespace PizzaShopRepository.Services
                 SortDirection = sortDirection
             };
         }
+
+        public async Task<CustomerHistoryViewModel> GetCustomerHistoryAsync(int customerId)
+        {
+            var customer = await _customerRepository.GetCustomerHistoryAsync(customerId);
+
+            if (customer == null)
+                return null;
+
+            return new CustomerHistoryViewModel
+            {
+                Customer = customer,
+                Orders = customer.Orders.ToList()
+            };
+        }
     }
 
 }

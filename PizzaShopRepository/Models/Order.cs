@@ -25,6 +25,8 @@ public partial class Order
 
     public string InvoiceNo { get; set; } = null!;
 
+    public string? OrderType { get; set; }
+
     public virtual Customer? Customer { get; set; }
 
     public virtual ICollection<CustomerReview> CustomerReviews { get; set; } = new List<CustomerReview>();
