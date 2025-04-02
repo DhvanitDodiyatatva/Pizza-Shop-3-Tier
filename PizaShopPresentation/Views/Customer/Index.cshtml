@@ -175,6 +175,7 @@
     });
 
     $(document).ready(function () {
+        //Search 
         $('#Search').on('keyup', function () {
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(() => {
@@ -184,6 +185,7 @@
             }, 300);
         });
 
+        //Time Filter
         $('#timeFilter').on('change', function () {
             currentTimeFilter = $(this).val();
             currentFromDate = '';
@@ -197,6 +199,7 @@
             }
         });
 
+        //Custom Date Modal
         $('#submitDateRange').on('click', function () {
             currentFromDate = $('#fromDate').val();
             currentToDate = $('#toDate').val();

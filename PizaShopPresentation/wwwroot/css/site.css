@@ -105,8 +105,17 @@ td {
   top: 25%;
 }
 
-.kot {
-  left: 90%;
+.profile-kot {
+  left: 97%;
+  top: 25%;
+}
+
+.OrdApp {
+  left: 88%;
+}
+
+.OrdApp-mob {
+  left: 70%;
 }
 
 .header-desktop {

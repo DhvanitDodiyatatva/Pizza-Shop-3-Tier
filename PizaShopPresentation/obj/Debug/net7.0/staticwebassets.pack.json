@@ -17,8 +17,12 @@
       "PackagePath": "staticwebassets\\images\\Default_pfp.svg.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\KOT.svg",
-      "PackagePath": "staticwebassets\\images\\KOT.svg"
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\Kot.png",
+      "PackagePath": "staticwebassets\\images\\Kot.png"
+    },
+    {
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\OrderApp.svg",
+      "PackagePath": "staticwebassets\\images\\OrderApp.svg"
     },
     {
       "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\QR.png",
@@ -149,6 +153,10 @@
       "PackagePath": "staticwebassets\\images\\logos\\pizzashop_logo.png"
     },
     {
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\menuOA.png",
+      "PackagePath": "staticwebassets\\images\\menuOA.png"
+    },
+    {
       "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\pdf.png",
       "PackagePath": "staticwebassets\\images\\pdf.png"
     },
@@ -165,12 +173,20 @@
       "PackagePath": "staticwebassets\\images\\qr-code.png"
     },
     {
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\tableOA.png",
+      "PackagePath": "staticwebassets\\images\\tableOA.png"
+    },
+    {
       "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\toppng.com-warning-icon-2400x2400.png",
       "PackagePath": "staticwebassets\\images\\toppng.com-warning-icon-2400x2400.png"
     },
     {
       "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\transperent-pizza.png",
       "PackagePath": "staticwebassets\\images\\transperent-pizza.png"
+    },
+    {
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\waitingOA.png",
+      "PackagePath": "staticwebassets\\images\\waitingOA.png"
     },
     {
       "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\js\\bootstrap.bundle.min.js",

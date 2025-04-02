@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "8Iq5La6wNpnHub5lOsmKlslKic/gIHnFyD8+e+51R8g=",
+  "Hash": "qJm0AeDxaWucbK0fKwuuxgI3A5G+ZIwBd/8siTxTdEs=",
   "Source": "PizaShopPresentation",
   "BasePath": "_content/PizaShopPresentation",
   "Mode": "Default",
@@ -544,12 +544,12 @@
       "OriginalItemSpec": "wwwroot\\images\\icons\\waiting-time.svg"
     },
     {
-      "Identity": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\KOT.svg",
+      "Identity": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\Kot.png",
       "SourceId": "PizaShopPresentation",
       "SourceType": "Discovered",
       "ContentRoot": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\",
       "BasePath": "_content/PizaShopPresentation",
-      "RelativePath": "images/KOT.svg",
+      "RelativePath": "images/Kot.png",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -558,7 +558,7 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\images\\KOT.svg"
+      "OriginalItemSpec": "wwwroot\\images\\Kot.png"
     },
     {
       "Identity": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\logos\\icons8-facebook-48.png",
@@ -627,6 +627,40 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\logos\\pizzashop_logo.png"
+    },
+    {
+      "Identity": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\menuOA.png",
+      "SourceId": "PizaShopPresentation",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\",
+      "BasePath": "_content/PizaShopPresentation",
+      "RelativePath": "images/menuOA.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\menuOA.png"
+    },
+    {
+      "Identity": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\OrderApp.svg",
+      "SourceId": "PizaShopPresentation",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\",
+      "BasePath": "_content/PizaShopPresentation",
+      "RelativePath": "images/OrderApp.svg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\OrderApp.svg"
     },
     {
       "Identity": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\pdf.png",
@@ -731,6 +765,23 @@
       "OriginalItemSpec": "wwwroot\\images\\Screenshot (3)_085aeeea-c0e3-49a2-a0c6-874c0fd0a500.png"
     },
     {
+      "Identity": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\tableOA.png",
+      "SourceId": "PizaShopPresentation",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\",
+      "BasePath": "_content/PizaShopPresentation",
+      "RelativePath": "images/tableOA.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\tableOA.png"
+    },
+    {
       "Identity": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\toppng.com-warning-icon-2400x2400.png",
       "SourceId": "PizaShopPresentation",
       "SourceType": "Discovered",
@@ -763,6 +814,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\transperent-pizza.png"
+    },
+    {
+      "Identity": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\waitingOA.png",
+      "SourceId": "PizaShopPresentation",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\",
+      "BasePath": "_content/PizaShopPresentation",
+      "RelativePath": "images/waitingOA.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\waitingOA.png"
     },
     {
       "Identity": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\js\\bootstrap.bundle.min.js",

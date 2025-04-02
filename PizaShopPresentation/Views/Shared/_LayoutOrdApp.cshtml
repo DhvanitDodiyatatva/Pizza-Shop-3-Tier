@@ -1,0 +1,182 @@
+@using System.Security.Claims
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] Orders App</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+
+<body>
+    <div class="main-dashboard">
+        <div class="row g-0">
+            <div class="col-12">
+                <!-- Header -->
+                <header class="header  text-white p-3" style="background-color: #1f73ae;">
+                    <div class="container-fluid">
+                        <div class="row align-items-center">
+                            <!-- Logo Section -->
+                            <div class="col-6 col-md-3">
+                                <a asp-controller="Home" asp-action="Dashboard" class="text-decoration-none">
+                                    <div class="d-flex align-items-center">
+                                        <img class="img-fluid bg-white" src="~/images/logos/pizzashop_logo.png"
+                                            alt="pizza-shop-logo" style="height: 50px;" />
+                                        <div class="fs-3 ms-2 d-none d-sm-block text-white">PIZZASHOP</div>
+                                    </div>
+                                </a>
+                            </div>
+
+                            <!-- Navigation Section -->
+                            <div class="col-6 col-md-9">
+                                <div class="d-flex justify-content-end align-items-center">
+                                    <!-- Navigation Pills -->
+                                    <div class="d-none d-md-flex align-items-center me-3">
+                                        <div class="rounded-pill px-2 me-2 border border-2 border-white">
+                                            <img src="~/images/Kot.png" class="ps-1" style="height: 20px; width:20px">
+                                            <span>KOT</span>
+                                        </div>
+                                        <div class="rounded-pill px-2 me-2 border border-2 border-white">
+                                            <img src="~/images/waitingOA.png" class="ps-1"
+                                                style="height: 20px; width:20px">
+                                            <span>Waiting List</span>
+                                        </div>
+                                        <div class="rounded-pill px-2 me-2 border border-2 border-white">
+                                            <img src="~/images/tableOA.png" class="ps-1"
+                                                style="height: 20px; width:20px">
+                                            <span>Tables</span>
+                                        </div>
+                                        <div class="rounded-pill px-2 me-2 border border-2 border-white">
+                                            <img src="~/images/menuOA.png" class="ps-1"
+                                                style="height: 20px; width:20px">
+                                            <span>Menu</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Profile Dropdown -->
+                                    <div class="dropdown">
+                                        <button class="btn p-0" type="button" data-bs-toggle="dropdown"
+                                            aria-expanded="false" style="background: transparent; border: none;">
+                                            <img src="~/images/Default_pfp.svg.png" alt="default-pfp"
+                                                style="max-height: 40px; aspect-ratio: 1;" />
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-end">
+                                            <a class="dropdown-item" asp-controller="Home" asp-action="MyProfile">My
+                                                Profile</a>
+                                            <a class="dropdown-item" asp-controller="Home"
+                                                asp-action="ChangePassword">Change Password</a>
+                                            <button type="button" class="dropdown-item" data-bs-toggle="modal"
+                                                data-bs-target="#exampleModal">Logout</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Mobile Menu Button -->
+                                    <button class="btn d-md-none ms-2" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#mobileMenu" aria-expanded="false" aria-controls="mobileMenu"
+                                        style="background: transparent; border: none;">
+                                        <span class="navbar-toggler-icon"><svg xmlns="http://www.w3.org/2000/svg"
+                                                width="20" height="20" fill="currentColor" class="bi bi-list"
+                                                viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd"
+                                                    d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5" />
+                                            </svg></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mobile Menu Collapse -->
+                        <div class="collapse d-md-none" id="mobileMenu">
+                            <div class="pt-3">
+                                <div class="d-flex flex-column gap-2">
+                                    <div class="rounded-pill px-2 border border-2 border-white">
+                                        <img src="~/images/Kot.png" class="ps-1" style="height: 20px; width:20px">
+                                        <span>KOT</span>
+                                    </div>
+                                    <div class="rounded-pill px-2 border border-2 border-white">
+                                        <img src="~/images/waitingOA.png" class="ps-1" style="height: 20px; width:20px">
+                                        <span>Waiting List</span>
+                                    </div>
+                                    <div class="rounded-pill px-2 border border-2 border-white">
+                                        <img src="~/images/tableOA.png" class="ps-1" style="height: 20px; width:20px">
+                                        <span>Tables</span>
+                                    </div>
+                                    <div class="rounded-pill px-2 border border-2 border-white">
+                                        <img src="~/images/menuOA.png" class="ps-1" style="height: 20px; width:20px">
+                                        <span>Menu</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Dashboard Content -->
+                @RenderBody()
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form asp-controller="Home" asp-action="Dashboard">
+                        <div class="modal-body d-flex align-items-center justify-content-center flex-column">
+                            <img src="~/images/toppng.com-warning-icon-2400x2400.png" alt="DeleteModal"
+                                style="height: 80px; width: 80px">
+                            <p>Are you sure you want to Logout form Orders App ?</p>
+                        </div>
+                        <div class="modal-footer d-flex justify-content-center">
+                            <button type="submit" class="btn btn-primary">Yes</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                aria-label="Close">No</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="pdf-render-container" style="display: none;"></div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var sidebarItems = document.querySelectorAll('.sidebar-item');
+
+
+            var activeSidebarIndex = sessionStorage.getItem('activeSidebarIndex');
+            if (activeSidebarIndex !== null) {
+                activeSidebarIndex = parseInt(activeSidebarIndex, 10);
+                sidebarItems.forEach(function (item) {
+                    item.classList.remove('active');
+                });
+                if (sidebarItems[activeSidebarIndex]) {
+                    sidebarItems[activeSidebarIndex].classList.add('active');
+                }
+            }
+
+            sidebarItems.forEach(function (item, index) {
+                item.addEventListener('click', function () {
+                    sidebarItems.forEach(function (i) {
+                        i.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    sessionStorage.setItem('activeSidebarIndex', index);
+                });
+            });
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

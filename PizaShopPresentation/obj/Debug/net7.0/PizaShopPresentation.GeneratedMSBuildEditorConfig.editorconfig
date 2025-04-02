@@ -140,6 +140,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWVudVxfU2VsZWN0RXhpc3RpbmdNb2RpZmllcnMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/PizzaShop 3-Tier/PizaShopPresentation/Views/OrderApp/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJBcHBcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/PizzaShop 3-Tier/PizaShopPresentation/Views/Orders/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJzXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
@@ -158,6 +162,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [D:/PizzaShop 3-Tier/PizaShopPresentation/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/PizzaShop 3-Tier/PizaShopPresentation/Views/Shared/_LayoutOrdApp.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXRPcmRBcHAuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/PizzaShop 3-Tier/PizaShopPresentation/Views/Shared/_ValidationScriptsPartial.cshtml]
