@@ -5,7 +5,7 @@ using PizzaShopServices.Interfaces;
 using PizzaShopServices.Attributes;
 using PizzaShopService;
 
-[CustomAuthorize("super_admin, chef, account_manager")]
+// [CustomAuthorize("super_admin, chef, account_manager")]
 public class MenuController : Controller
 {
     private readonly ICategoryService _categoryService;

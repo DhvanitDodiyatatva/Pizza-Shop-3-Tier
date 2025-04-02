@@ -1,3 +1,4 @@
+using PizzaShopRepository.Models;
 using PizzaShopRepository.ViewModels;
 using System.Collections.Generic;
 
@@ -8,6 +9,7 @@ namespace PizzaShopRepository.Services
         IEnumerable<Models.Role> GetAllRoles();
         RolePermissionVM GetRolePermissions(int roleId);
         void UpdateRolePermissions(RolePermissionVM model);
+        Task<RolePermission> GetPermissionForRoleAndModule(int roleId, string moduleName);
     }
 }
 

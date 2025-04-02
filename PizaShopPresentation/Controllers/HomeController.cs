@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace PizzaShopPresentation.Controllers
 {
 
-    [CustomAuthorize("super_admin, chef, account_manager")]
+    // [CustomAuthorize("super_admin, chef, account_manager")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

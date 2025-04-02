@@ -7,7 +7,8 @@ using System.Linq;
 
 namespace PizzaShopRepository.Controllers
 {
-    [CustomAuthorize("super_admin, chef, account_manager")]
+    // [CustomAuthorize("super_admin, chef, account_manager")]
+    [CustomAuthorize("TaxAndFee", PermissionType.View, "super_admin", "account_manager")]
     public class TaxFeeController : Controller
     {
         private readonly ITaxFeeService _taxFeeService;

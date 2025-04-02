@@ -71,5 +71,16 @@ namespace PizzaShopRepository.Services
             _roleRepository.AddRolePermissions(newPermissions);
             _roleRepository.SaveChanges();
         }
+
+
+        public async Task<RolePermission> GetPermissionForRoleAndModule(int roleId, string moduleName)
+        {
+            var role = _roleRepository.GetRoleWithPermissions(roleId);
+            if (role == null) return null;
+
+            var permission = role.RolePermissions
+                .FirstOrDefault(rp => rp.Permission.Name.Equals(moduleName, StringComparison.OrdinalIgnoreCase));
+            return permission;
+        }
     }
 }
