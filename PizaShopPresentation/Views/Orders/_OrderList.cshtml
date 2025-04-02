@@ -7,7 +7,7 @@
                 <tr>
                     <th scope="col" class="text-nowrap">
                         <a href="@Url.Action("GetOrderList", new { searchQuery = Model.SearchQuery, sortColumn = "order", sortDirection = Model.SortColumn == "order" && Model.SortDirection == "asc" ? "desc" : "asc", page = Model.CurrentPage, pageSize = Model.PageSize })"
-                            class="text-decoration-none text-dark sort-link">
+                            class="text-decoration-none text-secondary sort-link">
                             ORDER #
                             @if (Model.SortColumn == "order")
                             {
@@ -30,7 +30,7 @@
                     </th>
                     <th scope="col" class="text-nowrap">
                         <a href="@Url.Action("GetOrderList", new { searchQuery = Model.SearchQuery, sortColumn = "date", sortDirection = Model.SortColumn == "date" && Model.SortDirection == "asc" ? "desc" : "asc", page = Model.CurrentPage, pageSize = Model.PageSize })"
-                            class="text-decoration-none text-dark sort-link">
+                            class="text-decoration-none text-secondary sort-link">
                             DATE
                             @if (Model.SortColumn == "date")
                             {
@@ -53,7 +53,7 @@
                     </th>
                     <th scope="col" class="text-nowrap">
                         <a href="@Url.Action("GetOrderList", new { searchQuery = Model.SearchQuery, sortColumn = "customer", sortDirection = Model.SortColumn == "customer" && Model.SortDirection == "asc" ? "desc" : "asc", page = Model.CurrentPage, pageSize = Model.PageSize })"
-                            class="text-decoration-none text-dark sort-link">
+                            class="text-decoration-none text-secondary sort-link">
                             CUSTOMER
                             @if (Model.SortColumn == "customer")
                             {
@@ -74,12 +74,12 @@
                             }
                         </a>
                     </th>
-                    <th scope="col" class="text-nowrap">STATUS</th>
-                    <th scope="col" class="text-nowrap">PAYMENT MODE</th>
-                    <th scope="col" class="text-nowrap">RATING</th>
+                    <th scope="col" class="text-nowrap text-secondary">STATUS</th>
+                    <th scope="col" class="text-nowrap text-secondary">PAYMENT MODE</th>
+                    <th scope="col" class="text-nowrap text-secondary">RATING</th>
                     <th scope="col" class="text-nowrap">
                         <a href="@Url.Action("GetOrderList", new { searchQuery = Model.SearchQuery, sortColumn = "total amount", sortDirection = Model.SortColumn == "total amount" && Model.SortDirection == "asc" ? "desc" : "asc", page = Model.CurrentPage, pageSize = Model.PageSize })"
-                            class="text-decoration-none text-dark sort-link">
+                            class="text-decoration-none text-secondary sort-link">
                             TOTAL AMOUNT
                             @if (Model.SortColumn == "total amount")
                             {
@@ -100,7 +100,7 @@
                             }
                         </a>
                     </th>
-                    <th scope="col" class="text-nowrap">ACTION</th>
+                    <th scope="col" class="text-nowrap text-secondary">ACTION</th>
                 </tr>
             </thead>
             <tbody>

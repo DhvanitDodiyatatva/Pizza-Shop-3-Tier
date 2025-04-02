@@ -41,7 +41,7 @@
           <tr>
             <th scope="col" class="text-nowrap">
               <a href="@Url.Action("Users", new { searchQuery = ViewBag.SearchQuery, page = ViewBag.CurrentPage, pageSize = ViewBag.PageSize, sortBy = "name", sortOrder = (ViewBag.SortBy == "name" && ViewBag.SortOrder == "asc") ? "desc" : "asc" })"
-                class="text-decoration-none text-dark">
+                class="text-decoration-none text-secondary">
                 Name
                 @if (ViewBag.SortBy == "name")
                 {
@@ -61,11 +61,11 @@
                 }
               </a>
             </th>
-            <th scope="col" class="text-nowrap">Email</th>
-            <th scope="col" class="text-nowrap">Phone</th>
-            <th scope="col" class="text-nowrap">
+            <th scope="col" class="text-nowrap text-secondary">Email</th>
+            <th scope="col" class="text-nowrap text-secondary">Phone</th>
+            <th scope="col" class="text-nowrap ">
               <a href="@Url.Action("Users", new { searchQuery = ViewBag.SearchQuery, page = ViewBag.CurrentPage, pageSize = ViewBag.PageSize, sortBy = "role", sortOrder = (ViewBag.SortBy == "role" && ViewBag.SortOrder == "asc") ? "desc" : "asc" })"
-                class="text-decoration-none text-dark">
+                class="text-decoration-none text-secondary">
                 Role
                 @if (ViewBag.SortBy == "role")
                 {
@@ -85,8 +85,8 @@
                 }
               </a>
             </th>
-            <th scope="col" class="text-nowrap">Status</th>
-            <th scope="col" class="text-nowrap">Action</th>
+            <th scope="col" class="text-nowrap text-secondary">Status</th>
+            <th scope="col" class="text-nowrap text-secondary">Action</th>
           </tr>
         </thead>
         <tbody>

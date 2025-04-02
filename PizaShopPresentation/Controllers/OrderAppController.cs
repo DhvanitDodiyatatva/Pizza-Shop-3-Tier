@@ -4,7 +4,7 @@ namespace PizaShopPresentation.Controllers;
 
 public class OrderAppController : Controller
 {
-    public IActionResult Index()
+    public IActionResult Kot()
     {
         return View();
     }

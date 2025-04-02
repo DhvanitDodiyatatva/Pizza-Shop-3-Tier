@@ -6,7 +6,7 @@
             <thead>
                 <tr>
                     <th scope="col" class="text-nowrap">
-                        <a href="#" class="text-decoration-none text-black sort-link" data-column="Name"
+                        <a href="#" class="text-decoration-none text-secondary sort-link" data-column="Name"
                             data-direction="@(Model.SortColumn == "Name" && Model.SortDirection == "asc" ? "desc" : "asc")">
                             Name
                             @if (Model.SortColumn == "Name")
@@ -28,10 +28,10 @@
                             }
                         </a>
                     </th>
-                    <th scope="col" class="text-nowrap">Email</th>
-                    <th scope="col" class="text-nowrap">Phone Number</th>
+                    <th scope="col" class="text-nowrap text-secondary">Email</th>
+                    <th scope="col" class="text-nowrap text-secondary">Phone Number</th>
                     <th scope="col" class="text-nowrap">
-                        <a href="#" class="text-decoration-none text-black sort-link" data-column="Date"
+                        <a href="#" class="text-decoration-none text-secondary sort-link" data-column="Date"
                             data-direction="@(Model.SortColumn == "Date" && Model.SortDirection == "asc" ? "desc" : "asc")">
                             Date
                             @if (Model.SortColumn == "Date")
@@ -54,7 +54,7 @@
                         </a>
                     </th>
                     <th scope="col" class="text-nowrap text-center">
-                        <a href="#" class="text-decoration-none text-black sort-link" data-column="TotalOrders"
+                        <a href="#" class="text-decoration-none text-secondary sort-link" data-column="TotalOrders"
                             data-direction="@(Model.SortColumn == "TotalOrders" && Model.SortDirection == "asc" ? "desc" : "asc")">
                             Total Order
                             @if (Model.SortColumn == "TotalOrders")

@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Linq;
 
-namespace PizzaShopServices.Attributes // Adjust namespace as needed
+namespace PizzaShopServices.Attributes
 {
     public class CustomAuthorize : Attribute, IAuthorizationFilter
     {
@@ -30,3 +30,4 @@ namespace PizzaShopServices.Attributes // Adjust namespace as needed
         }
     }
 }
+
