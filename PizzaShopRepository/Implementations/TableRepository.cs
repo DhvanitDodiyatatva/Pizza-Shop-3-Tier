@@ -16,12 +16,12 @@ public class TableRepository : ITableRepository
 
     public async Task<List<Table>> GetTablesBySectionAsync(int sectionId)
     {
-       return await _context.Tables
-                             .Where(table => table.SectionId == sectionId && !table.IsDeleted)
-                             .ToListAsync();
+        return await _context.Tables
+                              .Where(table => table.SectionId == sectionId && !table.IsDeleted)
+                              .ToListAsync();
     }
 
-     public async Task<List<Table>> GetAllTablesAsync()
+    public async Task<List<Table>> GetAllTablesAsync()
     {
         return await _context.Tables
                              .Where(table => !table.IsDeleted)
@@ -30,7 +30,7 @@ public class TableRepository : ITableRepository
 
     public async Task<Table?> GetTableByIdAsync(int id)
     {
-       return await _context.Tables.FirstOrDefaultAsync(t => t.Id == id && !t.IsDeleted);
+        return await _context.Tables.FirstOrDefaultAsync(t => t.Id == id && !t.IsDeleted);
     }
 
     public async Task AddTableAsync(Table table)
@@ -39,9 +39,9 @@ public class TableRepository : ITableRepository
         await _context.SaveChangesAsync();
     }
 
-     public async Task UpdateTableAsync(Table table)
+    public async Task UpdateTableAsync(Table table)
     {
-         _context.Tables.Update(table);
+        _context.Tables.Update(table);
         await _context.SaveChangesAsync();
     }
 
@@ -52,9 +52,9 @@ public class TableRepository : ITableRepository
 
     public async Task SoftDeleteTablesAsync(List<int> ids)
     {
-         var tables = await _context.Tables
-            .Where(t => ids.Contains(t.Id) && !t.IsDeleted)
-            .ToListAsync();
+        var tables = await _context.Tables
+           .Where(t => ids.Contains(t.Id) && !t.IsDeleted)
+           .ToListAsync();
 
         if (tables.Any())
         {
@@ -67,6 +67,6 @@ public class TableRepository : ITableRepository
         }
     }
 
-   
+
 
 }

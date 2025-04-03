@@ -6,10 +6,12 @@ using OfficeOpenXml.Style;
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using System.Drawing; // For colors
+using System.Drawing;
+using PizzaShopServices.Attributes; // For colors
 
 namespace PizzaShopPresentation.Controllers;
 
+[CustomAuthorize("Order", PermissionType.View, "super_admin", "account_manager")]
 public class OrdersController : Controller
 {
     private readonly IOrderService _orderService;

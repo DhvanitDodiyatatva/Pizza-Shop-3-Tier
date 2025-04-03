@@ -32,7 +32,7 @@ public class ModifierService : IModifierService
             Name = model.Name,
             Price = model.Price,
             Unit = model.Unit,
-            Quantity = model.Quantity ?? 0, // Ensure Quantity has a default if null
+            Quantity = model.Quantity ?? 0, 
             Description = model.Description,
             IsDeleted = false
         };
@@ -41,7 +41,7 @@ public class ModifierService : IModifierService
 
         foreach (var groupId in model.ModifierGroupIds)
         {
-            // Verify ModifierGroupId exists (optional, depending on your requirements)
+            // Verify ModifierGroupId exists 
             await _modifierGroupMappingRepository.CreateMappingAsync(groupId, modifier.Id);
         }
 
@@ -77,7 +77,7 @@ public class ModifierService : IModifierService
         modifier.Name = model.Name;
         modifier.Price = model.Price;
         modifier.Unit = model.Unit;
-        modifier.Quantity = model.Quantity ?? 0; // Ensure Quantity has a default if null
+        modifier.Quantity = model.Quantity ?? 0;
         modifier.Description = model.Description;
 
         await _modifierRepository.UpdateModifierAsync(modifier);
@@ -90,7 +90,7 @@ public class ModifierService : IModifierService
             if (!model.ModifierGroupIds.Contains(mapping.ModifierGroupId))
             {
                 mapping.IsDeleted = true;
-                await _modifierGroupMappingRepository.UpdateMappingAsync(mapping); // Add await
+                await _modifierGroupMappingRepository.UpdateMappingAsync(mapping); 
             }
         }
 
