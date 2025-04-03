@@ -27,7 +27,7 @@ namespace PizzaShop.Controllers
             _tableService = tableService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Table()
         {
             var sections = await _sectionService.GetAllSectionsAsync();
             var viewModel = new List<SectionDetailsViewModel>();

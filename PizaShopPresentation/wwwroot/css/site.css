@@ -90,6 +90,44 @@ td {
     hue-rotate(180deg) brightness(90%) contrast(100%);
 }
 
+.sidebar-item2 {
+  display: block;
+
+  color: #e9eaeb;
+  text-decoration: none;
+  border-radius: 4px;
+}
+
+.sidebar-item2 a {
+  color: #e9eaeb;
+  text-decoration: none;
+  border-radius: 4px;
+}
+
+.sidebar-item2:hover {
+  background-color: #e9eaeb;
+  color: #1f73ae !important;
+}
+
+.sidebar-item2.active {
+  background-color: #e9eaeb;
+  color: #1f73ae !important;
+}
+
+.sidebar-item2 a:hover {
+  color: #1f73ae !important;
+}
+
+.sidebar-item2.active a {
+  color: #1f73ae !important;
+  fill: #1f73ae !important;
+}
+
+.sidebar-item2:hover img,
+.sidebar-item2.active img {
+  filter: brightness(0) saturate(100%) invert(30%) sepia(82%) saturate(437%)
+    hue-rotate(180deg) brightness(90%) contrast(100%);
+}
 /* .header-desktop{
     display: flex !important;
     justify-content: end;

@@ -17,7 +17,7 @@
         <div class="row g-0">
             <div class="col-12">
                 <!-- Header -->
-                <header class="header  text-white p-3" style="background-color: #1f73ae;">
+                <header class="header  text-white p-3 sticky-top" style="background-color: #1f73ae;">
                     <div class="container-fluid">
                         <div class="row align-items-center">
                             <!-- Logo Section -->
@@ -36,24 +36,24 @@
                                 <div class="d-flex justify-content-end align-items-center">
                                     <!-- Navigation Pills -->
                                     <div class="d-none d-md-flex align-items-center me-3">
-                                        <div class="rounded-pill px-2 me-2 border border-2 border-white">
+                                        <div class="rounded-pill px-2 me-2 border border-2 border-white sidebar-item2">
                                             <img src="~/images/Kot.png" class="ps-1" style="height: 20px; width:20px">
-                                            <span>KOT</span>
+                                            <a>KOT</a>
                                         </div>
-                                        <div class="rounded-pill px-2 me-2 border border-2 border-white">
+                                        <div class="rounded-pill px-2 me-2 border border-2 border-white sidebar-item2">
                                             <img src="~/images/waitingOA.png" class="ps-1"
                                                 style="height: 20px; width:20px">
-                                            <span>Waiting List</span>
+                                            <a>Waiting List</a>
                                         </div>
-                                        <div class="rounded-pill px-2 me-2 border border-2 border-white">
+                                        <div class="rounded-pill px-2 me-2 border border-2 border-white sidebar-item2">
                                             <img src="~/images/tableOA.png" class="ps-1"
                                                 style="height: 20px; width:20px">
-                                            <span>Tables</span>
+                                            <a>Tables</a>
                                         </div>
-                                        <div class="rounded-pill px-2 me-2 border border-2 border-white">
+                                        <div class="rounded-pill px-2 me-2 border border-2 border-white sidebar-item2">
                                             <img src="~/images/menuOA.png" class="ps-1"
                                                 style="height: 20px; width:20px">
-                                            <span>Menu</span>
+                                            <a>Menu</a>
                                         </div>
                                     </div>
 
@@ -93,21 +93,21 @@
                         <div class="collapse d-md-none" id="mobileMenu">
                             <div class="pt-3">
                                 <div class="d-flex flex-column gap-2">
-                                    <div class="rounded-pill px-2 border border-2 border-white">
+                                    <div class="rounded-pill px-2 border border-2 border-white sidebar-item2">
                                         <img src="~/images/Kot.png" class="ps-1" style="height: 20px; width:20px">
-                                        <span>KOT</span>
+                                        <a>KOT</a>
                                     </div>
-                                    <div class="rounded-pill px-2 border border-2 border-white">
+                                    <div class="rounded-pill px-2 border border-2 border-white sidebar-item2">
                                         <img src="~/images/waitingOA.png" class="ps-1" style="height: 20px; width:20px">
-                                        <span>Waiting List</span>
+                                        <a>Waiting List</a>
                                     </div>
-                                    <div class="rounded-pill px-2 border border-2 border-white">
+                                    <div class="rounded-pill px-2 border border-2 border-white sidebar-item2">
                                         <img src="~/images/tableOA.png" class="ps-1" style="height: 20px; width:20px">
-                                        <span>Tables</span>
+                                        <a>Tables</a>
                                     </div>
-                                    <div class="rounded-pill px-2 border border-2 border-white">
+                                    <div class="rounded-pill px-2 border border-2 border-white sidebar-item2">
                                         <img src="~/images/menuOA.png" class="ps-1" style="height: 20px; width:20px">
-                                        <span>Menu</span>
+                                        <a>Menu</a>
                                     </div>
                                 </div>
                             </div>
@@ -151,7 +151,7 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            var sidebarItems = document.querySelectorAll('.sidebar-item');
+            var sidebarItems = document.querySelectorAll('.sidebar-item2');
 
 
             var activeSidebarIndex = sessionStorage.getItem('activeSidebarIndex');
