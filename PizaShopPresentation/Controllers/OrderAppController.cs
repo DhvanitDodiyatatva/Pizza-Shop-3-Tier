@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using PizzaShopServices.Interfaces;
 using PizzaShopRepository.ViewModels;
 using PizzaShopRepository.Models;
+using Microsoft.AspNetCore.Mvc.Rendering; // Added for SelectList
 
 namespace PizzaShop.Controllers
 {
@@ -11,13 +12,15 @@ namespace PizzaShop.Controllers
         private readonly ITableService _tableService;
         private readonly IItemService _itemService;
         private readonly ICategoryService _categoryService;
+        private readonly IWaitingTokenService _waitingTokenService;
 
-        public OrderAppController(ISectionService sectionService, ITableService tableService, IItemService itemService, ICategoryService categoryService)
+        public OrderAppController(ISectionService sectionService, ITableService tableService, IItemService itemService, ICategoryService categoryService, IWaitingTokenService waitingTokenService)
         {
             _sectionService = sectionService;
             _tableService = tableService;
             _itemService = itemService;
             _categoryService = categoryService;
+            _waitingTokenService = waitingTokenService;
         }
 
         public async Task<IActionResult> Table()
@@ -48,8 +51,40 @@ namespace PizzaShop.Controllers
                 };
                 viewModel.Add(sectionViewModel);
             }
-
+            ViewBag.Sections = new SelectList(await _sectionService.GetAllSectionsAsync(), "Name", "Name");
             return View(viewModel);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> AddWaitingToken(WaitingTokenViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Sections = new SelectList(await _sectionService.GetAllSectionsAsync(), "Name", "Name", model.SectionName);
+                return PartialView("_WaitingTokenModal", model);
+            }
+
+            var result = await _waitingTokenService.AddWaitingTokenAsync(model);
+            if (!result.Success)
+            {
+                TempData["ErrorMessage"] = result.Message;
+                return PartialView("_WaitingTokenModal", model);
+            }
+
+            return Json(new { success = true, message = result.Message });
+        }
+
+        public async Task<IActionResult> ShowWaitingTokenModal(int sectionId, string sectionName)
+        {
+            var model = new WaitingTokenViewModel
+            {
+                SectionId = sectionId,
+                SectionName = sectionName
+            };
+            var sections = await _sectionService.GetAllSectionsAsync();
+            ViewBag.Sections = new SelectList(sections ?? new List<Section>(), "Name", "Name", sectionName);
+            return PartialView("_WaitingTokenModal", model);
         }
 
 

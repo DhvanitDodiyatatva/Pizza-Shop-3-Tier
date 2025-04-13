@@ -21,5 +21,7 @@ public partial class WaitingToken
 
     public DateTime? CreatedAt { get; set; }
 
+    public bool IsDeleted { get; set; }
+
     public virtual Section? Section { get; set; }
 }

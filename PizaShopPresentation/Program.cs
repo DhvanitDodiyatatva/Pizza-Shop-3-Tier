@@ -57,6 +57,8 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IWaitingTokenRepository, WaitingTokenRepository>();
+builder.Services.AddScoped<IWaitingTokenService, WaitingTokenService>();
 
 
 // Configure JWT authentication
