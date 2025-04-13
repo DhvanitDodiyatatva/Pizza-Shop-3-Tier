@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using PizzaShopRepository.Models;
 
 namespace PizzaShopRepository.ViewModels
 {
@@ -18,5 +19,14 @@ namespace PizzaShopRepository.ViewModels
 
     }
 
-    
+
+    public class MenuViewModel
+    {
+        public List<Category> Categories { get; set; }
+        public List<Item> Items { get; set; }
+        public string SelectedCategory { get; set; }
+        public string SearchTerm { get; set; }
+    }
+
+
 }

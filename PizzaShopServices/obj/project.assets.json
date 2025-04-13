@@ -6120,19 +6120,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\pci29\\.nuget\\packages\\": {}
+    "C:\\Users\\dhvan\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "d:\\PizzaShop 3-Tier\\PizzaShopServices\\PizzaShopServices.csproj",
+      "projectUniqueName": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizzaShopServices\\PizzaShopServices.csproj",
       "projectName": "PizzaShopServices",
-      "projectPath": "d:\\PizzaShop 3-Tier\\PizzaShopServices\\PizzaShopServices.csproj",
-      "packagesPath": "C:\\Users\\pci29\\.nuget\\packages\\",
-      "outputPath": "d:\\PizzaShop 3-Tier\\PizzaShopServices\\obj\\",
+      "projectPath": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizzaShopServices\\PizzaShopServices.csproj",
+      "packagesPath": "C:\\Users\\dhvan\\.nuget\\packages\\",
+      "outputPath": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizzaShopServices\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\pci29\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\dhvan\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net7.0"
@@ -6144,8 +6144,8 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
-            "D:\\PizzaShop 3-Tier\\PizzaShopRepository\\PizzaShopRepository.csproj": {
-              "projectPath": "D:\\PizzaShop 3-Tier\\PizzaShopRepository\\PizzaShopRepository.csproj"
+            "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizzaShopRepository\\PizzaShopRepository.csproj": {
+              "projectPath": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizzaShopRepository\\PizzaShopRepository.csproj"
             }
           }
         }

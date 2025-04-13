@@ -1,0 +1,62 @@
+@model List<PizzaShopRepository.Models.Item>
+
+<div class="main-content">
+    <!-- Search Bar -->
+    <div class="search-bar">
+        <form method="get" action="javascript:void(0)" class="mb-4" onsubmit="return false;">
+            <div class="input-group shadow-lg" style="max-width: 300px;">
+                <input type="text" name="search" class="form-control" placeholder="Search" value="@ViewBag.SearchTerm">
+                <button class="btn btn-outline-secondary" type="submit"><span class="bi bi-search"></span></button>
+            </div>
+        </form>
+        <div class="justify-content-end d-flex">
+            <span class="badge bg-success me-2">● Vegetarian</span>
+            <span class="badge bg-danger me-2">● Non-Vegetarian</span>
+            <span class="badge bg-warning">● Vegan</span>
+        </div>
+    </div>
+
+    <!-- Item Cards -->
+    <div class="row">
+        @if (Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <div class="item-card ">
+                    <div class="row">
+                        <div class="col-3">
+                            <div class="card-icon d-flex justify-content-center align-items-center">
+                                <span> <img src="/images/dining-menu.png" style="height: 40px; width: 40px"></span>
+                            </div>
+                        </div>
+                        <div class="col-9 ">
+                            <div class="card-content">
+                                <h5 class="card-title text-start ">@item.Name</h5>
+                                <p class="card-text text-start">₹@item.Price</p>
+                            </div>
+                            <!-- Item Type Badge -->
+                            @if (item.ItemType == "vegetarian")
+                            {
+                                <span class="badge bg-success position-absolute top-0 end-0 m-0">Veg</span>
+                            }
+                            else if (item.ItemType == "vegan")
+                            {
+                                <span class="badge bg-warning position-absolute top-0 end-0 m-0">Vegan</span>
+                            }
+                            else if (item.ItemType == "non_vegetarian")
+                            {
+                                <span class="badge bg-danger position-absolute top-0 end-0 m-0">Non-Veg</span>
+                            }
+                            <!-- Heart Icon -->
+                            <span class="heart position-absolute bottom-0 end-0 m-2">&hearts;</span>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p class="text-muted">No items found.</p>
+        }
+    </div>
+</div>

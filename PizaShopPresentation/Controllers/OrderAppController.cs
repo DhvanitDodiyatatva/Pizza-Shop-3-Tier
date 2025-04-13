@@ -1,18 +1,7 @@
-// using Microsoft.AspNetCore.Mvc;
-
-// namespace PizaShopPresentation.Controllers;
-
-
-// public class OrderAppController : Controller
-// {
-//     public IActionResult Table()
-//     {
-//         return View();
-//     }
-// }
 using Microsoft.AspNetCore.Mvc;
 using PizzaShopServices.Interfaces;
 using PizzaShopRepository.ViewModels;
+using PizzaShopRepository.Models;
 
 namespace PizzaShop.Controllers
 {
@@ -20,11 +9,15 @@ namespace PizzaShop.Controllers
     {
         private readonly ISectionService _sectionService;
         private readonly ITableService _tableService;
+        private readonly IItemService _itemService;
+        private readonly ICategoryService _categoryService;
 
-        public OrderAppController(ISectionService sectionService, ITableService tableService)
+        public OrderAppController(ISectionService sectionService, ITableService tableService, IItemService itemService, ICategoryService categoryService)
         {
             _sectionService = sectionService;
             _tableService = tableService;
+            _itemService = itemService;
+            _categoryService = categoryService;
         }
 
         public async Task<IActionResult> Table()
@@ -57,6 +50,50 @@ namespace PizzaShop.Controllers
             }
 
             return View(viewModel);
+        }
+
+
+        public async Task<IActionResult> Menu()
+        {
+            return View(new MenuViewModel());
+        }
+
+        public async Task<IActionResult> GetCategories()
+        {
+            var categories = await _categoryService.GetAllCategoriesAsync();
+            ViewBag.SelectedCategory = "";
+            return PartialView("_CategoryList", categories);
+        }
+
+        public async Task<IActionResult> GetItems(string category, string search)
+        {
+            var categories = await _categoryService.GetAllCategoriesAsync();
+            List<Item> items;
+            if (!string.IsNullOrEmpty(category) && category != "All")
+            {
+                var selectedCategory = categories.FirstOrDefault(c => c.Name == category);
+                if (selectedCategory != null)
+                {
+                    items = await _itemService.GetItemsByCategoryAsync(selectedCategory.Id);
+                }
+                else
+                {
+                    items = new List<Item>();
+                }
+            }
+            else
+            {
+                items = await _itemService.GetAllItemsAsync();
+            }
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                items = items.Where(i => i.Name.ToLower().Contains(search.ToLower())).ToList();
+            }
+
+            ViewBag.SelectedCategory = category;
+            ViewBag.SearchTerm = search;
+            return PartialView("_ItemList", items);
         }
     }
 }
