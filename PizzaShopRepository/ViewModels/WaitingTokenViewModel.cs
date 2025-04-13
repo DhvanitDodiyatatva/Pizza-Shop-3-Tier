@@ -25,5 +25,9 @@ namespace PizzaShopRepository.ViewModels
         public string SectionName { get; set; } = null!;
 
         public int SectionId { get; set; }
+
+         public DateTime? CreatedAt { get; set; }
+
+          public bool IsDeleted { get; set; }
     }
 }

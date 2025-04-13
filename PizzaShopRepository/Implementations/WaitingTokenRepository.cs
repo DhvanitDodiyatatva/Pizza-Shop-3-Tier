@@ -25,5 +25,10 @@ namespace PizzaShopRepository.Repositories
             _context.Customers.Add(customer);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<List<WaitingToken>> GetAllWaitingTokensAsync()
+        {
+            return await _context.WaitingTokens.ToListAsync();
+        }
     }
 }

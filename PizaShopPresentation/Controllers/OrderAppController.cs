@@ -130,5 +130,14 @@ namespace PizzaShop.Controllers
             ViewBag.SearchTerm = search;
             return PartialView("_ItemList", items);
         }
+
+        public async Task<IActionResult> WaitingList()
+        {
+            var sections = await _sectionService.GetAllSectionsAsync();
+            ViewBag.Sections = new SelectList(sections, "Name", "Name");
+            ViewBag.SelectedSection = sections.FirstOrDefault()?.Name ?? "Ground Floor"; // Default to first section
+            var waitingTokens = await _waitingTokenService.GetAllWaitingTokensAsync();
+            return View(waitingTokens);
+        }
     }
 }

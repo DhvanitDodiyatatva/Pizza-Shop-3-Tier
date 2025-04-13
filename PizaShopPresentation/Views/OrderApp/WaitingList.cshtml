@@ -1,0 +1,178 @@
+@model List<PizzaShopRepository.Models.WaitingToken>
+
+@{
+    ViewData["Title"] = "Waiting List";
+    Layout = "~/Views/Shared/_LayoutOrdApp.cshtml";
+}
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+    crossorigin="anonymous"></script>
+
+<div class="Users-content mt-0 p-xl-5 p-lg-4 p-md-4 p-sm-4 p-4">
+    <div class="d-flex align-items-center justify-content-between my-2">
+        <div>
+            <div class="fw-bolder fs-2 page-text">Waiting List</div>
+        </div>
+        <div class="d-flex">
+            <a asp-action="Table" asp-controller="OrderApp"><button
+                    class="btn btn-main bg-primary rounded-2 ms-1 text-white fs-6 d-none d-lg-block"
+                    type="submit">Back</button></a>
+            <a asp-action="Table" asp-controller="OrderApp"><button
+                    class="btn btn-main bg-primary rounded- ms-1 text-white fs-6 d-block d-lg-none" type="submit">
+                    << /button></a>
+        </div>
+    </div>
+    <div class="row mb-3 upper-div rounded-2 shadow py-3 d-flex">
+        <ul class="nav nav-underline" id="sectionTabs">
+            @foreach (SelectListItem sec in ViewBag.Sections)
+            {
+                var sectionId = sec.Text.ToLower().Replace(" ", "-");
+                <li class="nav-item">
+                    <a class="nav-link custom-tag mx-3 @(sec.Text == ViewBag.SelectedSection ? "active" : "text-decoration-none text-black")"
+                        id="@sectionId-tab" data-bs-toggle="tab" data-bs-target="#@sectionId-tab-pane" type="button"
+                        role="tab" aria-controls="@sectionId-tab-pane"
+                        aria-selected="@(sec.Text == ViewBag.SelectedSection ? "true" : "false")">
+                        @sec.Text
+                    </a>
+                </li>
+            }
+
+
+        </ul>
+    </div>
+    <div class="row content-div rounded-2 shadow">
+        <div class="tab-content w-100">
+            @foreach (SelectListItem sec in ViewBag.Sections)
+            {
+                var sectionId = sec.Text.ToLower().Replace(" ", "-");
+                <div class="tab-pane fade @(sec.Text == ViewBag.SelectedSection ? "show active" : "")"
+                    id="@sectionId-tab-pane" role="tabpanel" aria-labelledby="@sectionId-tab">
+                    <div class="content-div table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Token No</th>
+                                    <th scope="col">Created At</th>
+                                    <th scope="col">Waiting Time</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">No of Persons</th>
+                                    <th scope="col">Phone Number</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var token in Model.Where(t => t.Section?.Name == sec.Text && !t.IsDeleted))
+                                {
+                                    <tr>
+                                        <td>#@token.Id</td>
+                                        <td>@token.CreatedAt?.ToString("MMM dd, yyyy hh:mm tt")</td>
+                                        <td>
+                                            @(token.CreatedAt.HasValue
+                                                                                ? TimeSpan.FromTicks(DateTime.Now.Ticks -
+                                                                                token.CreatedAt.Value.Ticks).ToString(@"hh\:mm")
+                                                                                : "N/A")
+                                </td>
+                                <td>@token.CustomerName</td>
+                                <td>@token.NumOfPersons</td>
+                                <td>@token.PhoneNumber</td>
+                                <td>@token.Email</td>
+                                <td>
+                                    <button type="button" class="btn text-body-btn edit-tax-btn p-0 me-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                            fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
+                                            <path
+                                                d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001" />
+                                        </svg>
+                                    </button>
+                                    <button type="button" class="btn text-body-btn p-0" data-bs-toggle="modal">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                            fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+                                            <path
+                                                d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
+                                        </svg>
+                                    </button>
+                                    <button type="button" class="btn text-body-btn ps-1" data-bs-toggle="modal">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                                            fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+                                            <path
+                                                d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z" />
+                                        </svg>
+                                    </button>
+                                </td>
+                            </tr>
+                                                        }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+
+
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        // Initialize the first tab as active if not set
+        if (!$('#sectionTabs .nav-link.active').length) {
+            $('#sectionTabs .nav-link:first').addClass('active').attr('aria-selected', 'true');
+            $($('#sectionTabs .nav-link:first').data('bs-target')).addClass('show active');
+        }
+    });
+</script>
+
+<style>
+    .nav-underline .nav-link {
+        color: #000;
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+    }
+
+    .nav-underline .nav-link.active {
+        color: #000;
+        border-bottom: 2px solid #000;
+    }
+
+    .custom-tag {
+        display: flex;
+        align-items: center;
+    }
+
+    .upper-div {
+        background: #fff;
+    }
+
+    .content-div {
+        background: #fff;
+        padding: 1rem;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+
+    .btn-main {
+        background-color: #1f73ae;
+        border: none;
+    }
+
+    .btn-main:hover {
+        background-color: #175a8a;
+    }
+
+    .page-text {
+        color: #1f73ae;
+    }
+
+    .bi {
+        font-size: 1rem;
+    }
+</style>
