@@ -29,6 +29,14 @@
     </div>
     <div class="row mb-3 upper-div rounded-2 shadow py-3 d-flex">
         <ul class="nav nav-underline" id="sectionTabs">
+            <!-- Add "All" tab -->
+            <li class="nav-item">
+                <a class="nav-link custom-tag mx-3 @(ViewBag.SelectedSection == "All" ? "active" : "text-decoration-none text-black")"
+                    id="all-tab" data-bs-toggle="tab" data-bs-target="#all-tab-pane" type="button" role="tab"
+                    aria-controls="all-tab-pane" aria-selected="@(ViewBag.SelectedSection == "All" ? "true" : "false")">
+                    All
+                </a>
+            </li>
             @foreach (SelectListItem sec in ViewBag.Sections)
             {
                 var sectionId = sec.Text.ToLower().Replace(" ", "-");
@@ -41,12 +49,71 @@
                     </a>
                 </li>
             }
-
-
         </ul>
     </div>
     <div class="row content-div rounded-2 shadow">
         <div class="tab-content w-100">
+            <!-- Add "All" tab pane -->
+            <div class="tab-pane fade @(ViewBag.SelectedSection == "All" ? "show active" : "")" id="all-tab-pane"
+                role="tabpanel" aria-labelledby="all-tab">
+                <div class="content-div table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">Token No</th>
+                                <th scope="col">Created At</th>
+                                <th scope="col">Waiting Time</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">No of Persons</th>
+                                <th scope="col">Phone Number</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var token in Model.Where(t => !t.IsDeleted))
+                            {
+                                <tr>
+                                    <td>#@token.Id</td>
+                                    <td>@token.CreatedAt?.ToString(" dd MMM , yyyy hh:mm tt")</td>
+                                    <td>
+                                        @(token.CreatedAt.HasValue ? TimeSpan.FromTicks(DateTime.Now.Ticks -
+                                                                            token.CreatedAt.Value.Ticks).ToString(@"d' days 'hh' hours 'mm' min 'ss' sec'") :
+                                                                            "N/A")
+                                </td>
+                                <td>@token.CustomerName</td>
+                                <td>@token.NumOfPersons</td>
+                                <td>@token.PhoneNumber</td>
+                                <td>@token.Email</td>
+                                <td>
+                                    <button type="button" class="btn text-body-btn edit-tax-btn p-0 me-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                            fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
+                                            <path
+                                                d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001" />
+                                        </svg>
+                                    </button>
+                                    <button type="button" class="btn text-body-btn p-0" data-bs-toggle="modal">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                            fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+                                            <path
+                                                d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
+                                        </svg>
+                                    </button>
+                                    <button type="button" class="btn text-body-btn ps-1" data-bs-toggle="modal">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                                            fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+                                            <path
+                                                d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z" />
+                                        </svg>
+                                    </button>
+                                </td>
+                            </tr>
+                                                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
             @foreach (SelectListItem sec in ViewBag.Sections)
             {
                 var sectionId = sec.Text.ToLower().Replace(" ", "-");
@@ -75,7 +142,7 @@
                                         <td>
                                             @(token.CreatedAt.HasValue
                                                                                 ? TimeSpan.FromTicks(DateTime.Now.Ticks -
-                                                                                token.CreatedAt.Value.Ticks).ToString(@"hh\:mm")
+                                                                                token.CreatedAt.Value.Ticks).ToString(@"hh\:mm\:ss")
                                                                                 : "N/A")
                                 </td>
                                 <td>@token.CustomerName</td>
@@ -112,9 +179,6 @@
                     </div>
                 </div>
             }
-
-
-
         </div>
     </div>
 </div>

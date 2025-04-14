@@ -5,7 +5,8 @@
     <div class="search-bar">
         <form method="get" action="javascript:void(0)" class="mb-4" onsubmit="return false;">
             <div class="input-group shadow-lg" style="max-width: 300px;">
-                <input type="text" name="search" class="form-control" placeholder="Search" value="@ViewBag.SearchTerm">
+                <input type="text" name="search" id="searchInput" class="form-control" placeholder="Search"
+                    value="@ViewBag.SearchTerm">
                 <button class="btn btn-outline-secondary" type="submit"><span class="bi bi-search"></span></button>
             </div>
         </form>

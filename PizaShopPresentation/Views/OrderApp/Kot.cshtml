@@ -1,0 +1,200 @@
+@model List<PizzaShopRepository.ViewModels.KotViewModel>
+
+@{
+    ViewData["Title"] = "KOT";
+    Layout = "~/Views/Shared/_LayoutOrdApp.cshtml";
+}
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+    crossorigin="anonymous"></script>
+
+<div class="Users-content mt-0 p-xl-5 p-lg-4 p-md-4 p-sm-4 p-4">
+    <div class="d-flex align-items-center justify-content-between my-2">
+        <div>
+            <div class="fw-bolder fs-2 page-text">KOT</div>
+        </div>
+    </div>
+    <div class="row mb-3 upper-div rounded-2 shadow py-3 d-flex">
+        <ul class="nav nav-underline" id="categoryTabs">
+            <li class="nav-item">
+                <a class="nav-link custom-tag mx-3 @(ViewBag.SelectedCategoryId == 0 ? "active" : "text-decoration-none text-black")"
+                    id="all-tab" data-bs-toggle="tab" data-bs-target="#all-tab-pane" type="button" role="tab"
+                    aria-controls="all-tab-pane" aria-selected="@(ViewBag.SelectedCategoryId == 0 ? "true" : "false")">
+                    All
+                </a>
+            </li>
+            @foreach (var category in ViewBag.Categories)
+            {
+                <li class="nav-item">
+                    <a class="nav-link custom-tag mx-3 @(category.Id == ViewBag.SelectedCategoryId ? "active" : "text-decoration-none text-black")"
+                        id="@category.Name.ToLower().Replace(" ", "-")-tab" data-bs-toggle="tab"
+                        data-bs-target="#@category.Name.ToLower().Replace(" ", "-")-tab-pane" type="button" role="tab"
+                        aria-controls="@category.Name.ToLower().Replace(" ", "-")-tab-pane"
+                        aria-selected="@(category.Id == ViewBag.SelectedCategoryId ? "true" : "false")">
+                        @category.Name
+                    </a>
+                </li>
+            }
+        </ul>
+    </div>
+    <div class="row content-div rounded-2 shadow">
+        <div class="tab-content w-100">
+            <div class="tab-pane fade @(ViewBag.SelectedCategoryId == 0 ? "show active" : "")" id="all-tab-pane"
+                role="tabpanel" aria-labelledby="all-tab">
+                <div class="d-flex justify-content-end mb-2">
+                    <div class="btn-group" role="group">
+                        <a asp-action="Kot" asp-route-status="in_progress"
+                            asp-route-categoryId="@ViewBag.SelectedCategoryId"
+                            class="btn btn-main @(ViewBag.SelectedStatus == "in_progress" ? "bg-primary" : "bg-secondary") text-white">In
+                            Progress</a>
+                        <a asp-action="Kot" asp-route-status="ready" asp-route-categoryId="@ViewBag.SelectedCategoryId"
+                            class="btn btn-main @(ViewBag.SelectedStatus == "ready" ? "bg-primary" : "bg-secondary") text-white">Ready</a>
+                    </div>
+                </div>
+                <div class="row">
+                    @if (Model == null || !Model.Any())
+                    {
+                        <p>No order details available. Retrieved @Model?.Count ?? 0 items.</p>
+                    }
+                    else
+                    {
+                        @foreach (var order in Model)
+                        {
+                            <div class="col-md-4 mb-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">#@order.OrderId</h5>
+                                        <p class="card-text">Time: @(order.TimeElapsed.ToString(@"d'd 'hh\:mm\:ss"))</p>
+                                        <p class="card-text">Section: @order.SectionName</p>
+                                        <p class="card-text">Table: @order.TableName</p>
+                                        <p class="card-text">Item: @order.ItemName</p>
+                                        <p class="card-text">Modifier: @order.ModifierName</p>
+                                        <p class="card-text">Quantity: @order.Quantity</p>
+                                        <p class="card-text">Instructions: @order.SpecialInstructions</p>
+                                    </div>
+                                    <div class="card-footer d-flex justify-content-end">
+                                        <button class="btn btn-main bg-primary text-white">In Progress</button>
+                                        <button class="btn btn-main bg-success text-white ms-2">Ready</button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+            @foreach (var category in ViewBag.Categories)
+            {
+                <div class="tab-pane fade @(category.Id == ViewBag.SelectedCategoryId ? "show active" : "")"
+                    id="@category.Name.ToLower().Replace(" ", "-")-tab-pane" role="tabpanel"
+                    aria-labelledby="@category.Name.ToLower().Replace(" ", "-")-tab">
+                    <div class="d-flex justify-content-end mb-2">
+                        <div class="btn-group" role="group">
+                            <a asp-action="Kot" asp-route-status="in_progress" asp-route-categoryId="@category.Id"
+                                class="btn btn-main @(ViewBag.SelectedStatus == "in_progress" ? "bg-primary" : "bg-secondary") text-white">In
+                                Progress</a>
+                            <a asp-action="Kot" asp-route-status="ready" asp-route-categoryId="@category.Id"
+                                class="btn btn-main @(ViewBag.SelectedStatus == "ready" ? "bg-primary" : "bg-secondary") text-white">Ready</a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        @if (Model == null || !Model.Any())
+                        {
+                            <p>No order details available for @category.Name. Retrieved @Model?.Count ?? 0 items.</p>
+                        }
+                        else
+                        {
+                            @foreach (var order in Model.Where(o => o.ItemName.Contains(category.Name)))
+                            {
+                                <div class="col-md-4 mb-3">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5 class="card-title">#@order.OrderId</h5>
+                                            <p class="card-text">Time: @(order.TimeElapsed.ToString(@"d'd 'hh\:mm\:ss"))</p>
+                                            <p class="card-text">Section: @order.SectionName</p>
+                                            <p class="card-text">Table: @order.TableName</p>
+                                            <p class="card-text">Item: @order.ItemName</p>
+                                            <p class="card-text">Modifier: @order.ModifierName</p>
+                                            <p class="card-text">Quantity: @order.Quantity</p>
+                                            <p class="card-text">Instructions: @order.SpecialInstructions</p>
+                                        </div>
+                                        <div class="card-footer d-flex justify-content-end">
+                                            <button class="btn btn-main bg-primary text-white">In Progress</button>
+                                            <button class="btn btn-main bg-success text-white ms-2">Ready</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        if (!$('#categoryTabs .nav-link.active').length) {
+            $('#categoryTabs .nav-link:first').addClass('active').attr('aria-selected', 'true');
+            $($('#categoryTabs .nav-link:first').data('bs-target')).addClass('show active');
+        }
+    });
+</script>
+
+<style>
+    .nav-underline .nav-link {
+        color: #000;
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+    }
+
+    .nav-underline .nav-link.active {
+        color: #000;
+        border-bottom: 2px solid #000;
+    }
+
+    .custom-tag {
+        display: flex;
+        align-items: center;
+    }
+
+    .upper-div {
+        background: #fff;
+    }
+
+    .content-div {
+        background: #fff;
+        padding: 1rem;
+    }
+
+    .card {
+        border: 1px solid #ddd;
+        border-radius: 0.25rem;
+    }
+
+    .btn-main {
+        background-color: #1f73ae;
+        border: none;
+    }
+
+    .btn-main:hover {
+        background-color: #175a8a;
+    }
+
+    .page-text {
+        color: #1f73ae;
+    }
+
+    .bg-success {
+        background-color: #28a745 !important;
+    }
+
+    .bg-secondary {
+        background-color: #6c757d !important;
+    }
+</style>

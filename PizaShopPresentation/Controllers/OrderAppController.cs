@@ -13,14 +13,16 @@ namespace PizzaShop.Controllers
         private readonly IItemService _itemService;
         private readonly ICategoryService _categoryService;
         private readonly IWaitingTokenService _waitingTokenService;
+        private readonly IKotService _kotService;
 
-        public OrderAppController(ISectionService sectionService, ITableService tableService, IItemService itemService, ICategoryService categoryService, IWaitingTokenService waitingTokenService)
+        public OrderAppController(ISectionService sectionService, ITableService tableService, IItemService itemService, ICategoryService categoryService, IWaitingTokenService waitingTokenService, IKotService kotService)
         {
             _sectionService = sectionService;
             _tableService = tableService;
             _itemService = itemService;
             _categoryService = categoryService;
             _waitingTokenService = waitingTokenService;
+            _kotService = kotService;
         }
 
         public async Task<IActionResult> Table()
@@ -135,9 +137,23 @@ namespace PizzaShop.Controllers
         {
             var sections = await _sectionService.GetAllSectionsAsync();
             ViewBag.Sections = new SelectList(sections, "Name", "Name");
-            ViewBag.SelectedSection = sections.FirstOrDefault()?.Name ?? "Ground Floor"; // Default to first section
+            ViewBag.SelectedSection = "All"; // Default to "All" tab
             var waitingTokens = await _waitingTokenService.GetAllWaitingTokensAsync();
             return View(waitingTokens);
+        }
+
+
+        // Kot
+        public async Task<IActionResult> Kot(string status = "in_progress", int categoryId = 0)
+        {
+            var categories = await _categoryService.GetAllCategoriesAsync();
+            ViewBag.Categories = categories;
+            ViewBag.SelectedStatus = status;
+            ViewBag.SelectedCategoryId = categoryId;
+
+            var kotData = await _kotService.GetKotDataAsync(status, categoryId);
+            Console.WriteLine($"Controller passing {kotData.Count} items to view.");
+            return View(kotData);
         }
     }
 }

@@ -169,13 +169,11 @@
                 $("#categoryContainer").html(result);
                 $(".category-link").on("click", function (e) {
                     e.preventDefault();
-                    // Remove active class from all items
                     $(".list-group-item").removeClass("active");
-
-                    // Add active class to the clicked item's parent li
                     $(this).closest(".list-group-item").addClass("active");
-                    var categoryName = $(this).data("category-name");
-                    loadItems(categoryName, '');
+
+                    currentCategory = $(this).data("category-name");
+                    loadItems(currentCategory, '');
                 });
             },
             error: function (xhr, status, error) {
@@ -191,12 +189,6 @@
             data: { category: category, search: search || '' },
             success: function (result) {
                 $("#itemListContainer").html(result);
-                // Add search handler
-                $("#itemListContainer form").on("submit", function (e) {
-                    e.preventDefault();
-                    var searchTerm = $(this).find("input[name='search']").val();
-                    loadItems(category, searchTerm);
-                });
             },
             error: function (xhr, status, error) {
                 console.error("Error loading items:", error);
@@ -204,9 +196,14 @@
         });
     }
 
-    // Load categories and items on page load
     $(document).ready(function () {
         loadCategories();
         loadItems('', '');
+
+        // Handle dynamic search
+        $(document).on("input", "#searchInput", function () {
+            const searchTerm = $(this).val();
+            loadItems(currentCategory, searchTerm);
+        });
     });
 </script>
