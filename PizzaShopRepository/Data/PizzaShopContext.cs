@@ -308,10 +308,11 @@ public partial class PizzaShopContext : DbContext
             entity.Property(e => e.ItemId).HasColumnName("item_id");
             entity.Property(e => e.ItemStatus)
                 .HasMaxLength(20)
-                .HasDefaultValueSql("'pending'::character varying")
+                .HasDefaultValueSql("'in_progress'::character varying")
                 .HasColumnName("item_status");
             entity.Property(e => e.OrderId).HasColumnName("order_id");
             entity.Property(e => e.Quantity).HasColumnName("quantity");
+            entity.Property(e => e.ReadyQuantity).HasColumnName("ready_quantity");
             entity.Property(e => e.SpecialInstructions).HasColumnName("special_instructions");
             entity.Property(e => e.TotalPrice)
                 .HasPrecision(10, 2)

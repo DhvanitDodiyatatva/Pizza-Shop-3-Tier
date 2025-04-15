@@ -1,161 +1,185 @@
-@model List<PizzaShopRepository.ViewModels.KotViewModel>
-
 @{
-    ViewData["Title"] = "KOT";
+    ViewData["Title"] = "Kitchen Order Tickets";
     Layout = "~/Views/Shared/_LayoutOrdApp.cshtml";
 }
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
-    crossorigin="anonymous"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <div class="Users-content mt-0 p-xl-5 p-lg-4 p-md-4 p-sm-4 p-4">
-    <div class="d-flex align-items-center justify-content-between my-2">
+    <div class="d-flex align-items-center justify-content-start my-2">
         <div>
-            <div class="fw-bolder fs-2 page-text">KOT</div>
+            <div class="fw-bolder fs-2 page-text">Kitchen Order Tokens</div>
         </div>
     </div>
+
     <div class="row mb-3 upper-div rounded-2 shadow py-3 d-flex">
         <ul class="nav nav-underline" id="categoryTabs">
             <li class="nav-item">
-                <a class="nav-link custom-tag mx-3 @(ViewBag.SelectedCategoryId == 0 ? "active" : "text-decoration-none text-black")"
-                    id="all-tab" data-bs-toggle="tab" data-bs-target="#all-tab-pane" type="button" role="tab"
-                    aria-controls="all-tab-pane" aria-selected="@(ViewBag.SelectedCategoryId == 0 ? "true" : "false")">
+                <a class="nav-link custom-tag mx-3 active" data-category="All" role="tab">
                     All
                 </a>
             </li>
             @foreach (var category in ViewBag.Categories)
             {
                 <li class="nav-item">
-                    <a class="nav-link custom-tag mx-3 @(category.Id == ViewBag.SelectedCategoryId ? "active" : "text-decoration-none text-black")"
-                        id="@category.Name.ToLower().Replace(" ", "-")-tab" data-bs-toggle="tab"
-                        data-bs-target="#@category.Name.ToLower().Replace(" ", "-")-tab-pane" type="button" role="tab"
-                        aria-controls="@category.Name.ToLower().Replace(" ", "-")-tab-pane"
-                        aria-selected="@(category.Id == ViewBag.SelectedCategoryId ? "true" : "false")">
+                    <a class="nav-link custom-tag mx-3 text-decoration-none text-black" data-category="@category.Name"
+                        role="tab">
                         @category.Name
                     </a>
                 </li>
             }
         </ul>
     </div>
+
     <div class="row content-div rounded-2 shadow">
         <div class="tab-content w-100">
-            <div class="tab-pane fade @(ViewBag.SelectedCategoryId == 0 ? "show active" : "")" id="all-tab-pane"
-                role="tabpanel" aria-labelledby="all-tab">
-                <div class="d-flex justify-content-end mb-2">
-                    <div class="btn-group" role="group">
-                        <a asp-action="Kot" asp-route-status="in_progress"
-                            asp-route-categoryId="@ViewBag.SelectedCategoryId"
-                            class="btn btn-main @(ViewBag.SelectedStatus == "in_progress" ? "bg-primary" : "bg-secondary") text-white">In
-                            Progress</a>
-                        <a asp-action="Kot" asp-route-status="ready" asp-route-categoryId="@ViewBag.SelectedCategoryId"
-                            class="btn btn-main @(ViewBag.SelectedStatus == "ready" ? "bg-primary" : "bg-secondary") text-white">Ready</a>
-                    </div>
+            <div class="row">
+                <div class="col-md-12 mb-3 d-flex justify-content-end">
+                    <button id="in-progress-btn" class="btn btn-main status-btn text-white me-2">In Progress</button>
+                    <button id="ready-btn" class="btn btn-main status-btn text-white me-2">Ready</button>
+                    <button class="btn btn-main text-white me-2"> &lt; </button>
+                    <button class="btn btn-main text-white"> &gt; </button>
                 </div>
-                <div class="row">
-                    @if (Model == null || !Model.Any())
-                    {
-                        <p>No order details available. Retrieved @Model?.Count ?? 0 items.</p>
-                    }
-                    else
-                    {
-                        @foreach (var order in Model)
-                        {
-                            <div class="col-md-4 mb-3">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h5 class="card-title">#@order.OrderId</h5>
-                                        <p class="card-text">Time: @(order.TimeElapsed.ToString(@"d'd 'hh\:mm\:ss"))</p>
-                                        <p class="card-text">Section: @order.SectionName</p>
-                                        <p class="card-text">Table: @order.TableName</p>
-                                        <p class="card-text">Item: @order.ItemName</p>
-                                        <p class="card-text">Modifier: @order.ModifierName</p>
-                                        <p class="card-text">Quantity: @order.Quantity</p>
-                                        <p class="card-text">Instructions: @order.SpecialInstructions</p>
-                                    </div>
-                                    <div class="card-footer d-flex justify-content-end">
-                                        <button class="btn btn-main bg-primary text-white">In Progress</button>
-                                        <button class="btn btn-main bg-success text-white ms-2">Ready</button>
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                    }
+                <div class="col-md-12">
+
+                    <div id="kot-in-progress" class="row"></div>
+                </div>
+                <div class="col-md-12">
+
+                    <div id="kot-ready" class="row"></div>
                 </div>
             </div>
-            @foreach (var category in ViewBag.Categories)
-            {
-                <div class="tab-pane fade @(category.Id == ViewBag.SelectedCategoryId ? "show active" : "")"
-                    id="@category.Name.ToLower().Replace(" ", "-")-tab-pane" role="tabpanel"
-                    aria-labelledby="@category.Name.ToLower().Replace(" ", "-")-tab">
-                    <div class="d-flex justify-content-end mb-2">
-                        <div class="btn-group" role="group">
-                            <a asp-action="Kot" asp-route-status="in_progress" asp-route-categoryId="@category.Id"
-                                class="btn btn-main @(ViewBag.SelectedStatus == "in_progress" ? "bg-primary" : "bg-secondary") text-white">In
-                                Progress</a>
-                            <a asp-action="Kot" asp-route-status="ready" asp-route-categoryId="@category.Id"
-                                class="btn btn-main @(ViewBag.SelectedStatus == "ready" ? "bg-primary" : "bg-secondary") text-white">Ready</a>
-                        </div>
-                    </div>
-                    <div class="row">
-                        @if (Model == null || !Model.Any())
-                        {
-                            <p>No order details available for @category.Name. Retrieved @Model?.Count ?? 0 items.</p>
-                        }
-                        else
-                        {
-                            @foreach (var order in Model.Where(o => o.ItemName.Contains(category.Name)))
-                            {
-                                <div class="col-md-4 mb-3">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <h5 class="card-title">#@order.OrderId</h5>
-                                            <p class="card-text">Time: @(order.TimeElapsed.ToString(@"d'd 'hh\:mm\:ss"))</p>
-                                            <p class="card-text">Section: @order.SectionName</p>
-                                            <p class="card-text">Table: @order.TableName</p>
-                                            <p class="card-text">Item: @order.ItemName</p>
-                                            <p class="card-text">Modifier: @order.ModifierName</p>
-                                            <p class="card-text">Quantity: @order.Quantity</p>
-                                            <p class="card-text">Instructions: @order.SpecialInstructions</p>
-                                        </div>
-                                        <div class="card-footer d-flex justify-content-end">
-                                            <button class="btn btn-main bg-primary text-white">In Progress</button>
-                                            <button class="btn btn-main bg-success text-white ms-2">Ready</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-                        }
-                    </div>
-                </div>
-            }
         </div>
     </div>
 </div>
 
 <script>
-    $(document).ready(function () {
-        if (!$('#categoryTabs .nav-link.active').length) {
-            $('#categoryTabs .nav-link:first').addClass('active').attr('aria-selected', 'true');
-            $($('#categoryTabs .nav-link:first').data('bs-target')).addClass('show active');
+
+    let currentSlide = 0;
+    const cardsToShow = 1; // or 2, depending on screen
+    const cardWidth = 370; // match your kot-card width + margin
+
+    function nextslide() {
+        const cardWrapper = document.getElementById('cardWrapper');
+        const totalCards = cardWrapper?.children.length ?? 0;
+        const maxSlide = totalCards - cardsToShow;
+
+        if (currentSlide < maxSlide) {
+            currentSlide += cardsToShow;
+            const offset = -currentSlide * cardWidth;
+            cardWrapper.style.transform = `translateX(${offset}px)`;
         }
+    }
+
+    function backslide() {
+        const cardWrapper = document.getElementById('cardWrapper');
+
+        if (currentSlide > 0) {
+            currentSlide -= cardsToShow;
+            const offset = -currentSlide * cardWidth;
+            cardWrapper.style.transform = `translateX(${offset}px)`;
+        }
+    }
+
+    document.querySelectorAll('.btn-main').forEach(btn => {
+        btn.addEventListener('click', function () {
+            if (this.textContent.trim() === ">") nextslide();
+            if (this.textContent.trim() === "<") backslide();
+        });
+    });
+
+    function loadKotData(category, status) {
+        $.ajax({
+            url: `/OrderApp/GetKotByCategoryAndStatus`,
+            data: { category: category, status: status },
+            success: function (data) {
+                // Clear both sections and populate only the requested status
+                $('#kot-in-progress').html(status === 'in_progress' ? data : '');
+                $('#kot-ready').html(status === 'ready' ? data : '');
+            }
+        });
+    }
+
+    function updateTimeSinceOrder() {
+        document.querySelectorAll(".time-since-order").forEach(function (element) {
+            const createdAt = element.dataset.createdat;
+            if (!createdAt) {
+                element.innerText = "N/A";
+                return;
+            }
+
+            const createdDate = new Date(createdAt);
+            const now = new Date();
+            let diff = Math.floor((now - createdDate) / 1000); // difference in seconds
+
+            const days = Math.floor(diff / (60 * 60 * 24));
+            diff %= (60 * 60 * 24);
+            const hours = Math.floor(diff / (60 * 60));
+            diff %= (60 * 60);
+            const minutes = Math.floor(diff / 60);
+            const seconds = diff % 60;
+
+            let parts = [];
+            if (days > 0) parts.push(`${days} day${days !== 1 ? 's' : ''}`);
+            if (hours > 0 || days > 0) parts.push(`${hours} hour${hours !== 1 ? 's' : ''}`);
+            if (minutes > 0 || hours > 0 || days > 0) parts.push(`${minutes} min${minutes !== 1 ? 's' : ''}`);
+            parts.push(`${seconds} sec${seconds !== 1 ? 's' : ''}`);
+
+            element.innerText = parts.join(" ");
+        });
+    }
+
+    // Update every second
+    setInterval(updateTimeSinceOrder, 1000);
+    // Initial call
+    updateTimeSinceOrder();
+
+    $(document).ready(function () {
+        let selectedCategory = "All";
+        let selectedStatus = 'in_progress'; // Default to in_progress
+
+        // Initial load with all categories and in_progress status
+        loadKotData(selectedCategory, selectedStatus);
+        $('#in-progress-btn').addClass('active'); // Set In Progress button as active by default
+
+        // Handle category tab clicks
+        $('#categoryTabs .nav-link').on('click', function () {
+            $('#categoryTabs .nav-link').removeClass('active');
+            $(this).addClass('active');
+            selectedCategory = $(this).data('category');
+            loadKotData(selectedCategory, selectedStatus);
+        });
+
+        // Handle status button clicks
+        $('#in-progress-btn').on('click', function () {
+            selectedStatus = 'in_progress';
+            loadKotData(selectedCategory, selectedStatus);
+            $('#in-progress-btn').addClass('active').siblings().removeClass('active');
+        });
+
+        $('#ready-btn').on('click', function () {
+            selectedStatus = 'ready';
+            loadKotData(selectedCategory, selectedStatus);
+            $('#ready-btn').addClass('active').siblings().removeClass('active');
+        });
     });
 </script>
 
 <style>
     .nav-underline .nav-link {
-        color: #000;
+        color: #1f73ae;
         padding: 0.5rem 1rem;
         font-size: 1rem;
+        cursor: pointer;
     }
 
     .nav-underline .nav-link.active {
-        color: #000;
-        border-bottom: 2px solid #000;
+        font-size: 1.1rem;
+        color: #1f73ae;
+        border-bottom: 2px solid #1f73ae;
     }
 
     .custom-tag {
@@ -172,9 +196,12 @@
         padding: 1rem;
     }
 
-    .card {
-        border: 1px solid #ddd;
+    .kot-card {
+        background: #fff;
+        border: 3px dashed #dee2e6;
         border-radius: 0.25rem;
+
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     .btn-main {
@@ -190,11 +217,14 @@
         color: #1f73ae;
     }
 
-    .bg-success {
-        background-color: #28a745 !important;
+    p {
+        margin-top: 0;
+        margin-bottom: 0.1rem;
     }
 
-    .bg-secondary {
-        background-color: #6c757d !important;
+
+
+    .card-slider.transition {
+        transition: transform 0.5s ease;
     }
 </style>

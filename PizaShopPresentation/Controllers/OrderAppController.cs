@@ -143,17 +143,21 @@ namespace PizzaShop.Controllers
         }
 
 
-        // Kot
-        public async Task<IActionResult> Kot(string status = "in_progress", int categoryId = 0)
+        public async Task<IActionResult> Kot()
         {
             var categories = await _categoryService.GetAllCategoriesAsync();
             ViewBag.Categories = categories;
-            ViewBag.SelectedStatus = status;
-            ViewBag.SelectedCategoryId = categoryId;
-
-            var kotData = await _kotService.GetKotDataAsync(status, categoryId);
-            Console.WriteLine($"Controller passing {kotData.Count} items to view.");
-            return View(kotData);
+            return View();
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetKotByCategoryAndStatus(string category, string status)
+        {
+            var orders = await _kotService.GetOrdersByCategoryAndStatusAsync(category, status);
+            ViewBag.SelectedCategory = category;
+            ViewBag.ItemStatus = status;
+            return PartialView("_KotCardList", orders);
+        }
+
     }
 }

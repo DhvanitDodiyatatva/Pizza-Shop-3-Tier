@@ -16,6 +16,13 @@ body {
   color: #76777e;
 }
 
+.ordApp-content {
+  background-color: #f2f2f2;
+  font-family: "poppins", sans-serif !important;
+  width: 100%;
+  height: 100%;
+}
+
 .page-text {
   color: #1f73ae !important;
 }

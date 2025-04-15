@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using PizzaShopRepository.Data;
 using PizzaShopRepository.Interfaces;
 using PizzaShopRepository.Models;
-using PizzaShopRepository.ViewModels;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,59 +12,40 @@ namespace PizzaShopRepository.Repositories
 {
     public class KotRepository : IKotRepository
     {
-        private readonly PizzaShopContext _dbContext;
+        private readonly PizzaShopContext _context;
 
-        public KotRepository(PizzaShopContext dbContext)
+        public KotRepository(PizzaShopContext context)
         {
-            _dbContext = dbContext;
+            _context = context;
         }
 
-        public async Task<List<KotViewModel>> GetKotDataAsync(string status, int categoryId)
+        public async Task<List<Order>> GetOrdersByCategoryAndStatusAsync(int? categoryId, string status)
         {
-            var currentDateTime = DateTime.Now;
+            var query = _context.Orders
+            .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Item)
+                .ThenInclude(i => i.Category)
+            .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.OrderItemModifiers)
+                .ThenInclude(oim => oim.Modifier)
+            .Include(o => o.OrderTables)
+                .ThenInclude(ot => ot.Table)
+                .ThenInclude(t => t.Section)
+            .Where(o => o.OrderItems.Any(oi => !oi.Item.IsDeleted));
 
-            var orderItems = await _dbContext.Orders
-                .Include(o => o.OrderTables)
-                    .ThenInclude(ot => ot.Table)
-                    .ThenInclude(t => t.Section)
-                .Include(o => o.OrderItems)
-                    .ThenInclude(oi => oi.Item)
-                .Include(o => o.OrderItems)
-                    .ThenInclude(oi => oi.OrderItemModifiers)
-                    .ThenInclude(om => om.Modifier)
-                .SelectMany(o => o.OrderItems
-                    .Where(oi => string.IsNullOrEmpty(oi.ItemStatus) || oi.ItemStatus.ToLower() == status.ToLower()))
-                .ToListAsync();
-
-            var kotData = orderItems.Select(oi => new KotViewModel
+            if (categoryId.HasValue)
             {
-                OrderId = oi.OrderId,
-                TimeElapsed = currentDateTime - (oi.Order?.CreatedAt ?? DateTime.MinValue),
-                SectionName = oi.Order?.OrderTables.FirstOrDefault()?.Table?.Section?.Name ?? "N/A",
-                TableName = oi.Order?.OrderTables.FirstOrDefault()?.Table?.Name ?? "N/A",
-                ItemName = oi.Item?.Name ?? "N/A",
-                ModifierName = oi.OrderItemModifiers.FirstOrDefault()?.Modifier?.Name ?? "N/A",
-                Quantity = (int)oi.Quantity,
-                SpecialInstructions = oi.SpecialInstructions ?? "N/A"
-            }).ToList();
-
-            Console.WriteLine($"Retrieved {kotData.Count} KOT items from repository.");
-            if (kotData.Any())
-            {
-                Console.WriteLine($"Sample: OrderId={kotData[0].OrderId}, ItemName={kotData[0].ItemName}, ItemStatus={orderItems[0].ItemStatus}");
+                query = query.Where(o => o.OrderItems.Any(oi => oi.Item.CategoryId == categoryId));
             }
 
-            if (categoryId != 0)
+            if (!string.IsNullOrEmpty(status))
             {
-                var categoryNames = await _dbContext.Categories
-                    .Where(c => c.Id == categoryId)
-                    .Select(c => c.Name)
-                    .ToListAsync();
-                kotData = kotData.Where(o => categoryNames.Any(cn => o.ItemName.Contains(cn))).ToList();
-                Console.WriteLine($"After category filter (categoryId={categoryId}), {kotData.Count} items remain.");
+                query = query.Where(o => o.OrderItems.Any(oi => oi.ItemStatus == status));
             }
 
-            return kotData;
+            return await query.ToListAsync();
         }
     }
 }
+
+

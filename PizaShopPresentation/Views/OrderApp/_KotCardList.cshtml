@@ -1,0 +1,83 @@
+@model List<PizzaShopRepository.Models.Order>
+
+@{
+    var selectedCategory = ViewBag.SelectedCategory as string;
+    var itemStatus = ViewBag.ItemStatus as string;
+}
+
+<div id="cardWrapper" class="card-slider d-flex transition">
+    @foreach (var order in Model)
+    {
+        var filteredOrderItems = order.OrderItems.AsEnumerable();
+
+        if (!string.IsNullOrEmpty(selectedCategory) && selectedCategory != "All")
+        {
+            filteredOrderItems = filteredOrderItems.Where(oi => oi.Item.Category?.Name == selectedCategory);
+        }
+        if (!string.IsNullOrEmpty(itemStatus))
+        {
+            filteredOrderItems = filteredOrderItems.Where(oi => oi.ItemStatus == itemStatus);
+        }
+
+        if (filteredOrderItems.Any())
+        {
+            <div class="">
+                <div class="kot-card card  mx-2 flex-shrink-0 " style="">
+                    <div class=" card-header">
+                        <div class="d-flex justify-content-between mb-1">
+                            <div class="fw-semibold page-text"> #@order.Id</div>
+                            <div>
+                                <strong><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        class="bi bi-stopwatch" viewBox="0 0 16 16">
+                                        <path d="M8.5 5.6a.5.5 0 1 0-1 0v2.9h-3a.5.5 0 0 0 0 1H8a.5.5 0 0 0 .5-.5z" />
+                                        <path
+                                            d="M6.5 1A.5.5 0 0 1 7 .5h2a.5.5 0 0 1 0 1v.57c1.36.196 2.594.78 3.584 1.64l.012-.013.354-.354-.354-.353a.5.5 0 0 1 .707-.708l1.414 1.415a.5.5 0 1 1-.707.707l-.353-.354-.354.354-.013.012A7 7 0 1 1 7 2.071V1.5a.5.5 0 0 1-.5-.5M8 3a6 6 0 1 0 .001 12A6 6 0 0 0 8 3" />
+                                    </svg></strong>
+                                <span class="time-since-order text-secondary"
+                                    data-createdat="@order.CreatedAt?.ToString("o")">Calculating...</span>
+                            </div>
+                        </div>
+                        <p><strong></strong>@(order.OrderTables.Any()
+                                                ? string.Join(", ", order.OrderTables
+                                                .Where(ot => ot.Table != null && !string.IsNullOrEmpty(ot.Table.Name) && ot.Table.Section != null &&
+                                                !string.IsNullOrEmpty(ot.Table.Section.Name))
+                                                .Select(ot => $" {ot.Table.Section.Name} : {ot.Table.Name}"))
+                                                : "N/A")</p>
+            </div>
+
+                    <div class="custom-scrollbar"
+                        style="width: 350px; max-height: 250px; min-height: 250px; overflow-y: auto; overflow-x: hidden;">
+                @foreach (var orderItem in filteredOrderItems)
+                        {
+                            <div class="card-body ">
+                                <div class="d-flex justify-content-between">
+                                    <div class="text-secondary"> @orderItem.Item.Name</div>
+                                    <div class="text-secondary"> @orderItem.Quantity</div>
+                                </div>
+                                @if (orderItem.OrderItemModifiers.Any())
+                                {
+                                    <ul class="list ms-3 ">
+                                        @foreach (var mod in orderItem.OrderItemModifiers)
+                                        {
+                                            if (!string.IsNullOrEmpty(mod.Modifier?.Name))
+                                            {
+                                                <li class="mt-0  text-secondary">@mod.Modifier.Name</li>
+                                            }
+                                        }
+                                    </ul>
+                                }
+                                @if (!string.IsNullOrEmpty(orderItem.SpecialInstructions))
+                                {
+                                    <p><strong class="page-text">Instructions:</strong> @orderItem.SpecialInstructions</p>
+                                }
+
+                            </div>
+
+                        }
+                    </div>
+                    <div class="card-footer p-3">&nbsp;</div>
+                </div>
+            </div>
+        }
+    }
+</div>

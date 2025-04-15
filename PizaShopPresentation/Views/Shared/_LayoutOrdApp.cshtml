@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 
-<body>
+<body class="ordApp-content">
     <div class="main-dashboard">
         <div class="row g-0">
             <div class="col-12">
@@ -116,7 +116,9 @@
                 </header>
 
                 <!-- Dashboard Content -->
-                @RenderBody()
+                <div>
+                    @RenderBody()
+                </div>
             </div>
         </div>
         <!-- Modal -->
