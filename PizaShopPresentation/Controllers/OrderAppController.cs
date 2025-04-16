@@ -25,6 +25,7 @@ namespace PizzaShop.Controllers
             _kotService = kotService;
         }
 
+        //Table
         public async Task<IActionResult> Table()
         {
             var sections = await _sectionService.GetAllSectionsAsync();
@@ -89,7 +90,7 @@ namespace PizzaShop.Controllers
             return PartialView("_WaitingTokenModal", model);
         }
 
-
+        //Menu
         public async Task<IActionResult> Menu()
         {
             return View(new MenuViewModel());
@@ -133,6 +134,7 @@ namespace PizzaShop.Controllers
             return PartialView("_ItemList", items);
         }
 
+        //Waiting List
         public async Task<IActionResult> WaitingList()
         {
             var sections = await _sectionService.GetAllSectionsAsync();
@@ -142,7 +144,7 @@ namespace PizzaShop.Controllers
             return View(waitingTokens);
         }
 
-
+        // Kot
         public async Task<IActionResult> Kot()
         {
             var categories = await _categoryService.GetAllCategoriesAsync();

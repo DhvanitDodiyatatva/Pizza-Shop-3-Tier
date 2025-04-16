@@ -19,12 +19,10 @@
             <div class="fw-bolder fs-2 page-text">Waiting List</div>
         </div>
         <div class="d-flex">
-            <a asp-action="Table" asp-controller="OrderApp"><button
-                    class="btn btn-main bg-primary rounded-2 ms-1 text-white fs-6 d-none d-lg-block"
-                    type="submit">Back</button></a>
-            <a asp-action="Table" asp-controller="OrderApp"><button
-                    class="btn btn-main bg-primary rounded- ms-1 text-white fs-6 d-block d-lg-none" type="submit">
-                    << /button></a>
+            <a class="btn btn-main text-white fw-semibold waiting-token-btn" style="min-width: 120px; color: #1f73ae"
+                data-bs-toggle="modal" data-bs-target="#waitingTokenModal">
+                + Waiting Token
+            </a>
         </div>
     </div>
     <div class="row mb-3 upper-div rounded-2 shadow py-3 d-flex">
@@ -76,40 +74,41 @@
                                 <tr>
                                     <td>#@token.Id</td>
                                     <td>@token.CreatedAt?.ToString(" dd MMM , yyyy hh:mm tt")</td>
+                                    <td class="elapsed-time" data-created-at="@token.CreatedAt?.ToString("o")">
+                                        Calculating...
+                                    </td>
+
+                                    <td>@token.CustomerName</td>
+                                    <td>@token.NumOfPersons</td>
+                                    <td>@token.PhoneNumber</td>
+                                    <td>@token.Email</td>
                                     <td>
-                                        @(token.CreatedAt.HasValue ? TimeSpan.FromTicks(DateTime.Now.Ticks -
-                                                                            token.CreatedAt.Value.Ticks).ToString(@"d' days 'hh' hours 'mm' min 'ss' sec'") :
-                                                                            "N/A")
-                                </td>
-                                <td>@token.CustomerName</td>
-                                <td>@token.NumOfPersons</td>
-                                <td>@token.PhoneNumber</td>
-                                <td>@token.Email</td>
-                                <td>
-                                    <button type="button" class="btn text-body-btn edit-tax-btn p-0 me-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                                            fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
-                                            <path
-                                                d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001" />
-                                        </svg>
-                                    </button>
-                                    <button type="button" class="btn text-body-btn p-0" data-bs-toggle="modal">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                                            fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
-                                            <path
-                                                d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
-                                        </svg>
-                                    </button>
-                                    <button type="button" class="btn text-body-btn ps-1" data-bs-toggle="modal">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
-                                            fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
-                                            <path
-                                                d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z" />
-                                        </svg>
-                                    </button>
-                                </td>
-                            </tr>
-                                                        }
+                                        <button type="button" class="btn text-body-btn edit-tax-btn p-0 me-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                                fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
+                                                <path
+                                                    d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001" />
+                                            </svg>
+                                        </button>
+                                        <button type="button" class="btn text-body-btn p-0" data-bs-toggle="modal">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                                fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+                                                <path
+                                                    d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
+                                            </svg>
+                                        </button>
+                                        <button type="button" class="btn text-body-btn ps-1" data-bs-toggle="modal">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                                                fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16">
+                                                <path
+                                                    d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.708l.547.548 1.17-1.951a.5.5 0 1 1 .858.514M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4" />
+                                                <path
+                                                    d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z" />
+                                            </svg>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>
@@ -123,33 +122,33 @@
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th scope="col">Token No</th>
-                                    <th scope="col">Created At</th>
-                                    <th scope="col">Waiting Time</th>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">No of Persons</th>
-                                    <th scope="col">Phone Number</th>
-                                    <th scope="col">Email</th>
-                                    <th scope="col">Action</th>
+                                    <th scope="col" class="text-nowrap">Token No</th>
+                                    <th scope="col" class="text-nowrap">Created At</th>
+                                    <th scope="col" class="text-nowrap">Waiting Time</th>
+                                    <th scope="col" class="text-nowrap">Name</th>
+                                    <th scope="col" class="text-nowrap">No of Persons</th>
+                                    <th scope="col" class="text-nowrap">Phone Number</th>
+                                    <th scope="col" class="text-nowrap">Email</th>
+                                    <th scope="col" class="text-nowrap">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (var token in Model.Where(t => t.Section?.Name == sec.Text && !t.IsDeleted))
                                 {
                                     <tr>
-                                        <td>#@token.Id</td>
-                                        <td>@token.CreatedAt?.ToString("MMM dd, yyyy hh:mm tt")</td>
-                                        <td>
+                                        <td class="text-nowrap">#@token.Id</td>
+                                        <td class="text-nowrap">@token.CreatedAt?.ToString("MMM dd, yyyy hh:mm tt")</td>
+                                        <td class="text-nowrap">
                                             @(token.CreatedAt.HasValue
                                                                                 ? TimeSpan.FromTicks(DateTime.Now.Ticks -
                                                                                 token.CreatedAt.Value.Ticks).ToString(@"hh\:mm\:ss")
                                                                                 : "N/A")
                                 </td>
-                                <td>@token.CustomerName</td>
-                                <td>@token.NumOfPersons</td>
-                                <td>@token.PhoneNumber</td>
-                                <td>@token.Email</td>
-                                <td>
+                                <td class="text-nowrap">@token.CustomerName</td>
+                                <td class="text-nowrap">@token.NumOfPersons</td>
+                                <td class="text-nowrap">@token.PhoneNumber</td>
+                                <td class="text-nowrap">@token.Email</td>
+                                <td class="text-nowrap">
                                     <button type="button" class="btn text-body-btn edit-tax-btn p-0 me-2">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                             fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
@@ -181,15 +180,117 @@
             }
         </div>
     </div>
+    <!-- Placeholder modal container -->
+    <div class="modal fade" id="waitingTokenModal" tabindex="-1" aria-labelledby="waitingTokenModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="waitingTokenModalLabel">Waiting Token Details</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Partial view form content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
     $(document).ready(function () {
+
+        function updateElapsedTimes() {
+            const now = new Date();
+
+            document.querySelectorAll(".elapsed-time").forEach(function (td) {
+                const createdAtStr = td.getAttribute("data-created-at");
+                if (!createdAtStr) {
+                    td.textContent = "N/A";
+                    return;
+                }
+
+                const createdAt = new Date(createdAtStr);
+                let diffMs = now - createdAt;
+
+                if (diffMs < 0) {
+                    td.textContent = "Just now";
+                    return;
+                }
+
+                let seconds = Math.floor(diffMs / 1000);
+                let days = Math.floor(seconds / 86400);
+                seconds %= 86400;
+                let hours = Math.floor(seconds / 3600);
+                seconds %= 3600;
+                let minutes = Math.floor(seconds / 60);
+                seconds %= 60;
+
+                td.textContent = `${days} days ${hours} hours ${minutes} min ${seconds} sec`;
+            });
+        }
+
+        // Update every second
+        setInterval(updateElapsedTimes, 1000);
+        // Run immediately on page load
+        updateElapsedTimes();
         // Initialize the first tab as active if not set
         if (!$('#sectionTabs .nav-link.active').length) {
             $('#sectionTabs .nav-link:first').addClass('active').attr('aria-selected', 'true');
             $($('#sectionTabs .nav-link:first').data('bs-target')).addClass('show active');
         }
+
+
+        $('.waiting-token-btn').on('click', function () {
+            var sectionId = $(this).data('section-id');
+            var sectionName = $(this).data('section-name');
+            showWaitingTokenModal(sectionId, sectionName);
+        });
+
+        function showWaitingTokenModal(sectionId, sectionName) {
+            $.get('@Url.Action("ShowWaitingTokenModal", "OrderApp")', { sectionId: sectionId, sectionName: sectionName }, function (partialView) {
+                console.log('Partial View Response:', partialView); // Debug log
+                // Extract the inner modal-body content
+                var modalBodyContent = $(partialView).find('.modal-body').html();
+                $('#waitingTokenModal .modal-body').html(modalBodyContent);
+                $('#waitingTokenModal').modal('dispose'); // Dispose existing modal instance
+                $('#waitingTokenModal').modal('show'); // Show the modal with new content
+                $.validator.unobtrusive.parse('#waitingTokenModal'); // Reinitialize validation
+            }).fail(function (xhr, status, error) {
+                console.error('AJAX Error: ' + status + ' - ' + error);
+                toastr.error('Failed to load modal.');
+            });
+        }
+
+        $(document).on('submit', '#addWaitingTokenForm', function (e) {
+            e.preventDefault();
+            var form = $(this);
+            $.ajax({
+                url: form.attr('action'),
+                type: 'POST',
+                data: form.serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        $('#waitingTokenModal').modal('hide').on('hidden.bs.modal', function () {
+
+                            $(this).data('bs.modal', null); // Clear modal data
+                            $('.modal-backdrop').remove(); // Remove backdrop manually
+                        });
+                    } else {
+                        toastr.error(response.message);
+                        var modalBodyContent = $(response).find('.modal-body').html() || response;
+                        $('#waitingTokenModal .modal-body').html(modalBodyContent);
+                        $('#waitingTokenModal').modal('dispose'); // Dispose and reinitialize
+                        $('#waitingTokenModal').modal('show');
+                        $.validator.unobtrusive.parse('#waitingTokenModal'); // Reinitialize validation
+                    }
+                },
+                error: function () {
+                    toastr.error('An error occurred.');
+                }
+            });
+        });
     });
 </script>
 

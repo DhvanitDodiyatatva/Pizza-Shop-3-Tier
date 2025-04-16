@@ -1,18 +1,22 @@
 @model List<PizzaShopRepository.Models.Modifier>
 
-<div class="modal fade" id="selectModifiersModal" tabindex="-1" aria-labelledby="selectModifiersModalLabel" aria-hidden="true">
+<div class="modal fade" id="selectModifiersModal" tabindex="-1" aria-labelledby="selectModifiersModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="selectModifiersModalLabel">Select Existing Modifiers</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body custom-scrollbar"
+                style="width: 500px; max-height: 450px; min-height: 250px; overflow-y: auto; overflow-x: hidden;">
                 <div class="input-group mb-3">
                     <input type="text" class="form-control" placeholder="Search" id="modifierSearchInput" />
                     <span class="input-group-text">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-search" viewBox="0 0 16 16">
+                            <path
+                                d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
                         </svg>
                     </span>
                 </div>
@@ -29,6 +33,7 @@
                         </tr>
                     </thead>
                     <tbody id="modifierList">
+
                         @foreach (var modifier in Model)
                         {
                             <tr data-modifier-id="@modifier.Id" data-modifier-name="@modifier.Name">
@@ -41,6 +46,7 @@
                                 <td class="text-center">@modifier.Quantity</td>
                             </tr>
                         }
+
                     </tbody>
                 </table>
             </div>

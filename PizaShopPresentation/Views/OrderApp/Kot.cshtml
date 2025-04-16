@@ -38,17 +38,16 @@
         <div class="tab-content w-100">
             <div class="row">
                 <div class="col-md-12 mb-3 d-flex justify-content-end">
-                    <button id="in-progress-btn" class="btn btn-main status-btn text-white me-2">In Progress</button>
-                    <button id="ready-btn" class="btn btn-main status-btn text-white me-2">Ready</button>
-                    <button class="btn btn-main text-white me-2"> &lt; </button>
-                    <button class="btn btn-main text-white"> &gt; </button>
+                    <button id="in-progress-btn" class="btn status-btn me-2 active">In Progress</button>
+                    <button id="ready-btn" class="btn status-btn me-2">Ready</button>
+                    <button class="btn btn-main text-white me-2">
+                        < </button>
+                            <button class="btn btn-main text-white"> > </button>
                 </div>
                 <div class="col-md-12">
-
                     <div id="kot-in-progress" class="row"></div>
                 </div>
                 <div class="col-md-12">
-
                     <div id="kot-ready" class="row"></div>
                 </div>
             </div>
@@ -57,7 +56,6 @@
 </div>
 
 <script>
-
     let currentSlide = 0;
     const cardsToShow = 1; // or 2, depending on screen
     const cardWidth = 370; // match your kot-card width + margin
@@ -157,13 +155,15 @@
         $('#in-progress-btn').on('click', function () {
             selectedStatus = 'in_progress';
             loadKotData(selectedCategory, selectedStatus);
-            $('#in-progress-btn').addClass('active').siblings().removeClass('active');
+            $('#in-progress-btn').addClass('active').removeClass('inactive');
+            $('#ready-btn').removeClass('active').addClass('inactive');
         });
 
         $('#ready-btn').on('click', function () {
             selectedStatus = 'ready';
             loadKotData(selectedCategory, selectedStatus);
-            $('#ready-btn').addClass('active').siblings().removeClass('active');
+            $('#ready-btn').addClass('active').removeClass('inactive');
+            $('#in-progress-btn').removeClass('active').addClass('inactive');
         });
     });
 </script>
@@ -200,13 +200,13 @@
         background: #fff;
         border: 3px dashed #dee2e6;
         border-radius: 0.25rem;
-
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     .btn-main {
         background-color: #1f73ae;
         border: none;
+        color: white;
     }
 
     .btn-main:hover {
@@ -222,9 +222,23 @@
         margin-bottom: 0.1rem;
     }
 
-
-
     .card-slider.transition {
         transition: transform 0.5s ease;
+    }
+
+    /* Status button styles */
+    .status-btn {
+        border: 1px solid #1f73ae;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .status-btn.active {
+        background-color: #1f73ae;
+        color: white;
+    }
+
+    .status-btn.inactive {
+        background-color: white;
+        color: #1f73ae;
     }
 </style>
