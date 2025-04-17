@@ -5,6 +5,7 @@ using PizzaShopServices.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
+
 namespace PizzaShopServices.Implementations
 {
     public class KotService : IKotService
@@ -29,6 +30,16 @@ namespace PizzaShopServices.Implementations
             }
 
             return await _kotRepository.GetOrdersByCategoryAndStatusAsync(categoryId, status);
+        }
+
+        public async Task<bool> UpdateOrderItemStatusesAsync(int orderId, List<(int OrderItemId, int AdjustedQuantity)> items, string newStatus)
+        {
+            if (items == null || !items.Any())
+            {
+                return false;
+            }
+
+            return await _kotRepository.UpdateOrderItemStatusesAsync(orderId, items, newStatus);
         }
     }
 }

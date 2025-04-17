@@ -21,12 +21,10 @@
         {
             if (itemStatus == "ready")
             {
-                // Include items with ReadyQuantity > 0 for 'ready' status
                 filteredOrderItems = filteredOrderItems.Where(oi => oi.ReadyQuantity > 0);
             }
             else if (itemStatus == "in_progress")
             {
-                // Include items where Quantity > ReadyQuantity for 'in_progress' status
                 filteredOrderItems = filteredOrderItems.Where(oi => oi.Quantity > oi.ReadyQuantity);
             }
         }
@@ -34,7 +32,8 @@
         if (filteredOrderItems.Any())
         {
             <div class="">
-                <div class="kot-card card mx-2 flex-shrink-0" style="">
+                <div class="kot-card card mx-2 flex-shrink-0" style="cursor: pointer;" data-bs-toggle="modal"
+                    data-bs-target="#kotDetailsModal" onclick="loadKotDetails(@order.Id, '@itemStatus')">
                     <div class="card-header">
                         <div class="d-flex justify-content-between mb-1">
                             <div class="fw-semibold page-text">#@order.Id</div>
@@ -63,11 +62,8 @@
                         style="width: 350px; max-height: 250px; min-height: 250px; overflow-y: auto; overflow-x: hidden;">
                 @foreach (var orderItem in filteredOrderItems)
                         {
-                            // Determine the quantity to display based on status
                             int displayQuantity = itemStatus == "ready" ? orderItem.ReadyQuantity : orderItem.Quantity -
                             orderItem.ReadyQuantity;
-
-                            // Only render if displayQuantity is greater than 0
                             if (displayQuantity > 0)
                             {
                                 <div class="card-body">

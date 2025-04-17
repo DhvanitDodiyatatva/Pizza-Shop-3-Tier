@@ -2,7 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using PizzaShopServices.Interfaces;
 using PizzaShopRepository.ViewModels;
 using PizzaShopRepository.Models;
-using Microsoft.AspNetCore.Mvc.Rendering; // Added for SelectList
+using Microsoft.AspNetCore.Mvc.Rendering; //  for SelectList
+using Microsoft.EntityFrameworkCore;
 
 namespace PizzaShop.Controllers
 {
@@ -14,8 +15,9 @@ namespace PizzaShop.Controllers
         private readonly ICategoryService _categoryService;
         private readonly IWaitingTokenService _waitingTokenService;
         private readonly IKotService _kotService;
+        private readonly PizzaShopRepository.Data.PizzaShopContext _context;
 
-        public OrderAppController(ISectionService sectionService, ITableService tableService, IItemService itemService, ICategoryService categoryService, IWaitingTokenService waitingTokenService, IKotService kotService)
+        public OrderAppController(ISectionService sectionService, ITableService tableService, IItemService itemService, ICategoryService categoryService, IWaitingTokenService waitingTokenService, IKotService kotService, PizzaShopRepository.Data.PizzaShopContext context)
         {
             _sectionService = sectionService;
             _tableService = tableService;
@@ -23,6 +25,7 @@ namespace PizzaShop.Controllers
             _categoryService = categoryService;
             _waitingTokenService = waitingTokenService;
             _kotService = kotService;
+            _context = context;
         }
 
         //Table
@@ -149,6 +152,7 @@ namespace PizzaShop.Controllers
         {
             var categories = await _categoryService.GetAllCategoriesAsync();
             ViewBag.Categories = categories;
+            ViewBag.SelectedCategory = "All";
             return View();
         }
 
@@ -159,6 +163,83 @@ namespace PizzaShop.Controllers
             ViewBag.SelectedCategory = category;
             ViewBag.ItemStatus = status;
             return PartialView("_KotCardList", orders);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ShowKotDetailsModal(int orderId, string status, string selectedCategory)
+        {
+            var order = await _context.Orders
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Item)
+                    .ThenInclude(i => i.Category)
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.OrderItemModifiers)
+                    .ThenInclude(oim => oim.Modifier)
+                .FirstOrDefaultAsync(o => o.Id == orderId);
+
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            Console.WriteLine($"ShowKotDetailsModal - orderId: {orderId}, status: {status}, selectedCategory: {selectedCategory}"); // Debug log
+            var viewModel = new UpdateOrderItemStatusViewModel
+            {
+                OrderId = order.Id,
+                OrderItems = order.OrderItems
+                    .Where(oi =>
+                        (status == "in_progress" ? oi.Quantity > oi.ReadyQuantity : oi.ReadyQuantity > 0) && // Status filter
+                        (string.IsNullOrEmpty(selectedCategory) || selectedCategory == "All" || oi.Item.Category?.Name == selectedCategory) // Category filter
+                    )
+                    .Select(oi => new OrderItemDetail
+                    {
+                        OrderItemId = oi.Id,
+                        ItemName = oi.Item.Name,
+                        Quantity = status == "ready" ? oi.ReadyQuantity : oi.Quantity - oi.ReadyQuantity,
+                        ReadyQuantity = oi.ReadyQuantity,
+                        Status = oi.ItemStatus,
+                        Modifiers = oi.OrderItemModifiers
+                            .Where(oim => !string.IsNullOrEmpty(oim.Modifier?.Name))
+                            .Select(oim => oim.Modifier.Name)
+                            .ToList(),
+                        IsSelected = true,
+                        AdjustedQuantity = status == "ready" ? oi.ReadyQuantity : oi.Quantity - oi.ReadyQuantity,
+                        CategoryName = oi.Item.Category?.Name
+                    }).ToList()
+            };
+
+            ViewBag.SelectedCategory = selectedCategory;
+            ViewBag.ItemStatus = status;
+            return PartialView("_KotDetailsModal", viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateOrderItemStatus(UpdateOrderItemStatusViewModel model, string newStatus)
+        {
+            if (!ModelState.IsValid)
+            {
+                return PartialView("_KotDetailsModal", model);
+            }
+
+            var selectedItems = model.OrderItems
+                .Where(oi => oi.IsSelected && oi.AdjustedQuantity > 0)
+                .Select(oi => (OrderItemId: oi.OrderItemId, AdjustedQuantity: oi.AdjustedQuantity))
+                .ToList();
+
+            if (!selectedItems.Any())
+            {
+                ModelState.AddModelError("", "Please select at least one item with a valid quantity.");
+                return PartialView("_KotDetailsModal", model);
+            }
+
+            var result = await _kotService.UpdateOrderItemStatusesAsync(model.OrderId, selectedItems, newStatus);
+
+            if (result)
+            {
+                return Json(new { success = true, message = "Item statuses updated successfully." });
+            }
+
+            return Json(new { success = false, message = "Failed to update item statuses." });
         }
 
     }

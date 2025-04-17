@@ -1,0 +1,123 @@
+@model PizzaShopRepository.ViewModels.UpdateOrderItemStatusViewModel
+
+@{
+    var selectedCategory = ViewBag.SelectedCategory as string;
+    var itemStatus = ViewBag.ItemStatus as string;
+}
+
+<div class="modal fade" id="kotDetailsModal" tabindex="-1" aria-labelledby="kotDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="kotDetailsModalLabel">Order ID: #@Model.OrderId</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="updateStatusForm" asp-action="UpdateOrderItemStatus" asp-controller="OrderApp" method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="OrderId" value="@Model.OrderId" />
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Select</th>
+                                <th>Item</th>
+                                <th>Quantity</th>
+                                <th>Modifiers</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var orderItem in Model.OrderItems.OrderBy(oi => oi.ItemName))
+                            {
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" name="OrderItems[@orderItem.OrderItemId].IsSelected"
+                                            value="true" checked="@orderItem.IsSelected" />
+                                        <input type="hidden" name="OrderItems[@orderItem.OrderItemId].OrderItemId"
+                                            value="@orderItem.OrderItemId" />
+                                    </td>
+                                    <td>@orderItem.ItemName</td>
+                                    <td>
+                                        <div class="input-group" style="width: 120px;">
+                                            <button type="button" class="btn btn-outline-secondary decrement"
+                                                data-index="@orderItem.OrderItemId">-</button>
+                                            <input type="number" name="OrderItems[@orderItem.OrderItemId].AdjustedQuantity"
+                                                class="form-control text-center" value="@orderItem.AdjustedQuantity" min="0"
+                                                max="@orderItem.Quantity" />
+                                            <button type="button" class="btn btn-outline-secondary increment"
+                                                data-index="@orderItem.OrderItemId">+</button>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if (orderItem.Modifiers.Any())
+                                        {
+                                            <ul class="list-unstyled">
+                                                @foreach (var modifier in orderItem.Modifiers)
+                                                {
+                                                    <li>@modifier</li>
+                                                }
+                                            </ul>
+                                        }
+                                        else
+                                        {
+                                            <span>None</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    @if (Model.OrderItems.Any(oi => oi.Status == "in_progress"))
+                    {
+                        <button type="submit" class="btn btn-primary" name="newStatus" value="ready">Mark as
+                            Prepared</button>
+                    }
+                    @if (Model.OrderItems.Any(oi => oi.Status == "ready"))
+                    {
+                        <button type="submit" class="btn btn-primary" name="newStatus" value="in_progress">Mark as In
+                            Progress</button>
+                    }
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('.decrement').click(function () {
+            const index = $(this).data('index');
+            let qty = parseInt($(`input[name="OrderItems[${index}].AdjustedQuantity"]`).val());
+            if (qty > 0) {
+                qty--;
+                $(`input[name="OrderItems[${index}].AdjustedQuantity"]`).val(qty);
+            }
+        });
+
+        $('.increment').click(function () {
+            const index = $(this).data('index');
+            let qty = parseInt($(`input[name="OrderItems[${index}].AdjustedQuantity"]`).val());
+            const maxQty = parseInt($(`input[name="OrderItems[${index}].AdjustedQuantity"]`).attr('max'));
+            if (qty < maxQty) {
+                qty++;
+                $(`input[name="OrderItems[${index}].AdjustedQuantity"]`).val(qty);
+            }
+        });
+
+        $('#updateStatusForm').on('submit', function (e) {
+            const selectedItems = [];
+            $('input[name^="OrderItems"][name$=".IsSelected"]:checked').each(function () {
+                const index = $(this).attr('name').match(/\d+/)[0];
+                const qty = parseInt($(`input[name="OrderItems[${index}].AdjustedQuantity"]`).val());
+                selectedItems.push({ index: index, qty: qty });
+            });
+
+            if (selectedItems.length === 0) {
+                e.preventDefault();
+                alert('Please select at least one item.');
+                return;
+            }
+        });
+    });
+</script>

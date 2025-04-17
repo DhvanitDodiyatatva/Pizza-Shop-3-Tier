@@ -57,8 +57,9 @@
 
 <script>
     let currentSlide = 0;
-    const cardsToShow = 1; // or 2, depending on screen
-    const cardWidth = 370; // match your kot-card width + margin
+    const cardsToShow = 1;
+    const cardWidth = 370;
+    let selectedCategory = "All"; // Define selectedCategory globally
 
     function nextslide() {
         const cardWrapper = document.getElementById('cardWrapper');
@@ -90,13 +91,30 @@
     });
 
     function loadKotData(category, status) {
+        selectedCategory = category; // Update selectedCategory when loading data
         $.ajax({
             url: `/OrderApp/GetKotByCategoryAndStatus`,
             data: { category: category, status: status },
             success: function (data) {
-                // Clear both sections and populate only the requested status
                 $('#kot-in-progress').html(status === 'in_progress' ? data : '');
                 $('#kot-ready').html(status === 'ready' ? data : '');
+            }
+        });
+    }
+
+    function loadKotDetails(orderId, status) {
+        console.log("Loading modal for orderId:", orderId, "status:", status, "selectedCategory:", selectedCategory); // Debug log
+        $.ajax({
+            url: `/OrderApp/ShowKotDetailsModal`,
+            data: { orderId: orderId, status: status, selectedCategory: selectedCategory },
+            success: function (data) {
+                $('#kotDetailsModal').remove();
+                $('body').append(data);
+                var modal = new bootstrap.Modal(document.getElementById('kotDetailsModal'));
+                modal.show(); // Explicitly initialize and show the modal
+            },
+            error: function (xhr, status, error) {
+                console.error("AJAX Error:", error); // Debug error
             }
         });
     }
@@ -111,7 +129,7 @@
 
             const createdDate = new Date(createdAt);
             const now = new Date();
-            let diff = Math.floor((now - createdDate) / 1000); // difference in seconds
+            let diff = Math.floor((now - createdDate) / 1000);
 
             const days = Math.floor(diff / (60 * 60 * 24));
             diff %= (60 * 60 * 24);
@@ -130,20 +148,15 @@
         });
     }
 
-    // Update every second
     setInterval(updateTimeSinceOrder, 1000);
-    // Initial call
     updateTimeSinceOrder();
 
     $(document).ready(function () {
-        let selectedCategory = "All";
-        let selectedStatus = 'in_progress'; // Default to in_progress
+        let selectedStatus = 'in_progress';
 
-        // Initial load with all categories and in_progress status
         loadKotData(selectedCategory, selectedStatus);
-        $('#in-progress-btn').addClass('active'); // Set In Progress button as active by default
+        $('#in-progress-btn').addClass('active');
 
-        // Handle category tab clicks
         $('#categoryTabs .nav-link').on('click', function () {
             $('#categoryTabs .nav-link').removeClass('active');
             $(this).addClass('active');
@@ -151,7 +164,6 @@
             loadKotData(selectedCategory, selectedStatus);
         });
 
-        // Handle status button clicks
         $('#in-progress-btn').on('click', function () {
             selectedStatus = 'in_progress';
             loadKotData(selectedCategory, selectedStatus);
@@ -226,7 +238,6 @@
         transition: transform 0.5s ease;
     }
 
-    /* Status button styles */
     .status-btn {
         border: 1px solid #1f73ae;
         transition: background-color 0.3s, color 0.3s;
