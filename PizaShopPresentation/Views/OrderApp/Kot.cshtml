@@ -106,17 +106,29 @@
 
     function loadKotDetails(orderId, status) {
         console.log("Loading modal for orderId:", orderId, "status:", status, "selectedCategory:", selectedCategory, "selectedStatus:", selectedStatus); // Debug log
+
+        $('div[id="kotDetailsModal"]').remove();
+
+        $('.modal').modal('hide');
         $.ajax({
             url: `/OrderApp/ShowKotDetailsModal`,
             data: { orderId: orderId, status: status, selectedCategory: selectedCategory, selectedStatus: selectedStatus },
             success: function (data) {
-                $('#kotDetailsModal').remove();
                 $('body').append(data);
-                var modal = new bootstrap.Modal(document.getElementById('kotDetailsModal'));
-                modal.show(); // Explicitly initialize and show the modal
+                var modalElement = document.getElementById('kotDetailsModal');
+                if (modalElement) {
+                    var modal = new bootstrap.Modal(modalElement, { backdrop: 'static', keyboard: false });
+                    modal.show();
+                    // Ensure modal is removed when hidden
+                    modalElement.addEventListener('hidden.bs.modal', function () {
+                        $(this).remove();
+                    });
+                } else {
+                    console.error("Modal element not found after append");
+                }
             },
             error: function (xhr, status, error) {
-                console.error("AJAX Error:", error); // Debug error
+                console.error("AJAX Error:", error, "Status:", status, "Response:", xhr.responseText); // Detailed error log
             }
         });
     }
