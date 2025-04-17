@@ -166,7 +166,7 @@ namespace PizzaShop.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ShowKotDetailsModal(int orderId, string status, string selectedCategory)
+        public async Task<IActionResult> ShowKotDetailsModal(int orderId, string status, string selectedCategory, string selectedStatus)
         {
             var order = await _context.Orders
                 .Include(o => o.OrderItems)
@@ -182,7 +182,7 @@ namespace PizzaShop.Controllers
                 return NotFound();
             }
 
-            Console.WriteLine($"ShowKotDetailsModal - orderId: {orderId}, status: {status}, selectedCategory: {selectedCategory}"); // Debug log
+            Console.WriteLine($"ShowKotDetailsModal - orderId: {orderId}, status: {status}, selectedCategory: {selectedCategory}, selectedStatus: {selectedStatus}"); // Debug log
             var viewModel = new UpdateOrderItemStatusViewModel
             {
                 OrderId = order.Id,
@@ -210,6 +210,7 @@ namespace PizzaShop.Controllers
 
             ViewBag.SelectedCategory = selectedCategory;
             ViewBag.ItemStatus = status;
+            ViewBag.SelectedStatus = selectedStatus; // Pass the active status to the modal
             return PartialView("_KotDetailsModal", viewModel);
         }
 

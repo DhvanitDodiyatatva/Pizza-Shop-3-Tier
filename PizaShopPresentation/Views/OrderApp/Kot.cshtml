@@ -60,6 +60,7 @@
     const cardsToShow = 1;
     const cardWidth = 370;
     let selectedCategory = "All"; // Define selectedCategory globally
+    let selectedStatus = 'in_progress'; // Define selectedStatus globally
 
     function nextslide() {
         const cardWrapper = document.getElementById('cardWrapper');
@@ -92,6 +93,7 @@
 
     function loadKotData(category, status) {
         selectedCategory = category; // Update selectedCategory when loading data
+        selectedStatus = status; // Update selectedStatus when loading data
         $.ajax({
             url: `/OrderApp/GetKotByCategoryAndStatus`,
             data: { category: category, status: status },
@@ -103,10 +105,10 @@
     }
 
     function loadKotDetails(orderId, status) {
-        console.log("Loading modal for orderId:", orderId, "status:", status, "selectedCategory:", selectedCategory); // Debug log
+        console.log("Loading modal for orderId:", orderId, "status:", status, "selectedCategory:", selectedCategory, "selectedStatus:", selectedStatus); // Debug log
         $.ajax({
             url: `/OrderApp/ShowKotDetailsModal`,
-            data: { orderId: orderId, status: status, selectedCategory: selectedCategory },
+            data: { orderId: orderId, status: status, selectedCategory: selectedCategory, selectedStatus: selectedStatus },
             success: function (data) {
                 $('#kotDetailsModal').remove();
                 $('body').append(data);
@@ -152,7 +154,7 @@
     updateTimeSinceOrder();
 
     $(document).ready(function () {
-        let selectedStatus = 'in_progress';
+        selectedStatus = 'in_progress'; // Initialize selectedStatus
 
         loadKotData(selectedCategory, selectedStatus);
         $('#in-progress-btn').addClass('active');

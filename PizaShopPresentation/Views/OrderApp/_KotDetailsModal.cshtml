@@ -3,6 +3,7 @@
 @{
     var selectedCategory = ViewBag.SelectedCategory as string;
     var itemStatus = ViewBag.ItemStatus as string;
+    var selectedStatus = ViewBag.SelectedStatus as string; // from Kot.cshtml
 }
 
 <div class="modal fade" id="kotDetailsModal" tabindex="-1" aria-labelledby="kotDetailsModalLabel" aria-hidden="true">
@@ -68,14 +69,15 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    @if (Model.OrderItems.Any(oi => oi.Status == "in_progress"))
+                    @if (selectedStatus == "in_progress")
                     {
-                        <button type="submit" class="btn btn-primary" name="newStatus" value="ready">Mark as
+                        <button type="submit" class="btn btn-main text-white" name="newStatus" value="ready">Mark as
                             Prepared</button>
                     }
-                    @if (Model.OrderItems.Any(oi => oi.Status == "ready"))
+                    @if (selectedStatus == "ready")
                     {
-                        <button type="submit" class="btn btn-primary" name="newStatus" value="in_progress">Mark as In
+                        <button type="submit" class="btn btn-main text-white" name="newStatus" value="in_progress">Mark as
+                            In
                             Progress</button>
                     }
                 </div>
