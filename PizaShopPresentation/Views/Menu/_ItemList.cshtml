@@ -16,7 +16,7 @@ else
             <td class="py-3 text-center text-nowrap" scope="row">
                 <div class="form-check item-checkbox">
                     <input type="checkbox" class="itemCheckbox text-center form-check-input" value="@item.Id"
-                        style="height: 20px; width: 20px; color: blue;" checked>
+                        style="height: 20px; width: 20px; color: blue;">
                     <label class="form-check-label" for="flexcheckchecked_@item.Id"></label>
                 </div>
             </td>
@@ -101,8 +101,8 @@ else
 }
 
 <!-- Hidden inputs to store pagination data -->
- <input type="hidden" name="TotalPages" value="@Model.TotalPages" />
-<input type="hidden" name="CurrentPage" value="@Model.CurrentPage" /> 
+<input type="hidden" name="TotalPages" value="@Model.TotalPages" />
+<input type="hidden" name="CurrentPage" value="@Model.CurrentPage" />
 
 <script>
     $(document).ready(function () {

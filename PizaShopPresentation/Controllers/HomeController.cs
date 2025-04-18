@@ -256,5 +256,83 @@ namespace PizzaShopPresentation.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+
+
+        public async Task<IActionResult> MyProfileOA()
+        {
+            var email = User.Identity?.Name;
+            if (string.IsNullOrEmpty(email))
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            var model = await _userCrudService.GetUserProfileAsync(email);
+            if (model == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateProfileOA([Bind("FirstName,LastName,Username,Phone,Country,State,City,Address,Zipcode")] MyProfile model)
+        {
+            var email = User.Identity?.Name;
+            if (string.IsNullOrEmpty(email))
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            try
+            {
+                await _userCrudService.UpdateUserProfileAsync(email, model);
+                TempData["SuccessMessage"] = "Profile updated successfully!";
+            }
+            catch (Exception)
+            {
+                TempData["ErrorMessage"] = "Failed to update profile.";
+            }
+
+            return RedirectToAction("MyProfile");
+        }
+
+
+        public IActionResult ChangePasswordOA()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePasswordOA(ChangePassword model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var email = User.Identity?.Name;
+            if (string.IsNullOrEmpty(email))
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            try
+            {
+                await _userCrudService.ChangePasswordAsync(email, model);
+                TempData["SuccessMessage"] = "Password changed successfully.";
+                Response.Cookies.Delete("JWT");
+                Response.Cookies.Delete("RememberEmail");
+                Response.Cookies.Delete("RememberPassword");
+                Response.Cookies.Delete("RememberMeChecked");
+                return RedirectToAction("Index", "Login");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                return View(model);
+            }
+        }
     }
 }

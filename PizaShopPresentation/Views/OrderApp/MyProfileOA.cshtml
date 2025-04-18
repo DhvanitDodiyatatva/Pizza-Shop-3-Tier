@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "My Profile";
+    Layout = "~/Views/Shared/_LayoutOrdApp.cshtml";
 }
 
 <div class="Users-content mt-0 p-xl-5 p-lg-4 p-md-4 p-sm-4 p-4">
@@ -39,7 +40,7 @@
                 </div>
             </div>
 
-            <form method="post" asp-controller="Home" asp-action="UpdateProfile">
+            <form method="post" asp-controller="Home" asp-action="UpdateProfileOA">
                 <div class="row g-3">
                     <div class="col-md-6">
                         <div class="form-floating">

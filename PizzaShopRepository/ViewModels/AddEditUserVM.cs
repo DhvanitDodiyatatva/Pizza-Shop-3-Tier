@@ -29,7 +29,10 @@ public class AddEditUserVM
     [Required(ErrorMessage = "Role is required.")]
     public string Role { get; set; } = null!;
 
+    [Required(ErrorMessage = "Phone No. is required.")]
     [Phone(ErrorMessage = "Invalid phone number.")]
+    [MaxLength(10, ErrorMessage = "Phone No. cannot exceed 10 characters.")]
+    [MinLength(10, ErrorMessage = "Phone No. must be at least 10 characters.")]
     public string? Phone { get; set; }
 
     [MaxLength(100, ErrorMessage = "Address cannot exceed 100 characters.")]
