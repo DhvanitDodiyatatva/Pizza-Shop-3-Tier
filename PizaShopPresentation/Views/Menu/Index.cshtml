@@ -789,7 +789,7 @@
                 // Validate form using jQuery Validation
                 if (!$(this).valid()) {
                     console.log("Client-side validation failed:", $("#addModifierForm").validate().errorList);
-                    toastr.error("Please fill all required fields correctly.");
+                    @* toastr.error("Please fill all required fields correctly."); *@
                     return;
                 }
 
@@ -860,7 +860,7 @@
                 // Validate form using jQuery Validation
                 if (!$(this).valid()) {
                     console.log("Client-side validation failed:", $("#editModifierForm").validate().errorList);
-                    toastr.error("Please fill all required fields correctly.");
+                    @* toastr.error("Please fill all required fields correctly."); *@
                     return;
                 }
 
@@ -1010,7 +1010,7 @@
             $("#addModifierGroupForm").off("submit").on("submit", function (e) {
                 e.preventDefault();
                 if (!$(this).valid()) {
-                    toastr.error("Please fill all required fields correctly.");
+                    @* toastr.error("Please fill all required fields correctly."); *@
                     return;
                 }
 
@@ -1063,7 +1063,7 @@
             $("#editModifierGroupForm").off("submit").on("submit", function (e) {
                 e.preventDefault();
                 if (!$(this).valid()) {
-                    toastr.error("Please fill all required fields correctly.");
+                    @* toastr.error("Please fill all required fields correctly."); *@
                     return;
                 }
 

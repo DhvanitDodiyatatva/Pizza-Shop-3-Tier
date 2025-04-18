@@ -93,14 +93,14 @@
           @foreach (var user in Model)
           {
             <tr>
-              <td scope="row" class="d-flex align-items-center py-3">
+              <td scope="row" class="d-flex align-items-center py-3 text-nowrap">
                 <img src="~/images/Default_pfp.svg.png" alt="default-pfp"
                   style="max-height: 30px; aspect-ratio: 1; margin-right: 2%;" />
                 @user.FirstName @user.LastName
               </td>
-              <td class="py-3">@user.Email</td>
-              <td class="py-3">@user.Phone</td>
-              <td class="py-3">
+              <td class="py-3 text-nowrap">@user.Email</td>
+              <td class="py-3 text-nowrap">@user.Phone</td>
+              <td class="py-3 text-nowrap">
                 @if (@user.Role == "super_admin")
                 {
                   <span>Admin</span>
@@ -115,12 +115,12 @@
                 }
 
               </td>
-              <td class="py-3">
+              <td class="py-3 text-nowrap">
                 <span class="badge fw-bold fs-6 px-4 py-1 rounded-5 @(user.Status ? "bg-success" : "bg-secondary")">
                   @(user.Status ? "Active" : "Inactive")
                 </span>
               </td>
-              <td class="py-3">
+              <td class="py-3 text-nowrap">
                 <a asp-controller="Home" asp-action="EditUser" asp-route-id="@user.Id"
                   class="text-decoration-none text-black text-body-btn me-2">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-pen"
