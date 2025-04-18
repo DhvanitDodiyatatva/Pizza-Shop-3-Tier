@@ -3,7 +3,7 @@
 @{
     var selectedCategory = ViewBag.SelectedCategory as string;
     var itemStatus = ViewBag.ItemStatus as string;
-    var selectedStatus = ViewBag.SelectedStatus as string; // from Kot.cshtml
+    var selectedStatus = ViewBag.SelectedStatus as string;
 }
 
 <div class="modal fade" id="kotDetailsModal" tabindex="-1" aria-labelledby="kotDetailsModalLabel" aria-hidden="true">
@@ -16,58 +16,65 @@
             <form id="updateStatusForm" asp-action="UpdateOrderItemStatus" asp-controller="OrderApp" method="post">
                 <div class="modal-body">
                     <input type="hidden" name="OrderId" value="@Model.OrderId" />
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Select</th>
-                                <th>Item</th>
-                                <th>Modifiers</th>
-                                <th>Quantity</th>
-
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var orderItem in Model.OrderItems.OrderBy(oi => oi.ItemName))
-                            {
+                    <input type="hidden" name="newStatus" id="newStatus" value="@selectedStatus" />
+                    @if (Model == null || Model.OrderItems == null || !Model.OrderItems.Any())
+                    {
+                        <p>No items available for this order.</p>
+                    }
+                    else
+                    {
+                        <table class="table">
+                            <thead>
                                 <tr>
-                                    <td>
-                                        <input type="checkbox" name="OrderItems[@orderItem.OrderItemId].IsSelected"
-                                            value="true" checked="@orderItem.IsSelected" />
-                                        <input type="hidden" name="OrderItems[@orderItem.OrderItemId].OrderItemId"
-                                            value="@orderItem.OrderItemId" />
-                                    </td>
-                                    <td>@orderItem.ItemName</td>
-                                    <td>
-                                        @if (orderItem.Modifiers.Any())
-                                        {
-                                            <ul class="list-unstyled">
-                                                @foreach (var modifier in orderItem.Modifiers)
-                                                {
-                                                    <li>@modifier</li>
-                                                }
-                                            </ul>
-                                        }
-                                        else
-                                        {
-                                            <span>None</span>
-                                        }
-                                    </td>
-                                    <td>
-                                        <div class="input-group" style="width: 120px;">
-                                            <button type="button" class="btn btn-outline-secondary decrement"
-                                                data-index="@orderItem.OrderItemId">-</button>
-                                            <input type="number" name="OrderItems[@orderItem.OrderItemId].AdjustedQuantity"
-                                                class="form-control text-center" value="@orderItem.AdjustedQuantity" min="0"
-                                                max="@orderItem.Quantity" />
-                                            <button type="button" class="btn btn-outline-secondary increment"
-                                                data-index="@orderItem.OrderItemId">+</button>
-                                        </div>
-                                    </td>
-
+                                    <th>Select</th>
+                                    <th>Item</th>
+                                    <th>Modifiers</th>
+                                    <th>Quantity</th>
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i < Model.OrderItems.Count; i++)
+                                {
+                                    var orderItem = Model.OrderItems[i];
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" name="OrderItems[@i].IsSelected" value="true"
+                                                @(orderItem.IsSelected ? "checked" : "") />
+                                            <input type="hidden" name="OrderItems[@i].OrderItemId"
+                                                value="@orderItem.OrderItemId" />
+                                        </td>
+                                        <td>@orderItem.ItemName</td>
+                                        <td>
+                                            @if (orderItem.Modifiers != null && orderItem.Modifiers.Any())
+                                            {
+                                                <ul class="list-unstyled">
+                                                    @foreach (var modifier in orderItem.Modifiers)
+                                                    {
+                                                        <li>@modifier</li>
+                                                    }
+                                                </ul>
+                                            }
+                                            else
+                                            {
+                                                <span>None</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <div class="input-group" style="width: 120px;">
+                                                <button type="button" class="btn btn-outline-secondary decrement"
+                                                    data-index="@i">-</button>
+                                                <input type="number" name="OrderItems[@i].AdjustedQuantity"
+                                                    class="form-control text-center" value="@orderItem.AdjustedQuantity" min="0"
+                                                    max="@orderItem.Quantity" />
+                                                <button type="button" class="btn btn-outline-secondary increment"
+                                                    data-index="@i">+</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -79,8 +86,7 @@
                     @if (selectedStatus == "ready")
                     {
                         <button type="submit" class="btn btn-main text-white" name="newStatus" value="in_progress">Mark as
-                            In
-                            Progress</button>
+                            In Progress</button>
                     }
                 </div>
             </form>
@@ -89,10 +95,12 @@
 </div>
 
 <script>
+
+
     $(document).ready(function () {
         $('.decrement').click(function () {
             const index = $(this).data('index');
-            let qty = parseInt($(`input[name="OrderItems[${index}].AdjustedQuantity"]`).val());
+            let qty = parseInt($(`input[name="OrderItems[${index}].AdjustedQuantity"]`).val()) || 0;
             if (qty > 0) {
                 qty--;
                 $(`input[name="OrderItems[${index}].AdjustedQuantity"]`).val(qty);
@@ -101,8 +109,8 @@
 
         $('.increment').click(function () {
             const index = $(this).data('index');
-            let qty = parseInt($(`input[name="OrderItems[${index}].AdjustedQuantity"]`).val());
-            const maxQty = parseInt($(`input[name="OrderItems[${index}].AdjustedQuantity"]`).attr('max'));
+            let qty = parseInt($(`input[name="OrderItems[${index}].AdjustedQuantity"]`).val()) || 0;
+            const maxQty = parseInt($(`input[name="OrderItems[${index}].AdjustedQuantity"]`).attr('max')) || Infinity;
             if (qty < maxQty) {
                 qty++;
                 $(`input[name="OrderItems[${index}].AdjustedQuantity"]`).val(qty);
@@ -110,18 +118,43 @@
         });
 
         $('#updateStatusForm').on('submit', function (e) {
+            e.preventDefault();
+            const newStatus = $('button[type="submit"][name="newStatus"]').val() || $('#newStatus').val();
+            $('#newStatus').val(newStatus);
+            console.log('Form data:', $(this).serialize());
+
             const selectedItems = [];
             $('input[name^="OrderItems"][name$=".IsSelected"]:checked').each(function () {
                 const index = $(this).attr('name').match(/\d+/)[0];
-                const qty = parseInt($(`input[name="OrderItems[${index}].AdjustedQuantity"]`).val());
+                const qty = parseInt($(`input[name="OrderItems[${index}].AdjustedQuantity"]`).val()) || 0;
                 selectedItems.push({ index: index, qty: qty });
+                console.log(`Selected Item: index=${index}, qty=${qty}`);
             });
 
             if (selectedItems.length === 0) {
-                e.preventDefault();
-                alert('Please select at least one item.');
+                toastr.error('Please select at least one item.');
                 return;
             }
+
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (response) {
+                    console.log('AJAX Success:', response);
+                    if (response.success) {
+                        toastr.success(response.message);
+                        $('#kotDetailsModal').modal('hide');
+                        loadKotData(selectedCategory, selectedStatus);
+                    } else {
+                        toastr.error(response.message || 'Unknown error occurred.');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log('AJAX Error:', xhr.responseText, status, error);
+                    toastr.error('An error occurred while updating the status.');
+                }
+            });
         });
     });
 </script>

@@ -117,8 +117,8 @@
                         </td>
                         <td class="py-3">@order.PaymentMethod</td>
                         <td class="py-3">
-                            <span class="text-warning">@(new string('★', order.Rating ?? 0))@(new string('☆', 5 -
-                                                            (order.Rating ?? 0)))</span>
+                            <span class="text-warning fs-4">@(new string('★', order.Rating ?? 0))@(new string('☆', 5
+                                                            - (order.Rating ?? 0)))</span>
                     </td>
                     <td class="py-3">@order.TotalAmount.ToString("C")</td>
                     <td class="py-3">

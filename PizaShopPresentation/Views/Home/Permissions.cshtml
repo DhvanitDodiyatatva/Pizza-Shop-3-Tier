@@ -100,14 +100,37 @@
             const canAddEditCheckboxes = document.querySelectorAll('.can-add-edit');
             const canViewCheckboxes = document.querySelectorAll('.can-view');
 
-            // Select All functionality
-            selectAll.addEventListener('change', function () {
-                permissionCheckboxes.forEach(checkbox => {
-                    checkbox.checked = selectAll.checked;
+
+             // Function to toggle related checkboxes based on permission-checkbox
+            function togglePermissionDependencies(index, isEnabled) {
+                canViewCheckboxes[index].disabled = !isEnabled;
+                canAddEditCheckboxes[index].disabled = !isEnabled;
+                canDeleteCheckboxes[index].disabled = !isEnabled;
+
+               
+            }
+
+            // Initial check on page load
+            permissionCheckboxes.forEach((checkbox, index) => {
+                togglePermissionDependencies(index, checkbox.checked);
+            });
+
+            // Handle change in permission-checkbox
+            permissionCheckboxes.forEach((checkbox, index) => {
+                checkbox.addEventListener('change', function () {
+                    togglePermissionDependencies(index, this.checked);
                 });
             });
 
-            // Enforce "Can View" when "Can Delete" is checked
+            // Select All functionality
+            selectAll.addEventListener('change', function () {
+                permissionCheckboxes.forEach((checkbox, index) => {
+                    checkbox.checked = selectAll.checked;
+                    togglePermissionDependencies(index, checkbox.checked);
+                });
+            });
+
+          
             canDeleteCheckboxes.forEach((checkbox, index) => {
                 checkbox.addEventListener('change', function () {
                     if (this.checked) {
@@ -116,7 +139,7 @@
                 });
             });
 
-            // Enforce "Can View" when "Can Add/Edit" is checked
+           
             canAddEditCheckboxes.forEach((checkbox, index) => {
                 checkbox.addEventListener('change', function () {
                     if (this.checked) {
@@ -125,15 +148,16 @@
                 });
             });
 
-            //  Prevent "Can View" from being unchecked if "Can Delete" or "Can Add/Edit" is checked
-            @* canViewCheckboxes.forEach((checkbox, index) => {
+            
+
+            canViewCheckboxes.forEach((checkbox, index) => {
                 checkbox.addEventListener('change', function () {
-                    if (!this.checked && (canDeleteCheckboxes[index].checked || canAddEditCheckboxes[index].checked)) {
-                        this.checked = true; // Force it back on
-                        alert("Cannot uncheck 'Can View' when 'Can Delete' or 'Can Add/Edit' is selected.");
+                    if (!this.checked) {
+                        canAddEditCheckboxes[index].checked = false;
+                        canDeleteCheckboxes[index].checked = false;
                     }
                 });
-            }); *@
+            });
         });
     </script>
 }

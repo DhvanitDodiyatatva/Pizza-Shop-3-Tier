@@ -165,7 +165,6 @@ namespace PizzaShop.Controllers
             return PartialView("_KotCardList", orders);
         }
 
-        [HttpGet]
         public async Task<IActionResult> ShowKotDetailsModal(int orderId, string status, string selectedCategory, string selectedStatus)
         {
             var order = await _context.Orders
@@ -182,65 +181,108 @@ namespace PizzaShop.Controllers
                 return NotFound();
             }
 
-            Console.WriteLine($"ShowKotDetailsModal - orderId: {orderId}, status: {status}, selectedCategory: {selectedCategory}, selectedStatus: {selectedStatus}"); // Debug log
+            Console.WriteLine($"ShowKotDetailsModal - orderId: {orderId}, status: {status}, selectedCategory: {selectedCategory}, selectedStatus: {selectedStatus}");
+            Console.WriteLine($"Raw OrderItems count: {order.OrderItems.Count}");
+            foreach (var item in order.OrderItems)
+            {
+                Console.WriteLine($"Raw Item: Id={item.Id}, OrderId={item.OrderId}, Quantity={item.Quantity}, ReadyQuantity={item.ReadyQuantity}, Status={item.ItemStatus}");
+            }
+
+            var filteredItems = order.OrderItems
+                .Where(oi =>
+                    (status == "in_progress" ? oi.Quantity > oi.ReadyQuantity : oi.ReadyQuantity > 0) &&
+                    (string.IsNullOrEmpty(selectedCategory) || selectedCategory == "All" || oi.Item.Category == null || oi.Item.Category.Name == selectedCategory)
+                ).ToList();
+
+            Console.WriteLine($"Filtered OrderItems count: {filteredItems.Count}");
+            foreach (var item in filteredItems)
+            {
+                Console.WriteLine($"Filtered Item: Id={item.Id}, Quantity={item.Quantity}, ReadyQuantity={item.ReadyQuantity}, Status={item.ItemStatus}");
+            }
+
             var viewModel = new UpdateOrderItemStatusViewModel
             {
                 OrderId = order.Id,
-                OrderItems = order.OrderItems
-                    .Where(oi =>
-                        (status == "in_progress" ? oi.Quantity > oi.ReadyQuantity : oi.ReadyQuantity > 0) && // Status filter
-                        (string.IsNullOrEmpty(selectedCategory) || selectedCategory == "All" || oi.Item.Category?.Name == selectedCategory) // Category filter
-                    )
+                OrderItems = filteredItems
                     .Select(oi => new OrderItemDetail
                     {
                         OrderItemId = oi.Id,
-                        ItemName = oi.Item.Name,
+                        ItemName = oi.Item?.Name ?? "Unknown Item", // Ensure ItemName is set
                         Quantity = status == "ready" ? oi.ReadyQuantity : oi.Quantity - oi.ReadyQuantity,
                         ReadyQuantity = oi.ReadyQuantity,
-                        Status = oi.ItemStatus,
+                        Status = oi.ItemStatus ?? "in_progress", // Ensure Status is set
                         Modifiers = oi.OrderItemModifiers
-                            .Where(oim => !string.IsNullOrEmpty(oim.Modifier?.Name))
+                            .Where(oim => oim.Modifier != null && !string.IsNullOrEmpty(oim.Modifier.Name))
                             .Select(oim => oim.Modifier.Name)
                             .ToList(),
                         IsSelected = true,
                         AdjustedQuantity = status == "ready" ? oi.ReadyQuantity : oi.Quantity - oi.ReadyQuantity,
-                        CategoryName = oi.Item.Category?.Name
+                        CategoryName = oi.Item?.Category?.Name ?? "Unknown Category" // Ensure CategoryName is set
                     }).ToList()
             };
 
+            Console.WriteLine($"ViewModel OrderItems count: {viewModel.OrderItems.Count}");
+            foreach (var item in viewModel.OrderItems)
+            {
+                Console.WriteLine($"ViewModel Item: OrderItemId={item.OrderItemId}, ItemName={item.ItemName}, Status={item.Status}, CategoryName={item.CategoryName}");
+            }
             ViewBag.SelectedCategory = selectedCategory;
             ViewBag.ItemStatus = status;
-            ViewBag.SelectedStatus = selectedStatus; // Pass the active status to the modal
+            ViewBag.SelectedStatus = selectedStatus;
             return PartialView("_KotDetailsModal", viewModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateOrderItemStatus(UpdateOrderItemStatusViewModel model, string newStatus)
+        public async Task<IActionResult> UpdateOrderItemStatus([Bind("OrderId,OrderItems")] UpdateOrderItemStatusViewModel model, string newStatus)
         {
-            if (!ModelState.IsValid)
+            Console.WriteLine("UpdateOrderItemStatus called with OrderId: {0}, newStatus: {1}", model?.OrderId ?? 0, newStatus);
+            Console.WriteLine("Received OrderItems count: {0}", model?.OrderItems?.Count ?? 0);
+            foreach (var item in model?.OrderItems ?? Enumerable.Empty<OrderItemDetail>())
             {
-                return PartialView("_KotDetailsModal", model);
+                Console.WriteLine("Received Item: OrderItemId={0}, IsSelected={1}, AdjustedQuantity={2}", item.OrderItemId, item.IsSelected, item.AdjustedQuantity);
             }
 
+            // Ensure model is not null
+            if (model == null || model.OrderItems == null)
+            {
+                Console.WriteLine("Model or OrderItems is null, returning JSON with error");
+                return Json(new { success = false, message = "Invalid data submitted." });
+            }
+
+            // Collect selected items
             var selectedItems = model.OrderItems
-                .Where(oi => oi.IsSelected && oi.AdjustedQuantity > 0)
+                .Where(oi => oi.IsSelected && oi.AdjustedQuantity >= 0)
                 .Select(oi => (OrderItemId: oi.OrderItemId, AdjustedQuantity: oi.AdjustedQuantity))
                 .ToList();
 
+            Console.WriteLine("SelectedItems count: {0}", selectedItems.Count);
+            foreach (var item in selectedItems)
+            {
+                Console.WriteLine("SelectedItem: OrderItemId={0}, AdjustedQuantity={1}", item.OrderItemId, item.AdjustedQuantity);
+            }
+
             if (!selectedItems.Any())
             {
-                ModelState.AddModelError("", "Please select at least one item with a valid quantity.");
-                return PartialView("_KotDetailsModal", model);
+                Console.WriteLine("No selected items, returning JSON with error");
+                return Json(new { success = false, message = "Please select at least one item with a valid quantity." });
             }
 
-            var result = await _kotService.UpdateOrderItemStatusesAsync(model.OrderId, selectedItems, newStatus);
-
-            if (result)
+            try
             {
-                return Json(new { success = true, message = "Item statuses updated successfully." });
+                var result = await _kotService.UpdateOrderItemStatusesAsync(model.OrderId, selectedItems, newStatus);
+                if (result)
+                {
+                    Console.WriteLine("Update successful, returning JSON");
+                    return Json(new { success = true, message = "Item statuses updated successfully." });
+                }
+                Console.WriteLine("Update failed, returning JSON");
+                return Json(new { success = false, message = "Failed to update item statuses." });
             }
-
-            return Json(new { success = false, message = "Failed to update item statuses." });
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception caught: {0}", ex.Message);
+                return Json(new { success = false, message = $"An error occurred: {ex.Message}" });
+            }
         }
 
     }
