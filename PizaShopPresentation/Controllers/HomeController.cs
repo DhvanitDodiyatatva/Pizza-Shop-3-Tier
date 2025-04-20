@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PizaShopPresentation.Models;
 using PizzaShopRepository.Models;
+using PizzaShopRepository.Repositories;
 using PizzaShopRepository.Services;
 using PizzaShopRepository.ViewModels;
 using PizzaShopServices.Attributes;
@@ -22,15 +23,22 @@ namespace PizzaShopPresentation.Controllers
         private readonly IUserCrudService _userCrudService;
 
         // private readonly IRoleService _roleService;
-
+        private readonly IRoleRepository _roleRepository;
         private readonly IRoleService _roleService;
 
+        private readonly PizzaShopRepository.Data.PizzaShopContext _context;
 
-        public HomeController(ILogger<HomeController> logger, IUserCrudService userCrudService, IRoleService roleService)
+
+        public HomeController(ILogger<HomeController> logger, IUserCrudService userCrudService, IRoleService roleService, IRoleRepository roleRepository, PizzaShopRepository.Data.PizzaShopContext context)
+
+
         {
             _logger = logger;
             _userCrudService = userCrudService;
             _roleService = roleService;
+            _roleRepository = roleRepository;
+            _roleService = roleService;
+            _context = context;
         }
 
         public IActionResult Dashboard()
@@ -236,15 +244,64 @@ namespace PizzaShopPresentation.Controllers
         }
 
         [HttpPost]
-        public IActionResult UpdatePermissions(RolePermissionVM model)
+        public IActionResult UpdatePermissions(RolePermissionVM model, [FromForm] string changedPermissions)
         {
             if (!ModelState.IsValid)
             {
                 return View("Permissions", model);
             }
 
-            _roleService.UpdateRolePermissions(model);
-            return RedirectToAction("Roles");
+            if (!string.IsNullOrEmpty(changedPermissions))
+            {
+                var changedPerms = System.Text.Json.JsonSerializer.Deserialize<List<ChangedPermission>>(changedPermissions);
+                if (changedPerms != null)
+                {
+                    var role = _roleRepository.GetRoleWithPermissions(model.RoleId);
+                    if (role != null)
+                    {
+                        foreach (var change in changedPerms)
+                        {
+                            var permission = model.Permissions[change.index];
+                            var rolePermission = role.RolePermissions
+                                .FirstOrDefault(rp => rp.PermissionId == permission.PermissionId);
+                            if (rolePermission != null)
+                            {
+                                rolePermission.CanView = change.canView;
+                                rolePermission.CanAddEdit = change.canAddEdit;
+                                rolePermission.CanDelete = change.canDelete;
+                                if (!change.isSelected)
+                                {
+                                    _context.RolePermissions.Remove(rolePermission);
+                                }
+                            }
+                            else if (change.isSelected)
+                            {
+                                _context.RolePermissions.Add(new RolePermission
+                                {
+                                    RoleId = model.RoleId,
+                                    PermissionId = permission.PermissionId,
+                                    CanView = change.canView,
+                                    CanAddEdit = change.canAddEdit,
+                                    CanDelete = change.canDelete
+                                });
+                            }
+                        }
+                        _roleRepository.SaveChanges();
+                    }
+                }
+            }
+
+            return Json(new { success = true });
+        }
+
+        // Add a new class to deserialize the changed permissions
+        public class ChangedPermission
+        {
+            public int index { get; set; }
+            public bool isSelected { get; set; }
+            public bool canView { get; set; }
+            public bool canAddEdit { get; set; }
+            public bool canDelete { get; set; }
         }
 
 

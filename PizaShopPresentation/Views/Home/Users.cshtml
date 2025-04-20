@@ -4,16 +4,16 @@
   ViewData["Title"] = "Users";
 }
 
-<div class="Users-content mt-0 p-xl-5 p-lg-4 p-md-4 p-sm-4 p-4 ">
+<div class="Users-content mt-0 p-xl-5 p-lg-4 p-md-4 p-sm-4 p-4">
   <div class="d-flex align-items-center justify-content-between my-2 z-0">
     <div>
       <div class="fw-bolder fs-2 page-text me-2">Users</div>
     </div>
     <div class="d-flex position-relative z-0">
-      <form class="d-flex align-items-center" role="search" method="get" action="@Url.Action("Users")">
+      <form class="d-flex align-items-center" role="search" id="searchForm">
         <div class="input-group position-relative">
           <input class="form-control" type="search" placeholder="Search" aria-label="Search" name="searchQuery"
-            value="@ViewBag.SearchQuery" />
+            id="searchInput" value="@ViewBag.SearchQuery" />
           <span class="search-img-desktop position-absolute">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search"
               viewBox="0 0 16 16">
@@ -22,10 +22,10 @@
             </svg>
           </span>
         </div>
-        <input type="hidden" name="page" value="@ViewBag.CurrentPage" />
-        <input type="hidden" name="pageSize" value="@ViewBag.PageSize" />
-        <input type="hidden" name="sortBy" value="@ViewBag.SortBy" />
-        <input type="hidden" name="sortOrder" value="@ViewBag.SortOrder" />
+        <input type="hidden" name="page" id="page" value="@ViewBag.CurrentPage" />
+        <input type="hidden" name="pageSize" id="pageSize" value="@ViewBag.PageSize" />
+        <input type="hidden" name="sortBy" id="sortBy" value="@ViewBag.SortBy" />
+        <input type="hidden" name="sortOrder" id="sortOrder" value="@ViewBag.SortOrder" />
       </form>
       <a asp-controller="Home" asp-action="AddNewUser"><button
           class="btn btn-main bg-primary rounded-2 ms-1 text-white fs-6 d-none d-lg-block" type="submit">+Add
@@ -36,7 +36,8 @@
   </div>
   <div class="content-div rounded-2 shadow p-3">
     <div class="row table-responsive p-3">
-      <table class="table table-hover">
+      <table class="table table-hover" id="usersTable">
+        <!-- Table content remains the same -->
         <thead>
           <tr>
             <th scope="col" class="text-nowrap">
@@ -48,7 +49,7 @@
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                     class="bi @(ViewBag.SortOrder == "asc" ? "bi-arrow-up" : "bi-arrow-down")" viewBox="0 0 16 16">
                     <path fill-rule="evenodd"
-                      d="@(ViewBag.SortOrder == "asc" ? "M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z" : "M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z")" />
+                      d="@(ViewBag.SortOrder == "asc" ? "M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 0 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z" : "M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z")" />
                   </svg>
                 }
                 else
@@ -56,14 +57,14 @@
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                     class="bi bi-arrow-down-up" viewBox="0 0 16 16">
                     <path fill-rule="evenodd"
-                      d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5" />
+                      d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 1 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5" />
                   </svg>
                 }
               </a>
             </th>
             <th scope="col" class="text-nowrap text-secondary">Email</th>
             <th scope="col" class="text-nowrap text-secondary">Phone</th>
-            <th scope="col" class="text-nowrap ">
+            <th scope="col" class="text-nowrap">
               <a href="@Url.Action("Users", new { searchQuery = ViewBag.SearchQuery, page = ViewBag.CurrentPage, pageSize = ViewBag.PageSize, sortBy = "role", sortOrder = (ViewBag.SortBy == "role" && ViewBag.SortOrder == "asc") ? "desc" : "asc" })"
                 class="text-decoration-none text-secondary">
                 Role
@@ -80,7 +81,7 @@
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                     class="bi bi-arrow-down-up" viewBox="0 0 16 16">
                     <path fill-rule="evenodd"
-                      d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5" />
+                      d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 1 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5" />
                   </svg>
                 }
               </a>
@@ -89,7 +90,7 @@
             <th scope="col" class="text-nowrap text-secondary">Action</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="tableBody">
           @foreach (var user in Model)
           {
             <tr>
@@ -113,7 +114,6 @@
                 {
                   <span>Chef</span>
                 }
-
               </td>
               <td class="py-3 text-nowrap">
                 <span class="badge fw-bold fs-6 px-4 py-1 rounded-5 @(user.Status ? "bg-success" : "bg-secondary")">
@@ -134,7 +134,7 @@
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash3"
                     viewBox="0 0 16 16">
                     <path
-                      d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
+                      d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 0 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
                   </svg>
                 </button>
                 <div class="modal fade" id="deletemodal-@user.Id" tabindex="-1"
@@ -185,7 +185,7 @@
           </ul>
         </div>
       </div>
-      <ul class="pagination d-flex align-items-center mb-4">
+      <ul class="pagination d-flex align-items-center mb-4" id="pagination">
         @{
           int totalPages = (int)Math.Ceiling((double)ViewBag.TotalUsers / ViewBag.PageSize);
           int currentPage = ViewBag.CurrentPage;
@@ -214,3 +214,61 @@
     </nav>
   </div>
 </div>
+
+@section Scripts {
+  <script>
+    // Debounce function to limit the rate of search requests
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    }
+
+    // Function to perform the dynamic search
+    function performSearch() {
+      const searchQuery = document.getElementById('searchInput').value;
+      const page = document.getElementById('page').value;
+      const pageSize = document.getElementById('pageSize').value;
+      const sortBy = document.getElementById('sortBy').value;
+      const sortOrder = document.getElementById('sortOrder').value;
+
+      // Construct the URL with query parameters
+      const url = '@Url.Action("Users", "Home")' + '?searchQuery=' + encodeURIComponent(searchQuery) +
+        '&page=' + page +
+        '&pageSize=' + pageSize +
+        '&sortBy=' + sortBy +
+        '&sortOrder=' + sortOrder;
+
+      // Perform AJAX request
+      fetch(url, {
+        method: 'GET',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest' // Indicate AJAX request
+        }
+      })
+        .then(response => response.text())
+        .then(data => {
+          // Update the table body and pagination with the new content
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(data, 'text/html');
+          const newTableBody = doc.querySelector('#tableBody');
+          const newPagination = doc.querySelector('#pagination');
+
+          if (newTableBody && newPagination) {
+            document.getElementById('tableBody').innerHTML = newTableBody.innerHTML;
+            document.getElementById('pagination').innerHTML = newPagination.innerHTML;
+          }
+        })
+        .catch(error => console.error('Error fetching search results:', error));
+    }
+
+    // Add event listener for input changes with debounce
+    document.getElementById('searchInput').addEventListener('input', debounce(performSearch, 300));
+  </script>
+}

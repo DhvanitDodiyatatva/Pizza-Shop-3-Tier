@@ -20,8 +20,9 @@
         </div>
     </div>
 
-    <form asp-controller="Home" asp-action="UpdatePermissions" method="post">
+    <form id="permissionsForm" asp-controller="Home" asp-action="UpdatePermissions" method="post">
         <input type="hidden" asp-for="RoleId" />
+        <input type="hidden" id="changedPermissions" name="changedPermissions" />
         <div class="row my-3">
             <div class="col-12 col-lg-7">
                 <div class="form-floating">
@@ -55,7 +56,8 @@
                                 <td>
                                     <div class="form-check">
                                         <input class="form-check-input permission-checkbox" type="checkbox"
-                                            asp-for="Permissions[i].IsSelected" checked="@Model.Permissions[i].IsSelected">
+                                               asp-for="Permissions[i].IsSelected" checked="@Model.Permissions[i].IsSelected"
+                                               data-index="@i">
                                     </div>
                                     <input type="hidden" asp-for="Permissions[i].PermissionId" />
                                 </td>
@@ -63,19 +65,19 @@
                                 <td>
                                     <div class="form-check form-switch">
                                         <input class="form-check-input can-view" type="checkbox" asp-for="Permissions[i].CanView"
-                                            style="width: 50px; height: 30px;">
+                                               data-index="@i" style="width: 50px; height: 30px;">
                                     </div>
                                 </td>
                                 <td>
                                     <div class="form-check form-switch">
                                         <input class="form-check-input can-add-edit" type="checkbox" asp-for="Permissions[i].CanAddEdit"
-                                            style="width: 50px; height: 30px;">
+                                               data-index="@i" style="width: 50px; height: 30px;">
                                     </div>
                                 </td>
                                 <td>
                                     <div class="form-check form-switch">
                                         <input class="form-check-input can-delete" type="checkbox" asp-for="Permissions[i].CanDelete"
-                                            style="width: 50px; height: 30px;">
+                                               data-index="@i" style="width: 50px; height: 30px;">
                                     </div>
                                 </td>
                             </tr>
@@ -84,7 +86,7 @@
                 </table>
             </div>
             <div class="d-grid gap-2 d-flex justify-content-sm-end flex-sm-row flex-column">
-                <button class="btn btn-main text-white me-md-2" type="submit">Save</button>
+                <button class="btn btn-main text-white me-md-2" type="button" id="saveButton">Save</button>
                 <a asp-controller="Home" asp-action="Roles" class="btn btn-outline">Cancel</a>
             </div>
         </div>
@@ -99,15 +101,15 @@
             const canDeleteCheckboxes = document.querySelectorAll('.can-delete');
             const canAddEditCheckboxes = document.querySelectorAll('.can-add-edit');
             const canViewCheckboxes = document.querySelectorAll('.can-view');
+            const saveButton = document.getElementById('saveButton');
+            const changedPermissionsInput = document.getElementById('changedPermissions');
+            let changedPermissions = [];
 
-
-             // Function to toggle related checkboxes based on permission-checkbox
+            // Function to toggle related checkboxes based on permission-checkbox
             function togglePermissionDependencies(index, isEnabled) {
                 canViewCheckboxes[index].disabled = !isEnabled;
                 canAddEditCheckboxes[index].disabled = !isEnabled;
                 canDeleteCheckboxes[index].disabled = !isEnabled;
-
-               
             }
 
             // Initial check on page load
@@ -115,10 +117,60 @@
                 togglePermissionDependencies(index, checkbox.checked);
             });
 
+            // Track initial states
+            const initialStates = Array.from(permissionCheckboxes).map((checkbox, index) => ({
+                index: index,
+                isSelected: checkbox.checked,
+                canView: canViewCheckboxes[index].checked,
+                canAddEdit: canAddEditCheckboxes[index].checked,
+                canDelete: canDeleteCheckboxes[index].checked
+            }));
+
             // Handle change in permission-checkbox
             permissionCheckboxes.forEach((checkbox, index) => {
                 checkbox.addEventListener('change', function () {
                     togglePermissionDependencies(index, this.checked);
+                    const initialState = initialStates.find(s => s.index === index);
+                    if (this.checked !== initialState.isSelected) {
+                        changedPermissions.push({
+                            index: index,
+                            isSelected: this.checked,
+                            canView: canViewCheckboxes[index].checked,
+                            canAddEdit: canAddEditCheckboxes[index].checked,
+                            canDelete: canDeleteCheckboxes[index].checked
+                        });
+                    } else {
+                        changedPermissions = changedPermissions.filter(cp => cp.index !== index);
+                    }
+                });
+            });
+
+            // Handle changes in canView, canAddEdit, and canDelete
+            [canViewCheckboxes, canAddEditCheckboxes, canDeleteCheckboxes].forEach(checkBoxes => {
+                checkBoxes.forEach((checkbox, index) => {
+                    checkbox.addEventListener('change', function () {
+                        const initialState = initialStates.find(s => s.index === index);
+                        if (
+                            this.checked !== initialState.canView ||
+                            this.checked !== initialState.canAddEdit ||
+                            this.checked !== initialState.canDelete
+                        ) {
+                            const existingChange = changedPermissions.find(cp => cp.index === index);
+                            if (existingChange) {
+                                existingChange.canView = canViewCheckboxes[index].checked;
+                                existingChange.canAddEdit = canAddEditCheckboxes[index].checked;
+                                existingChange.canDelete = canDeleteCheckboxes[index].checked;
+                            } else {
+                                changedPermissions.push({
+                                    index: index,
+                                    isSelected: permissionCheckboxes[index].checked,
+                                    canView: canViewCheckboxes[index].checked,
+                                    canAddEdit: canAddEditCheckboxes[index].checked,
+                                    canDelete: canDeleteCheckboxes[index].checked
+                                });
+                            }
+                        }
+                    });
                 });
             });
 
@@ -127,28 +179,45 @@
                 permissionCheckboxes.forEach((checkbox, index) => {
                     checkbox.checked = selectAll.checked;
                     togglePermissionDependencies(index, checkbox.checked);
+                    const initialState = initialStates.find(s => s.index === index);
+                    if (checkbox.checked !== initialState.isSelected) {
+                        changedPermissions.push({
+                            index: index,
+                            isSelected: checkbox.checked,
+                            canView: canViewCheckboxes[index].checked,
+                            canAddEdit: canAddEditCheckboxes[index].checked,
+                            canDelete: canDeleteCheckboxes[index].checked
+                        });
+                    } else {
+                        changedPermissions = changedPermissions.filter(cp => cp.index !== index);
+                    }
                 });
             });
 
-          
+            // Dependency logic
             canDeleteCheckboxes.forEach((checkbox, index) => {
                 checkbox.addEventListener('change', function () {
                     if (this.checked) {
                         canViewCheckboxes[index].checked = true;
                     }
+                    const initialState = initialStates.find(s => s.index === index);
+                    if (this.checked !== initialState.canDelete) {
+                        updateChangedPermissions(index);
+                    }
                 });
             });
 
-           
             canAddEditCheckboxes.forEach((checkbox, index) => {
                 checkbox.addEventListener('change', function () {
                     if (this.checked) {
                         canViewCheckboxes[index].checked = true;
                     }
+                    const initialState = initialStates.find(s => s.index === index);
+                    if (this.checked !== initialState.canAddEdit) {
+                        updateChangedPermissions(index);
+                    }
                 });
             });
-
-            
 
             canViewCheckboxes.forEach((checkbox, index) => {
                 checkbox.addEventListener('change', function () {
@@ -156,7 +225,50 @@
                         canAddEditCheckboxes[index].checked = false;
                         canDeleteCheckboxes[index].checked = false;
                     }
+                    const initialState = initialStates.find(s => s.index === index);
+                    if (this.checked !== initialState.canView) {
+                        updateChangedPermissions(index);
+                    }
                 });
+            });
+
+            function updateChangedPermissions(index) {
+                const existingChange = changedPermissions.find(cp => cp.index === index);
+                if (existingChange) {
+                    existingChange.canView = canViewCheckboxes[index].checked;
+                    existingChange.canAddEdit = canAddEditCheckboxes[index].checked;
+                    existingChange.canDelete = canDeleteCheckboxes[index].checked;
+                } else {
+                    changedPermissions.push({
+                        index: index,
+                        isSelected: permissionCheckboxes[index].checked,
+                        canView: canViewCheckboxes[index].checked,
+                        canAddEdit: canAddEditCheckboxes[index].checked,
+                        canDelete: canDeleteCheckboxes[index].checked
+                    });
+                }
+            }
+
+            // Save button click handler
+            saveButton.addEventListener('click', function () {
+                if (changedPermissions.length > 0) {
+                    const formData = new FormData(document.getElementById('permissionsForm'));
+                    formData.set('changedPermissions', JSON.stringify(changedPermissions));
+
+                    fetch('@Url.Action("UpdatePermissions", "Home")', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            window.location.href = '@Url.Action("Roles", "Home")';
+                        } else {
+                            console.error('Update failed:', data.message);
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                }
             });
         });
     </script>
