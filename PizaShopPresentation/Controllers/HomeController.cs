@@ -66,6 +66,7 @@ namespace PizzaShopPresentation.Controllers
             ViewBag.SearchQuery = searchQuery;
             ViewBag.SortBy = sortBy;
             ViewBag.SortOrder = sortOrder;
+            ViewBag.CurrentUserEmail = User.Identity?.Name;
 
             return View(users);
         }

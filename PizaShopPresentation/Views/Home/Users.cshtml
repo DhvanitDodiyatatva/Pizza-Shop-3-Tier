@@ -37,7 +37,6 @@
   <div class="content-div rounded-2 shadow p-3">
     <div class="row table-responsive p-3">
       <table class="table table-hover" id="usersTable">
-        <!-- Table content remains the same -->
         <thead>
           <tr>
             <th scope="col" class="text-nowrap">
@@ -93,7 +92,7 @@
         <tbody id="tableBody">
           @foreach (var user in Model)
           {
-            <tr>
+            <tr data-email="@user.Email">
               <td scope="row" class="d-flex align-items-center py-3 text-nowrap">
                 <img src="~/images/Default_pfp.svg.png" alt="default-pfp"
                   style="max-height: 30px; aspect-ratio: 1; margin-right: 2%;" />
@@ -179,7 +178,7 @@
             @foreach (var size in new int[] { 2, 5, 8, 10 })
             {
               <li><a class="dropdown-item"
-                  href="@Url.Action("Users", new { page = 1, pageSize = size, sortBy = ViewBag.SortBy, sortOrder = ViewBag.SortOrder })">@size</a>
+                  href="@Url.Action("Users", new { page = 1, pageSize = size, sortBy = ViewBag.SortBy, sortOrder = ViewBag.SortOrder, searchQuery = ViewBag.SearchQuery })">@size</a>
               </li>
             }
           </ul>
@@ -238,9 +237,15 @@
       const sortBy = document.getElementById('sortBy').value;
       const sortOrder = document.getElementById('sortOrder').value;
 
+      // Update hidden inputs to maintain state
+      document.getElementById('page').value = 1; // Reset to first page on new search
+      document.getElementById('pageSize').value = pageSize;
+      document.getElementById('sortBy').value = sortBy;
+      document.getElementById('sortOrder').value = sortOrder;
+
       // Construct the URL with query parameters
       const url = '@Url.Action("Users", "Home")' + '?searchQuery=' + encodeURIComponent(searchQuery) +
-        '&page=' + page +
+        '&page=' + 1 +
         '&pageSize=' + pageSize +
         '&sortBy=' + sortBy +
         '&sortOrder=' + sortOrder;
@@ -263,12 +268,84 @@
           if (newTableBody && newPagination) {
             document.getElementById('tableBody').innerHTML = newTableBody.innerHTML;
             document.getElementById('pagination').innerHTML = newPagination.innerHTML;
+            updatePageInfo(doc); // Update page info
           }
         })
         .catch(error => console.error('Error fetching search results:', error));
     }
 
+    // Function to update page info from the new document
+    function updatePageInfo(doc) {
+      const newTotalUsers = doc.querySelector('p.m-0.me-1')?.textContent.match(/of (\d+)/)?.[1];
+      const newStartEnd = doc.querySelector('p.m-0.me-1')?.textContent.match(/Showing (\d+ - \d+)/)?.[1];
+      if (newTotalUsers) ViewBag.TotalUsers = newTotalUsers;
+      if (newStartEnd) document.querySelector('p.m-0.me-1').textContent = `Showing ${newStartEnd} of ${newTotalUsers}`;
+    }
+
     // Add event listener for input changes with debounce
     document.getElementById('searchInput').addEventListener('input', debounce(performSearch, 300));
+
+    // Function to disable edit and delete actions for the logged-in user
+    function disableOwnUserActions() {
+      const currentUserEmail = '@ViewBag.CurrentUserEmail'; // Get logged-in user's email from ViewBag
+      const rows = document.querySelectorAll('#tableBody tr');
+
+      rows.forEach(row => {
+        const userEmail = row.getAttribute('data-email');
+        const editLink = row.querySelector('a[href*="EditUser"]');
+        const deleteButton = row.querySelector('button[data-bs-toggle="modal"]');
+
+        if (userEmail === currentUserEmail && editLink && deleteButton) {
+          editLink.classList.add('disabled');
+          editLink.setAttribute('tabindex', '-1');
+          editLink.style.pointerEvents = 'none';
+          editLink.style.opacity = '0.65';
+          deleteButton.classList.add('disabled');
+          deleteButton.setAttribute('tabindex', '-1');
+          deleteButton.style.pointerEvents = 'none';
+          deleteButton.style.opacity = '0.65';
+
+          // Disable the delete modal form submission
+          const deleteModal = document.getElementById(`deletemodal-${editLink.getAttribute('data-id')}`);
+          if (deleteModal) {
+            const submitButton = deleteModal.querySelector('form button[type="submit"]');
+            if (submitButton) {
+              submitButton.disabled = true;
+              submitButton.style.cursor = 'not-allowed';
+            }
+          }
+        }
+      });
+    }
+
+    // Run the disable function when the page loads and after each search
+    document.addEventListener('DOMContentLoaded', disableOwnUserActions);
+    document.getElementById('searchForm').addEventListener('input', debounce(disableOwnUserActions, 300));
   </script>
 }
+
+<style>
+  .table td,
+  .table th {
+    padding: 0.75rem 0.5rem;
+    /* Consistent padding as per Bootstrap default */
+  }
+
+  .disabled {
+    pointer-events: none;
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+
+  .text-body-btn {
+    color: #000;
+    /* Match the reference page's action button color */
+  }
+
+  .name-column {
+    display: flex;
+    align-items: center;
+    gap: 2%;
+    /* Match the inline style margin-right: 2% */
+  }
+</style>

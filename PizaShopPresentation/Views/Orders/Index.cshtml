@@ -35,6 +35,7 @@
                             <option value="cancelled">Cancelled</option>
                             <option value="served">Served</option>
                         </select>
+                        <label>Status</label>
                     </div>
                     <div class="form-floating" style="max-width: 150px;">
                         <select class="form-select" aria-label="Time filter" id="timeFilter">
@@ -43,6 +44,7 @@
                             <option value="this_week">This Week</option>
                             <option value="this_month">This Month</option>
                         </select>
+                        <label>Timeframe</label>
                     </div>
                     <form id="exportForm" action="@Url.Action("ExportOrders", "Orders")" method="get">
                         <input type="hidden" name="searchQuery" id="exportSearchQuery" />
