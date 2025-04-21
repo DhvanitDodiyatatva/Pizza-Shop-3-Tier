@@ -63,38 +63,56 @@ namespace PizzaShopRepository.Repositories
                     return false;
                 }
 
+                bool hasChanges = false;
                 foreach (var item in orderItems)
                 {
                     var updateItem = items.FirstOrDefault(i => i.OrderItemId == item.Id);
                     if (updateItem.AdjustedQuantity >= 0)
                     {
+                        string originalItemStatus = item.ItemStatus;
+                        int originalReadyQuantity = item.ReadyQuantity;
+
+                        var entry = _context.Entry(item);
+                        Console.WriteLine($"Initial Entity State for Item {item.Id}: {entry.State}");
+
                         if (newStatus == "ready")
                         {
-                            item.ReadyQuantity = updateItem.AdjustedQuantity;
+                            // Increment ready_quantity by AdjustedQuantity if it exceeds current value, cap at quantity
+                            int newReadyQuantity = Math.Min(item.ReadyQuantity + updateItem.AdjustedQuantity, item.Quantity);
+                            item.ReadyQuantity = newReadyQuantity;
                             item.ItemStatus = item.ReadyQuantity >= item.Quantity ? "ready" : "in_progress";
-                            Console.WriteLine($"Updated Item {item.Id}: ReadyQuantity={item.ReadyQuantity}, Status={item.ItemStatus}");
+                            entry.Property(e => e.ReadyQuantity).IsModified = true;
+                            entry.Property(e => e.ItemStatus).IsModified = true;
+                            Console.WriteLine($"Updated Item {item.Id} (Ready): Original ReadyQuantity={originalReadyQuantity}, AdjustedQuantity={updateItem.AdjustedQuantity}, New ReadyQuantity={item.ReadyQuantity}, Original Status={originalItemStatus}, New Status={item.ItemStatus}");
                         }
                         else if (newStatus == "in_progress")
                         {
-                            item.ReadyQuantity = item.ReadyQuantity - updateItem.AdjustedQuantity;
-                            if (item.ReadyQuantity < 0)
-                            {
-                                item.ReadyQuantity = 0;
-                            }
+                            int reduction = Math.Min(updateItem.AdjustedQuantity, item.ReadyQuantity);
+                            item.ReadyQuantity -= reduction;
                             item.ItemStatus = item.ReadyQuantity < item.Quantity ? "in_progress" : "ready";
-                            Console.WriteLine($"Updated Item {item.Id}: ReadyQuantity={item.ReadyQuantity}, Status={item.ItemStatus}");
+                            entry.Property(e => e.ReadyQuantity).IsModified = true;
+                            entry.Property(e => e.ItemStatus).IsModified = true;
+                            Console.WriteLine($"Updated Item {item.Id} (In Progress): Original ReadyQuantity={originalReadyQuantity}, Reduced by {reduction}, New ReadyQuantity={item.ReadyQuantity}, Original Status={originalItemStatus}, New Status={item.ItemStatus}");
                         }
+
+                        Console.WriteLine($"Entity State after Update for Item {item.Id}: {entry.State}");
+                        Console.WriteLine($"UPDATE Parameters: ReadyQuantity={item.ReadyQuantity}, ItemStatus={item.ItemStatus}");
+                        hasChanges = true;
                     }
                 }
 
-                await _context.SaveChangesAsync();
-                Console.WriteLine("Database changes saved successfully.");
+                if (hasChanges)
+                {
+                    var rowsAffected = await _context.SaveChangesAsync();
+                    Console.WriteLine($"Database changes saved: Rows affected = {rowsAffected}");
+                    return rowsAffected > 0;
+                }
                 return true;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Repository Error: {ex.Message}\nStackTrace: {ex.StackTrace}");
-                return false; 
+                return false;
             }
         }
     }

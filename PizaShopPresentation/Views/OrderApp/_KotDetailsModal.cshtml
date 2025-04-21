@@ -121,7 +121,7 @@
             e.preventDefault();
             const newStatus = $('button[type="submit"][name="newStatus"]').val() || $('#newStatus').val();
             $('#newStatus').val(newStatus);
-            console.log('Form data:', $(this).serialize());
+            console.log('Form data being sent:', $(this).serialize());
 
             const selectedItems = [];
             $('input[name^="OrderItems"][name$=".IsSelected"]:checked').each(function () {
