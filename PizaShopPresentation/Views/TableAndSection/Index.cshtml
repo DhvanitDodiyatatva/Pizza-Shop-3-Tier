@@ -237,15 +237,15 @@
 
 
         // Search functionality with pagination
+        // Search functionality with pagination
         $("#searchInput").on("keyup", function () {
             var searchTerm = $(this).val().trim();
             $.ajax({
                 url: '@Url.Action("SearchTables", "TableAndSection")',
                 type: 'GET',
-                data: { searchTerm: searchTerm, page: 1, pageSize: pageSize },
+                data: { searchTerm: searchTerm, sectionId: currentSectionId, page: 1, pageSize: pageSize },
                 success: function (response) {
                     $("#GetTableList").html(response);
-                    currentSectionId = 0; // Reset category for search
                     updatePaginationControls();
                 },
                 error: function () {

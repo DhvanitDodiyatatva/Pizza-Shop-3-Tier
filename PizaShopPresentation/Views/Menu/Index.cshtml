@@ -381,10 +381,9 @@
             $.ajax({
                 url: '@Url.Action("SearchItems", "Menu")',
                 type: 'GET',
-                data: { searchTerm: searchTerm, page: 1, pageSize: pageSize },
+                data: { searchTerm: searchTerm, categoryId: currentCategoryId, page: 1, pageSize: pageSize },
                 success: function (response) {
                     $("#GetItemList").html(response);
-                    currentCategoryId = 0; // Reset category for search
                     updatePaginationControls();
                 },
                 error: function () {

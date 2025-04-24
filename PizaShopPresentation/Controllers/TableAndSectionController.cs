@@ -222,15 +222,23 @@ public class TableAndSectionController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> SearchTables(string searchTerm, int page = 1, int pageSize = 5)
+    public async Task<IActionResult> SearchTables(string searchTerm, int sectionId, int page = 1, int pageSize = 5)
     {
         var tables = await _tableService.GetAllTablesAsync();
 
+        // Filter by sectionId if provided (sectionId > 0 indicates a specific section)
+        if (sectionId > 0)
+        {
+            tables = tables.Where(t => t.SectionId == sectionId).ToList();
+        }
+
+        // Filter by searchTerm if provided
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
             tables = tables.Where(t => t.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
         }
 
+        // Pagination
         int totalTables = tables.Count;
         int totalPages = (int)Math.Ceiling(totalTables / (double)pageSize);
 
@@ -246,7 +254,7 @@ public class TableAndSectionController : Controller
             TotalPages = totalPages,
             PageSize = pageSize,
             TotalTables = totalTables,
-            SectionId = 0 // No specific section for search
+            SectionId = sectionId // Include the sectionId used for filtering
         };
 
         return PartialView("_TableList", viewModel);

@@ -5,6 +5,8 @@ namespace PizzaShopRepository.ViewModels
     public class ItemVM
     {
         public int Id { get; set; }
+
+        [Required(ErrorMessage = "Category is required")]
         public int? CategoryId { get; set; }
 
         [Required(ErrorMessage = "Item name is required")]
@@ -20,7 +22,8 @@ namespace PizzaShopRepository.ViewModels
         public decimal Price { get; set; }
         public string ItemType { get; set; } = string.Empty;
 
-        [Range(0, int.MaxValue, ErrorMessage = "Quantity cannot be negative")]
+        [Required(ErrorMessage = "Quantity is required")]
+        [Range(1, int.MaxValue, ErrorMessage = "Quantity must be greater than 1")]
         public int? Quantity { get; set; }
         public string? Unit { get; set; }
 

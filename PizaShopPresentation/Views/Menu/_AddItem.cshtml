@@ -18,7 +18,8 @@
                                             asp-items="@(new SelectList(ViewBag.Categories, "Id", "Name"))" required>
                                             <option value="">Select Category</option>
                                         </select>
-                                        <label for="CategoryId">Categories*</label>
+                                        <label asp-for="CategoryId">Categories*</label>
+                                        <span asp-validation-for="CategoryId" class="text-danger"></span>
                                     </div>
                                 </div>
                                 <div class="col">

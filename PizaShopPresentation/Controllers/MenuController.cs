@@ -254,15 +254,23 @@ public class MenuController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> SearchItems(string searchTerm, int page = 1, int pageSize = 5)
+    public async Task<IActionResult> SearchItems(string searchTerm, int categoryId, int page = 1, int pageSize = 5)
     {
         var items = await _itemService.GetAllItemsAsync();
 
+        // Filter by categoryId if provided (categoryId > 0 indicates a specific category)
+        if (categoryId > 0)
+        {
+            items = items.Where(i => i.CategoryId == categoryId).ToList();
+        }
+
+        // Filter by searchTerm if provided
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
             items = items.Where(i => i.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
         }
 
+        // Pagination
         int totalItems = items.Count;
         int totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
 
@@ -278,7 +286,7 @@ public class MenuController : Controller
             TotalPages = totalPages,
             PageSize = pageSize,
             TotalItems = totalItems,
-            CategoryId = 0 // No specific category for search
+            CategoryId = categoryId // Include the categoryId used for filtering
         };
 
         return PartialView("_ItemList", viewModel);
