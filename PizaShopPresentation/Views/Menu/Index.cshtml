@@ -668,6 +668,7 @@
                     $(".ModifierGroup-link").off("click").on("click", function (e) {
                         e.preventDefault();
                         currentModifierGroupId = $(this).data("modifiergroup-id");
+                        console.log("Modifier Group clicked, ID:", currentModifierGroupId); // Debug
                         loadModifier(currentModifierGroupId, 1, pageSize, "");
                     });
 
@@ -687,6 +688,7 @@
 
         // Load modifiers with pagination and search
         function loadModifier(modifierGroupId, page = 1, size = pageSize, searchString = "") {
+            console.log("Loading modifiers for ModifierGroupId:", modifierGroupId); // Debug
             $.ajax({
                 url: '@Url.Action("GetModifiers", "Menu")',
                 type: 'GET',
@@ -700,6 +702,7 @@
                     $(".GetModifierList").html(result);
                     currentPage = page;
                     currentModifierGroupId = modifierGroupId;
+                    console.log("Current Modifier Group ID set to:", currentModifierGroupId); // Debug
                     updateModifierPaginationControls();
                 },
                 error: function (xhr, status, error) {
@@ -946,47 +949,65 @@
         });
 
         // Mass Modifier Delete from Group
-        $("#deleteSelectedModifiers").on("click", function () {
+        $("#deleteSelectedModifiers").off("click").on("click", function () {
+            // Collect selected modifier IDs from checked checkboxes
             var selectedIds = $(".modifierCheckbox:checked").map(function () {
                 return parseInt($(this).val());
             }).get();
 
-            console.log("Selected Modifier IDs:", selectedIds); // Debug: Check selected IDs
-            console.log("Current Modifier Group ID:", currentModifierGroupId); // Debug: Verify group ID
+            // Log for debugging
+            console.log("Selected Modifier IDs:", selectedIds);
+            console.log("Current Modifier Group ID:", currentModifierGroupId);
 
+            // Check if any modifiers are selected
             if (selectedIds.length === 0) {
                 toastr.warning("Please select at least one modifier to remove.");
                 return;
             }
 
+            // Check if modifier group ID is valid
+            if (!currentModifierGroupId) {
+                toastr.error("No modifier group selected.");
+                return;
+            }
+
+            // Confirm deletion
             if (!confirm("Are you sure you want to remove the selected modifiers from this group?")) {
                 return;
             }
 
+            // Send AJAX request to delete selected modifiers
             $.ajax({
-                url: '@Url.Action("DeleteModifiers", "Menu")',
+                url: '@Url.Action("DeleteModifiers", "Menu")' + '?modifierGroupId=' + currentModifierGroupId,
                 type: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify({ ids: selectedIds, modifierGroupId: currentModifierGroupId }),
+                data: JSON.stringify(selectedIds), // Send only the ids array as the body
                 headers: {
                     'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
                 },
                 success: function (response) {
-                    console.log("DeleteModifiers Response:", response); // Debug: Log server response
+                    console.log("DeleteModifiers Response:", response);
                     if (response.success) {
                         toastr.success(response.message);
-                        loadModifier(currentModifierGroupId);
+                        $('.modal-backdrop').remove();
+                        $('body').removeClass('modal-open');
+                        loadModifier(currentModifierGroupId, 1, pageSize, $("#searchModifierInput").val().trim());
+                        $("#selectAllModifiers").prop("checked", false);
                     } else {
-                        toastr.error(response.message);
+                        toastr.error(response.message || "Failed to remove modifiers.");
                     }
                 },
                 error: function (xhr, status, error) {
-                    console.error("Error deleting modifiers:", error, "Response:", xhr.responseText); // Debug: Log error details
-                    toastr.error("Failed to remove modifiers from group.");
+                    console.error("Delete Modifiers AJAX Error:", {
+                        status: status,
+                        error: error,
+                        responseText: xhr.responseText,
+                        statusCode: xhr.status
+                    });
+                    toastr.error("Error removing modifiers: " + (xhr.responseText || "Unknown error"));
                 }
             });
         });
-
 
 
         // Load Add Modifier Group Form

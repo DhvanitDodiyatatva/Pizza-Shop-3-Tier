@@ -5,7 +5,7 @@
 @if (Model == null || !Model.Tables.Any())
 {
     <div class="row g-0 category-side">
-        <p>No Items available in this Category</p>
+        <p>No Tables available in this Section</p>
     </div>
 }
 else
@@ -16,7 +16,7 @@ else
             <td class="py-3 text-center text-nowrap" scope="row">
                 <div class="form-check item-checkbox">
                     <input type="checkbox" class="itemCheckbox text-center form-check-input" value="@table.Id"
-                        style="height: 20px; width: 20px; color: blue;" checked>
+                        style="height: 20px; width: 20px; color: blue;">
                     <label class="form-check-label" for="flexcheckchecked_@table.Id"></label>
                 </div>
             </td>

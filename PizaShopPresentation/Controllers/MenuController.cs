@@ -439,6 +439,7 @@ public class MenuController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteModifiers([FromBody] List<int> ids, int modifierGroupId)
     {
+        Console.WriteLine($"DeleteModifiers called with ModifierGroupId: {modifierGroupId}, IDs: [{string.Join(", ", ids ?? new List<int>())}]");
         if (ids == null || !ids.Any())
         {
             Console.WriteLine("No IDs received in DeleteModifiers");
@@ -453,6 +454,7 @@ public class MenuController : Controller
         }
         catch (Exception ex)
         {
+            Console.WriteLine($"Error in DeleteModifiers: {ex.Message}\nStackTrace: {ex.StackTrace}");
             return Json(new { success = false, message = ex.Message });
         }
     }
