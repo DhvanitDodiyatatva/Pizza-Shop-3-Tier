@@ -112,7 +112,8 @@
                                 </div>
 
                                 <div>
-                                    <button type="button" class="btn btn-main btn-main text-white d-none d-lg-block ms-2"
+                                    <button type="button"
+                                        class="btn btn-main btn-main text-white d-none d-lg-block ms-2"
                                         id="addNewItemBtn">+ New Item</button>
                                     <button
                                         class="btn btn-main bg-primary rounded-2 ms-2 text-white fs-6 d-block d-lg-none"
@@ -231,7 +232,8 @@
                                     </button>
                                 </div>
                                 <div>
-                                    <button type="button" class="btn btn-main btn-main text-white d-none d-lg-block ms-2"
+                                    <button type="button"
+                                        class="btn btn-main btn-main text-white d-none d-lg-block ms-2"
                                         id="addNewModifierBtn">+
                                         New Modifier</button>
                                     <button
@@ -1093,13 +1095,27 @@
         }
 
         // Load Select Existing Modifiers Modal
-        $(document).on("click", "#addExistingModifiersLink", function (e) {
+        $(document).off("click", "#addExistingModifiersLink").on("click", "#addExistingModifiersLink", function (e) {
             e.preventDefault();
+            console.log("addExistingModifiersLink clicked"); // Debug: Verify single click
+
+            // Check if the modal is already loaded to avoid duplicate loads
+            if ($("#selectModifiersContainer").find("#selectModifiersModal").length > 0) {
+                console.log("Modal already exists, showing existing modal"); // Debug
+                var modal = bootstrap.Modal.getInstance(document.getElementById("selectModifiersModal")) ||
+                    new bootstrap.Modal(document.getElementById("selectModifiersModal"));
+                modal.show();
+                attachSelectModifiersHandler();
+                return;
+            }
+
+            // Load the modal content via AJAX
             $.ajax({
                 url: '@Url.Action("SelectExistingModifiers", "Menu")',
                 type: 'GET',
                 success: function (result) {
                     $("#selectModifiersContainer").html(result);
+                    console.log("SelectExistingModifiers modal loaded"); // Debug
                     var modal = new bootstrap.Modal(document.getElementById("selectModifiersModal"));
                     modal.show();
                     attachSelectModifiersHandler();
@@ -1110,36 +1126,15 @@
             });
         });
 
-        // Update Hidden Inputs with Selected Modifier IDs
-        function updateSelectedModifierIds() {
-            var selectedIds = [];
-            $("#selectedModifiersContainer .badge").each(function () {
-                selectedIds.push($(this).data("modifier-id"));
-            });
-
-            // Remove existing hidden inputs for SelectedModifierIds
-            $("input[name^='SelectedModifierIds']").remove();
-
-            // Add a hidden input for each selected ID
-            selectedIds.forEach(function (id, index) {
-                $("#editModifierGroupForm").append(
-                    `<input type="hidden" name="SelectedModifierIds[${index}]" value="${id}" />`
-                );
-                $("#addModifierGroupForm").append(
-                    `<input type="hidden" name="SelectedModifierIds[${index}]" value="${id}" />`
-                );
-            });
-        }
-
         // Handle Select Existing Modifiers
         function attachSelectModifiersHandler() {
             // Select All Checkbox
-            $("#selectAllExistingModifiers").on("change", function () {
+            $("#selectAllExistingModifiers").off("change").on("change", function () {
                 $(".modifier-checkbox").prop("checked", $(this).prop("checked"));
             });
 
             // Search Functionality
-            $("#modifierSearchInput").on("keyup", function () {
+            $("#modifierSearchInput").off("keyup").on("keyup", function () {
                 var searchTerm = $(this).val().toLowerCase();
                 $("#modifierList tr").each(function () {
                     var modifierName = $(this).data("modifier-name").toLowerCase();
@@ -1148,7 +1143,7 @@
             });
 
             // Add Selected Modifiers
-            $("#addSelectedModifiers").on("click", function () {
+            $("#addSelectedModifiers").off("click").on("click", function () {
                 var selectedModifiers = [];
                 $(".modifier-checkbox:checked").each(function () {
                     var modifierId = $(this).val();
@@ -1179,10 +1174,10 @@
                 updateSelectedModifierIds();
 
                 // Close the Select Existing Modifiers modal
-                var modal = bootstrap.Modal.getInstance(document.getElementById("selectModifiersModal"));
-                modal.hide();
+                var selectModal = bootstrap.Modal.getInstance(document.getElementById("selectModifiersModal"));
+                selectModal.hide();
 
-                // Ensure the parent modal (Add/Edit Modifier Group) remains open
+                // Reopen the parent modal (Add or Edit Modifier Group)
                 var parentModal = bootstrap.Modal.getInstance(document.getElementById("addModGroupModal")) ||
                     bootstrap.Modal.getInstance(document.getElementById("editModGroupModal"));
                 if (parentModal) {
@@ -1190,14 +1185,52 @@
                 }
             });
 
-
-
+            // Handle closing of SelectExistingModifiers modal with close button
+            $("#selectModifiersModal").off("hidden.bs.modal").on("hidden.bs.modal", function () {
+                // Ensure the parent modal is shown again
+                var parentModal = bootstrap.Modal.getInstance(document.getElementById("addModGroupModal")) ||
+                    bootstrap.Modal.getInstance(document.getElementById("editModGroupModal"));
+                if (parentModal) {
+                    parentModal.show();
+                }
+            });
         }
+
+        // Update Hidden Inputs with Selected Modifier IDs
+        function updateSelectedModifierIds() {
+            var selectedIds = [];
+            $("#selectedModifiersContainer .badge").each(function () {
+                selectedIds.push($(this).data("modifier-id"));
+            });
+
+            // Remove existing hidden inputs for SelectedModifierIds
+            $("input[name^='SelectedModifierIds']").remove();
+
+            // Add a hidden input for each selected ID
+            selectedIds.forEach(function (id, index) {
+                $("#editModifierGroupForm").append(
+                    `<input type="hidden" name="SelectedModifierIds[${index}]" value="${id}" />`
+                );
+                $("#addModifierGroupForm").append(
+                    `<input type="hidden" name="SelectedModifierIds[${index}]" value="${id}" />`
+                );
+            });
+        }
+
         // Remove Modifier from Selection
-        $(document).on("click", ".remove-modifier", function () {
+        $(document).off("click", ".remove-modifier").on("click", ".remove-modifier", function () {
             var badge = $(this).closest(".badge");
             badge.remove();
             updateSelectedModifierIds(); // Update the hidden inputs after removal
+        });
+
+        // Ensure modal backdrop is properly managed when any modal is hidden
+        $('.modal').off('hidden.bs.modal').on('hidden.bs.modal', function () {
+            // Remove lingering backdrop if no modals are open
+            if ($('.modal.show').length === 0) {
+                $('.modal-backdrop').remove();
+                $('body').removeClass('modal-open');
+            }
         });
 
         // Add Modifier Group Button Click Handler
@@ -1257,9 +1290,18 @@
         }
 
 
+        @* // Ensure modal backdrop is properly managed when any modal is hidden
+        $('.modal').on('hidden.bs.modal', function () {
+            // Remove lingering backdrop if no modals are open
+            if ($('.modal.show').length === 0) {
+                $('.modal-backdrop').remove();
+                $('body').removeClass('modal-open');
+            }
+        }); *@
 
-        // Initial load of categories, items, and the Add Category form
-        loadCategories();
+
+            // Initial load of categories, items, and the Add Category form
+            loadCategories();
         loadItems(1);
         loadAddCategory();
         loadModifierGroups();
