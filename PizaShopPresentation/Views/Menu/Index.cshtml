@@ -1099,9 +1099,28 @@
             e.preventDefault();
             console.log("addExistingModifiersLink clicked"); // Debug: Verify single click
 
+            // Determine the parent modal (Add or Edit Modifier Group)
+            var parentModalId = $("#addModGroupModal").hasClass("show") ? "addModGroupModal" : "editModGroupModal";
+            var formSelector = parentModalId === "addModGroupModal" ? "#addModifierGroupForm" : "#editModifierGroupForm";
+
+            // Collect SelectedModifierIds from the parent form
+            var selectedModifierIds = [];
+            $(`${formSelector} input[name^='SelectedModifierIds']`).each(function () {
+                selectedModifierIds.push(parseInt($(this).val()));
+            });
+
+            console.log("Selected Modifier IDs from parent modal:", selectedModifierIds); // Debug
+
             // Check if the modal is already loaded to avoid duplicate loads
             if ($("#selectModifiersContainer").find("#selectModifiersModal").length > 0) {
                 console.log("Modal already exists, showing existing modal"); // Debug
+                // Update checkboxes based on selectedModifierIds
+                $(".modifier-checkbox").each(function () {
+                    var modifierId = parseInt($(this).val());
+                    $(this).prop("checked", selectedModifierIds.includes(modifierId));
+                });
+                // Update select all checkbox
+                updateSelectAllCheckbox();
                 var modal = bootstrap.Modal.getInstance(document.getElementById("selectModifiersModal")) ||
                     new bootstrap.Modal(document.getElementById("selectModifiersModal"));
                 modal.show();
@@ -1109,10 +1128,11 @@
                 return;
             }
 
-            // Load the modal content via AJAX
+            // Load the modal content via AJAX with selectedModifierIds
             $.ajax({
                 url: '@Url.Action("SelectExistingModifiers", "Menu")',
                 type: 'GET',
+                data: { selectedModifierIds: selectedModifierIds },
                 success: function (result) {
                     $("#selectModifiersContainer").html(result);
                     console.log("SelectExistingModifiers modal loaded"); // Debug
@@ -1126,11 +1146,23 @@
             });
         });
 
+        // Update Select All Checkbox State
+        function updateSelectAllCheckbox() {
+            var totalCheckboxes = $(".modifier-checkbox").length;
+            var checkedCheckboxes = $(".modifier-checkbox:checked").length;
+            $("#selectAllExistingModifiers").prop("checked", totalCheckboxes > 0 && checkedCheckboxes === totalCheckboxes);
+        }
+
         // Handle Select Existing Modifiers
         function attachSelectModifiersHandler() {
             // Select All Checkbox
             $("#selectAllExistingModifiers").off("change").on("change", function () {
                 $(".modifier-checkbox").prop("checked", $(this).prop("checked"));
+            });
+
+            // Individual Checkbox Change
+            $(".modifier-checkbox").off("change").on("change", function () {
+                updateSelectAllCheckbox();
             });
 
             // Search Functionality
@@ -1194,6 +1226,9 @@
                     parentModal.show();
                 }
             });
+
+            // Update Select All Checkbox on modal load
+            updateSelectAllCheckbox();
         }
 
         // Update Hidden Inputs with Selected Modifier IDs

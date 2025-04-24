@@ -6,7 +6,7 @@ using PizzaShopServices.Attributes;
 using PizzaShopService;
 
 // [CustomAuthorize("super_admin, chef, account_manager")]
- [CustomAuthorize("Menu", PermissionType.View, "super_admin", "account_manager")]
+[CustomAuthorize("Menu", PermissionType.View, "super_admin", "account_manager")]
 public class MenuController : Controller
 {
     private readonly ICategoryService _categoryService;
@@ -509,9 +509,13 @@ public class MenuController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> SelectExistingModifiers()
+    public async Task<IActionResult> SelectExistingModifiers(int[] selectedModifierIds = null)
     {
         var modifiers = await _modifierService.GetAllModifiersAsync();
+
+        // Pass the selected modifier IDs to the view
+        ViewData["SelectedModifierIds"] = selectedModifierIds?.ToList() ?? new List<int>();
+
         return PartialView("_SelectExistingModifiers", modifiers);
     }
 
