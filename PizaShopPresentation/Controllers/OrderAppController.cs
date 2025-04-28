@@ -93,6 +93,116 @@ namespace PizzaShop.Controllers
             return PartialView("_WaitingTokenModal", model);
         }
 
+
+        public async Task<IActionResult> ShowCustomerDetailsOffcanvas(int sectionId, string sectionName, string selectedTableIds)
+        {
+            var tableIds = selectedTableIds.Split(',').Select(int.Parse).ToList();
+            var tables = await _tableService.GetTablesBySectionAsync(sectionId);
+            var selectedTables = tables
+                .Where(t => tableIds.Contains(t.Id))
+                .Select(t => new TableDetailsViewModel
+                {
+                    TableId = t.Id,
+                    TableName = t.Name,
+                    Capacity = t.Capacity,
+                    Availability = t.Status switch
+                    {
+                        "available" => "Available",
+                        "occupied" => "Running",
+                        "reserved" => "Assigned",
+                        _ => "Available"
+                    }
+                })
+                .ToList();
+
+            var waitingTokens = await _waitingTokenService.GetAllWaitingTokensAsync();
+            var sectionTokens = waitingTokens
+                .Where(t => t.SectionId == sectionId && !t.IsDeleted && !t.IsAssigned)
+                .Select(t => new WaitingTokensViewModel
+                {
+                    Id = t.Id,
+                    CustomerName = t.CustomerName,
+                    Email = t.Email,
+                    PhoneNumber = t.PhoneNumber,
+                    NumOfPersons = t.NumOfPersons
+                })
+                .ToList();
+
+            var viewModel = new CustomerDetailsViewModel
+            {
+                SectionId = sectionId,
+                SectionName = sectionName,
+                SelectedTables = selectedTables,
+                WaitingTokens = sectionTokens
+            };
+
+            return PartialView("_CustomerDetailsOffcanvas", viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AssignTable(int[] selectedTableIds, int sectionId, int? waitingTokenId, string email, string name, string phoneNumber, int numOfPersons, string sectionName)
+        {
+            // Validate the input
+            if (selectedTableIds == null || !selectedTableIds.Any())
+            {
+                return Json(new { success = false, message = "No tables selected." });
+            }
+
+            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(phoneNumber) || numOfPersons <= 0)
+            {
+                return Json(new { success = false, message = "Invalid customer details." });
+            }
+
+            try
+            {
+                // Check if all selected tables are still available
+                var tables = await _tableService.GetTablesBySectionAsync(sectionId);
+                var selectedTables = tables.Where(t => selectedTableIds.Contains(t.Id)).ToList();
+                if (selectedTables.Any(t => t.Status != "available"))
+                {
+                    return Json(new { success = false, message = "One or more selected tables are no longer available." });
+                }
+
+                // Create or update the customer
+                var customer = new Customer
+                {
+                    Name = name,
+                    Email = email,
+                    PhoneNo = phoneNumber,
+                    NoOfPersons = numOfPersons,
+                    Date = DateOnly.FromDateTime(DateTime.Now)
+                };
+                await _context.Customers.AddAsync(customer);
+                await _context.SaveChangesAsync();
+
+                // Update table statuses to "reserved"
+                foreach (var table in selectedTables)
+                {
+                    table.Status = "reserved";
+                    _context.Tables.Update(table);
+                }
+
+                // If a waiting token is selected, mark it as assigned
+                if (waitingTokenId.HasValue)
+                {
+                    var waitingToken = await _context.WaitingTokens.FindAsync(waitingTokenId.Value);
+                    if (waitingToken != null)
+                    {
+                        waitingToken.IsAssigned = true;
+                        _context.WaitingTokens.Update(waitingToken);
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+
+                return Json(new { success = true, message = "Tables assigned successfully." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"An error occurred: {ex.Message}" });
+            }
+        }
+
         //Menu
         public async Task<IActionResult> Menu()
         {

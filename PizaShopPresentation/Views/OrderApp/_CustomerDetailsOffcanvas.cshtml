@@ -1,0 +1,119 @@
+@model PizzaShopRepository.ViewModels.CustomerDetailsViewModel
+
+<div class="container">
+    <h6>Selected Tables</h6>
+    <ul>
+        @foreach (var table in Model.SelectedTables)
+        {
+            <li>@table.TableName (Capacity: @table.Capacity)</li>
+        }
+    </ul>
+
+    <h6>Waiting List</h6>
+    @if (Model.WaitingTokens.Any())
+    {
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">No. of Persons</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var token in Model.WaitingTokens)
+                {
+                    <tr>
+                        <td>
+                            <input type="radio" name="selectedToken" value="@token.Id" class="select-token"
+                                data-name="@token.CustomerName" data-email="@token.Email" data-phone="@token.PhoneNumber"
+                                data-persons="@token.NumOfPersons" />
+                        </td>
+                        <td>#@token.Id</td>
+                        <td>@token.CustomerName</td>
+                        <td>@token.NumOfPersons</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No waiting tokens available for this section.</p>
+    }
+
+    <h6>Customer Details</h6>
+    <form id="assignTableForm" asp-action="AssignTable" asp-controller="OrderApp" method="post">
+        <input type="hidden" name="SelectedTableIds"
+            value="@string.Join(",", Model.SelectedTables.Select(t => t.TableId))" />
+        <input type="hidden" name="SectionId" value="@Model.SectionId" />
+        <input type="hidden" name="WaitingTokenId" id="waitingTokenId" value="" />
+
+        <div class="mb-3">
+            <label for="email" class="form-label">Email*</label>
+            <input type="email" class="form-control" id="email" name="Email" value="" required />
+        </div>
+        <div class="mb-3">
+            <label for="name" class="form-label">Name*</label>
+            <input type="text" class="form-control" id="name" name="Name" value="" required />
+        </div>
+        <div class="mb-3">
+            <label for="mobileNumber" class="form-label">Mobile Number*</label>
+            <input type="text" class="form-control" id="mobileNumber" name="PhoneNumber" value="" required />
+        </div>
+        <div class="mb-3">
+            <label for="numOfPersons" class="form-label">No of Person(s)*</label>
+            <input type="number" class="form-control" id="numOfPersons" name="NumOfPersons" value="0" required />
+        </div>
+        <div class="mb-3">
+            <label for="section" class="form-label">Section*</label>
+            <input type="text" class="form-control" id="section" name="SectionName" value="@Model.SectionName"
+                readonly />
+        </div>
+        <div class="d-flex justify-content-end gap-2">
+            <button type="submit" class="btn btn-primary">Assign</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="offcanvas">Cancel</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('.select-token').on('change', function () {
+            const name = $(this).data('name');
+            const email = $(this).data('email');
+            const phone = $(this).data('phone');
+            const persons = $(this).data('persons');
+            const tokenId = $(this).val();
+
+            $('#name').val(name);
+            $('#email').val(email);
+            $('#mobileNumber').val(phone);
+            $('#numOfPersons').val(persons);
+            $('#waitingTokenId').val(tokenId);
+        });
+
+        $('#assignTableForm').on('submit', function (e) {
+            e.preventDefault();
+            var form = $(this);
+            $.ajax({
+                url: form.attr('action'),
+                type: 'POST',
+                data: form.serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        $('#customerDetailsOffcanvas').offcanvas('hide');
+                        location.reload(); // Refresh the page to update table statuses
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function () {
+                    toastr.error('An error occurred while assigning the table.');
+                }
+            });
+        });
+    });
+</script>

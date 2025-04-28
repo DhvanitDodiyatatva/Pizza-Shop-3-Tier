@@ -5,8 +5,7 @@
     Layout = "~/Views/Shared/_LayoutOrdApp.cshtml";
 }
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
@@ -50,13 +49,12 @@
                 var collapseClass = isFirst ? "accordion-collapse collapse show" : "accordion-collapse collapse";
                 var ariaExpanded = isFirst ? "true" : "false";
 
-                <div class="accordion-item mb-3 rounded-2 shadow-sm ">
+                <div class="accordion-item mb-3 rounded-2 shadow-sm">
                     <h2 class="accordion-header custom-header" id="heading-@floorId">
                         <div class="d-md-flex justify-content-between align-items-center w-100">
-                            <button
-                                class="accordion-button reset-button-styles @(!isFirst ? "collapsed" : "") flex-grow-1 text-start"
-                                type="button" data-bs-toggle="collapse" data-bs-target="#@floorCollapseId"
-                                aria-expanded="@ariaExpanded" aria-controls="@floorCollapseId">
+                            <button class="accordion-button reset-button-styles @(!isFirst ? "collapsed" : "") flex-grow-1 text-start"
+                                    type="button" data-bs-toggle="collapse" data-bs-target="#@floorCollapseId"
+                                    aria-expanded="@ariaExpanded" aria-controls="@floorCollapseId">
                                 <div class="d-flex align-items-center">
                                     <span class="accordion-custom-arrow"></span>
                                     <span class="headAccordian fs-4 fw-normal" style="color: #1f73ae;">@floor.FloorName</span>
@@ -104,7 +102,7 @@
                                     };
 
                                     <div class="col-md-2" style="cursor: pointer;">
-                                        <div class="card @cardClass mb-3">
+                                        <div class="card @cardClass mb-3 table-card" data-table-id="@table.TableId" data-status="@table.Availability">
                                             <div class="card-body">
                                                 <h5 class="card-title">@table.TableName</h5>
                                                 <i class="bi bi-people text-dark"></i>
@@ -116,10 +114,8 @@
                                 }
                             </div>
                             <div class="d-flex justify-content-end">
-                                <button class="btn btn-main text-white">
-                                    <a class="text-white" asp-area="" asp-controller="Order" asp-action="Index">
-                                        Assign
-                                    </a>
+                                <button class="btn btn-main text-white assign-btn" disabled data-section-id="@floor.FloorId" data-section-name="@floor.FloorName">
+                                    Assign
                                 </button>
                             </div>
                         </div>
@@ -143,10 +139,74 @@
             </div>
         </div>
     </div>
+
+    <!-- Offcanvas for Customer Details -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="customerDetailsOffcanvas" aria-labelledby="customerDetailsOffcanvasLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="customerDetailsOffcanvasLabel">Customer Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <!-- Partial view content will be loaded here -->
+        </div>
+    </div>
 </div>
 
 <script>
     $(document).ready(function () {
+        let selectedTables = [];
+
+        // Handle table selection
+        $('.table-card').on('click', function () {
+            const status = $(this).data('status');
+            const tableId = $(this).data('table-id');
+
+            if (status !== 'Available') {
+                toastr.error('You cannot select this table.');
+                return;
+            }
+
+            const index = selectedTables.indexOf(tableId);
+            if (index === -1) {
+                // Select the table
+                selectedTables.push(tableId);
+                $(this).removeClass('custom-card-available').addClass('custom-card-selected');
+            } else {
+                // Deselect the table
+                selectedTables.splice(index, 1);
+                $(this).removeClass('custom-card-selected').addClass('custom-card-available');
+            }
+
+            // Enable/disable the Assign button based on selection
+            const assignBtn = $(this).closest('.accordion-body').find('.assign-btn');
+            if (selectedTables.length > 0) {
+                assignBtn.prop('disabled', false);
+            } else {
+                assignBtn.prop('disabled', true);
+            }
+        });
+
+        // Handle Assign button click
+        $('.assign-btn').on('click', function () {
+            if (selectedTables.length === 0) {
+                toastr.error('Please select at least one table.');
+                return;
+            }
+
+            const sectionId = $(this).data('section-id');
+            const sectionName = $(this).data('section-name');
+
+            // Load the customer details offcanvas
+            $.get('@Url.Action("ShowCustomerDetailsOffcanvas", "OrderApp")', { sectionId: sectionId, sectionName: sectionName, selectedTableIds: selectedTables.join(',') }, function (partialView) {
+                $('#customerDetailsOffcanvas .offcanvas-body').html(partialView);
+                $('#customerDetailsOffcanvas').offcanvas('show');
+            }).fail(function (xhr, status, error) {
+                console.error('AJAX Error: ' + status + ' - ' + error);
+                toastr.error('Failed to load customer details.');
+            });
+        });
+
+        // Existing waiting token modal logic
         $('.waiting-token-btn').on('click', function () {
             var sectionId = $(this).data('section-id');
             var sectionName = $(this).data('section-name');
@@ -155,13 +215,12 @@
 
         function showWaitingTokenModal(sectionId, sectionName) {
             $.get('@Url.Action("ShowWaitingTokenModal", "OrderApp")', { sectionId: sectionId, sectionName: sectionName }, function (partialView) {
-                console.log('Partial View Response:', partialView); // Debug log
-                // Extract the inner modal-body content
+                console.log('Partial View Response:', partialView);
                 var modalBodyContent = $(partialView).find('.modal-body').html();
                 $('#waitingTokenModal .modal-body').html(modalBodyContent);
-                $('#waitingTokenModal').modal('dispose'); // Dispose existing modal instance
-                $('#waitingTokenModal').modal('show'); // Show the modal with new content
-                $.validator.unobtrusive.parse('#waitingTokenModal'); // Reinitialize validation
+                $('#waitingTokenModal').modal('dispose');
+                $('#waitingTokenModal').modal('show');
+                $.validator.unobtrusive.parse('#waitingTokenModal');
             }).fail(function (xhr, status, error) {
                 console.error('AJAX Error: ' + status + ' - ' + error);
                 toastr.error('Failed to load modal.');
@@ -179,17 +238,16 @@
                     if (response.success) {
                         toastr.success(response.message);
                         $('#waitingTokenModal').modal('hide').on('hidden.bs.modal', function () {
-                      
-                            $(this).data('bs.modal', null); // Clear modal data
-                            $('.modal-backdrop').remove(); // Remove backdrop manually
+                            $(this).data('bs.modal', null);
+                            $('.modal-backdrop').remove();
                         });
                     } else {
                         toastr.error(response.message);
                         var modalBodyContent = $(response).find('.modal-body').html() || response;
                         $('#waitingTokenModal .modal-body').html(modalBodyContent);
-                        $('#waitingTokenModal').modal('dispose'); // Dispose and reinitialize
+                        $('#waitingTokenModal').modal('dispose');
                         $('#waitingTokenModal').modal('show');
-                        $.validator.unobtrusive.parse('#waitingTokenModal'); // Reinitialize validation
+                        $.validator.unobtrusive.parse('#waitingTokenModal');
                     }
                 },
                 error: function () {
@@ -202,8 +260,8 @@
 
 <style>
     .modal-body {
-        background-color: #f0f0f0; /* Temporary to check visibility */
-        min-height: 200px; /* Ensure minimum height to see content */
+        background-color: #f0f0f0;
+        min-height: 200px;
     }
 
     .circle {
@@ -246,6 +304,11 @@
 
     .custom-card-default {
         border: 2px solid #6c757d;
+    }
+
+    .custom-card-selected {
+        border: 2px solid #28a745;
+        background-color: transparent;
     }
 
     .accordion-button.reset-button-styles {
