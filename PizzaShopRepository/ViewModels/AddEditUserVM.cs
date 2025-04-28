@@ -24,6 +24,8 @@ public class AddEditUserVM
     [Required(ErrorMessage = "Password is required.")]
     [DataType(DataType.Password)]
     [MinLength(6, ErrorMessage = "Password must be at least 6 characters.")]
+    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{6,}$",
+        ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character.")]
     public string Password { get; set; } = null!;
 
     [Required(ErrorMessage = "Role is required.")]

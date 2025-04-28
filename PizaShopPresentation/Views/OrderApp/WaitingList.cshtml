@@ -58,31 +58,31 @@
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th scope="col">Token No</th>
-                                <th scope="col">Created At</th>
-                                <th scope="col">Waiting Time</th>
-                                <th scope="col">Name</th>
-                                <th scope="col">No of Persons</th>
-                                <th scope="col">Phone Number</th>
-                                <th scope="col">Email</th>
-                                <th scope="col">Action</th>
+                                <th scope="col" class="text-nowrap text-center">Token No</th>
+                                <th scope="col" class="text-nowrap">Created At</th>
+                                <th scope="col" class="text-nowrap">Waiting Time</th>
+                                <th scope="col" class="text-nowrap">Name</th>
+                                <th scope="col" class="text-nowrap text-center">No of Persons</th>
+                                <th scope="col" class="text-nowrap">Phone Number</th>
+                                <th scope="col" class="text-nowrap">Email</th>
+                                <th scope="col" class="text-nowrap">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var token in Model.Where(t => !t.IsDeleted))
                             {
                                 <tr>
-                                    <td>#@token.Id</td>
-                                    <td>@token.CreatedAt?.ToString(" dd MMM , yyyy hh:mm tt")</td>
-                                    <td class="elapsed-time" data-created-at="@token.CreatedAt?.ToString("o")">
+                                    <td class="text-nowrap text-center">#@token.Id</td>
+                                    <td class="text-nowrap">@token.CreatedAt?.ToString(" dd MMM , yyyy hh:mm tt")</td>
+                                    <td class="elapsed-time text-nowrap" data-created-at="@token.CreatedAt?.ToString("o")">
                                         Calculating...
                                     </td>
 
-                                    <td>@token.CustomerName</td>
-                                    <td>@token.NumOfPersons</td>
-                                    <td>@token.PhoneNumber</td>
-                                    <td>@token.Email</td>
-                                    <td>
+                                    <td class="text-nowrap">@token.CustomerName</td>
+                                    <td class="text-nowrap text-center">@token.NumOfPersons</td>
+                                    <td class="text-nowrap">@token.PhoneNumber</td>
+                                    <td class="text-nowrap">@token.Email</td>
+                                    <td class="text-nowrap">
                                         <button type="button" class="btn text-body-btn edit-tax-btn p-0 me-2">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                                 fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">

@@ -147,6 +147,7 @@ public partial class PizzaShopContext : DbContext
                 .HasDefaultValueSql("true")
                 .HasColumnName("is_available");
             entity.Property(e => e.IsDeleted).HasColumnName("is_deleted");
+            entity.Property(e => e.IsFavourite).HasColumnName("is_favourite");
             entity.Property(e => e.ItemType)
                 .HasMaxLength(20)
                 .HasColumnName("item_type");
@@ -611,6 +612,7 @@ public partial class PizzaShopContext : DbContext
             entity.Property(e => e.Email)
                 .HasMaxLength(100)
                 .HasColumnName("email");
+            entity.Property(e => e.IsAssigned).HasColumnName("is_assigned");
             entity.Property(e => e.IsDeleted).HasColumnName("is_deleted");
             entity.Property(e => e.NumOfPersons).HasColumnName("num_of_persons");
             entity.Property(e => e.PhoneNumber)

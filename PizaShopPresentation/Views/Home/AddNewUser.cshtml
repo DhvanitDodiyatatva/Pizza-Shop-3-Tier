@@ -60,6 +60,7 @@
                         <input asp-for="Password" class="form-control" placeholder="Password" type="password">
                         <label asp-for="Password">Password</label>
                         <span asp-validation-for="Password" class="text-danger"></span>
+
                     </div>
                 </div>
                 <div class="col-md-12">
@@ -137,6 +138,9 @@
 <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
 <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 <script>
+
+
+
     fetch("https://restcountries.com/v3.1/all")
         .then(response => response.json())
         .then(data => {

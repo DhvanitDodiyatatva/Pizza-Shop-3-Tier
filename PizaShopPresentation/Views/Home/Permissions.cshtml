@@ -199,6 +199,7 @@
                 checkbox.addEventListener('change', function () {
                     if (this.checked) {
                         canViewCheckboxes[index].checked = true;
+                        canAddEditCheckboxes[index].checked = true;
                     }
                     const initialState = initialStates.find(s => s.index === index);
                     if (this.checked !== initialState.canDelete) {

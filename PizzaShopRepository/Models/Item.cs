@@ -37,6 +37,8 @@ public partial class Item
 
     public decimal? TaxPercentage { get; set; }
 
+    public bool IsFavourite { get; set; }
+
     public virtual Category? Category { get; set; }
 
     public virtual ICollection<ItemModifierGroup> ItemModifierGroups { get; set; } = new List<ItemModifierGroup>();

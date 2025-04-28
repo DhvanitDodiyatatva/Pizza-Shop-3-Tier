@@ -23,5 +23,7 @@ public partial class WaitingToken
 
     public bool IsDeleted { get; set; }
 
+    public bool IsAssigned { get; set; }
+
     public virtual Section? Section { get; set; }
 }

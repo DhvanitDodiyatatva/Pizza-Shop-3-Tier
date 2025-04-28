@@ -63,11 +63,11 @@ namespace PizzaShopServices.Implementations
             try
             {
                 var waitingTokens = await _waitingTokenRepository.GetAllWaitingTokensAsync();
-                return waitingTokens.Where(t => !t.IsDeleted).ToList(); // Filter out deleted tokens
+                return waitingTokens.Where(t => !t.IsDeleted && !t.IsAssigned).ToList(); // Filter out deleted tokens
             }
             catch (Exception ex)
             {
-                // Log the exception (consider using a logging framework like Serilog or ILogger)
+
                 Console.WriteLine($"Error fetching waiting tokens: {ex.Message}");
                 return new List<WaitingToken>(); // Return empty list on error
             }
