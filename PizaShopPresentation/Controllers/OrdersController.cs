@@ -7,7 +7,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Drawing;
-using PizzaShopServices.Attributes; // For colors
+using PizzaShopServices.Attributes;
 
 namespace PizzaShopPresentation.Controllers;
 
@@ -69,7 +69,7 @@ public class OrdersController : Controller
             var currentRow = 3;
             var currentCol = 2;
 
-            // First Row: Status and Search Text
+            
             // Status Label
             worksheet.Cells[currentRow, currentCol, currentRow + 1, currentCol + 1].Merge = true;
             worksheet.Cells[currentRow, currentCol].Value = "Status: ";

@@ -258,13 +258,13 @@ public class MenuController : Controller
     {
         var items = await _itemService.GetAllItemsAsync();
 
-        // Filter by categoryId if provided (categoryId > 0 indicates a specific category)
+        // Filter by categoryId (categoryId > 0 indicates a specific category)
         if (categoryId > 0)
         {
             items = items.Where(i => i.CategoryId == categoryId).ToList();
         }
 
-        // Filter by searchTerm if provided
+        // Filter by searchTerm 
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
             items = items.Where(i => i.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();

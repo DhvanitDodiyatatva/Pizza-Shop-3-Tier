@@ -16,9 +16,9 @@
             <thead>
                 <tr>
                     <th scope="col"></th>
-                    <th scope="col">ID</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">No. of Persons</th>
+                    <th scope="col" class="text-nowrap">ID</th>
+                    <th scope="col" class="text-nowrap">Name</th>
+                    <th scope="col" class="text-nowrap">No. of Persons</th>
                 </tr>
             </thead>
             <tbody>
@@ -26,13 +26,13 @@
                 {
                     <tr>
                         <td>
-                            <input type="radio" name="selectedToken" value="@token.Id" class="select-token"
+                            <input type="radio" name="radioDefault" value="@token.Id" class="select-token form-check-input"
                                 data-name="@token.CustomerName" data-email="@token.Email" data-phone="@token.PhoneNumber"
                                 data-persons="@token.NumOfPersons" />
                         </td>
                         <td>#@token.Id</td>
-                        <td>@token.CustomerName</td>
-                        <td>@token.NumOfPersons</td>
+                        <td class="text-nowrap">@token.CustomerName</td>
+                        <td class="text-center">@token.NumOfPersons</td>
                     </tr>
                 }
             </tbody>
@@ -72,7 +72,7 @@
                 readonly />
         </div>
         <div class="d-flex justify-content-end gap-2">
-            <button type="submit" class="btn btn-primary">Assign</button>
+            <button type="submit" class="btn btn-main text-white">Assign</button>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="offcanvas">Cancel</button>
         </div>
     </form>
