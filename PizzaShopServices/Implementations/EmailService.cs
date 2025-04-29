@@ -90,7 +90,7 @@ namespace PizzaShopServices.Implementations
                             </div>
                             <div class='content'>
                                 <p><strong>Pizza shop,</strong></p>
-                                <p>Please click <a href='{resetPasswordUrl}'>here</a> to reset your account password.</p>
+                                <p>Please <a href='{resetPasswordUrl}' style=""color: #1f73ae; text-decoration: underline;"" > click here</a> to reset your account password.</p>
                                 <p>If you encounter any issues or have any questions, please do not hesitate to contact our support team.</p>
                                 <p class='important-note'><strong>Important Note:</strong> For security reasons, the link will expire in 24 hours. If you did not request a password reset, please ignore this email or contact our support team immediately.</p>
                             </div>
@@ -146,6 +146,13 @@ namespace PizzaShopServices.Implementations
                                 .content {{
                                     padding: 20px 0;
                                     text-align: left;
+                                }}
+                                a{{
+                                    color: #005a9c;
+                                    text-decoration: none;
+                                }}
+                                a:hover {{
+                                    text-decoration: underline;
                                 }}
                                 .login-box {{
                                     border: 1px solid #000;

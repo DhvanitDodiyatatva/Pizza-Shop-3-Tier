@@ -1,6 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 namespace PizzaShopRepository.ViewModels;
 
+
+
 public class AddEditUserVM
 {
     public int Id { get; set; }
@@ -25,7 +27,7 @@ public class AddEditUserVM
     [DataType(DataType.Password)]
     [MinLength(6, ErrorMessage = "Password must be at least 6 characters.")]
     [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{6,}$",
-        ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character.")]
+    ErrorMessage = "Password must meet complexity requirements.")]
     public string Password { get; set; } = null!;
 
     [Required(ErrorMessage = "Role is required.")]

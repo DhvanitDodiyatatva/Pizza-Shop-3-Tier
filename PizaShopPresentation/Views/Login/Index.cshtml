@@ -2,7 +2,6 @@
 
 @{
     Layout = null;
-
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -44,7 +43,6 @@
                         {
                             <div class="alert alert-danger">@ViewData["ErrorMessage"]</div>
                         }
-
                         <form method="post" asp-route="LoginValidation">
                             <div class="mb-3">
                                 <div class="d-flex align-items-center justify-content-end position-relative">
@@ -55,7 +53,6 @@
                                 </div>
                                 <span asp-validation-for="Email" class="text-danger"></span>
                             </div>
-
                             <div class="mb-3">
                                 <div class="d-flex align-items-center justify-content-end position-relative">
                                     <input type="password" name="Password" class="form-control" id="inputPassword"
@@ -66,7 +63,6 @@
                                 </div>
                                 <span asp-validation-for="Password" class="text-danger"></span>
                             </div>
-
                             <div class="w-100 d-flex justify-content-between">
                                 <div class="mb-3 form-check">
                                     <input type="checkbox" class="form-check-input" id="rememberMe" name="RememberMe"
@@ -95,7 +91,6 @@
                         {
                             <div class="alert alert-danger">@ViewData["ErrorMessage"]</div>
                         }
-
                         <form method="post" asp-route="LoginValidation">
                             <div class="mb-3">
                                 <div class="d-flex align-items-center justify-content-end position-relative">
@@ -106,7 +101,6 @@
                                 </div>
                                 <span asp-validation-for="Email" class="text-danger"></span>
                             </div>
-
                             <div class="mb-3">
                                 <div class="d-flex align-items-center justify-content-end position-relative">
                                     <input type="password" name="Password" class="form-control" id="inputPassword"
@@ -117,7 +111,6 @@
                                 </div>
                                 <span asp-validation-for="Password" class="text-danger"></span>
                             </div>
-
                             <div class="w-100 d-flex justify-content-between">
                                 <div class="mb-3 form-check">
                                     <input type="checkbox" class="form-check-input" id="rememberMe" name="RememberMe"

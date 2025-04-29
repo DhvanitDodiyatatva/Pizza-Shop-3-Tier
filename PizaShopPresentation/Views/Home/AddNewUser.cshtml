@@ -56,12 +56,21 @@
                     </div>
                 </div>
                 <div class="col-md-6">
+
                     <div class="form-floating">
-                        <input asp-for="Password" class="form-control" placeholder="Password" type="password">
+                        <input asp-for="Password" class="form-control" placeholder="Password" type="password"
+                            id="passwordInput">
                         <label asp-for="Password">Password</label>
                         <span asp-validation-for="Password" class="text-danger"></span>
-
+                        <div id="passwordErrors" class="text-danger">
+                            <div id="uppercaseError" class="password-error"></div>
+                            <div id="lowercaseError" class="password-error"></div>
+                            <div id="digitError" class="password-error"></div>
+                            <div id="specialCharError" class="password-error"></div>
+                            <div id="lengthError" class="password-error"></div>
+                        </div>
                     </div>
+
                 </div>
                 <div class="col-md-12">
                     <div class="form-floating">
@@ -195,5 +204,52 @@
                 });
             })
             .catch(error => console.error("Error fetching cities:", error));
+    });
+
+
+    // Password validation function
+    function validatePassword() {
+        const password = document.getElementById("passwordInput").value;
+        const uppercaseError = document.getElementById("uppercaseError");
+        const lowercaseError = document.getElementById("lowercaseError");
+        const digitError = document.getElementById("digitError");
+        const specialCharError = document.getElementById("specialCharError");
+        const lengthError = document.getElementById("lengthError");
+
+        // Regular expressions for each requirement
+        const hasUppercase = /[A-Z]/.test(password);
+        const hasLowercase = /[a-z]/.test(password);
+        const hasDigit = /\d/.test(password);
+        const hasSpecialChar = /[^\da-zA-Z]/.test(password);
+        const hasMinLength = password.length >= 6;
+
+        // Update error messages
+        uppercaseError.textContent = hasUppercase ? "" : "Password must contain at least one uppercase letter.";
+        lowercaseError.textContent = hasLowercase ? "" : "Password must contain at least one lowercase letter.";
+        digitError.textContent = hasDigit ? "" : "Password must contain at least one digit.";
+        specialCharError.textContent = hasSpecialChar ? "" : "Password must contain at least one special character.";
+        lengthError.textContent = hasMinLength ? "" : "Password must be at least 6 characters.";
+
+        // Enable/disable submit button based on validity
+        const isValid = hasUppercase && hasLowercase && hasDigit && hasSpecialChar && hasMinLength;
+        document.querySelector('button[type="submit"]').disabled = !isValid;
+    }
+
+    // Attach event listener to password input
+    document.getElementById("passwordInput").addEventListener("input", validatePassword);
+
+    // Run validation on form submission to ensure client-side checks are enforced
+    document.querySelector('form').addEventListener('submit', function (event) {
+        const password = document.getElementById("passwordInput").value;
+        const hasUppercase = /[A-Z]/.test(password);
+        const hasLowercase = /[a-z]/.test(password);
+        const hasDigit = /\d/.test(password);
+        const hasSpecialChar = /[^\da-zA-Z]/.test(password);
+        const hasMinLength = password.length >= 6;
+
+        if (!(hasUppercase && hasLowercase && hasDigit && hasSpecialChar && hasMinLength)) {
+            event.preventDefault();
+            validatePassword(); // Re-run validation to show errors
+        }
     });
 </script>

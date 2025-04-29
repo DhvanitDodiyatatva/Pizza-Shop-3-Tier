@@ -16,7 +16,7 @@ namespace PizzaShopPresentation.Controllers
 {
 
     // [CustomAuthorize("super_admin, chef, account_manager")]
-    [CustomAuthorize("Users", PermissionType.View, "super_admin", "account_manager", "chef")]
+
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -51,6 +51,8 @@ namespace PizzaShopPresentation.Controllers
             return View();
         }
 
+
+        [CustomAuthorize("Users", PermissionType.View, "super_admin", "account_manager", "chef")]
         public async Task<IActionResult> Users(string searchQuery = "", int page = 1, int pageSize = 5, string sortBy = "Id", string sortOrder = "asc")
         {
             var (users, totalUsers) = await _userCrudService.GetUsersAsync(searchQuery, page, pageSize, sortBy, sortOrder);

@@ -53,7 +53,7 @@ namespace PizzaShopPresentation.Controllers
 
             try
             {
-         
+
                 var (token, expireHours) = await _userService.ValidateUserAsync(model);
 
                 // Handle "Remember Me" functionality with cookies
