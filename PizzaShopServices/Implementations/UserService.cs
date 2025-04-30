@@ -38,7 +38,7 @@ namespace PizzaShopServices.Implementations
 
             if (user.Status != true)
             {
-                throw new Exception("User is inactive .");
+                throw new Exception("Invalid Username or Password .");
             }
 
             // Create JWT token

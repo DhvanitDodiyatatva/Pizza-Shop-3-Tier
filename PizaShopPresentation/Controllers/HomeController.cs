@@ -156,7 +156,7 @@ namespace PizzaShopPresentation.Controllers
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", ex.Message);
+                TempData["ErrorMessage"] = ex.Message; 
                 return View(model);
             }
         }
