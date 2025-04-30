@@ -400,14 +400,14 @@
 
 
 
-        $('#item-tab-pane #categoriesContainer').on('click', '.category-option', function () {
-            $('#item-tab-pane #categoriesContainer .category-option').removeClass('active');
+        $('#item-tab-pane #categoriesContainer').on('click', '.category-link', function () {
+            $('#item-tab-pane #categoriesContainer .category-link').removeClass('active');
             $(this).addClass('active');
 
         });
 
-        $('#modifier-tab-pane #ModifierGroupList').on('click', '.category-option', function () {
-            $('#modifier-tab-pane #ModifierGroupList .category-option').removeClass('active');
+        $('#modifier-tab-pane #ModifierGroupList').on('click', '.ModifierGroup-link', function () {
+            $('#modifier-tab-pane #ModifierGroupList .ModifierGroup-link').removeClass('active');
             $(this).addClass('active');
 
         });
@@ -1450,10 +1450,16 @@
 </script>
 
 <style>
-    .category-option.active {
-        background-color: rgb(119, 163, 209);
-        color: white;
-        border-radius: 5px;
+    .ModifierGroup-link.active {
+        color: rgb(63, 137, 216);
+        font-size: 1.2rem;
+        font-weight: 700;
+    }
+
+    .category-link.active {
+        color: rgb(63, 137, 216);
+        font-size: 1.2rem;
+        font-weight: 700;
     }
 
     .category-option {

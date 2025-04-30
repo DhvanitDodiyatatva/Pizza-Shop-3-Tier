@@ -72,7 +72,8 @@ namespace PizzaShopServices.Implementations
                     Email = u.Email,
                     Phone = u.Phone,
                     Role = u.Role,
-                    Status = u.Status
+                    Status = u.Status,
+                    ProfileImage = u.ProfileImage
                 })
                 .ToListAsync();
 
@@ -148,6 +149,38 @@ namespace PizzaShopServices.Implementations
             await _userRepository.UpdateUserAsync(user);
         }
 
+        private async Task<string?> UploadFile(IFormFile file, string userName)
+        {
+            try
+            {
+                if (file != null && file.Length > 0)
+                {
+                    string uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/uploadimages");
+                    if (!Directory.Exists(uploadFolder))
+                    {
+                        Directory.CreateDirectory(uploadFolder);
+                    }
+
+                    string fileExtension = Path.GetExtension(file.FileName);
+                    string fileName = $"{userName}_{Guid.NewGuid()}{fileExtension}";
+                    string filePath = Path.Combine(uploadFolder, fileName);
+
+                    using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(fileStream);
+                    }
+
+                    return Path.Combine("/images/uploadimages", fileName).Replace("\\", "/");
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return null;
+        }
+
         public async Task<(bool Success, string Message)> AddNewUserAsync(AddEditUserVM model)
         {
             if (await _userRepository.UserExistsAsync(model.Username, model.Email))
@@ -155,7 +188,17 @@ namespace PizzaShopServices.Implementations
                 throw new Exception("Username or Email already exists.");
             }
 
-            String temporaryPassword = model.Password;
+            string temporaryPassword = model.Password;
+            string? profilePath = null;
+
+            if (model.ImageFile != null && model.ImageFile.Length > 0) // Changed to ImageFile
+            {
+                profilePath = await UploadFile(model.ImageFile, model.Username);
+                if (profilePath == null)
+                {
+                    return (false, "Failed to upload profile image.");
+                }
+            }
 
             var newUser = new User
             {
@@ -171,18 +214,14 @@ namespace PizzaShopServices.Implementations
                 State = model.State,
                 Country = model.Country,
                 Zipcode = model.Zipcode,
-                ProfileImage = model.ProfileImage,
+                ProfileImage = profilePath, // Use the uploaded file path
                 CreatedAt = DateTime.Now,
                 Status = true
             };
 
-
-
-
             try
             {
                 await _userRepository.AddUserAsync(newUser);
-                // Send an email with the username and temporary password.
                 await _emailService.SendEmailAsync(newUser.Email, newUser.Username, temporaryPassword);
                 return (true, "User added successfully.");
             }
@@ -190,7 +229,6 @@ namespace PizzaShopServices.Implementations
             {
                 return (false, "Failed to add user: " + ex.Message);
             }
-
         }
 
         public async Task<AddEditUserVM> GetUserForEditAsync(int id)
@@ -204,7 +242,7 @@ namespace PizzaShopServices.Implementations
             return new AddEditUserVM
             {
                 Id = user.Id,
-                ProfileImage = string.IsNullOrEmpty(user.ProfileImage) ? "/images/default-pfp.png" : user.ProfileImage,
+                ProfileImage = string.IsNullOrEmpty(user.ProfileImage) ? "/images/default-pfp.png" : user.ProfileImage, // Set the existing image path
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Username = user.Username,
@@ -220,7 +258,7 @@ namespace PizzaShopServices.Implementations
             };
         }
 
-        public async Task UpdateUserAsync(AddEditUserVM model, IFormFile ProfileImage, string host)
+        public async Task UpdateUserAsync(AddEditUserVM model, IFormFile ImageFile, string host)
         {
             var user = await _userRepository.GetUserByIdAsync(model.Id);
             if (user == null)
@@ -240,26 +278,25 @@ namespace PizzaShopServices.Implementations
             user.Status = model.Status;
             user.Role = model.Role;
 
-            if (ProfileImage != null && ProfileImage.Length > 0)
+            if (model.RemoveImage && !string.IsNullOrEmpty(user.ProfileImage))
             {
-                var fileNameWithoutExt = Path.GetFileNameWithoutExtension(ProfileImage.FileName);
-                var extension = Path.GetExtension(ProfileImage.FileName);
-                var uniqueFileName = $"{fileNameWithoutExt}_{Guid.NewGuid()}{extension}";
-                var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
-
-                if (!Directory.Exists(uploadPath))
+                string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", user.ProfileImage.TrimStart('/'));
+                if (File.Exists(filePath))
                 {
-                    Directory.CreateDirectory(uploadPath);
+                    File.Delete(filePath);
                 }
-
-                var filePath = Path.Combine(uploadPath, uniqueFileName);
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await ProfileImage.CopyToAsync(stream);
-                }
-
-                user.ProfileImage = "/images/" + uniqueFileName;
+                user.ProfileImage = null;
             }
+            else if (ImageFile != null && ImageFile.Length > 0)
+            {
+                string? profilePath = await UploadFile(ImageFile, model.Username);
+                if (profilePath == null)
+                {
+                    throw new Exception("Failed to upload profile image.");
+                }
+                user.ProfileImage = profilePath; // Update with new image path
+            }
+            // If neither RemoveImage nor ImageFile is provided, retain existing ProfileImage
 
             await _userRepository.UpdateUserAsync(user);
         }

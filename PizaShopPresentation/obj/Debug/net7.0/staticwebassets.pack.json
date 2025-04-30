@@ -185,6 +185,14 @@
       "PackagePath": "staticwebassets\\images\\transperent-pizza.png"
     },
     {
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\Dhvanit@123_eada0160-566f-4e3a-a336-a60f464e45a2.jpg",
+      "PackagePath": "staticwebassets\\images\\uploadimages\\Dhvanit@123_eada0160-566f-4e3a-a336-a60f464e45a2.jpg"
+    },
+    {
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\jryjryjyjrds_38a9fc01-a752-4a7e-8368-03fb0071cb38.png",
+      "PackagePath": "staticwebassets\\images\\uploadimages\\jryjryjyjrds_38a9fc01-a752-4a7e-8368-03fb0071cb38.png"
+    },
+    {
       "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\waitingOA.png",
       "PackagePath": "staticwebassets\\images\\waitingOA.png"
     },

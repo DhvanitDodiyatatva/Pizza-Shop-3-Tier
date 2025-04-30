@@ -10,5 +10,7 @@ public class UserList
     public string Role { get; set; } = null!;
     public bool Status { get; set; }
 
+    public string? ProfileImage { get; set; }
+
     public bool IsDeleted { get; set; } = false;
 }

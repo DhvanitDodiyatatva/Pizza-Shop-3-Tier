@@ -94,8 +94,9 @@
           {
             <tr data-email="@user.Email">
               <td scope="row" class="d-flex align-items-center py-3 text-nowrap">
-                <img src="~/images/Default_pfp.svg.png" alt="default-pfp"
-                  style="max-height: 30px; aspect-ratio: 1; margin-right: 2%;" />
+                <img src="@(!string.IsNullOrEmpty(user.ProfileImage) ? user.ProfileImage : "/images/Default_pfp.svg.png")"
+                  alt="@user.FirstName @user.LastName profile image"
+                  style="max-height: 30px; aspect-ratio: 1; margin-right: 2%; border-radius: 50%; object-fit: cover;" />
                 @user.FirstName @user.LastName
               </td>
               <td class="py-3 text-nowrap">@user.Email</td>

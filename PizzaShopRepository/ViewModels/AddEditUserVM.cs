@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 namespace PizzaShopRepository.ViewModels;
 
 
@@ -57,7 +58,9 @@ public class AddEditUserVM
 
     public string? ProfileImage { get; set; }
 
+    public IFormFile? ImageFile { get; set; }
 
+    public bool RemoveImage { get; set; }
 
     public bool Status { get; set; }
 }

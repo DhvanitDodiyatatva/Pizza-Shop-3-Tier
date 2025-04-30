@@ -199,11 +199,11 @@ namespace PizzaShopPresentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateUser([Bind("Id,FirstName,LastName,Username,Phone,Country,State,City,Address,Zipcode,Status,Role")] AddEditUserVM model, IFormFile ProfileImg)
+        public async Task<IActionResult> UpdateUser([Bind("Id,FirstName,LastName,Username,Phone,Country,State,City,Address,Zipcode,Status,Role,ProfileImage,RemoveImage")] AddEditUserVM model, IFormFile ImageFile)
         {
             try
             {
-                await _userCrudService.UpdateUserAsync(model, ProfileImg, HttpContext.Request.Host.Value);
+                await _userCrudService.UpdateUserAsync(model, ImageFile, HttpContext.Request.Host.Value);
                 TempData["SuccessMessage"] = "Profile updated successfully!";
             }
             catch (Exception ex)
