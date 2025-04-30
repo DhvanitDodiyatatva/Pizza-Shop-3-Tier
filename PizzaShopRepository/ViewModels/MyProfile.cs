@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace PizzaShopRepository.ViewModels;
 
@@ -46,4 +47,8 @@ public partial class MyProfile
     [MaxLength(6, ErrorMessage = "Zipcode cannot exceed 6 characters.")]
     [MinLength(6, ErrorMessage = "Zipcode must be at least 6 characters.")]
     public string? Zipcode { get; set; }
+
+    public IFormFile? ImageFile { get; set; }
+
+    public bool RemoveImage { get; set; }
 }

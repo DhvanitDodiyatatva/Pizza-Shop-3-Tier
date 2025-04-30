@@ -114,6 +114,7 @@ namespace PizzaShopServices.Implementations
                 throw new Exception("User not found.");
             }
 
+            // Update user fields
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;
             user.Username = model.Username;
@@ -123,6 +124,39 @@ namespace PizzaShopServices.Implementations
             user.City = model.City;
             user.Address = model.Address;
             user.Zipcode = model.Zipcode;
+
+            // Handle profile image
+            if (model.RemoveImage && !string.IsNullOrEmpty(user.ProfileImage))
+            {
+                // Delete the existing image file
+                string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", user.ProfileImage.TrimStart('/'));
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+                user.ProfileImage = null; // Clear the image URL in the database
+            }
+            else if (model.ImageFile != null && model.ImageFile.Length > 0)
+            {
+                // Delete the old image if it exists
+                if (!string.IsNullOrEmpty(user.ProfileImage))
+                {
+                    string oldFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", user.ProfileImage.TrimStart('/'));
+                    if (File.Exists(oldFilePath))
+                    {
+                        File.Delete(oldFilePath);
+                    }
+                }
+
+                // Upload the new image
+                string? profilePath = await UploadFile(model.ImageFile, user.Username);
+                if (profilePath == null)
+                {
+                    throw new Exception("Failed to upload profile image.");
+                }
+                user.ProfileImage = profilePath; // Update the database with the new image URL
+            }
+            // If neither RemoveImage nor ImageFile is provided, retain the existing ProfileImage
 
             await _userRepository.UpdateUserAsync(user);
         }

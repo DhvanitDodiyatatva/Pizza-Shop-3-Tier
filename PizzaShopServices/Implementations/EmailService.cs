@@ -11,6 +11,8 @@ namespace PizzaShopServices.Implementations
     {
         private readonly IUserRepository _userRepository;
 
+        private readonly string _logoPath = Path.Combine(Directory.GetCurrentDirectory(), "images", "logos", "pizzashop_logo.png");
+
         public EmailService(IUserRepository userRepository)
         {
             _userRepository = userRepository;
@@ -85,7 +87,7 @@ namespace PizzaShopServices.Implementations
                     <body>
                         <div class='container'>
                             <div class='header'>
-                                <img src='https://www.yoursite.com/images/logos/pizzashop_logo.png' alt='logo' style='max-height: 120px; max-width: 120px;'>
+                                <img src='/images/logos/pizzashop_logo.png' alt='logo' style='max-height: 120px; max-width: 120px;'>
                                 <h1>PIZZASHOP</h1>
                             </div>
                             <div class='content'>
