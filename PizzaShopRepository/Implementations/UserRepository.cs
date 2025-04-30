@@ -47,5 +47,7 @@ namespace PizzaShopRepository.Implementations
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
         }
+
+        
     }
 }

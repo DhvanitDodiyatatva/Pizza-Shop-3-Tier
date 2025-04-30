@@ -14,7 +14,7 @@ namespace PizzaShopServices.Interfaces
         Task ChangePasswordAsync(string email, ChangePassword model);
         Task<(bool Success, string Message)> AddNewUserAsync(AddEditUserVM model);
         Task<AddEditUserVM> GetUserForEditAsync(int id);
-        Task UpdateUserAsync(AddEditUserVM model, IFormFile profileImg, string host);
+        Task<(bool Success, string Message)> UpdateUserAsync(AddEditUserVM model, IFormFile profileImg, string host);
         Task SoftDeleteUserAsync(int id);
 
     }

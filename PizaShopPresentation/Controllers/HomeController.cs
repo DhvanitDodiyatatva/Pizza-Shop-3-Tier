@@ -156,7 +156,7 @@ namespace PizzaShopPresentation.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = ex.Message; 
+                TempData["ErrorMessage"] = ex.Message;
                 return View(model);
             }
         }
@@ -183,7 +183,7 @@ namespace PizzaShopPresentation.Controllers
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", ex.Message);
+                TempData["ErrorMessage"] = ex.Message;
                 return View(model);
             }
         }
@@ -205,11 +205,12 @@ namespace PizzaShopPresentation.Controllers
             try
             {
                 await _userCrudService.UpdateUserAsync(model, ImageFile, HttpContext.Request.Host.Value);
-                TempData["SuccessMessage"] = "Profile updated successfully!";
+                TempData["SuccessMessage"] = "User Edited successfully!";
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Failed to update profile: " + ex.Message;
+                TempData["ErrorMessage"] = "Failed to Edit User: " + ex.Message;
+
             }
 
             return RedirectToAction("Users", new { id = model.Id });

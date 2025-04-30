@@ -292,12 +292,17 @@ namespace PizzaShopServices.Implementations
             };
         }
 
-        public async Task UpdateUserAsync(AddEditUserVM model, IFormFile ImageFile, string host)
+        public async Task<(bool Success, string Message)> UpdateUserAsync(AddEditUserVM model, IFormFile ImageFile, string host)
         {
             var user = await _userRepository.GetUserByIdAsync(model.Id);
             if (user == null)
             {
                 throw new Exception("User not found.");
+            }
+
+            if (user.Username != model.Username && await _userRepository.UserExistsAsync(model.Username, null))
+            {
+                throw new Exception("Username is already taken.");
             }
 
             user.FirstName = model.FirstName;
@@ -332,7 +337,19 @@ namespace PizzaShopServices.Implementations
             }
             // If neither RemoveImage nor ImageFile is provided, retain existing ProfileImage
 
-            await _userRepository.UpdateUserAsync(user);
+
+
+            try
+            {
+                await _userRepository.UpdateUserAsync(user);
+                return (true, "User Edited successfully.");
+            }
+            catch (Exception ex)
+            {
+                return (false, "Failed to add user: " + ex.Message);
+            }
+
+
         }
 
         public async Task SoftDeleteUserAsync(int id)
