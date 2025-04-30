@@ -25,7 +25,8 @@
                     </div>
                 </a>
                 <a asp-area="" asp-controller="Home" asp-action="Dashboard">
-                    <div class="row sidebar-item my-3 active">
+                    <div
+                        class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Dashboard" ? "active" : "")">
                         <div class="d-flex align-items-center" style="gap: 10px">
                             <img src="~/images/dashboard/dashboard.png" alt="dashboard-icon"
                                 style="height: 20px; width: 20px;">
@@ -34,7 +35,8 @@
                     </div>
                 </a>
                 <a asp-area="" asp-controller="Home" asp-action="Users">
-                    <div class="row sidebar-item my-3">
+                    <div
+                        class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Users" ? "active" : "")">
                         <div class="d-flex align-items-center" style="gap: 10px">
                             <img src="~/images/dashboard/users.png" alt="users-icon" style="height: 20px; width: 20px;">
                             <span>Users</span>
@@ -42,7 +44,8 @@
                     </div>
                 </a>
                 <a asp-area="" asp-controller="Home" asp-action="Roles">
-                    <div class="row sidebar-item my-3">
+                    <div
+                        class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Roles" ? "active" : "")">
                         <div class="d-flex align-items-center" style="gap: 10px">
                             <img src="~/images/dashboard/rolesAndPermission.png" alt="rolesAndPermission-icon"
                                 style="height: 20px; width: 20px;">
@@ -51,7 +54,8 @@
                     </div>
                 </a>
                 <a asp-controller="Menu" asp-action="Index">
-                    <div class="row sidebar-item my-3">
+                    <div
+                        class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Menu" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
                         <div class="d-flex align-items-center" style="gap: 10px">
                             <img src="~/images/dashboard/menu.png" alt="menu-icon" style="height: 20px; width: 20px;">
                             <span>Menu</span>
@@ -59,7 +63,8 @@
                     </div>
                 </a>
                 <a asp-controller="TableAndSection" asp-action="Index">
-                    <div class="row sidebar-item my-3">
+                    <div
+                        class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "TableAndSection" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
                         <div class="d-flex align-items-center" style="gap: 10px">
                             <img src="~/images/dashboard/tableandSection.png" alt="tables-icon"
                                 style="height: 20px; width: 20px;">
@@ -68,7 +73,8 @@
                     </div>
                 </a>
                 <a asp-controller="TaxFee" asp-action="TaxesFees">
-                    <div class="row sidebar-item my-3">
+                    <div
+                        class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "TaxFee" && ViewContext.RouteData.Values["Action"]?.ToString() == "TaxesFees" ? "active" : "")">
                         <div class="d-flex align-items-center" style="gap: 10px">
                             <img src="~/images/dashboard/tax.png" alt="tax-icon" style="height: 20px; width: 20px;">
                             <span>Taxes and Fees</span>
@@ -76,7 +82,8 @@
                     </div>
                 </a>
                 <a asp-controller="Orders" asp-action="Index">
-                    <div class="row sidebar-item my-3">
+                    <div
+                        class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Orders" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
                         <div class="d-flex align-items-center" style="gap: 10px">
                             <img src="~/images/dashboard/orders.png" alt="orders-icon"
                                 style="height: 20px; width: 20px;">
@@ -85,7 +92,8 @@
                     </div>
                 </a>
                 <a asp-controller="Customer" asp-action="Index">
-                    <div class="row sidebar-item my-3">
+                    <div
+                        class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Customer" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
                         <div class="d-flex align-items-center" style="gap: 10px">
                             <img src="~/images/dashboard/customer.png" alt="customer-icon"
                                 style="height: 20px; width: 20px;">
@@ -197,7 +205,8 @@
                         <div class="offcanvas-body">
                             <div class="sidebar bg-white">
                                 <a asp-area="" asp-controller="Home" asp-action="Dashboard">
-                                    <div class="row sidebar-item my-3 active">
+                                    <div
+                                        class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Dashboard" ? "active" : "")">
                                         <div class="d-flex align-items-center" style="gap: 10px">
                                             <img src="~/images/dashboard/dashboard.png" alt="dashboard-icon"
                                                 style="height: 20px; width: 20px;">
@@ -206,17 +215,18 @@
                                     </div>
                                 </a>
                                 <a asp-area="" asp-controller="Home" asp-action="Users">
-                                    <div class="row sidebar-item my-3">
+                                    <div
+                                        class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Users" ? "active" : "")">
                                         <div class="d-flex align-items-center" style="gap: 10px">
                                             <img src="~/images/dashboard/users.png" alt="users-icon"
                                                 style="height: 20px; width: 20px;">
                                             <span>Users</span>
-
                                         </div>
                                     </div>
                                 </a>
                                 <a asp-area="" asp-controller="Home" asp-action="Roles">
-                                    <div class="row sidebar-item my-3">
+                                    <div
+                                        class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Roles" ? "active" : "")">
                                         <div class="d-flex align-items-center" style="gap: 10px">
                                             <img src="~/images/dashboard/rolesAndPermission.png"
                                                 alt="rolesAndPermission-icon" style="height: 20px; width: 20px;">
@@ -225,7 +235,8 @@
                                     </div>
                                 </a>
                                 <a asp-controller="Menu" asp-action="Index">
-                                    <div class="row sidebar-item my-3">
+                                    <div
+                                        class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Menu" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
                                         <div class="d-flex align-items-center" style="gap: 10px">
                                             <img src="~/images/dashboard/menu.png" alt="menu-icon"
                                                 style="height: 20px; width: 20px;">
@@ -234,7 +245,8 @@
                                     </div>
                                 </a>
                                 <a asp-controller="TableAndSection" asp-action="Index">
-                                    <div class="row sidebar-item my-3">
+                                    <div
+                                        class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "TableAndSection" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
                                         <div class="d-flex align-items-center" style="gap: 10px">
                                             <img src="~/images/dashboard/tableandSection.png" alt="tables-icon"
                                                 style="height: 20px; width: 20px;">
@@ -243,7 +255,8 @@
                                     </div>
                                 </a>
                                 <a asp-controller="TaxFee" asp-action="TaxesFees">
-                                    <div class="row sidebar-item my-3">
+                                    <div
+                                        class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "TaxFee" && ViewContext.RouteData.Values["Action"]?.ToString() == "TaxesFees" ? "active" : "")">
                                         <div class="d-flex align-items-center" style="gap: 10px">
                                             <img src="~/images/dashboard/tax.png" alt="tax-icon"
                                                 style="height: 20px; width: 20px;">
@@ -252,7 +265,8 @@
                                     </div>
                                 </a>
                                 <a asp-controller="Orders" asp-action="Index">
-                                    <div class="row sidebar-item my-3">
+                                    <div
+                                        class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Orders" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
                                         <div class="d-flex align-items-center" style="gap: 10px">
                                             <img src="~/images/dashboard/orders.png" alt="orders-icon"
                                                 style="height: 20px; width: 20px;">
@@ -261,7 +275,8 @@
                                     </div>
                                 </a>
                                 <a asp-controller="Customer" asp-action="Index">
-                                    <div class="row sidebar-item my-3">
+                                    <div
+                                        class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Customer" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
                                         <div class="d-flex align-items-center" style="gap: 10px">
                                             <img src="~/images/dashboard/customer.png" alt="customer-icon"
                                                 style="height: 20px; width: 20px;">
@@ -309,7 +324,7 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        @* document.addEventListener("DOMContentLoaded", function () {
             var sidebarItems = document.querySelectorAll('.sidebar-item');
 
 
@@ -333,7 +348,7 @@
                     sessionStorage.setItem('activeSidebarIndex', index);
                 });
             });
-        });
+        }); *@
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

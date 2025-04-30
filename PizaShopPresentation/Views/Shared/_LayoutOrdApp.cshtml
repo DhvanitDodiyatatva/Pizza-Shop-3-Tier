@@ -36,22 +36,25 @@
                                 <div class="d-flex justify-content-end align-items-center">
                                     <!-- Navigation Pills -->
                                     <div class="d-none d-md-flex align-items-center me-3">
-                                        <div class="rounded-pill px-2 me-2 border border-2 border-white sidebar-item2">
+                                        <div
+                                            class="rounded-pill px-2 me-2 border border-2 border-white sidebar-item2 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "OrderApp" && ViewContext.RouteData.Values["Action"]?.ToString() == "Kot" ? "active" : "")">
                                             <img src="~/images/Kot.png" class="ps-1" style="height: 20px; width:20px">
                                             <a asp-controller="OrderApp" asp-action="Kot">KOT</a>
                                         </div>
-                                        <div class="rounded-pill px-2 me-2 border border-2 border-white sidebar-item2">
+                                        <div
+                                            class="rounded-pill px-2 me-2 border border-2 border-white sidebar-item2 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "OrderApp" && ViewContext.RouteData.Values["Action"]?.ToString() == "WaitingList" ? "active" : "")">
                                             <img src="~/images/waitingOA.png" class="ps-1"
                                                 style="height: 20px; width:20px">
                                             <a asp-controller="OrderApp" asp-action="WaitingList">Waiting List</a>
                                         </div>
                                         <div
-                                            class="rounded-pill px-2 me-2 border border-2 border-white sidebar-item2 active">
+                                            class="rounded-pill px-2 me-2 border border-2 border-white sidebar-item2 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "OrderApp" && ViewContext.RouteData.Values["Action"]?.ToString() == "Table" ? "active" : "")">
                                             <img src="~/images/tableOA.png" class="ps-1"
                                                 style="height: 20px; width:20px">
                                             <a asp-controller="OrderApp" asp-action="Table">Tables</a>
                                         </div>
-                                        <div class="rounded-pill px-2 me-2 border border-2 border-white sidebar-item2">
+                                        <div
+                                            class="rounded-pill px-2 me-2 border border-2 border-white sidebar-item2 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "OrderApp" && ViewContext.RouteData.Values["Action"]?.ToString() == "Menu" ? "active" : "")">
                                             <img src="~/images/menuOA.png" class="ps-1"
                                                 style="height: 20px; width:20px">
                                             <a asp-controller="OrderApp" asp-action="Menu">Menu</a>
@@ -94,19 +97,23 @@
                         <div class="collapse d-md-none" id="mobileMenu">
                             <div class="pt-3">
                                 <div class="d-flex flex-column gap-2">
-                                    <div class="rounded-pill px-2 border border-2 border-white sidebar-item2">
+                                    <div
+                                        class="rounded-pill px-2 border border-2 border-white sidebar-item2 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "OrderApp" && ViewContext.RouteData.Values["Action"]?.ToString() == "Kot" ? "active" : "")">
                                         <img src="~/images/Kot.png" class="ps-1" style="height: 20px; width:20px">
                                         <a asp-controller="OrderApp" asp-action="Kot">KOT</a>
                                     </div>
-                                    <div class="rounded-pill px-2 border border-2 border-white sidebar-item2">
+                                    <div
+                                        class="rounded-pill px-2 border border-2 border-white sidebar-item2 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "OrderApp" && ViewContext.RouteData.Values["Action"]?.ToString() == "WaitingList" ? "active" : "")">
                                         <img src="~/images/waitingOA.png" class="ps-1" style="height: 20px; width:20px">
                                         <a asp-controller="OrderApp" asp-action="WaitingList">Waiting List</a>
                                     </div>
-                                    <div class="rounded-pill px-2 border border-2 border-white sidebar-item2">
+                                    <div
+                                        class="rounded-pill px-2 border border-2 border-white sidebar-item2 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "OrderApp" && ViewContext.RouteData.Values["Action"]?.ToString() == "Table" ? "active" : "")">
                                         <img src="~/images/tableOA.png" class="ps-1" style="height: 20px; width:20px">
                                         <a asp-controller="OrderApp" asp-action="Table">Tables</a>
                                     </div>
-                                    <div class="rounded-pill px-2 border border-2 border-white sidebar-item2">
+                                    <div
+                                        class="rounded-pill px-2 border border-2 border-white sidebar-item2 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "OrderApp" && ViewContext.RouteData.Values["Action"]?.ToString() == "Menu" ? "active" : "")">
                                         <img src="~/images/menuOA.png" class="ps-1" style="height: 20px; width:20px">
                                         <a asp-controller="OrderApp" asp-action="Menu">Menu</a>
                                     </div>
@@ -155,7 +162,7 @@
 
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        @* document.addEventListener("DOMContentLoaded", function () {
             var sidebarItems = document.querySelectorAll('.sidebar-item2');
 
 
@@ -179,7 +186,7 @@
                     sessionStorage.setItem('activeSidebarIndex', index);
                 });
             });
-        });
+        }); *@
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
