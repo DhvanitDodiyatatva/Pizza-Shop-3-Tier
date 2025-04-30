@@ -87,7 +87,20 @@
                 </table>
             </div>
             <div class="d-grid gap-2 d-flex justify-content-sm-end flex-sm-row flex-column">
-                <button class="btn btn-main text-white me-md-2" type="button" id="saveButton">Save</button>
+                @if (User.IsInRole("super_admin"))
+                {
+                    @if (Model.RoleName != "super_admin")
+                    {
+                        <button class="btn btn-main text-white me-md-2" type="button" id="saveButton">Save</button>
+                    }
+                }
+                else if (User.IsInRole("account_manager"))
+                {
+                    @if (Model.RoleName == "chef")
+                    {
+                        <button class="btn btn-main text-white me-md-2" type="button" id="saveButton">Save</button>
+                    }
+                }
                 <a asp-controller="Home" asp-action="Roles" class="btn btn-outline">Cancel</a>
             </div>
         </div>
