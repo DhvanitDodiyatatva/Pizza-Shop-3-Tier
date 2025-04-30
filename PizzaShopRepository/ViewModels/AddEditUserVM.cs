@@ -42,12 +42,13 @@ public class AddEditUserVM
     [MaxLength(100, ErrorMessage = "Address cannot exceed 100 characters.")]
     public string? Address { get; set; }
 
-
+    [Required(ErrorMessage = "City is required.")]
     public string? City { get; set; }
 
+    [Required(ErrorMessage = "State is required.")]
     public string? State { get; set; }
 
-
+    [Required(ErrorMessage = "Country is required.")]
     public string? Country { get; set; }
 
     [MaxLength(6, ErrorMessage = "Zipcode cannot exceed 6 characters.")]

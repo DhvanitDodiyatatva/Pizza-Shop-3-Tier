@@ -96,10 +96,10 @@
             </div>
 
             <!-- Main Content -->
-            <div class="col-xl-10 col-lg-9 col-md-12 col-12">
+            <div class="col-xl-10 col-lg-9 col-md-12 col-12 ">
                 <!-- Header -->
                 <div
-                    class="header-desktop position-sticky top-0 d-flex align-items-center justify-content-end p-3 d-none d-md-none d-lg-block w-100 position-relative z-2">
+                    class="header-desktop position-sticky top-0 d-flex align-items-center justify-content-end p-3 d-none d-md-none d-lg-block w-100 position-relative z-3">
                     @if (User.IsInRole("account_manager"))
                     {
                         <div class="OrdApp position-absolute">
@@ -159,24 +159,26 @@
                             <img src="~/images/Default_pfp.svg.png" alt="default-pfp"
                                 style="max-height: 40px; aspect-ratio: 1" />
                         </button>
+
+                        <!-- Dropdown Menu -->
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" asp-area="" asp-controller="Home" asp-action="MyProfile">My
+                                Profile</a>
+                            <a class="dropdown-item" asp-controller="Home" asp-action="ChangePassword">Change
+                                Password</a>
+
+                            <!-- Button trigger modal -->
+                            <button type="button" class="dropdown-item" data-bs-toggle="modal"
+                                data-bs-target="#exampleModalLogOut">
+                                Logout
+                            </button>
+
+
+                        </div>
                     </div>
 
 
-                    <!-- Dropdown Menu -->
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" asp-area="" asp-controller="Home" asp-action="MyProfile">My
-                            Profile</a>
-                        <a class="dropdown-item" asp-controller="Home" asp-action="ChangePassword">Change
-                            Password</a>
 
-                        <!-- Button trigger modal -->
-                        <button type="button" class="dropdown-item" data-bs-toggle="modal"
-                            data-bs-target="#exampleModalLogOut">
-                            Logout
-                        </button>
-
-
-                    </div>
 
 
                     <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample"

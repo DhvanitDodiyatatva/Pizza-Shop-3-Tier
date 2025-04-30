@@ -16,7 +16,21 @@
         @foreach (var role in Model)
         {
           <tr>
-            <td class="py-3" scope="row">@role.Name</td>
+            <td class="py-3" scope="row">
+
+              @if (@role.Name == "super_admin")
+              {
+                <span>Super Admin</span>
+              }
+              else if (@role.Name == "account_manager")
+              {
+                <span>Account Manager</span>
+              }
+              else if (@role.Name == "chef")
+              {
+                <span>Chef</span>
+              }
+            </td>
             <td class="d-flex justify-content-end py-3">
               <a asp-controller="Home" asp-action="Permissions" asp-route-roleId="@role.Id"
                 class="text-decoration-none text-black">

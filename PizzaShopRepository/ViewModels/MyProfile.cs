@@ -7,12 +7,16 @@ public partial class MyProfile
     public int Id { get; set; }
 
     [Required(ErrorMessage = "First name is required.")]
+    [MaxLength(50, ErrorMessage = "First Name cannot exceed 50 characters.")]
+
     public string FirstName { get; set; } = null!;
 
     [Required(ErrorMessage = "Last name is required.")]
+    [MaxLength(50, ErrorMessage = "Last Name cannot exceed 50 characters.")]
     public string LastName { get; set; } = null!;
 
     [Required(ErrorMessage = "Username is required.")]
+    [MaxLength(50, ErrorMessage = "Username cannot exceed 50 characters.")]
     public string Username { get; set; } = null!;
 
     [Required(ErrorMessage = "Email is required.")]
@@ -29,8 +33,13 @@ public partial class MyProfile
     [MinLength(10, ErrorMessage = "Phone No. must be at least 10 characters.")]
     public string? Phone { get; set; }
 
+    [Required(ErrorMessage = "Country is required.")]
     public string? Country { get; set; }
+
+    [Required(ErrorMessage = "State is required.")]
     public string? State { get; set; }
+
+    [Required(ErrorMessage = "City is required.")]
     public string? City { get; set; }
     public string? Address { get; set; }
 

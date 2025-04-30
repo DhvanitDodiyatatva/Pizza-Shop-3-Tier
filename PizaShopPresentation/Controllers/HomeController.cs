@@ -109,7 +109,7 @@ namespace PizzaShopPresentation.Controllers
                 TempData["ErrorMessage"] = "Failed to update profile.";
             }
 
-            return RedirectToAction("MyProfile");
+            return RedirectToAction("Dashboard");
         }
 
         public IActionResult Logout()
@@ -211,7 +211,7 @@ namespace PizzaShopPresentation.Controllers
                 TempData["ErrorMessage"] = "Failed to update profile: " + ex.Message;
             }
 
-            return RedirectToAction("EditUser", new { id = model.Id });
+            return RedirectToAction("Users", new { id = model.Id });
         }
 
         [HttpPost]

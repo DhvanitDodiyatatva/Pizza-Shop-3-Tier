@@ -76,25 +76,28 @@
                     <div class="col-md-4">
                         <div class="form-floating">
                             <select class="form-select" id="selectCountry" name="Country" asp-for="Country">
-                                <option selected>Select Country</option>
+                                <option value="" selected>Select Country</option>
                             </select>
                             <label asp-for="Country">Country</label>
+                            <span asp-validation-for="Country" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-floating">
                             <select class="form-select" id="selectState" name="State" asp-for="State">
-                                <option selected>Select State</option>
+                                <option value="" selected>Select State</option>
                             </select>
                             <label asp-for="State">State</label>
+                            <span asp-validation-for="State" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-floating">
                             <select class="form-select" id="selectCity" name="City" asp-for="City">
-                                <option selected>Select City</option>
+                                <option value="" selected>Select City</option>
                             </select>
                             <label asp-for="City">City</label>
+                            <span asp-validation-for="City" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-8">
@@ -115,7 +118,7 @@
                 </div>
 
                 <div class="d-flex justify-content-end mt-4">
-                    <button type="submit" class="btn btn-main text-white me-2" >Update</button>
+                    <button type="submit" class="btn btn-main text-white me-2">Update</button>
                     <a type="button" class="btn btn-secondary" asp-action="Dashboard" asp-controller="Home">Cancel</a>
                 </div>
             </form>

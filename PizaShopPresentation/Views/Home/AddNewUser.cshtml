@@ -58,9 +58,16 @@
                 <div class="col-md-6">
 
                     <div class="form-floating">
-                        <input asp-for="Password" class="form-control" placeholder="Password" type="password"
-                            id="passwordInput">
-                        <label asp-for="Password">Password</label>
+                        <div class="d-flex align-items-center justify-content-end position-relative form-floating">
+                            <input asp-for="Password" class="form-control" placeholder="Password" type="password"
+                                id="inputPassword">
+                            <label asp-for="Password">Password</label>
+                            <img src="~/images/icons/passwordhide.png" alt="eye-icon" id="togglePassword"
+                                style="width: 20px; aspect-ratio: 1; cursor: pointer;"
+                                class="me-2 position-absolute rounded-2">
+
+                        </div>
+
                         <span asp-validation-for="Password" class="text-danger"></span>
                         <div id="passwordErrors" class="text-danger">
                             <div id="uppercaseError" class="password-error"></div>
@@ -83,7 +90,7 @@
                 <div class="col-md-4">
                     <div class="form-floating">
                         <select asp-for="Country" class="form-select" id="selectCountry">
-                            <option selected>Select Country</option>
+                            <option value="" selected>Select Country</option>
                         </select>
                         <label asp-for="Country">Country</label>
                         <span asp-validation-for="Country" class="text-danger"></span>
@@ -92,7 +99,7 @@
                 <div class="col-md-4">
                     <div class="form-floating">
                         <select asp-for="State" class="form-select" id="selectState">
-                            <option selected>Select State</option>
+                            <option value="" selected>Select State</option>
                         </select>
                         <label asp-for="State">State</label>
                         <span asp-validation-for="State" class="text-danger"></span>
@@ -101,7 +108,7 @@
                 <div class="col-md-4">
                     <div class="form-floating">
                         <select asp-for="City" class="form-select" id="selectCity">
-                            <option selected>Select City</option>
+                            <option value="" selected>Select City</option>
                         </select>
                         <label asp-for="City">City</label>
                         <span asp-validation-for="City" class="text-danger"></span>
@@ -209,7 +216,7 @@
 
     // Password validation function
     function validatePassword() {
-        const password = document.getElementById("passwordInput").value;
+        const password = document.getElementById("inputPassword").value;
         const uppercaseError = document.getElementById("uppercaseError");
         const lowercaseError = document.getElementById("lowercaseError");
         const digitError = document.getElementById("digitError");
@@ -236,11 +243,11 @@
     }
 
     // Attach event listener to password input
-    document.getElementById("passwordInput").addEventListener("input", validatePassword);
+    document.getElementById("inputPassword").addEventListener("input", validatePassword);
 
     // Run validation on form submission to ensure client-side checks are enforced
     document.querySelector('form').addEventListener('submit', function (event) {
-        const password = document.getElementById("passwordInput").value;
+        const password = document.getElementById("inputPassword").value;
         const hasUppercase = /[A-Z]/.test(password);
         const hasLowercase = /[a-z]/.test(password);
         const hasDigit = /\d/.test(password);
