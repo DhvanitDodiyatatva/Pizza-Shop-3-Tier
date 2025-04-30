@@ -23,6 +23,7 @@ public class OrdersController : Controller
 
     public IActionResult Index()
     {
+        
         return View();
     }
 
@@ -31,6 +32,7 @@ public class OrdersController : Controller
     {
         var viewModel = await _orderService.GetOrdersAsync(searchQuery, statusFilter, timeFilter, fromDate, toDate, sortColumn, sortDirection, page, pageSize);
         return PartialView("_OrderList", viewModel);
+       
     }
 
 
@@ -69,7 +71,7 @@ public class OrdersController : Controller
             var currentRow = 3;
             var currentCol = 2;
 
-            
+
             // Status Label
             worksheet.Cells[currentRow, currentCol, currentRow + 1, currentCol + 1].Merge = true;
             worksheet.Cells[currentRow, currentCol].Value = "Status: ";

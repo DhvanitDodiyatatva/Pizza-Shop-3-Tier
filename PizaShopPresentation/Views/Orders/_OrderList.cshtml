@@ -158,16 +158,16 @@
                     @Model.PageSize
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item"
+                    <li><a class="dropdown-item pageDropdown"
                             href="@Url.Action("GetOrderList", new { searchQuery = Model.SearchQuery, sortColumn = Model.SortColumn, sortDirection = Model.SortDirection, page = Model.CurrentPage, pageSize = 2 })">2</a>
                     </li>
-                    <li><a class="dropdown-item"
+                    <li><a class="dropdown-item pageDropdown"
                             href="@Url.Action("GetOrderList", new { searchQuery = Model.SearchQuery, sortColumn = Model.SortColumn, sortDirection = Model.SortDirection, page = Model.CurrentPage, pageSize = 5 })">5</a>
                     </li>
-                    <li><a class="dropdown-item"
+                    <li><a class="dropdown-item pageDropdown"
                             href="@Url.Action("GetOrderList", new { searchQuery = Model.SearchQuery, sortColumn = Model.SortColumn, sortDirection = Model.SortDirection, page = Model.CurrentPage, pageSize = 8 })">8</a>
                     </li>
-                    <li><a class="dropdown-item"
+                    <li><a class="dropdown-item pageDropdown"
                             href="@Url.Action("GetOrderList", new { searchQuery = Model.SearchQuery, sortColumn = Model.SortColumn, sortDirection = Model.SortDirection, page = Model.CurrentPage, pageSize = 10 })">10</a>
                     </li>
                 </ul>

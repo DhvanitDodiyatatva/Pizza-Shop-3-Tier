@@ -118,8 +118,9 @@
                 loadOrders();
             });
 
-            // Handle sorting and pagination clicks
-            $(document).on('click', '.sort-link, .page-link, .dropdown-item', function (e) {
+            // Handle sorting and pagination clicks pageDropdown
+            $(document).on('click', '.sort-link, .page-link, .pageDropdown', function (e) {
+                debugger;
                 e.preventDefault();
                 var url = $(this).attr('href');
                 if (url) {
@@ -190,6 +191,7 @@
 
 
         function loadOrders(url) {
+            debugger;
             var searchQuery = $('#Search').val();
             var statusFilter = $('#statusFilter').val();
             var timeFilter = $('#timeFilter').val();

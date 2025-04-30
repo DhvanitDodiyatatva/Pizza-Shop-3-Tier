@@ -91,7 +91,7 @@ namespace PizzaShopPresentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateProfile([Bind("FirstName,LastName,Username,Phone,Country,State,City,Address,Zipcode")] MyProfile model)
+        public async Task<IActionResult> UpdateProfile(MyProfile model, IFormFile? ImageFile)
         {
             var email = User.Identity?.Name;
             if (string.IsNullOrEmpty(email))
@@ -101,12 +101,13 @@ namespace PizzaShopPresentation.Controllers
 
             try
             {
+                model.ImageFile = ImageFile; // Bind the uploaded file to the model
                 await _userCrudService.UpdateUserProfileAsync(email, model);
                 TempData["SuccessMessage"] = "Profile updated successfully!";
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Failed to update profile.";
+                TempData["ErrorMessage"] = "Failed to update profile: " + ex.Message;
             }
 
             return RedirectToAction("Dashboard");
