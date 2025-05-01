@@ -106,13 +106,19 @@ namespace PizzaShopServices.Implementations
             };
         }
 
-        public async Task UpdateUserProfileAsync(string email, MyProfile model)
+        public async Task<(bool Success, string Message)> UpdateUserProfileAsync(string email, MyProfile model)
         {
             var user = await _userRepository.GetUserByEmailAsync(email);
             if (user == null)
             {
                 throw new Exception("User not found.");
             }
+
+            if (user.Username != model.Username && await _userRepository.UserExistsAsync(model.Username, null))
+            {
+                throw new Exception("Username is already taken.");
+            }
+
 
             // Update user fields
             user.FirstName = model.FirstName;
@@ -158,7 +164,18 @@ namespace PizzaShopServices.Implementations
             }
             // If neither RemoveImage nor ImageFile is provided, retain the existing ProfileImage
 
-            await _userRepository.UpdateUserAsync(user);
+
+
+
+            try
+            {
+                await _userRepository.UpdateUserAsync(user);
+                return (true, "Profile Edited successfully.");
+            }
+            catch (Exception ex)
+            {
+                return (false, "Failed to Update Profile: " + ex.Message);
+            }
         }
 
         public async Task ChangePasswordAsync(string email, ChangePassword model)

@@ -6,7 +6,7 @@ namespace PizzaShopServices.Interfaces
 {
         public interface IUserService
         {
-                Task<(string Token, double ExpireHours)> ValidateUserAsync(Authenticate model);
+                Task<(string Token, double ExpireHours, bool Success, string Message)> ValidateUserAsync(Authenticate model);
                 Task ResetPasswordAsync(ResetPassword model);
                 Task<User> GetUserByEmailAsync(string email);
         }

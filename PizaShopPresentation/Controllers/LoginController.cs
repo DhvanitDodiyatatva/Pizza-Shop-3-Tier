@@ -54,7 +54,7 @@ namespace PizzaShopPresentation.Controllers
             try
             {
 
-                var (token, expireHours) = await _userService.ValidateUserAsync(model);
+                var (token, expireHours, Success, Message) = await _userService.ValidateUserAsync(model);
 
                 // Handle "Remember Me" functionality with cookies
                 if (RememberMe)
@@ -94,7 +94,7 @@ namespace PizzaShopPresentation.Controllers
             }
             catch (Exception ex)
             {
-                ViewData["ErrorMessage"] = ex.Message;
+                TempData["ErrorMessage"] = ex.Message;
                 return View("Index", model);
             }
         }

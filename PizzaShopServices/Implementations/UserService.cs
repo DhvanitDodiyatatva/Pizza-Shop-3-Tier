@@ -22,7 +22,7 @@ namespace PizzaShopServices.Implementations
             _configuration = configuration;
         }
 
-        public async Task<(string Token, double ExpireHours)> ValidateUserAsync(Authenticate model)
+        public async Task<(string Token, double ExpireHours, bool Success, string Message)> ValidateUserAsync(Authenticate model)
         {
             var user = await _userRepository.GetUserByEmailAsync(model.Email);
             if (user == null)
@@ -62,7 +62,17 @@ namespace PizzaShopServices.Implementations
 
             var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
-            return (tokenString, expireHours);
+            // return ();
+
+            try
+            {
+
+                return (tokenString, expireHours, true, "Profile Edited successfully.");
+            }
+            catch (Exception ex)
+            {
+                return (tokenString, expireHours, false, " " + ex.Message);
+            }
         }
 
         public async Task ResetPasswordAsync(ResetPassword model)

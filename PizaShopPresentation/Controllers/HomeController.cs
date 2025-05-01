@@ -104,13 +104,15 @@ namespace PizzaShopPresentation.Controllers
                 model.ImageFile = ImageFile; // Bind the uploaded file to the model
                 await _userCrudService.UpdateUserProfileAsync(email, model);
                 TempData["SuccessMessage"] = "Profile updated successfully!";
+                return RedirectToAction("Dashboard");
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Failed to update profile: " + ex.Message;
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("MyProfile");
             }
 
-            return RedirectToAction("Dashboard");
+
         }
 
         public IActionResult Logout()
@@ -232,6 +234,8 @@ namespace PizzaShopPresentation.Controllers
             return RedirectToAction("Users");
         }
 
+
+        [CustomAuthorize("RoleAndPermission", PermissionType.View, "super_admin", "account_manager", "chef")]
         public IActionResult Roles()
         {
             var roles = _roleService.GetAllRoles();

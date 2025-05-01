@@ -213,8 +213,8 @@
         </li>
         @for (int i = 1; i <= totalPages; i++)
         {
-          <li class="page-item @(i == currentPage ? "active" : "")">
-            <a class="page-link text-decoration-none text-body"
+          <li class="page-item  @(i == currentPage ? "active" : "")">
+            <a class="page-link  text-decoration-none text-body"
               href="@Url.Action("Users", new { page = i, pageSize, searchQuery = ViewBag.SearchQuery, sortBy = ViewBag.SortBy, sortOrder = ViewBag.SortOrder })">@i</a>
           </li>
         }
@@ -352,7 +352,7 @@
         {
           <text>toastr.error('@TempData["ErrorMessage"]');</text>
       }
-                      });
+                                                          });
   </script>
 }
 
@@ -379,5 +379,13 @@
     align-items: center;
     gap: 2%;
     /* Match the inline style margin-right: 2% */
+  }
+
+  .active>.page-link,
+  .page-link.active {
+    z-index: 3;
+    color: var(--bs-pagination-active-color);
+    background-color: #1f73ae;
+    border-color: #1f73ae;
   }
 </style>

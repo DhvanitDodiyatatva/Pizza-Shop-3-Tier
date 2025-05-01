@@ -7,7 +7,7 @@ using PizzaShopServices.Interfaces;
 namespace PizaShopPresentation.Controllers;
 
 // [CustomAuthorize("super_admin, chef, account_manager")]
-[CustomAuthorize("TableAndSection", PermissionType.View, "super_admin", "account_manager")]
+[CustomAuthorize("TableAndSection", PermissionType.View, "super_admin", "account_manager", "chef")]
 public class TableAndSectionController : Controller
 {
     private readonly ISectionService _sectionService;

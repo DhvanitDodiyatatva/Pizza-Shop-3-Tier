@@ -10,7 +10,7 @@ namespace PizzaShopServices.Interfaces
         // Task<(List<UserList> Users, int TotalUsers)> GetUsersAsync(string searchQuery, int page, int pageSize);
         Task<(List<UserList> Users, int TotalUsers)> GetUsersAsync(string searchQuery, int page, int pageSize, string sortBy, string sortOrder);
         Task<MyProfile> GetUserProfileAsync(string email);
-        Task UpdateUserProfileAsync(string email, MyProfile model);
+        Task<(bool Success, string Message)> UpdateUserProfileAsync(string email, MyProfile model);
         Task ChangePasswordAsync(string email, ChangePassword model);
         Task<(bool Success, string Message)> AddNewUserAsync(AddEditUserVM model);
         Task<AddEditUserVM> GetUserForEditAsync(int id);
