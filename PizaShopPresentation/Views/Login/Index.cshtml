@@ -143,15 +143,15 @@
         </div>
     </div>
     <script>
-        document.getElementById("forgotPass").addEventListener("click", function (event) {
-            event.preventDefault();
-            var email = document.getElementById("inputEmail").value;
-            if (email) {
-                window.location.href = "/Login/ForgotPassword?email=" + encodeURIComponent(email);
-            } else {
-                window.location.href = "/Login/ForgotPassword";
-            }
+        document.querySelectorAll("#forgotPass").forEach(link => {
+            link.addEventListener("click", function (event) {
+                event.preventDefault();
+                const email = document.getElementById("inputEmail")?.value;
+                const url = email ? `/Login/ForgotPassword?email=${encodeURIComponent(email)}` : `/Login/ForgotPassword`;
+                window.location.href = url;
+            });
         });
+
     </script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
