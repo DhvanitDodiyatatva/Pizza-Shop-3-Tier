@@ -27,7 +27,11 @@
         <div class="row my-3">
             <div class="col-12 col-lg-7">
                 <div class="form-floating">
-                    <input type="text" class="form-control w-75" id="roleName" value="@Model.RoleName" disabled>
+                    <input type="text" class="form-control w-75" id="roleName" 
+       value="@(Model.RoleName?.ToLower() == "super_admin" ? "Super Admin" : 
+                Model.RoleName?.ToLower() == "account_manager" ? "Account Manager" : 
+                Model.RoleName?.ToLower() == "chef" ? "Chef" : Model.RoleName)" 
+       disabled>
                     <label for="roleName">Role</label>
                 </div>
             </div>

@@ -120,8 +120,8 @@
 
             // Handle sorting and pagination clicks pageDropdown
             $(document).on('click', '.sort-link, .page-link, .pageDropdown', function (e) {
-                debugger;
-                e.preventDefault();
+                @* debugger; *@
+                    e.preventDefault();
                 var url = $(this).attr('href');
                 if (url) {
                     loadOrders(url);
@@ -191,8 +191,8 @@
 
 
         function loadOrders(url) {
-            debugger;
-            var searchQuery = $('#Search').val();
+            @* debugger; *@
+                                                        var searchQuery = $('#Search').val();
             var statusFilter = $('#statusFilter').val();
             var timeFilter = $('#timeFilter').val();
             var fromDate = $('#fromDate').val();

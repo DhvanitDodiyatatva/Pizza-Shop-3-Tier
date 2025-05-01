@@ -1,5 +1,15 @@
 ﻿@using System.Security.Claims
+@{
+    var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
+    var profileImageUrl = Url.Content("~/images/Default_pfp.svg.png");
+
+    var imageClaim = User.FindFirst("profile_image")?.Value;
+    if (!string.IsNullOrEmpty(imageClaim))
+    {
+        profileImageUrl = imageClaim;
+    }
+}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -124,8 +134,8 @@
 
                         <button class="btn p-0" style="border: none; background: transparent;" data-bs-toggle="dropdown"
                             aria-expanded="false">
-                            <img src="~/images/Default_pfp.svg.png" alt="default-pfp"
-                                style="max-height: 40px; aspect-ratio: 1" />
+                            <img src="@profileImageUrl" alt="default-pfp" style="max-height: 40px; aspect-ratio: 1"
+                                class="rounded-circle" />
                         </button>
 
                         <!-- Dropdown Menu -->
@@ -168,8 +178,8 @@
                         }
                         <button class="btn p-0" style="border: none; background: transparent;" data-bs-toggle="dropdown"
                             aria-expanded="false">
-                            <img src="~/images/Default_pfp.svg.png" alt="default-pfp"
-                                style="max-height: 40px; aspect-ratio: 1" />
+                            <img src="@profileImageUrl" alt="default-pfp" style="max-height: 40px; aspect-ratio: 1"
+                                class="rounded-circle" />
                         </button>
 
                         <!-- Dropdown Menu -->

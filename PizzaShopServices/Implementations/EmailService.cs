@@ -21,6 +21,7 @@ namespace PizzaShopServices.Implementations
         {
 
 
+
             var smtpClient = new SmtpClient("mail.etatvasoft.com")
             {
                 Port = 587,

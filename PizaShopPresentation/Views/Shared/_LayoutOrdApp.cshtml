@@ -1,5 +1,16 @@
 @using System.Security.Claims
 
+@{
+    var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+    var profileImageUrl = Url.Content("~/images/Default_pfp.svg.png");
+
+    var imageClaim = User.FindFirst("profile_image")?.Value;
+    if (!string.IsNullOrEmpty(imageClaim))
+    {
+        profileImageUrl = imageClaim;
+    }
+}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -65,8 +76,8 @@
                                     <div class="dropdown">
                                         <button class="btn p-0" type="button" data-bs-toggle="dropdown"
                                             aria-expanded="false" style="background: transparent; border: none;">
-                                            <img src="~/images/Default_pfp.svg.png" alt="default-pfp"
-                                                style="max-height: 40px; aspect-ratio: 1;" />
+                                            <img src="@profileImageUrl" alt="default-pfp"
+                                                style="max-height: 40px; aspect-ratio: 1;" class="rounded-circle" />
                                         </button>
                                         <div class="dropdown-menu dropdown-menu-end">
                                             <a class="dropdown-item" asp-controller="Home" asp-action="MyProfileOA">My
