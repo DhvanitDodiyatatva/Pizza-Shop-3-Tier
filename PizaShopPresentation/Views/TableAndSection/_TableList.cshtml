@@ -132,7 +132,7 @@ else
                         // Reload items for the current page
                         loadItems(currentCategoryId, currentPage, pageSize);
                     } else {
-                        toastr.error("Failed to delete item: " + response.message);
+                        toastr.error(response.message);
                     }
                 },
                 error: function () {

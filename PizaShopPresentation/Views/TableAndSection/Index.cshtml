@@ -487,11 +487,11 @@
             }).get();
 
             if (selectedIds.length === 0) {
-                alert("Please select at least one item to delete.");
+                toastr.warning("Please select at least one table to delete.");
                 return;
             }
 
-            if (!confirm("Are you sure you want to delete the selected items?")) {
+            if (!confirm("Are you sure you want to delete the selected tables?")) {
                 return;
             }
 
@@ -502,15 +502,17 @@
                 data: JSON.stringify(selectedIds),
                 success: function (response) {
                     if (response.success) {
-                        selectedIds.forEach(id => {
+                        response.deletedIds.forEach(id => {
                             $("tr[data-id='" + id + "']").remove();
                         });
+                        toastr.success(response.message);
+                        loadTables(currentSectionId, currentPage, pageSize); // Refresh table list
                     } else {
-                        alert("Error: " + response.message);
+                        toastr.error(response.message);
                     }
                 },
                 error: function () {
-                    alert("An error occurred while deleting tables.");
+                    toastr.error("An error occurred while deleting tables.");
                 }
             });
         });

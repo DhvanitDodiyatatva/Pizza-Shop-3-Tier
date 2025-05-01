@@ -102,29 +102,15 @@ public class TableAndSectionController : Controller
     [HttpPost]
     public async Task<IActionResult> DeleteTable(int id)
     {
-        try
-        {
-            await _tableService.SoftDeleteTableAsync(id);
-            return Json(new { success = true });
-        }
-        catch (Exception ex)
-        {
-            return Json(new { success = false, message = ex.Message });
-        }
+        var result = await _tableService.SoftDeleteTableAsync(id);
+        return Json(new { success = result.Success, message = result.Message });
     }
 
     [HttpPost]
     public async Task<IActionResult> DeleteTables([FromBody] List<int> ids)
     {
-        try
-        {
-            await _tableService.SoftDeleteTablesAsync(ids);
-            return Json(new { success = true });
-        }
-        catch (Exception ex)
-        {
-            return Json(new { success = false, message = ex.Message });
-        }
+        var result = await _tableService.SoftDeleteTablesAsync(ids);
+        return Json(new { success = result.Success, message = result.Message, deletedIds = result.DeletedIds });
     }
 
     [HttpGet]

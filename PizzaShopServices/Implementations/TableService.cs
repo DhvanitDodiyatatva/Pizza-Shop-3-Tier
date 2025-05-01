@@ -111,21 +111,83 @@ public class TableService : ITableService
 
 
 
-    public async Task SoftDeleteTableAsync(int id)
+    public async Task<(bool Success, string Message)> SoftDeleteTableAsync(int id)
     {
         var table = await _tableRepository.GetTableByIdAsync(id);
         if (table == null)
         {
-            return;
+            return (false, "Table not found.");
+        }
+
+        // Check if the table status is Available
+        if (table.Status != "available")
+        {
+            return (false, "Table cannot be deleted, it is reserved or occupied.");
         }
 
         table.IsDeleted = true;
-        await _tableRepository.UpdateTableAsync(table);
+        try
+        {
+            await _tableRepository.UpdateTableAsync(table);
+            return (true, "Table deleted successfully!");
+        }
+        catch (Exception ex)
+        {
+            var innerException = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+            return (false, $"Failed to delete table: {innerException}");
+        }
     }
 
-    public async Task SoftDeleteTablesAsync(List<int> ids)
+    public async Task<(bool Success, string Message, List<int> DeletedIds)> SoftDeleteTablesAsync(List<int> ids)
     {
-        await _tableRepository.SoftDeleteTablesAsync(ids);
+        if (ids == null || ids.Count == 0)
+        {
+            return (false, "No tables selected for deletion.", new List<int>());
+        }
+
+        var deletedIds = new List<int>();
+        var nonAvailableTableIds = new List<int>();
+
+        foreach (var id in ids)
+        {
+            var table = await _tableRepository.GetTableByIdAsync(id);
+            if (table == null || table.IsDeleted)
+            {
+                continue; // Skip non-existent or already deleted tables
+            }
+
+            if (table.Status != "available")
+            {
+                nonAvailableTableIds.Add(id); // Track non-available tables
+                continue;
+            }
+
+            table.IsDeleted = true;
+            try
+            {
+                await _tableRepository.UpdateTableAsync(table);
+                deletedIds.Add(id);
+            }
+            catch (Exception ex)
+            {
+                var innerException = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+                return (false, $"Failed to delete table {id}: {innerException}", deletedIds);
+            }
+        }
+
+        if (deletedIds.Count == 0)
+        {
+            if (nonAvailableTableIds.Count > 0)
+            {
+                return (false, "Some tables cannot be deleted, because they are reserved or occupied.", deletedIds);
+            }
+            return (false, "No valid tables were deleted.", deletedIds);
+        }
+
+        string message = nonAvailableTableIds.Count > 0
+            ? "Some tables were deleted successfully, but others cannot be deleted because they are reserved or occupied."
+            : "All selected tables were deleted successfully!";
+        return (true, message, deletedIds);
     }
 
 
