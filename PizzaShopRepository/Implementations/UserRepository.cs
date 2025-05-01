@@ -48,6 +48,11 @@ namespace PizzaShopRepository.Implementations
             await _context.SaveChangesAsync();
         }
 
-        
+        public async Task<User?> GetUserByResetTokenAsync(string token)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.ResetPasswordToken == token);
+        }
+
+
     }
 }

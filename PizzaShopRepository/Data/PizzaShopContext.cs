@@ -556,6 +556,12 @@ public partial class PizzaShopContext : DbContext
             entity.Property(e => e.ProfileImage)
                 .HasMaxLength(255)
                 .HasColumnName("profile_image");
+            entity.Property(e => e.ResetPasswordToken)
+                .HasMaxLength(300)
+                .HasColumnName("reset_password_token");
+            entity.Property(e => e.ResetPasswordTokenExpiry)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("reset_password_token_expiry");
             entity.Property(e => e.Role)
                 .HasMaxLength(20)
                 .HasColumnName("role");

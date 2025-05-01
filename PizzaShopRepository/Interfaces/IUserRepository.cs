@@ -12,7 +12,8 @@ namespace PizzaShopRepository.Interfaces
                 Task<bool> UserExistsAsync(string username, string email);
                 Task AddUserAsync(User user);
                 Task UpdateUserAsync(User user);
+                Task<User?> GetUserByResetTokenAsync(string token);
 
-                
+
         }
 }

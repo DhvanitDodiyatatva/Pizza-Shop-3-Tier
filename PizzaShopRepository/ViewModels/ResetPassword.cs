@@ -20,4 +20,7 @@ public class ResetPassword
     [DataType(DataType.Password)]
     [Compare("NewPassword", ErrorMessage = "Passwords do not match.")]
     public string ConfirmPassword { get; set; }
+
+    [Required(ErrorMessage = "Token is Required")]
+    public string Token { get; set; }
 }

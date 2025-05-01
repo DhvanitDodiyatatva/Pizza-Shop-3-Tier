@@ -41,5 +41,9 @@ public partial class User
 
     public bool Status { get; set; }
 
+    public string? ResetPasswordToken { get; set; }
+
+    public DateTime? ResetPasswordTokenExpiry { get; set; }
+
     public virtual ICollection<Item> Items { get; set; } = new List<Item>();
 }

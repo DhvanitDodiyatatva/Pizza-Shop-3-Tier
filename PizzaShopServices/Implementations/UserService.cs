@@ -92,5 +92,15 @@ namespace PizzaShopServices.Implementations
         {
             return await _userRepository.GetUserByEmailAsync(email);
         }
+
+        public async Task<User> GetUserByResetTokenAsync(string token)
+        {
+            return await _userRepository.GetUserByResetTokenAsync(token);
+        }
+
+        public async Task UpdateUserAsync(User user)
+        {
+            await _userRepository.UpdateUserAsync(user);
+        }
     }
 }

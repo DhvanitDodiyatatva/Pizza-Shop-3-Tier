@@ -3,6 +3,7 @@ using PizzaShopRepository.ViewModels;
 using PizzaShopServices.Interfaces;
 using System.Threading.Tasks;
 using PizzaShopServices.Attributes;
+using Microsoft.EntityFrameworkCore;
 
 namespace PizzaShopPresentation.Controllers
 {
@@ -121,16 +122,24 @@ namespace PizzaShopPresentation.Controllers
                 var user = await _userService.GetUserByEmailAsync(email);
                 if (user == null)
                 {
-                    ViewData["ErrorMessage"] = "This email is not registered.";
+                    ViewData["SuccessMessage"] = "If your email is registered, you'll receive a reset link.";
                     return View("ForgotPassword");
                 }
 
-                string resetPasswordUrl = Url.Action("ResetPassword", "Login", new { email = email }, protocol: Request.Scheme);
+                string resetPasswordUrl = Url.Action("ResetPassword", "Login", null, protocol: Request.Scheme);
                 await _emailService.SendResetPasswordEmailAsync(email, resetPasswordUrl);
                 ViewData["SuccessMessage"] = "If your email is registered, you'll receive a reset link.";
             }
+            catch (DbUpdateException ex)
+            {
+                // Log the inner exception for debugging
+                Console.WriteLine($"DbUpdateException: {ex.InnerException?.Message}");
+                ViewData["ErrorMessage"] = "Failed to send email due to a database error. Please try again later.";
+            }
             catch (Exception ex)
             {
+                // Log the full exception
+                Console.WriteLine($"Exception: {ex.Message}, Inner: {ex.InnerException?.Message}");
                 ViewData["ErrorMessage"] = "Failed to send email. Error: " + ex.Message;
             }
 
@@ -138,14 +147,23 @@ namespace PizzaShopPresentation.Controllers
         }
 
         // GET: ResetPassword
-        public IActionResult ResetPassword(string email)
+        public async Task<IActionResult> ResetPassword(string token)
         {
-            if (string.IsNullOrEmpty(email))
+            if (string.IsNullOrEmpty(token))
             {
+                ViewData["ErrorMessage"] = "Invalid or missing token.";
                 return RedirectToAction("ForgotPassword");
             }
 
-            var model = new ResetPassword { Email = email };
+            var user = await _userService.GetUserByResetTokenAsync(token);
+            if (user == null || user.ResetPasswordTokenExpiry < DateTime.UtcNow)
+            {
+                ViewData["ErrorMessage"] = "The reset link is invalid or has expired.";
+                return RedirectToAction("ForgotPassword");
+            }
+
+            var model = new ResetPassword { Email = user.Email };
+            ViewData["Token"] = token; // Pass token to the view for form submission
             return View(model);
         }
 
@@ -155,18 +173,32 @@ namespace PizzaShopPresentation.Controllers
         {
             if (!ModelState.IsValid)
             {
+                ViewData["Token"] = model.Token;
                 return View(model);
             }
 
             try
             {
+                var user = await _userService.GetUserByResetTokenAsync(model.Token);
+                if (user == null || user.ResetPasswordTokenExpiry < DateTime.UtcNow)
+                {
+                    ViewData["ErrorMessage"] = "The reset link is invalid or has expired.";
+                    return RedirectToAction("ForgotPassword");
+                }
+
                 await _userService.ResetPasswordAsync(model);
+
+                user.ResetPasswordToken = null;
+                user.ResetPasswordTokenExpiry = null;
+                await _userService.UpdateUserAsync(user);
+
                 TempData["SuccessMessage"] = "Password reset successfully!";
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError("", ex.Message);
+                ViewData["Token"] = model.Token;
                 return View(model);
             }
         }
