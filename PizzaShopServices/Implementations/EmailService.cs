@@ -105,7 +105,7 @@ namespace PizzaShopServices.Implementations
                     <body>
                         <div class='container'>
                             <div class='header'>
-                                <img src='/images/logos/pizzashop_logo.png' alt='logo' style='max-height: 120px; max-width: 120px;'>
+                                <img src='https://dcassetcdn.com/design_img/75540/80399/80399_1296199_75540_image.png' alt='logo' style='max-height: 120px; max-width: 120px;'>
                                 <h1>PIZZASHOP</h1>
                             </div>
                             <div class='content'>
@@ -201,7 +201,7 @@ namespace PizzaShopServices.Implementations
                         <body>
                             <div class=""container"">
                                 <div class=""header"">
-                                    <img src=""logo.png"" alt=""PIZZASHOP Logo"">
+                                    <img src=""https://dcassetcdn.com/design_img/75540/80399/80399_1296199_75540_image.png"" alt=""PIZZASHOP Logo"">
                                     PIZZASHOP
                                 </div>
                                 <div class=""content"">

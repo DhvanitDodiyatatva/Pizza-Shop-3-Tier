@@ -147,7 +147,7 @@
             event.preventDefault();
             var email = document.getElementById("inputEmail").value;
             if (email) {
-                window.location.href = "/Login/ForgotPassword?email=" + email;
+                window.location.href = "/Login/ForgotPassword?email=" + encodeURIComponent(email);
             } else {
                 window.location.href = "/Login/ForgotPassword";
             }

@@ -109,41 +109,41 @@ namespace PizzaShopPresentation.Controllers
 
         // POST: Send Email
         [HttpPost]
-        public async Task<IActionResult> SendEmail(string email)
+        public async Task<IActionResult> SendEmail(Authenticate model)
         {
-            if (string.IsNullOrEmpty(email))
+            if (string.IsNullOrEmpty(model.Email))
             {
                 ViewData["ErrorMessage"] = "Email field is required.";
-                return View("ForgotPassword");
+                return View("ForgotPassword", model);
             }
 
             try
             {
-                var user = await _userService.GetUserByEmailAsync(email);
+                var user = await _userService.GetUserByEmailAsync(model.Email);
                 if (user == null)
                 {
-                    ViewData["SuccessMessage"] = "If your email is registered, you'll receive a reset link.";
-                    return View("ForgotPassword");
+                    ViewData["ErrorMessage"] = "User is not registered.";
+                    return View("ForgotPassword", model);
                 }
 
                 string resetPasswordUrl = Url.Action("ResetPassword", "Login", null, protocol: Request.Scheme);
-                await _emailService.SendResetPasswordEmailAsync(email, resetPasswordUrl);
-                ViewData["SuccessMessage"] = "If your email is registered, you'll receive a reset link.";
+                await _emailService.SendResetPasswordEmailAsync(model.Email, resetPasswordUrl);
+
+                ViewData["SuccessMessage"] = "Email sent successfully.";
+                return View("ForgotPassword", model);
             }
             catch (DbUpdateException ex)
             {
-                // Log the inner exception for debugging
-                Console.WriteLine($"DbUpdateException: {ex.InnerException?.Message}");
+
                 ViewData["ErrorMessage"] = "Failed to send email due to a database error. Please try again later.";
             }
             catch (Exception ex)
             {
-                // Log the full exception
-                Console.WriteLine($"Exception: {ex.Message}, Inner: {ex.InnerException?.Message}");
+
                 ViewData["ErrorMessage"] = "Failed to send email. Error: " + ex.Message;
             }
 
-            return View("ForgotPassword");
+            return View("ForgotPassword", model);
         }
 
         // GET: ResetPassword
