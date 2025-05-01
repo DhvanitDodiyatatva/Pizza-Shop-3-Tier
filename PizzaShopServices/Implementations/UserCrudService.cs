@@ -119,7 +119,6 @@ namespace PizzaShopServices.Implementations
                 throw new Exception("Username is already taken.");
             }
 
-
             // Update user fields
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;
@@ -158,23 +157,20 @@ namespace PizzaShopServices.Implementations
                 string? profilePath = await UploadFile(model.ImageFile, user.Username);
                 if (profilePath == null)
                 {
-                    throw new Exception("Failed to upload profile image.");
+                    return (false, "Failed to upload profile image.");
                 }
                 user.ProfileImage = profilePath; // Update the database with the new image URL
             }
             // If neither RemoveImage nor ImageFile is provided, retain the existing ProfileImage
 
-
-
-
             try
             {
                 await _userRepository.UpdateUserAsync(user);
-                return (true, "Profile Edited successfully.");
+                return (true, "Profile updated successfully.");
             }
             catch (Exception ex)
             {
-                return (false, "Failed to Update Profile: " + ex.Message);
+                return (false, "Failed to update profile: " + ex.Message);
             }
         }
 
