@@ -1183,6 +1183,25 @@
             });
             console.log("Selected Modifier IDs from Edit modal:", selectedModifierIds); // Debug
 
+            // Check if the modal is already loaded
+            if ($("#selectModifiersContainer").find("#selectModifiersModal").length > 0) {
+                console.log("SelectExistingModifiers modal already exists, reusing modal"); // Debug
+                // Update checkboxes based on selectedModifierIds
+                $(".modifier-checkbox").each(function () {
+                    var modifierId = parseInt($(this).val());
+                    $(this).prop("checked", selectedModifierIds.includes(modifierId));
+                });
+                updateSelectAllCheckboxEdit();
+                var modal = bootstrap.Modal.getInstance(document.getElementById("selectModifiersModal")) ||
+                    new bootstrap.Modal(document.getElementById("selectModifiersModal"));
+                modal.show();
+                attachSelectModifiersEditHandler();
+                return;
+            }
+
+            // Clear existing content in selectModifiersContainer to prevent duplicates
+            $("#selectModifiersContainer").empty();
+
             // Load the modal content via AJAX
             $.ajax({
                 url: '@Url.Action("SelectExistingModifiers", "Menu")',
