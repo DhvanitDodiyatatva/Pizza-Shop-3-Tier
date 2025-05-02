@@ -24,9 +24,9 @@
                         <span asp-validation-for="Description" class="text-danger"></span>
                     </div>
                     <div class="mb-3">
-                        <a href="#" id="addExistingModifiersLink" data-bs-toggle="modal"
+                        <a href="#" id="addExistingModifiersLinkEdit" data-bs-toggle="modal"
                             data-bs-target="#selectModifiersModal">+ Add Existing Modifiers</a>
-                        <div id="selectedModifiersContainer" class="mt-2">
+                        <div id="selectedModifiersContainerEdit" class="mt-2">
                             @if (Model.SelectedModifiers != null && Model.SelectedModifiers.Any())
                             {
                                 foreach (var modifier in Model.SelectedModifiers)

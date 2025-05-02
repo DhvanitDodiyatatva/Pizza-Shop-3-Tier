@@ -17,15 +17,13 @@
                         <span asp-validation-for="Name" class="text-danger"></span>
                     </div>
                     <div class="form-floating mb-3">
-                        <input asp-for="Description" class="form-control" id="floatingInputDescription"
-                            placeholder="Description" />
+                        <input asp-for="Description" class="form-control" id="floatingInputDescription" placeholder="Description" />
                         <label for="floatingInputDescription" asp-for="Description">Description</label>
                         <span asp-validation-for="Description" class="text-danger"></span>
                     </div>
                     <div class="mb-3">
-                        <a href="#" id="addExistingModifiersLink" data-bs-toggle="modal"
-                            data-bs-target="#selectModifiersModal">+ Add Existing Modifiers</a>
-                        <div id="selectedModifiersContainer" class="mt-2">
+                        <a href="#" id="addExistingModifiersLinkAdd" data-bs-toggle="modal" data-bs-target="#selectModifiersAddModal">+ Add Existing Modifiers</a>
+                        <div id="selectedModifiersContainerAdd" class="mt-2">
                             <!-- Selected modifiers and hidden inputs will be displayed here -->
                         </div>
                     </div>

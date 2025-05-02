@@ -521,14 +521,15 @@ public class MenuController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> SelectExistingModifiers(int[] selectedModifierIds = null)
+    public async Task<IActionResult> SelectExistingModifiers(int[] selectedModifierIds = null, bool forAdd = false)
     {
         var modifiers = await _modifierService.GetAllModifiersAsync();
 
         // Pass the selected modifier IDs to the view
         ViewData["SelectedModifierIds"] = selectedModifierIds?.ToList() ?? new List<int>();
 
-        return PartialView("_SelectExistingModifiers", modifiers);
+        // Return the appropriate partial view based on the 'forAdd' parameter
+        return PartialView(forAdd ? "_SelectExistingModifierAdd" : "_SelectExistingModifiers", modifiers);
     }
 
     [HttpPost]
