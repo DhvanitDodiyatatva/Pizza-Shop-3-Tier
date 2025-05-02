@@ -21,8 +21,8 @@ else
                 </div>
             </td>
             <td class="py-3 text-nowrap">
-                <img src="@(item.ImageUrl ?? "/images/dining-menu.png")" alt="item-img"
-                    style="max-height: 30px; aspect-ratio: 1/1; margin-right: 3%;">
+                <img src="@(!string.IsNullOrEmpty(item.ImageUrl) ? item.ImageUrl : "/images/dining-menu.png")" alt="item-img"
+                    style="max-height: 30px; aspect-ratio: 1/1; margin-right: 3%;  border-radius: 50%; object-fit: cover;">
                 @item.Name
             </td>
             <td class="py-3 text-center text-nowrap">

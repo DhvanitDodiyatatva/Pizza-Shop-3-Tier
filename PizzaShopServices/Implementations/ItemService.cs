@@ -4,6 +4,7 @@ using PizzaShopRepository.Models;
 using PizzaShopRepository.ViewModels;
 using PizzaShopServices.Interfaces;
 using PizzaShopRepository.Data;
+using Microsoft.AspNetCore.Http;
 
 namespace PizzaShopServices.Implementations;
 
@@ -12,11 +13,14 @@ public class ItemService : IItemService
     private readonly IItemRepository _itemRepository;
     private readonly IItemModifierGroupService _itemModifierGroupService;
 
+    private readonly IUserCrudService _userCrudService;
 
-    public ItemService(IItemRepository itemRepository, IItemModifierGroupService itemModifierGroupService)
+
+    public ItemService(IItemRepository itemRepository, IItemModifierGroupService itemModifierGroupService, IUserCrudService userCrudService)
     {
         _itemRepository = itemRepository;
         _itemModifierGroupService = itemModifierGroupService;
+        _userCrudService = userCrudService;
     }
 
     public async Task<List<Item>> GetItemsByCategoryAsync(int categoryId)
@@ -29,6 +33,39 @@ public class ItemService : IItemService
         return await _itemRepository.GetAllItemsAsync();
     }
 
+
+    private async Task<string?> UploadFile(IFormFile file, string userName)
+    {
+        try
+        {
+            if (file != null && file.Length > 0)
+            {
+                string uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/uploadimages");
+                if (!Directory.Exists(uploadFolder))
+                {
+                    Directory.CreateDirectory(uploadFolder);
+                }
+
+                string fileExtension = Path.GetExtension(file.FileName);
+                string fileName = $"{userName}_{Guid.NewGuid()}{fileExtension}";
+                string filePath = Path.Combine(uploadFolder, fileName);
+
+                using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(fileStream);
+                }
+
+                return Path.Combine("/images/uploadimages", fileName).Replace("\\", "/");
+            }
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+
+        return null;
+    }
+
     public async Task<(bool Success, string Message)> AddItemAsync(ItemVM model)
     {
         // Check if an item with the same name already exists
@@ -36,6 +73,17 @@ public class ItemService : IItemService
         if (existingItem != null)
         {
             return (false, "Item with this name already exists!");
+        }
+
+        string? profilePath = null;
+
+        if (model.ImageFile != null && model.ImageFile.Length > 0) // Changed to ImageFile
+        {
+            profilePath = await UploadFile(model.ImageFile, model.Name);
+            if (profilePath == null)
+            {
+                return (false, "Failed to upload profile image.");
+            }
         }
 
         var item = new Item
@@ -49,7 +97,7 @@ public class ItemService : IItemService
             Unit = model.Unit,
             IsAvailable = model.IsAvailable,
             ShortCode = model.ShortCode,
-            ImageUrl = model.ImageUrl,
+            ImageUrl = profilePath,
             TaxPercentage = model.TaxPercentage,
             DefaultTax = model.DefaultTax,
             CreatedAt = DateTime.Now,
@@ -80,7 +128,7 @@ public class ItemService : IItemService
         catch (Exception ex)
         {
             var innerException = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
-            return (false, $"Failed to add item: {innerException}");
+            return (false, $"Failed to add item");
         }
     }
 
@@ -110,7 +158,7 @@ public class ItemService : IItemService
             Unit = item.Unit,
             IsAvailable = item.IsAvailable,
             ShortCode = item.ShortCode,
-            ImageUrl = item.ImageUrl,
+            ImageUrl = string.IsNullOrEmpty(item.ImageUrl) ? "/images/dining-menu.png" : item.ImageUrl,
             TaxPercentage = item.TaxPercentage,
             DefaultTax = item.DefaultTax,
             CreatedAt = item.CreatedAt,
@@ -125,7 +173,7 @@ public class ItemService : IItemService
         };
     }
 
-    public async Task<(bool Success, string Message)> UpdateItemAsync(ItemVM model)
+    public async Task<(bool Success, string Message)> UpdateItemAsync(ItemVM model, IFormFile ImageFile, string host)
     {
         // Check if an item with the same name already exists
         var existingItem = await _itemRepository.GetItemByNameAsync(model.Name);
@@ -152,10 +200,29 @@ public class ItemService : IItemService
         item.Unit = model.Unit;
         item.IsAvailable = model.IsAvailable;
         item.ShortCode = model.ShortCode;
-        item.ImageUrl = model.ImageUrl;
         item.TaxPercentage = model.TaxPercentage;
         item.DefaultTax = model.DefaultTax;
         item.UpdatedAt = DateTime.Now;
+
+        if (model.RemoveImage && !string.IsNullOrEmpty(item.ImageUrl))
+        {
+            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", item.ImageUrl.TrimStart('/'));
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+            item.ImageUrl = null;
+        }
+        else if (ImageFile != null && ImageFile.Length > 0)
+        {
+            string? profilePath = await UploadFile(ImageFile, model.Name);
+            if (profilePath == null)
+            {
+                throw new Exception("Failed to upload profile image.");
+            }
+            item.ImageUrl = profilePath; // Update with new image path
+        }
+
 
         try
         {
@@ -205,7 +272,7 @@ public class ItemService : IItemService
         catch (Exception ex)
         {
             Console.WriteLine($"Exception in UpdateItemAsync: {ex.Message}"); // Debugging
-            return (false, $"Failed to update item: {ex.Message}");
+            return (false, $"Failed to update item");
         }
     }
 
@@ -219,7 +286,7 @@ public class ItemService : IItemService
 
         item.IsDeleted = true;
         await _itemRepository.UpdateItemAsync(item);
-        
+
         // Soft delete associated ItemModifierGroup mappings
         var itemModifierGroups = await _itemModifierGroupService.GetItemModifierGroupsByItemIdAsync(id);
         foreach (var img in itemModifierGroups)

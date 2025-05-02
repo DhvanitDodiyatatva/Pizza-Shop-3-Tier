@@ -196,7 +196,7 @@ public class MenuController : Controller
         if (!ModelState.IsValid)
         {
             var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToArray();
-            return Json(new { success = false, message = string.Join(" ", errors) });
+            // return Json(new { success = false, message = string.Join(" ", errors) });
         }
 
         var result = await _itemService.AddItemAsync(model);
@@ -232,18 +232,20 @@ public class MenuController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> UpdateItem(ItemVM model)
+    public async Task<IActionResult> UpdateItem(ItemVM model, IFormFile ImageFile)
     {
+
+
         if (!ModelState.IsValid)
         {
             var errors = ModelState.Values.SelectMany(v => v.Errors)
                                           .Select(e => e.ErrorMessage)
                                           .ToArray();
             Console.WriteLine($"ModelState Errors: {string.Join(" | ", errors)}"); // Debugging
-            return Json(new { success = false, message = string.Join(" ", errors) });
+            // return Json(new { success = false, message = string.Join(" ", errors) });
         }
 
-        var result = await _itemService.UpdateItemAsync(model);
+        var result = await _itemService.UpdateItemAsync(model, ImageFile, HttpContext.Request.Host.Value);
 
         if (!result.Success)
         {

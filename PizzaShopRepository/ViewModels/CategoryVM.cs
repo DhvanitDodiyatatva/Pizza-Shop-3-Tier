@@ -8,7 +8,7 @@ namespace PizzaShopRepository.ViewModels
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Category Description is Required")]
+        // [Required(ErrorMessage = "Category Description is Required")]
         public string? Description { get; set; }
 
         [Required(ErrorMessage = "Category Name is Required")]

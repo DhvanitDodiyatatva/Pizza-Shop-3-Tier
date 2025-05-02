@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 namespace PizzaShopRepository.ViewModels
 {
     // Base view model for ItemVM (used for Fetch, Delete, Update)
@@ -25,6 +26,8 @@ namespace PizzaShopRepository.ViewModels
         [Required(ErrorMessage = "Quantity is required")]
         [Range(1, int.MaxValue, ErrorMessage = "Quantity must be greater than 1")]
         public int? Quantity { get; set; }
+
+        [Required(ErrorMessage = "Unit is required")]
         public string? Unit { get; set; }
 
         [Required(ErrorMessage = "Availability status is required")]
@@ -42,6 +45,10 @@ namespace PizzaShopRepository.ViewModels
         public bool DefaultTax { get; set; }
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
+
+        public IFormFile? ImageFile { get; set; }
+
+        public bool RemoveImage { get; set; }
 
         public List<int> SelectedModifierGroupIds { get; set; } = new List<int>();
         public List<ModifierGroupConfig> ModifierGroupConfigs { get; set; } = new List<ModifierGroupConfig>();
