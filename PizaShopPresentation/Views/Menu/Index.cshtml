@@ -1166,43 +1166,46 @@
             e.preventDefault();
             console.log("addExistingModifiersLinkEdit clicked"); // Debug
 
-            // Collect SelectedModifierIds from the Edit form
+            // Collect SelectedModifierIds from the Edit form's hidden inputs and badges
             var selectedModifierIds = [];
             $("#editModifierGroupForm input[name^='SelectedModifierIds']").each(function () {
-                selectedModifierIds.push(parseInt($(this).val()));
+                var value = parseInt($(this).val());
+                if (!isNaN(value)) {
+                    selectedModifierIds.push(value);
+                }
+            });
+            // Also check badges in case hidden inputs are not yet populated
+            $("#selectedModifiersContainerEdit .badge").each(function () {
+                var modifierId = parseInt($(this).data("modifier-id"));
+                if (!isNaN(modifierId) && !selectedModifierIds.includes(modifierId)) {
+                    selectedModifierIds.push(modifierId);
+                }
             });
             console.log("Selected Modifier IDs from Edit modal:", selectedModifierIds); // Debug
-
-            // Check if the modal is already loaded
-            if ($("#selectModifiersContainer").find("#selectModifiersModal").length > 0) {
-                console.log("Edit modal already exists, showing existing modal"); // Debug
-                // Update checkboxes based on selectedModifierIds
-                $(".modifier-checkbox").each(function () {
-                    var modifierId = parseInt($(this).val());
-                    $(this).prop("checked", selectedModifierIds.includes(modifierId));
-                });
-                // Update select all checkbox
-                updateSelectAllCheckboxEdit();
-                var modal = bootstrap.Modal.getInstance(document.getElementById("selectModifiersModal")) ||
-                    new bootstrap.Modal(document.getElementById("selectModifiersModal"));
-                modal.show();
-                attachSelectModifiersEditHandler();
-                return;
-            }
 
             // Load the modal content via AJAX
             $.ajax({
                 url: '@Url.Action("SelectExistingModifiers", "Menu")',
                 type: 'GET',
                 data: { selectedModifierIds: selectedModifierIds, forAdd: false },
+                cache: false, // Prevent caching to ensure fresh data
                 success: function (result) {
                     $("#selectModifiersContainer").html(result);
                     console.log("SelectExistingModifiers modal loaded"); // Debug
+
+                    // Ensure checkboxes are updated based on selectedModifierIds
+                    $(".modifier-checkbox").each(function () {
+                        var modifierId = parseInt($(this).val());
+                        $(this).prop("checked", selectedModifierIds.includes(modifierId));
+                    });
+                    updateSelectAllCheckboxEdit();
+
                     var modal = new bootstrap.Modal(document.getElementById("selectModifiersModal"));
                     modal.show();
                     attachSelectModifiersEditHandler();
                 },
-                error: function () {
+                error: function (xhr, status, error) {
+                    console.error("Error loading SelectExistingModifiers modal:", error);
                     toastr.error("Failed to load modifiers list.");
                 }
             });
