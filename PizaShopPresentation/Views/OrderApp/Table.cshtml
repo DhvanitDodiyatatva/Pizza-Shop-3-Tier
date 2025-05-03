@@ -102,7 +102,7 @@
                                     };
 
                                     <div class="col-md-2" style="cursor: pointer;">
-                                        <div class="card @cardClass mb-3 table-card" data-table-id="@table.TableId" data-status="@table.Availability">
+                                        <div class="card @cardClass mb-3 table-card" data-table-id="@table.TableId" data-status="@table.Availability" data-section-id="@floor.FloorId">
                                             <div class="card-body">
                                                 <h5 class="card-title">@table.TableName</h5>
                                                 <i class="bi bi-people text-dark"></i>
@@ -143,7 +143,6 @@
     <!-- Offcanvas for Customer Details -->
     <div class="offcanvas offcanvas-end" tabindex="-1" id="customerDetailsOffcanvas" aria-labelledby="customerDetailsOffcanvasLabel">
         <div class="offcanvas-header">
-          
         </div>
         <div class="offcanvas-body">
             <!-- Partial view content will be loaded here -->
@@ -153,50 +152,63 @@
 
 <script>
     $(document).ready(function () {
-        let selectedTables = [];
+        let selectedTables = {}; // Object to store table IDs mapped to section IDs
 
         // Handle table selection
         $('.table-card').on('click', function () {
             const status = $(this).data('status');
             const tableId = $(this).data('table-id');
+            const sectionId = $(this).data('section-id');
 
             if (status !== 'Available') {
                 toastr.error('You cannot select this table.');
                 return;
             }
 
-            const index = selectedTables.indexOf(tableId);
+            if (!selectedTables[sectionId]) {
+                selectedTables[sectionId] = [];
+            }
+
+            const index = selectedTables[sectionId].indexOf(tableId);
             if (index === -1) {
                 // Select the table
-                selectedTables.push(tableId);
+                selectedTables[sectionId].push(tableId);
                 $(this).removeClass('custom-card-available').addClass('custom-card-selected');
             } else {
                 // Deselect the table
-                selectedTables.splice(index, 1);
+                selectedTables[sectionId].splice(index, 1);
                 $(this).removeClass('custom-card-selected').addClass('custom-card-available');
+                if (selectedTables[sectionId].length === 0) {
+                    delete selectedTables[sectionId]; // Remove section if no tables selected
+                }
             }
 
             // Enable/disable the Assign button based on selection
             const assignBtn = $(this).closest('.accordion-body').find('.assign-btn');
-            if (selectedTables.length > 0) {
-                assignBtn.prop('disabled', false);
-            } else {
-                assignBtn.prop('disabled', true);
-            }
+            const anySelected = Object.values(selectedTables).some(tables => tables.length > 0);
+            assignBtn.prop('disabled', !anySelected);
         });
 
         // Handle Assign button click
         $('.assign-btn').on('click', function () {
-            if (selectedTables.length === 0) {
+            const sectionId = $(this).data('section-id');
+            const sectionName = $(this).data('section-name');
+
+            // Collect all selected table IDs and section IDs
+            const allTableIds = Object.values(selectedTables).flat();
+            const sectionIds = Object.keys(selectedTables).map(id => parseInt(id));
+
+            if (allTableIds.length === 0) {
                 toastr.error('Please select at least one table.');
                 return;
             }
 
-            const sectionId = $(this).data('section-id');
-            const sectionName = $(this).data('section-name');
-
             // Load the customer details offcanvas
-            $.get('@Url.Action("ShowCustomerDetailsOffcanvas", "OrderApp")', { sectionId: sectionId, sectionName: sectionName, selectedTableIds: selectedTables.join(',') }, function (partialView) {
+            $.get('@Url.Action("ShowCustomerDetailsOffcanvas", "OrderApp")', {
+                sectionIds: sectionIds.join(','),
+                sectionName: sectionName,
+                selectedTableIds: allTableIds.join(',')
+            }, function (partialView) {
                 $('#customerDetailsOffcanvas .offcanvas-body').html(partialView);
                 $('#customerDetailsOffcanvas').offcanvas('show');
             }).fail(function (xhr, status, error) {

@@ -4,6 +4,8 @@ using PizzaShopRepository.ViewModels;
 using PizzaShopRepository.Models;
 using Microsoft.AspNetCore.Mvc.Rendering; //  for SelectList
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace PizzaShop.Controllers
 {
@@ -97,11 +99,20 @@ namespace PizzaShop.Controllers
         }
 
 
-        public async Task<IActionResult> ShowCustomerDetailsOffcanvas(int sectionId, string sectionName, string selectedTableIds)
+        public async Task<IActionResult> ShowCustomerDetailsOffcanvas(string sectionIds, string sectionName, string selectedTableIds)
         {
             var tableIds = selectedTableIds.Split(',').Select(int.Parse).ToList();
-            var tables = await _tableService.GetTablesBySectionAsync(sectionId);
-            var selectedTables = tables
+            var sectionIdList = sectionIds.Split(',').Select(int.Parse).ToList();
+
+            // Fetch tables from all selected sections
+            var allTables = new List<Table>();
+            foreach (var sectionId in sectionIdList)
+            {
+                var tables = await _tableService.GetTablesBySectionAsync(sectionId);
+                allTables.AddRange(tables);
+            }
+
+            var selectedTables = allTables
                 .Where(t => tableIds.Contains(t.Id))
                 .Select(t => new TableDetailsViewModel
                 {
@@ -120,7 +131,7 @@ namespace PizzaShop.Controllers
 
             var waitingTokens = await _waitingTokenService.GetAllWaitingTokensAsync();
             var sectionTokens = waitingTokens
-                .Where(t => t.SectionId == sectionId && !t.IsDeleted && !t.IsAssigned)
+                .Where(t => sectionIdList.Contains((int)t.SectionId) && !t.IsDeleted && !t.IsAssigned)
                 .Select(t => new WaitingTokensViewModel
                 {
                     Id = t.Id,
@@ -133,7 +144,7 @@ namespace PizzaShop.Controllers
 
             var viewModel = new CustomerDetailsViewModel
             {
-                SectionId = sectionId,
+                SectionId = sectionIdList.FirstOrDefault(), // Use first section ID for form submission
                 SectionName = sectionName,
                 SelectedTables = selectedTables,
                 WaitingTokens = sectionTokens

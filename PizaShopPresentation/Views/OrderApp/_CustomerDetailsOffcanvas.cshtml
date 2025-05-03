@@ -40,7 +40,7 @@
     }
     else
     {
-        <p>No waiting tokens available for this section.</p>
+        <p>No waiting tokens available for the selected sections.</p>
     }
 
     <h6>Customer Details</h6>
@@ -107,7 +107,7 @@
                     if (response.success) {
                         toastr.success(response.message);
                         $('#customerDetailsOffcanvas').offcanvas('hide');
-                        location.reload(); // Refresh the page to update table statuses
+                        location.reload();
                     } else {
                         toastr.error(response.message);
                     }
