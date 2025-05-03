@@ -15,9 +15,11 @@ namespace PizzaShop.Controllers
         private readonly ICategoryService _categoryService;
         private readonly IWaitingTokenService _waitingTokenService;
         private readonly IKotService _kotService;
+
+        private readonly IOrderAppService _orderAppService;
         private readonly PizzaShopRepository.Data.PizzaShopContext _context;
 
-        public OrderAppController(ISectionService sectionService, ITableService tableService, IItemService itemService, ICategoryService categoryService, IWaitingTokenService waitingTokenService, IKotService kotService, PizzaShopRepository.Data.PizzaShopContext context)
+        public OrderAppController(ISectionService sectionService, ITableService tableService, IItemService itemService, ICategoryService categoryService, IWaitingTokenService waitingTokenService, IKotService kotService, IOrderAppService orderAppService, PizzaShopRepository.Data.PizzaShopContext context)
         {
             _sectionService = sectionService;
             _tableService = tableService;
@@ -25,6 +27,7 @@ namespace PizzaShop.Controllers
             _categoryService = categoryService;
             _waitingTokenService = waitingTokenService;
             _kotService = kotService;
+            _orderAppService = orderAppService;
             _context = context;
         }
 
@@ -142,66 +145,11 @@ namespace PizzaShop.Controllers
         [HttpPost]
         public async Task<IActionResult> AssignTable(int[] selectedTableIds, int sectionId, int? waitingTokenId, string email, string name, string phoneNumber, int numOfPersons, string sectionName)
         {
-            // Validate the input
-            if (selectedTableIds == null || !selectedTableIds.Any())
-            {
-                return Json(new { success = false, message = "No tables selected." });
-            }
-
-            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(phoneNumber) || numOfPersons <= 0)
-            {
-                return Json(new { success = false, message = "Invalid customer details." });
-            }
-
-            try
-            {
-                // Check if all selected tables are still available
-                var tables = await _tableService.GetTablesBySectionAsync(sectionId);
-                var selectedTables = tables.Where(t => selectedTableIds.Contains(t.Id)).ToList();
-                if (selectedTables.Any(t => t.Status != "available"))
-                {
-                    return Json(new { success = false, message = "One or more selected tables are no longer available." });
-                }
-
-                // Create or update the customer
-                var customer = new Customer
-                {
-                    Name = name,
-                    Email = email,
-                    PhoneNo = phoneNumber,
-                    NoOfPersons = numOfPersons,
-                    Date = DateOnly.FromDateTime(DateTime.Now)
-                };
-                await _context.Customers.AddAsync(customer);
-                await _context.SaveChangesAsync();
-
-                // Update table statuses to "reserved"
-                foreach (var table in selectedTables)
-                {
-                    table.Status = "reserved";
-                    _context.Tables.Update(table);
-                }
-
-                // If a waiting token is selected, mark it as assigned
-                if (waitingTokenId.HasValue)
-                {
-                    var waitingToken = await _context.WaitingTokens.FindAsync(waitingTokenId.Value);
-                    if (waitingToken != null)
-                    {
-                        waitingToken.IsAssigned = true;
-                        _context.WaitingTokens.Update(waitingToken);
-                    }
-                }
-
-                await _context.SaveChangesAsync();
-
-                return Json(new { success = true, message = "Tables assigned successfully." });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = $"An error occurred: {ex.Message}" });
-            }
+            var result = await _orderAppService.AssignTableAsync(selectedTableIds, sectionId, waitingTokenId, email, name, phoneNumber, numOfPersons);
+            return Json(new { success = result.Success, message = result.Message });
         }
+
+
 
         //Menu
         public async Task<IActionResult> Menu()

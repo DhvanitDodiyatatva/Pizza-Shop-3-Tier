@@ -55,7 +55,8 @@ builder.Services.AddScoped<IWaitingTokenRepository, WaitingTokenRepository>();
 builder.Services.AddScoped<IWaitingTokenService, WaitingTokenService>();
 builder.Services.AddScoped<IKotRepository, KotRepository>();
 builder.Services.AddScoped<IKotService, KotService>();
-
+builder.Services.AddScoped<IOrderAppRepository, OrderAppRepository>();
+builder.Services.AddScoped<IOrderAppService, OrderAppService>();
 
 
 // Configure JWT authentication

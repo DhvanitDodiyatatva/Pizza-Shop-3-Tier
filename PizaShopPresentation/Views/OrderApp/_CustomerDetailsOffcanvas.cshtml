@@ -45,8 +45,10 @@
 
     <h6>Customer Details</h6>
     <form id="assignTableForm" asp-action="AssignTable" asp-controller="OrderApp" method="post">
-        <input type="hidden" name="SelectedTableIds"
-            value="@string.Join(",", Model.SelectedTables.Select(t => t.TableId))" />
+        @foreach (var table in Model.SelectedTables)
+        {
+            <input type="hidden" name="selectedTableIds" value="@table.TableId" />
+        }
         <input type="hidden" name="SectionId" value="@Model.SectionId" />
         <input type="hidden" name="WaitingTokenId" id="waitingTokenId" value="" />
 
