@@ -102,6 +102,13 @@ namespace PizzaShop.Controllers
             return PartialView("_ItemList", items);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> ToggleFavorite(int itemId)
+        {
+            var result = await _itemService.ToggleFavoriteAsync(itemId);
+            return Json(new { success = result.Success, message = result.Message, isFavourite = result.Success ? (await _itemService.GetItemByIdAsync(itemId))?.IsFavourite : false });
+        }
+
         public async Task<IActionResult> WaitingList()
         {
             var (waitingTokens, sections) = await _orderAppService.GetWaitingListDataAsync();

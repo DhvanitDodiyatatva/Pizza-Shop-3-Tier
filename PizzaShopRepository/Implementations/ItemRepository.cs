@@ -28,6 +28,13 @@ public class ItemRepository : IItemRepository
                              .ToListAsync();
     }
 
+    public async Task<List<Item>> GetFavoriteItemsAsync()
+    {
+        return await _context.Items
+                             .Where(item => item.IsFavourite && !item.IsDeleted)
+                             .ToListAsync();
+    }
+
     public async Task<Item?> GetItemByIdAsync(int id)
     {
         return await _context.Items.FirstOrDefaultAsync(i => i.Id == id && !i.IsDeleted);

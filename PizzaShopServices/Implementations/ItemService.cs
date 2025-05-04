@@ -33,6 +33,33 @@ public class ItemService : IItemService
         return await _itemRepository.GetAllItemsAsync();
     }
 
+    public async Task<List<Item>> GetFavoriteItemsAsync()
+    {
+        return await _itemRepository.GetFavoriteItemsAsync();
+    }
+
+    public async Task<(bool Success, string Message)> ToggleFavoriteAsync(int itemId)
+    {
+        var item = await _itemRepository.GetItemByIdAsync(itemId);
+        if (item == null)
+        {
+            return (false, "Item not found.");
+        }
+
+        item.IsFavourite = !item.IsFavourite;
+        item.UpdatedAt = DateTime.Now;
+
+        try
+        {
+            await _itemRepository.UpdateItemAsync(item);
+            return (true, item.IsFavourite ? "Item marked as favorite." : "Item removed from favorites.");
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Failed to update favorite status: {ex.Message}");
+        }
+    }
+
 
     private async Task<string?> UploadFile(IFormFile file, string userName)
     {

@@ -6,6 +6,7 @@ public interface IItemRepository
 {
     Task<List<Item>> GetItemsByCategoryAsync(int categoryId);
     Task<List<Item>> GetAllItemsAsync();
+    Task<List<Item>> GetFavoriteItemsAsync();
     Task<Item?> GetItemByIdAsync(int id);
     Task AddItemAsync(Item item);
     Task UpdateItemAsync(Item item);

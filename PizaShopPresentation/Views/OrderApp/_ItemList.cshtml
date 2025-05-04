@@ -7,7 +7,9 @@
             <div class="input-group shadow-lg" style="max-width: 300px;">
                 <input type="text" name="search" id="searchInput" class="form-control" placeholder="Search"
                     value="@ViewBag.SearchTerm">
-                <button class="btn btn-outline-secondary" type="submit"><span class="bi bi-search"></span></button>
+                <button class="btn btn-outline-secondary" type="submit">
+                    <span class="bi bi-search"></span>
+                </button>
             </div>
         </form>
         <div class="justify-content-end d-flex">
@@ -23,18 +25,22 @@
         {
             foreach (var item in Model)
             {
-                <div class="item-card ">
+                <div class="item-card" data-item-id="@item.Id">
                     <div class="row">
                         <div class="col-3">
                             <div class="card-icon d-flex justify-content-center align-items-center">
-                                <span> <img src="/images/dining-menu.png" style="height: 40px; width: 40px"></span>
+                                <span>
+                                    <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/images/dining-menu.png" : item.ImageUrl)"
+                                        class="rounded-circle" style="height: 40px; width: 40px">
+                                </span>
                             </div>
                         </div>
-                        <div class="col-9 ">
+                        <div class="col-9">
                             <div class="card-content">
-                                <h5 class="card-title text-start ">@item.Name</h5>
+                                <h5 class="card-title text-start">@item.Name</h5>
                                 <p class="card-text text-start">₹@item.Price</p>
                             </div>
+
                             <!-- Item Type Badge -->
                             @if (item.ItemType == "vegetarian")
                             {
@@ -48,8 +54,11 @@
                             {
                                 <span class="badge bg-danger position-absolute top-0 end-0 m-0">Non-Veg</span>
                             }
+
                             <!-- Heart Icon -->
-                            <span class="heart position-absolute bottom-0 end-0 m-2">&hearts;</span>
+                            <span
+                                class="heart position-absolute bottom-0 end-0 m-2 @(item.IsFavourite ? "text-primary" : "text-secondary")"
+                                style="cursor: pointer;" onclick="toggleFavorite(@item.Id, this)">♥</span>
                         </div>
                     </div>
                 </div>
@@ -61,3 +70,31 @@
         }
     </div>
 </div>
+
+<script>
+    function toggleFavorite(itemId, element) {
+        $.ajax({
+            url: '@Url.Action("ToggleFavorite", "OrderApp")',
+            type: 'POST',
+            data: { itemId: itemId },
+            success: function (result) {
+                if (result.success) {
+                    // Toggle the heart icon color based on isFavourite status
+                    $(element).toggleClass('text-primary', result.isFavourite);
+                    $(element).toggleClass('text-secondary', !result.isFavourite);
+
+                    // Optionally, reload items if the Favorite Items category is active
+                    if (currentCategory === 'Favorite Items') {
+                        loadItems('Favorite Items', '');
+                    }
+                } else {
+                    alert(result.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error toggling favorite:", error);
+                alert("Failed to update favorite status.");
+            }
+        });
+    }
+</script>

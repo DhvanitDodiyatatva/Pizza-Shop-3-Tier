@@ -229,7 +229,12 @@ namespace PizzaShopServices.Implementations
         {
             var categories = await _categoryService.GetAllCategoriesAsync();
             List<Item> items;
-            if (!string.IsNullOrEmpty(category) && category != "All")
+
+            if (category == "Favorite Items")
+            {
+                items = await _itemService.GetFavoriteItemsAsync();
+            }
+            else if (!string.IsNullOrEmpty(category) && category != "All")
             {
                 var selectedCategory = categories.FirstOrDefault(c => c.Name == category);
                 if (selectedCategory != null)
