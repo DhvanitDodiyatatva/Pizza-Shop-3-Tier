@@ -7,5 +7,6 @@ namespace PizzaShopRepository.Interfaces
         Task AddWaitingTokenAsync(WaitingToken waitingToken);
         Task AddCustomerAsync(Customer customer);
         Task<List<WaitingToken>> GetAllWaitingTokensAsync();
+        Task<Customer> GetCustomerByEmailAsync(string email);
     }
 }

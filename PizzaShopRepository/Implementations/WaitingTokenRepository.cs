@@ -30,5 +30,10 @@ namespace PizzaShopRepository.Repositories
         {
             return await _context.WaitingTokens.ToListAsync();
         }
+
+        public async Task<Customer> GetCustomerByEmailAsync(string email)
+        {
+            return await _context.Customers.FirstOrDefaultAsync(c => c.Email == email);
+        }
     }
 }

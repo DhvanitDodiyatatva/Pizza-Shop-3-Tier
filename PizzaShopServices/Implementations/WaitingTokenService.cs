@@ -24,30 +24,38 @@ namespace PizzaShopServices.Implementations
                 return (false, "Section not found.");
             }
 
-            var customer = new Customer
-            {
-                Name = model.CustomerName,
-                Email = model.Email,
-                PhoneNo = model.PhoneNumber,
-                NoOfPersons = model.NumOfPersons,
-                Date = DateOnly.FromDateTime(DateTime.Now)
-            };
-
-            var waitingToken = new WaitingToken
-            {
-                CustomerName = model.CustomerName,
-                Email = model.Email,
-                PhoneNumber = model.PhoneNumber,
-                NumOfPersons = model.NumOfPersons,
-                SectionId = section.Id,
-                Status = "waiting",
-                CreatedAt = DateTime.Now,
-                IsDeleted = false
-            };
-
             try
             {
-                await _waitingTokenRepository.AddCustomerAsync(customer);
+                // Check if customer exists by email
+                var existingCustomer = await _waitingTokenRepository.GetCustomerByEmailAsync(model.Email);
+
+                if (existingCustomer == null)
+                {
+                    // Customer does not exist, create new customer
+                    var customer = new Customer
+                    {
+                        Name = model.CustomerName,
+                        Email = model.Email,
+                        PhoneNo = model.PhoneNumber,
+                        NoOfPersons = model.NumOfPersons,
+                        Date = DateOnly.FromDateTime(DateTime.Now)
+                    };
+                    await _waitingTokenRepository.AddCustomerAsync(customer);
+                }
+
+                // Create waiting token (whether customer existed or was just created)
+                var waitingToken = new WaitingToken
+                {
+                    CustomerName = model.CustomerName,
+                    Email = model.Email,
+                    PhoneNumber = model.PhoneNumber,
+                    NumOfPersons = model.NumOfPersons,
+                    SectionId = section.Id,
+                    Status = "waiting",
+                    CreatedAt = DateTime.Now,
+                    IsDeleted = false
+                };
+
                 await _waitingTokenRepository.AddWaitingTokenAsync(waitingToken);
                 return (true, "Waiting token assigned successfully.");
             }
