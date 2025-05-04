@@ -29,6 +29,7 @@
 
                                     </select>
                                     <label for="SectionId">Sections*</label>
+                                    <input type="hidden" asp-for="SectionId" />
                                 </div>
                             </div>
                         </div>
@@ -48,6 +49,7 @@
                                         <option value="reserved">Reserved</option>
                                     </select>
                                     <label for="Status">Sections*</label>
+                                    <input type="hidden" asp-for="Status" />
                                 </div>
                             </div>
                         </div>
@@ -93,7 +95,7 @@
                         var modal = bootstrap.Modal.getInstance(document.getElementById("editItemModal_@Model.Id"));
                         modal.hide();
 
-                        toastr.success("Item edited successfully!");
+                        toastr.success("Table edited successfully!");
 
 
                         // Get the active category ID and reload items

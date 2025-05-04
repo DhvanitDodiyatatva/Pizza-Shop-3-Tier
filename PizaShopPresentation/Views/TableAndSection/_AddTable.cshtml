@@ -41,11 +41,11 @@
                             <div class="col">
                                 <div class="form-floating mb-3">
                                     <select class="form-select" asp-for="Status" disabled>
-                                        <option value="available">Available</option>
+                                        <option value="available" selected>Available</option>
                                         <option value="occupied">Occupied</option>
                                         <option value="reserved">Reserved</option>
                                     </select>
-                                    <label for="Status">Sections*</label>
+                                    <label for="Status">Status*</label>
                                 </div>
                             </div>
                         </div>
@@ -83,7 +83,7 @@
                     if (response.success) {
                         var modal = bootstrap.Modal.getInstance(document.getElementById("exampleModal2"));
                         modal.hide(); // Close modal
-                        toastr.success("Item added successfully!");
+                        toastr.success("Table added successfully!");
 
                         // Get the active category ID and reload items
                         var sectionId = $(".section-link.active").data("sections-id") || $("#SectionId").val();

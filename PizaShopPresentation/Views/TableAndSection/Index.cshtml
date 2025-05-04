@@ -120,7 +120,6 @@
                             <select id="pageSizeSelect" class="form-select d-inline-block w-auto">
                                 <option value="2">2</option>
                                 <option value="5" selected>5</option>
-                                <option value="8">8</option>
                                 <option value="10">10</option>
                             </select>
                         </div>
@@ -145,17 +144,26 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
     $(document).ready(function () {
 
         let currentPage = 1;
         let pageSize = 5;
-        let currentSectionId = 1;
+        let currentSectionId = 0; // Initialize to 0, will be set after loading sections
+        let allTableIds = []; // Store all table IDs for the current section
+        let selectedTableIds = []; // Track selected table IDs
 
-        // Function to load items with pagination
+        // Function to load tables with pagination
         function loadTables(sectionId, page = 1, size = pageSize) {
+            if (!sectionId) {
+                $("#GetTableList").html("<tr><td colspan='5'>Please select a section.</td></tr>");
+                allTableIds = [];
+                selectedTableIds = [];
+                updatePaginationControls();
+                return;
+            }
+
             $.ajax({
                 url: '@Url.Action("GetTables", "TableAndSection")',
                 type: 'GET',
@@ -164,19 +172,41 @@
                     $("#GetTableList").html(result);
                     currentPage = page;
                     currentSectionId = sectionId;
+
+                    // Fetch all table IDs for the current section
+                    $.ajax({
+                        url: '@Url.Action("GetTables", "TableAndSection")',
+                        type: 'GET',
+                        data: { sectionId: sectionId, page: 1, pageSize: 9999 },
+                        success: function (allTablesResult) {
+                            const tempDiv = $('<div>').html(allTablesResult);
+                            allTableIds = tempDiv.find('.itemCheckbox').map(function () {
+                                return $(this).val();
+                            }).get();
+                            updateSelectAllState();
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error fetching all table IDs:", error);
+                            allTableIds = [];
+                            updateSelectAllState();
+                        }
+                    });
+
                     updatePaginationControls();
                 },
                 error: function (xhr, status, error) {
-                    console.error("Error loading items:", error);
-                    $("#GetTableList").html("Failed to load items");
+                    console.error("Error loading tables:", error);
+                    $("#GetTableList").html("<tr><td colspan='5'>Failed to load tables.</td></tr>");
+                    allTableIds = [];
+                    updatePaginationControls();
                 }
             });
         }
 
         // Function to update pagination controls
         function updatePaginationControls() {
-            const totalPages = parseInt($("#GetTableList").find("input[name='TotalPages']").val());
-            const currentPage = parseInt($("#GetTableList").find("input[name='CurrentPage']").val());
+            const totalPages = parseInt($("#GetTableList").find("input[name='TotalPages']").val()) || 1;
+            const currentPage = parseInt($("#GetTableList").find("input[name='CurrentPage']").val()) || 1;
             let paginationHtml = '';
 
             if (totalPages > 1) {
@@ -188,7 +218,7 @@
                     <a class="page-link text-secondary" href="#" data-page="${currentPage - 1}"> < </a>
                 </li>`;
 
-                // Page numbers (simplified: show all pages)
+                // Page numbers
                 for (let i = 1; i <= totalPages; i++) {
                     paginationHtml += `<li class="page-item ${i === currentPage ? 'active' : ''}">
                         <a class="page-link text-secondary" href="#" data-page="${i}">${i}</a>
@@ -196,7 +226,7 @@
                 }
 
                 // Next button
-                paginationHtml += `<li class="page-item  ${currentPage === totalPages ? 'disabled' : ''}">
+                paginationHtml += `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
                     <a class="page-link text-secondary" href="#" data-page="${currentPage + 1}"> > </a>
                 </li>`;
 
@@ -206,40 +236,62 @@
             $("#paginationControls").html(paginationHtml);
 
             // Attach click handlers to pagination links
-            $("#paginationControls .page-link").on("click", function (e) {
+            $("#paginationControls .page-link").off("click").on("click", function (e) {
                 e.preventDefault();
                 const page = $(this).data("page");
                 if (page && page > 0 && page <= totalPages) {
-                    loadTables(currentSectionId, page);
+                    loadTables(currentSectionId, page, pageSize);
                 }
             });
         }
 
-        // Load sectoins and attach click handlers
+        // Function to update the select all checkbox state
+        function updateSelectAllState() {
+            const allChecked = allTableIds.length > 0 && allTableIds.every(id => selectedTableIds.includes(id));
+            $("#selectAll").prop("checked", allChecked);
+        }
+
+        // Function to load sections and select the first one
         function loadSections() {
             $.ajax({
                 url: '@Url.Action("GetSections", "TableAndSection")',
                 type: 'GET',
                 success: function (result) {
                     $("#sectionsContainer").html(result);
-                    $(".section-link").on("click", function (e) {
+                    if ($(".section-link").length > 0) {
+                        // Select the first section and load its tables
+                        const firstSection = $(".section-link").first();
+                        const sectionId = firstSection.data("sections-id");
+                        firstSection.addClass('active');
+                        currentSectionId = sectionId;
+                        loadTables(sectionId, 1, pageSize);
+                    } else {
+                        $("#GetTableList").html("<tr><td colspan='5'>No sections available.</td></tr>");
+                    }
+
+                    // Attach click handlers for section links
+                    $(".section-link").off("click").on("click", function (e) {
                         e.preventDefault();
-                        var sectionId = $(this).data("sections-id");
+                        $("#sectionsContainer .section-link").removeClass('active');
+                        $(this).addClass('active');
+                        const sectionId = $(this).data("sections-id");
+                        selectedTableIds = []; // Reset selection when changing sections
                         loadTables(sectionId, 1, pageSize);
                     });
+
                     attachEditSectionHandler();
                 },
                 error: function (xhr, status, error) {
                     console.error("Error loading sections:", error);
+                    $("#sectionsContainer").html("<div>Error loading sections.</div>");
+                    $("#GetTableList").html("<tr><td colspan='5'>No sections available.</td></tr>");
                 }
             });
         }
 
-
-        // Search functionality with pagination
         // Search functionality with pagination
         $("#searchInput").on("keyup", function () {
-            var searchTerm = $(this).val().trim();
+            const searchTerm = $(this).val().trim();
             $.ajax({
                 url: '@Url.Action("SearchTables", "TableAndSection")',
                 type: 'GET',
@@ -260,19 +312,7 @@
             loadTables(currentSectionId, 1, pageSize);
         });
 
-
-
-        $('#sectionsContainer').on('click', '.section-link', function () {
-            $('#sectionsContainer .section-link').removeClass('active');
-            $(this).addClass('active');
-
-        });
-
-
-
-
-
-        // Function to load the Add Category partial view and attach its form handler
+        // Function to load the Add Section partial view and attach its form handler
         function loadAddSection() {
             $.ajax({
                 url: '@Url.Action("AddNewSection", "TableAndSection")',
@@ -288,37 +328,26 @@
             });
         }
 
-
-
-        // Attach submit handler to the Add Category form
+        // Attach submit handler to the Add Section form
         function attachAddSectionFormHandler() {
-            $("#addSectionForm").on("submit", function (e) {
+            $("#addSectionForm").off("submit").on("submit", function (e) {
                 e.preventDefault();
                 if (!$(this).valid()) {
                     return;
                 }
-                var formData = $(this).serialize();
+                const formData = $(this).serialize();
                 $.ajax({
                     url: '@Url.Action("AddNewSection", "TableAndSection")',
                     type: 'POST',
                     data: formData,
                     success: function (response) {
                         if (response.success) {
-                            // On success: hide the modal, show success toast, and refresh categories
-                            @* var modalEl = document.getElementById('exampleModal12');
-                            if (modalEl) {
-                                var modal = bootstrap.Modal.getInstance(modalEl);
-                                if (modal) {
-                                    modal.hide();
-                                }
-                            } *@
-                                $(".modal").hide();
+                            $(".modal").hide();
                             $('.modal-backdrop').remove();
                             toastr.success("Section added successfully!");
                             loadSections();
                             loadAddSection();
                         } else {
-                            // On error: show a single toastr error and ensure the modal stays open
                             toastr.error("Failed to add section: " + response.message);
                             var modalEl = document.getElementById('exampleModal12');
                             if (modalEl) {
@@ -328,8 +357,8 @@
                         }
                     },
                     error: function (xhr, status, error) {
-                        console.error("Error adding category:", error);
-                        toastr.error("Error adding category. Please try again.");
+                        console.error("Error adding section:", error);
+                        toastr.error("Error adding section. Please try again.");
                         var modalEl = document.getElementById('exampleModal12');
                         if (modalEl) {
                             var modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
@@ -344,31 +373,27 @@
         function attachEditSectionHandler() {
             $(".edit-category-btn").off('click').on("click", function (e) {
                 e.preventDefault();
-                var sectionId = $(this).data("sections-id");
-                console.log("Clicked edit for category ID:", sectionId);
-
+                const sectionId = $(this).data("sections-id");
                 $("#editModalView").html("");
-
                 $.ajax({
                     url: '@Url.Action("EditSection", "TableAndSection")',
                     type: 'GET',
                     data: { id: sectionId },
                     cache: false,
                     success: function (data) {
-                        console.log("Received data for category ID:", sectionId);
                         $("#editModalView").html(data);
-
-                        var modalElement = document.getElementById('editModal');
+                        const modalElement = document.getElementById('editModal');
                         if (modalElement) {
-                            var editModal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+                            const editModal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
                             editModal.show();
-                            attachEditFormHandler(); // Attach form handler after modal is loaded
+                            attachEditFormHandler();
                         } else {
                             console.error("Modal element #editModal not found in DOM");
                         }
                     },
                     error: function (xhr, status, error) {
                         console.error("Error loading edit partial view for ID " + sectionId + ":", error);
+                        toastr.error("Failed to load edit section form.");
                     }
                 });
             });
@@ -378,33 +403,30 @@
         function attachEditFormHandler() {
             $("#editSectionForm").off('submit').on("submit", function (e) {
                 e.preventDefault();
-                if (!$(this).valid()) { // Check client-side validation
+                if (!$(this).valid()) {
                     return;
                 }
-                var formData = $(this).serialize();
+                const formData = $(this).serialize();
                 $.ajax({
                     url: '@Url.Action("UpdateSection", "TableAndSection")',
                     type: 'POST',
                     data: formData,
                     success: function (response) {
                         if (response.success) {
-                            // On success: close the modal, show success toast, and reload categories
-                            var modalElement = document.getElementById('editModal');
-                            var editModal = bootstrap.Modal.getInstance(modalElement);
+                            const modalElement = document.getElementById('editModal');
+                            const editModal = bootstrap.Modal.getInstance(modalElement);
                             if (editModal) {
                                 editModal.hide();
                             }
                             toastr.success(response.message);
                             loadSections();
                         } else {
-                            // On error: show a single toastr error message.
                             toastr.error(response.message);
-
                         }
                     },
                     error: function (xhr, status, error) {
-                        console.error("Error updating category:", error);
-                        toastr.error("Error updating category. Please try again.");
+                        console.error("Error updating section:", error);
+                        toastr.error("Error updating section. Please try again.");
                     }
                 });
             });
@@ -413,80 +435,95 @@
         // Ensure modal backdrop is removed when any modal is hidden
         $('.modal').on('hidden.bs.modal', function () {
             $('.modal-backdrop').remove();
+            $('body').removeClass('modal-open');
         });
 
-
+        // Add new table button handler
         $("#addNewItemBtn, #addNewItemBtnMobile").on("click", function () {
             $.ajax({
                 url: '@Url.Action("AddNewTable", "TableAndSection")',
                 type: 'GET',
                 success: function (result) {
                     $("#addTableContainer").html(result);
-
-                    var modal = new bootstrap.Modal(document.getElementById("exampleModal2"));
+                    const modal = new bootstrap.Modal(document.getElementById("exampleModal2"));
                     modal.show();
-
                 },
                 error: function () {
-                    toastr.error("Failed to load add item form.");
+                    toastr.error("Failed to load add table form.");
                 }
             });
         });
 
-        // Simplified delete AJAX: attach handler to the delete form submission
+        // Delete section handler
         $(document).on('submit', '.delete-category-form', function (e) {
             e.preventDefault();
-            var form = $(this);
-            var sectionId = form.data('sections-id');
-
+            const form = $(this);
+            const sectionId = form.data('section-id');
             $.ajax({
                 url: '@Url.Action("Delete", "TableAndSection")',
                 type: 'POST',
                 data: form.serialize(),
                 success: function (response) {
                     if (response.success) {
-                        // Retrieve the delete modal element
-                        var modalEl = document.getElementById('deletemodal-' + sectionId);
+                        const modalEl = document.getElementById('deletemodal-' + sectionId);
                         if (modalEl) {
-                            var modal = bootstrap.Modal.getInstance(modalEl);
+                            const modal = bootstrap.Modal.getInstance(modalEl);
                             if (modal) {
                                 modal.hide();
                             }
                         }
-                        // Explicitly remove any lingering modal backdrop
                         $('.modal-backdrop').remove();
-
-                        toastr.success("Category deleted successfully!");
-                        // Refresh the category list
+                        toastr.success("Section deleted successfully!");
                         loadSections();
-                        // Optionally, load items for the first category after a short delay
-                        setTimeout(function () {
-                            var firstCategory = $(".section-link").first();
-                            if (firstCategory.length) {
-                                loadTables(firstCategory.data("sections-id"));
-                            }
-                        }, 300);
                     } else {
                         toastr.error("Error: " + response.message);
                     }
                 },
                 error: function () {
-                    toastr.error("Failed to delete category. Please try again.");
+                    toastr.error("Failed to delete section. Please try again.");
                 }
             });
         });
 
-
-        $("#selectAll").click(function () {
-            $(".itemCheckbox").prop("checked", this.checked);
+        // Select all checkbox handler
+        $("#selectAll").on("click", function () {
+            const isChecked = $(this).is(":checked");
+            if (isChecked) {
+                // Select all tables in the section
+                selectedTableIds = [...new Set([...selectedTableIds, ...allTableIds])];
+            } else {
+                // Deselect all tables in the section
+                selectedTableIds = selectedTableIds.filter(id => !allTableIds.includes(id));
+            }
+            // Update visible checkboxes
+            $(".itemCheckbox").prop("checked", isChecked);
+            updateSelectAllState();
         });
 
-        $("#deleteSelected").click(function () {
-            var selectedIds = $(".itemCheckbox:checked").map(function () {
-                return $(this).val();
-            }).get();
+        // Handle individual checkbox changes
+        $(document).on('change', '.itemCheckbox', function () {
+            const tableId = $(this).val();
+            if ($(this).is(':checked')) {
+                if (!selectedTableIds.includes(tableId)) {
+                    selectedTableIds.push(tableId);
+                }
+            } else {
+                selectedTableIds = selectedTableIds.filter(id => id !== tableId);
+            }
+            updateSelectAllState();
+        });
 
-            if (selectedIds.length === 0) {
+        // Ensure checkboxes reflect selection state when loading new pages
+        $(document).on('DOMNodeInserted', '#GetTableList', function () {
+            $('.itemCheckbox').each(function () {
+                const tableId = $(this).val();
+                $(this).prop('checked', selectedTableIds.includes(tableId));
+            });
+        });
+
+        // Delete selected tables handler
+        $("#deleteSelected").on("click", function () {
+            if (selectedTableIds.length === 0) {
                 toastr.warning("Please select at least one table to delete.");
                 return;
             }
@@ -496,17 +533,18 @@
             }
 
             $.ajax({
-                url: "/TableAndSection/DeleteTables",
+                url: '@Url.Action("DeleteTables", "TableAndSection")',
                 type: "POST",
                 contentType: "application/json",
-                data: JSON.stringify(selectedIds),
+                data: JSON.stringify(selectedTableIds),
                 success: function (response) {
                     if (response.success) {
                         response.deletedIds.forEach(id => {
                             $("tr[data-id='" + id + "']").remove();
+                            selectedTableIds = selectedTableIds.filter(tableId => tableId !== id);
                         });
                         toastr.success(response.message);
-                        loadTables(currentSectionId, currentPage, pageSize); // Refresh table list
+                        loadTables(currentSectionId, currentPage, pageSize);
                     } else {
                         toastr.error(response.message);
                     }
@@ -517,11 +555,10 @@
             });
         });
 
+        // Initialize by loading sections
         loadSections();
-        loadTables(1);
         loadAddSection();
     });
-
 </script>
 
 <script>
@@ -557,11 +594,8 @@
 <style>
     .section-link.active {
         color: rgb(63, 137, 216);
-    font-size: 1.2rem;
-    font-weight: 700;
-        @* border-radius: 5px; *@
-         @* background-color: rgb(119, 163, 209); *@
-        
+        font-size: 1.2rem;
+        font-weight: 700;
     }
 
     .category-option {

@@ -16,7 +16,7 @@ namespace PizzaShopRepository.ViewModels
         [Range(1, 50, ErrorMessage = "Capacity must be between 1 and 50")]
         public int Capacity { get; set; }
 
-        [Required(ErrorMessage = "Status is required")]
+        // [Required(ErrorMessage = "Status is required")]
         public string? Status { get; set; }
 
 

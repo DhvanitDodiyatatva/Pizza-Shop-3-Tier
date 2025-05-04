@@ -36,7 +36,7 @@ public class TableService : ITableService
             SectionId = model.SectionId,
             Name = model.Name,
             Capacity = model.Capacity,
-            Status = model.Status,
+            Status = "available",
             IsDeleted = false
 
         };
