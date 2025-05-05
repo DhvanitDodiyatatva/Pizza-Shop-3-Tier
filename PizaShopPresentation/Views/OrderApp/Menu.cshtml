@@ -74,7 +74,7 @@
 
     .item-card {
         display: inline-block;
-        width: 250px;
+        width: 18rem;
         margin: 10px;
         background: #fff;
         border-radius: 10px;
@@ -101,27 +101,6 @@
         margin: 5px 0;
     }
 
-    .badge {
-        position: absolute;
-        top: 5px;
-        right: 5px;
-        padding: 2px 8px;
-        font-size: 10px;
-        border-radius: 5px;
-    }
-
-    .badge.bg-success {
-        background-color: #28a745;
-    }
-
-    .badge.bg-danger {
-        background-color: #dc3545;
-    }
-
-    .badge.bg-warning {
-        background-color: #ffc107;
-    }
-
     .heart {
         position: absolute;
         bottom: 5px;
@@ -140,21 +119,21 @@
     <div class="row m-0 p-0">
         <!-- Category List Container -->
         <div class="col-2 p-0">
-            <div style="overflow: auto; height: 90dvh;" class="custom-scrollbar" id="categoryContainer">
+            <div style="overflow: auto; height: 91dvh;" class="custom-scrollbar" id="categoryContainer">
                 <!-- Categories loaded here via AJAX -->
             </div>
         </div>
 
         <!-- Item List Container -->
-        <div class="col-5 p-0">
+        <div class="col-10 p-0">
             <div style="overflow: auto; height: 90dvh;" class="custom-scrollbar" id="itemListContainer">
                 <!-- Items loaded here via AJAX -->
             </div>
         </div>
 
-        <div class="col-5 p-0">
+        @* <div class="col-5 p-0">
 
-        </div>
+        </div> *@
     </div>
 </div>
 
