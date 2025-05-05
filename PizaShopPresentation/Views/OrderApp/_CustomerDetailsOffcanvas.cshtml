@@ -1,7 +1,7 @@
 @model PizzaShopRepository.ViewModels.CustomerDetailsViewModel
 
 <div class="container">
-    <h6>Selected Tables</h6>
+    <div class="fw-bolder fs-5 page-text">Selected Tables</div>
     <ul>
         @foreach (var table in Model.SelectedTables)
         {
@@ -9,7 +9,7 @@
         }
     </ul>
 
-    <h6>Waiting List</h6>
+    <div class="fw-bolder fs-5 page-text">Waiting List</div>
     @if (Model.WaitingTokens.Any())
     {
         <table class="table table-hover">
@@ -43,7 +43,7 @@
         <p>No waiting tokens available for the selected sections.</p>
     }
 
-    <h6>Customer Details</h6>
+    <div class="fw-bolder fs-5 page-text">Customer Details</div>
     <form id="assignTableForm" asp-action="AssignTable" asp-controller="OrderApp" method="post">
         @foreach (var table in Model.SelectedTables)
         {
@@ -52,26 +52,35 @@
         <input type="hidden" name="SectionId" value="@Model.SectionId" />
         <input type="hidden" name="WaitingTokenId" id="waitingTokenId" value="" />
 
-        <div class="mb-3">
-            <label for="email" class="form-label">Email*</label>
-            <input type="email" class="form-control" id="email" name="Email" value="" required />
+        <div class="form-floating mb-3">
+
+            <input type="email" class="form-control" id="email" asp-for="Email" value="" />
+            <label asp-for="Email">Email*</label>
+            <span asp-validation-for="Email" class="text-danger"></span>
         </div>
-        <div class="mb-3">
-            <label for="name" class="form-label">Name*</label>
-            <input type="text" class="form-control" id="name" name="Name" value="" required />
+        <div class="form-floating mb-3">
+
+            <input type="text" class="form-control" id="name" asp-for="CustomerName" value="" name="name" required />
+            <label asp-for="CustomerName">Name*</label>
+            <span asp-validation-for="CustomerName" class="text-danger"></span>
         </div>
-        <div class="mb-3">
-            <label for="mobileNumber" class="form-label">Mobile Number*</label>
-            <input type="text" class="form-control" id="mobileNumber" name="PhoneNumber" value="" required />
+        <div class="form-floating mb-3">
+
+            <input type="text" class="form-control" id="mobileNumber" asp-for="PhoneNumber" value="" required />
+            <label asp-for="PhoneNumber">Mobile Number*</label>
+            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
         </div>
-        <div class="mb-3">
-            <label for="numOfPersons" class="form-label">No of Person(s)*</label>
-            <input type="number" class="form-control" id="numOfPersons" name="NumOfPersons" value="0" required />
+        <div class="form-floating mb-3">
+
+            <input type="number" class="form-control" id="numOfPersons" asp-for="NumOfPersons" value="0" required />
+            <label asp-for="NumOfPersons">No of Person(s)*</label>
+            <span asp-validation-for="NumOfPersons" class="text-danger"></span>
         </div>
-        <div class="mb-3">
-            <label for="section" class="form-label">Section*</label>
+        <div class="form-floating mb-3">
+
             <input type="text" class="form-control" id="section" name="SectionName" value="@Model.SectionName"
                 readonly />
+            <label for="section">Section*</label>
         </div>
         <div class="d-flex justify-content-end gap-2">
             <button type="submit" class="btn btn-main text-white">Assign</button>
@@ -79,6 +88,10 @@
         </div>
     </form>
 </div>
+
+
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 
 <script>
     $(document).ready(function () {

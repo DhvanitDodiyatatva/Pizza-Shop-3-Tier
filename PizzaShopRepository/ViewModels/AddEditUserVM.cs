@@ -62,5 +62,6 @@ public class AddEditUserVM
 
     public bool RemoveImage { get; set; }
 
+    [Required(ErrorMessage = "Status is required.")]
     public bool Status { get; set; }
 }

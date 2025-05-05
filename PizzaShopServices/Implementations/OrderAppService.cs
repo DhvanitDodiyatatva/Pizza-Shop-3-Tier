@@ -53,9 +53,14 @@ namespace PizzaShopServices.Implementations
                 return (false, "No tables selected.");
             }
 
-            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(phoneNumber) || numOfPersons <= 0)
+            if (string.IsNullOrEmpty(phoneNumber) || numOfPersons <= 0)
             {
                 return (false, "Invalid customer details.");
+            }
+
+            if (string.IsNullOrEmpty(name))
+            {
+                return (false, "Customer name is required.");
             }
 
             try

@@ -6917,19 +6917,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\dhvan\\.nuget\\packages\\": {}
+    "C:\\Users\\pci29\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\PizaShopPresentation.csproj",
+      "projectUniqueName": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\PizaShopPresentation.csproj",
       "projectName": "PizaShopPresentation",
-      "projectPath": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\PizaShopPresentation.csproj",
-      "packagesPath": "C:\\Users\\dhvan\\.nuget\\packages\\",
-      "outputPath": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\obj\\",
+      "projectPath": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\PizaShopPresentation.csproj",
+      "packagesPath": "C:\\Users\\pci29\\.nuget\\packages\\",
+      "outputPath": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\dhvan\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\pci29\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net7.0"
@@ -6941,11 +6941,11 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
-            "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizzaShopRepository\\PizzaShopRepository.csproj": {
-              "projectPath": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizzaShopRepository\\PizzaShopRepository.csproj"
+            "D:\\PizzaShop 3-Tier\\PizzaShopRepository\\PizzaShopRepository.csproj": {
+              "projectPath": "D:\\PizzaShop 3-Tier\\PizzaShopRepository\\PizzaShopRepository.csproj"
             },
-            "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizzaShopServices\\PizzaShopServices.csproj": {
-              "projectPath": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizzaShopServices\\PizzaShopServices.csproj"
+            "D:\\PizzaShop 3-Tier\\PizzaShopServices\\PizzaShopServices.csproj": {
+              "projectPath": "D:\\PizzaShop 3-Tier\\PizzaShopServices\\PizzaShopServices.csproj"
             }
           }
         }
