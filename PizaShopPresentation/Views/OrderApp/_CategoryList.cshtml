@@ -6,7 +6,8 @@
         <li class="list-group-item @(ViewBag.SelectedCategory == "Favorite Items" ? "active" : "")">
             <a href="" class="category-link text-decoration-none" data-category-name="Favorite Items">Favorite Items</a>
         </li>
-        <li class="list-group-item @(string.IsNullOrEmpty(ViewBag.SelectedCategory) || ViewBag.SelectedCategory == "All" ? "active" : "")">
+        <li
+            class="list-group-item @(string.IsNullOrEmpty(ViewBag.SelectedCategory) || ViewBag.SelectedCategory == "All" ? "active" : "")">
             <a href="" class="category-link text-decoration-none" data-category-name="All">All</a>
         </li>
         @foreach (var category in Model)

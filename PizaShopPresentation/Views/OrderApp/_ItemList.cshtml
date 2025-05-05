@@ -20,7 +20,8 @@
     </div>
 
     <!-- Item Cards -->
-    <div class="row">
+    <div class="row custom-scrollbar"
+        style=" max-height: 80%; min-height: 250px; overflow-y: auto; overflow-x: hidden;">
         @if (Model.Any())
         {
             foreach (var item in Model)

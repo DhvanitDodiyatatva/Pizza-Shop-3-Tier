@@ -212,6 +212,7 @@ namespace PizzaShopPresentation.Controllers
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "Failed to Edit User: " + ex.Message;
+                return RedirectToAction("EditUser", new { id = model.Id });
 
             }
 
