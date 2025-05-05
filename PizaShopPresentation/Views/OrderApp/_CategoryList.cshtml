@@ -1,6 +1,45 @@
 @model List<PizzaShopRepository.Models.Category>
 
-<div class="sidebar fixed-start">
+<!-- Offcanvas for small screens -->
+<div class="d-lg-none">
+    <button class="btn text-secondary-emphasis" type="button" data-bs-toggle="offcanvas"
+        data-bs-target="#categoryOffcanvas" aria-controls="categoryOffcanvas">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="grey" class="bi bi-list"
+            viewBox="0 0 16 16">
+            <path fill-rule="evenodd"
+                d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5" />
+        </svg>
+    </button>
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="categoryOffcanvas"
+        aria-labelledby="categoryOffcanvasLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="categoryOffcanvasLabel">Category</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="list-group">
+                <li class="list-group-item @(ViewBag.SelectedCategory == "Favorite Items" ? "active" : "")">
+                    <a href="" class="category-link text-decoration-none" data-category-name="Favorite Items">Favorite
+                        Items</a>
+                </li>
+                <li
+                    class="list-group-item @(string.IsNullOrEmpty(ViewBag.SelectedCategory) || ViewBag.SelectedCategory == "All" ? "active" : "")">
+                    <a href="" class="category-link text-decoration-none" data-category-name="All">All</a>
+                </li>
+                @foreach (var category in Model)
+                {
+                    <li class="list-group-item @(ViewBag.SelectedCategory == category.Name ? "active" : "")">
+                        <a href="" class="category-link text-decoration-none"
+                            data-category-name="@category.Name">@category.Name</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Sidebar for larger screens -->
+<div class="sidebar fixed-start d-none d-lg-block">
     <h4>Category</h4>
     <ul class="list-group">
         <li class="list-group-item @(ViewBag.SelectedCategory == "Favorite Items" ? "active" : "")">

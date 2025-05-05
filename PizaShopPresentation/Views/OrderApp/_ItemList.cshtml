@@ -3,21 +3,27 @@
 <div class="main-content">
     <!-- Search Bar -->
     <div class="search-bar">
-        <form method="get" action="javascript:void(0)" class="mb-4" onsubmit="return false;">
-            <div class="input-group shadow-lg" style="max-width: 300px;">
-                <input type="text" name="search" id="searchInput" class="form-control" placeholder="Search"
-                    value="@ViewBag.SearchTerm">
-                <button class="btn btn-outline-secondary" type="submit">
-                    <span class="bi bi-search"></span>
-                </button>
+        <div class="row align-items-center">
+            <div class="col-12 col-md-6 col-lg-4 mb-3 mb-md-0">
+                <form method="get" action="javascript:void(0)" onsubmit="return false;">
+                    <div class="input-group shadow-lg">
+                        <input type="text" name="search" id="searchInput" class="form-control" placeholder="Search"
+                            value="@ViewBag.SearchTerm">
+                        <button class="btn btn-outline-secondary" type="submit">
+                            <span class="bi bi-search"></span>
+                        </button>
+                    </div>
+                </form>
             </div>
-        </form>
-        <div class="d-flex">
-            <div class="d-flex align-items-center"><span class=" text-success mx-1 fs-3">● </span>Vegetarian</div>
-            <div class="d-flex align-items-center"><span class=" text-danger mx-1  fs-3">● </span>Non-Vegetarian</div>
-            <div class="d-flex align-items-center"><span class=" text-warning mx-1 fs-3">● </span>Vegan</div>
-            @* <span class="badge bg-danger me-2">● Non-Vegetarian</span>
-            <span class="badge bg-warning">● Vegan</span> *@
+            <div class="col-12 col-md-6 col-lg-8">
+                <div class="row">
+                    <div class="col d-flex justify-content-end">
+                        <div class=" item-type"><span class="text-success mx-1 fs-3">●</span>Vegetarian</div>
+                        <div class=" item-type"><span class="text-danger mx-1 fs-3">●</span>Non-Vegetarian</div>
+                        <div class=" item-type"><span class="text-warning mx-1 fs-3">●</span>Vegan</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -47,20 +53,20 @@
                             <!-- Item Type Badge -->
                             @if (item.ItemType == "vegetarian")
                             {
-                                <span class="badge bg-success position-absolute top-0 end-0 m-0">Veg</span>
+                                <span class="badge bg-success position-absolute top-0 end-0 m-0">&nbsp;</span>
                             }
                             else if (item.ItemType == "vegan")
                             {
-                                <span class="badge bg-warning position-absolute top-0 end-0 m-0">Vegan</span>
+                                <span class="badge bg-warning position-absolute top-0 end-0 m-0">&nbsp;</span>
                             }
                             else if (item.ItemType == "non_vegetarian")
                             {
-                                <span class="badge bg-danger position-absolute top-0 end-0 m-0">Non-Veg</span>
+                                <span class="badge bg-danger position-absolute top-0 end-0 m-0">&nbsp;</span>
                             }
 
                             <!-- Heart Icon -->
                             <span
-                                class="heart position-absolute bottom-0 end-0 m-2 @(item.IsFavourite ? "text-primary" : "text-secondary")"
+                                class="heart position-absolute fs-4 bottom-0 end-0 m-2  @(item.IsFavourite ? "text-primary" : "text-secondary")"
                                 style="cursor: pointer;" onclick="toggleFavorite(@item.Id, this)">♥</span>
                         </div>
                     </div>
