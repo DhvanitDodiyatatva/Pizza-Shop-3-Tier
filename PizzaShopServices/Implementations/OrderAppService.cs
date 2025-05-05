@@ -144,24 +144,69 @@ namespace PizzaShopServices.Implementations
                 {
                     FloorId = section.Id,
                     FloorName = section.Name,
-                    TableDetails = tables.Select(t => new TableDetailViewModel
+                    TableDetails = new List<TableDetailViewModel>()
+                };
+
+                foreach (var table in tables)
+                {
+                    string timeSinceCreated = null;
+                    DateTime? createdAt = null;
+
+                    if (table.Status == "reserved" || table.Status == "occupied")
                     {
-                        TableId = t.Id,
-                        TableName = t.Name,
-                        Capacity = t.Capacity,
-                        Availability = t.Status switch
+                        // Fetch the most recent order associated with this table
+                        var orderTable = await _context.OrderTables
+                            .Include(ot => ot.Order)
+                            .Where(ot => ot.TableId == table.Id && ot.Order.OrderStatus == "pending")
+                            .OrderByDescending(ot => ot.Order.CreatedAt)
+                            .FirstOrDefaultAsync();
+
+                        if (orderTable?.Order?.CreatedAt != null)
+                        {
+                            createdAt = orderTable.Order.CreatedAt;
+                            var timeSpan = DateTime.Now - createdAt.Value;
+                            timeSinceCreated = FormatTimeSpan(timeSpan);
+                        }
+                    }
+
+                    sectionViewModel.TableDetails.Add(new TableDetailViewModel
+                    {
+                        TableId = table.Id,
+                        TableName = table.Name,
+                        Capacity = table.Capacity,
+                        Availability = table.Status switch
                         {
                             "available" => "Available",
                             "occupied" => "Running",
                             "reserved" => "Assigned",
                             _ => "Available"
-                        }
-                    }).ToList()
-                };
+                        },
+                        TimeSinceCreated = timeSinceCreated,
+                        CreatedAt = createdAt  // Store the raw timestamp
+                    });
+                }
+
                 viewModel.Add(sectionViewModel);
             }
 
             return viewModel;
+        }
+
+        // Helper method to format the TimeSpan into a readable string
+        private string FormatTimeSpan(TimeSpan timeSpan)
+        {
+            var parts = new List<string>();
+
+            if (timeSpan.Days > 0)
+                parts.Add($"{timeSpan.Days} days");
+            if (timeSpan.Hours > 0)
+                parts.Add($"{timeSpan.Hours} hrs");
+            if (timeSpan.Minutes > 0)
+                parts.Add($"{timeSpan.Minutes} min");
+            if (timeSpan.Seconds > 0)
+                parts.Add($"{timeSpan.Seconds} sec");
+
+            return parts.Any() ? string.Join(" ", parts) : "0 sec";
         }
 
         public async Task<WaitingTokenViewModel> PrepareWaitingTokenModalAsync(int sectionId, string sectionName)

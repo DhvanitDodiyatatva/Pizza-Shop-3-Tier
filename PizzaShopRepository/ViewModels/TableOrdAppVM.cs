@@ -13,5 +13,7 @@ namespace PizzaShopRepository.ViewModels
         public string TableName { get; set; }
         public int Capacity { get; set; }
         public string Availability { get; set; }  // Will map to Available, Running, Assigned
+        public string TimeSinceCreated { get; set; }
+        public DateTime? CreatedAt { get; set; }
     }
 }

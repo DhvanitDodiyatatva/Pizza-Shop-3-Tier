@@ -91,7 +91,7 @@
                     <div id="@floorCollapseId" class="@collapseClass" aria-labelledby="heading-@floorId" data-bs-parent="#accordionExample">
                         <div class="accordion-body">
                             <div class="row">
-                                @foreach (var table in floor.TableDetails)
+                               @foreach (var table in floor.TableDetails)
                                 {
                                     var cardClass = table.Availability switch
                                     {
@@ -103,10 +103,27 @@
 
                                     <div class="col-md-2" style="cursor: pointer;">
                                         <div class="card @cardClass mb-3 table-card" data-table-id="@table.TableId" data-status="@table.Availability" data-section-id="@floor.FloorId">
-                                            <div class="card-body">
+                                            <div class="card-body" >
                                                 <h5 class="card-title">@table.TableName</h5>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                <div class=" algin-items-center">
                                                 <i class="bi bi-people text-dark"></i>
                                                 <p class="card-text text-dark">@table.Capacity</p>
+
+                                                </div>
+                                                @if (table.Availability == "Assigned" || table.Availability == "Running")
+                                                {
+
+                                                    <div class="text-end align-items-center">
+                                                    
+                                                    <i class="bi bi-clock text-dark"></i>
+                                                    <p class="card-text text-dark elapsed-time d-flex" data-created-at="@table.CreatedAt?.ToString("o")">
+                                                        @table.TimeSinceCreated
+                                                    </p>
+                                                    </div>
+                                                }
+
+                                                </div>
                                                 <p class="card-text text-dark">Status: @table.Availability</p>
                                             </div>
                                         </div>
@@ -153,6 +170,42 @@
 <script>
     $(document).ready(function () {
         let selectedTables = {}; // Object to store table IDs mapped to section IDs
+
+        // Function to update elapsed times for tables
+        function updateElapsedTimes() {
+            const now = new Date();
+
+            $(".elapsed-time").each(function () {
+                const createdAtStr = $(this).data("created-at");
+                if (!createdAtStr) {
+                    $(this).text("N/A");
+                    return;
+                }
+
+                const createdAt = new Date(createdAtStr);
+                let diffMs = now - createdAt;
+
+                if (diffMs < 0) {
+                    $(this).text("Just now");
+                    return;
+                }
+
+                let seconds = Math.floor(diffMs / 1000);
+                let days = Math.floor(seconds / 86400);
+                seconds %= 86400;
+                let hours = Math.floor(seconds / 3600);
+                seconds %= 3600;
+                let minutes = Math.floor(seconds / 60);
+                seconds %= 60;
+
+                $(this).text(`${days} days ${hours} hrs ${minutes} min ${seconds} sec`);
+            });
+        }
+
+        // Update elapsed times every second
+        setInterval(updateElapsedTimes, 1000);
+        // Run immediately on page load
+        updateElapsedTimes();
 
         // Handle table selection
         $('.table-card').on('click', function () {
