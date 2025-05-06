@@ -82,8 +82,12 @@ namespace PizzaShop.Controllers
         [HttpPost]
         public async Task<IActionResult> AssignTable(int[] selectedTableIds, int sectionId, int? waitingTokenId, string email, string name, string phoneNumber, int numOfPersons, string sectionName)
         {
-            var result = await _orderAppService.AssignTableAsync(selectedTableIds, sectionId, waitingTokenId, email, name, phoneNumber, numOfPersons);
-            return Json(new { success = result.Success, message = result.Message });
+            var (success, message, orderId) = await _orderAppService.AssignTableAsync(selectedTableIds, sectionId, waitingTokenId, email, name, phoneNumber, numOfPersons);
+            if (success)
+            {
+                return Json(new { success = true, message = message, orderId = orderId, redirectUrl = Url.Action("Menu", "OrderApp", new { orderId = orderId }) });
+            }
+            return Json(new { success = false, message = message });
         }
 
         public async Task<IActionResult> Menu(int? orderId)

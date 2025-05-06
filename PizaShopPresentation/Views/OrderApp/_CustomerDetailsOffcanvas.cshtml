@@ -27,8 +27,8 @@
                     <tr>
                         <td>
                             <input type="radio" name="radioDefault" value="@token.Id" class="select-token form-check-input"
-                                data-name="@token.CustomerName" data-email="@token.Email" data-phone="@token.PhoneNumber"
-                                data-persons="@token.NumOfPersons" />
+                                   data-name="@token.CustomerName" data-email="@token.Email" data-phone="@token.PhoneNumber"
+                                   data-persons="@token.NumOfPersons" />
                         </td>
                         <td>#@token.Id</td>
                         <td class="text-nowrap">@token.CustomerName</td>
@@ -53,33 +53,27 @@
         <input type="hidden" name="WaitingTokenId" id="waitingTokenId" value="" />
 
         <div class="form-floating mb-3">
-
             <input type="email" class="form-control" id="email" asp-for="Email" value="" />
             <label asp-for="Email">Email*</label>
             <span asp-validation-for="Email" class="text-danger"></span>
         </div>
         <div class="form-floating mb-3">
-
             <input type="text" class="form-control" id="name" asp-for="CustomerName" value="" name="name" required />
             <label asp-for="CustomerName">Name*</label>
             <span asp-validation-for="CustomerName" class="text-danger"></span>
         </div>
         <div class="form-floating mb-3">
-
             <input type="text" class="form-control" id="mobileNumber" asp-for="PhoneNumber" value="" required />
             <label asp-for="PhoneNumber">Mobile Number*</label>
             <span asp-validation-for="PhoneNumber" class="text-danger"></span>
         </div>
         <div class="form-floating mb-3">
-
             <input type="number" class="form-control" id="numOfPersons" asp-for="NumOfPersons" value="0" required />
             <label asp-for="NumOfPersons">No of Person(s)*</label>
             <span asp-validation-for="NumOfPersons" class="text-danger"></span>
         </div>
         <div class="form-floating mb-3">
-
-            <input type="text" class="form-control" id="section" name="SectionName" value="@Model.SectionName"
-                readonly />
+            <input type="text" class="form-control" id="section" name="SectionName" value="@Model.SectionName" readonly />
             <label for="section">Section*</label>
         </div>
         <div class="d-flex justify-content-end gap-2">
@@ -88,7 +82,6 @@
         </div>
     </form>
 </div>
-
 
 <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
 <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
@@ -117,15 +110,16 @@
                 type: 'POST',
                 data: form.serialize(),
                 success: function (response) {
-                    if (response.success) {
+                    if (response.success && response.redirectUrl) {
                         toastr.success(response.message);
                         $('#customerDetailsOffcanvas').offcanvas('hide');
-                        location.reload();
+                        window.location.href = response.redirectUrl;
                     } else {
                         toastr.error(response.message);
                     }
                 },
-                error: function () {
+                error: function (xhr, status, error) {
+                    console.error('AJAX Error: ' + status + ' - ' + error);
                     toastr.error('An error occurred while assigning the table.');
                 }
             });

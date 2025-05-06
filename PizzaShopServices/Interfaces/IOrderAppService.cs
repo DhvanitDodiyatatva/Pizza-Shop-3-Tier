@@ -8,7 +8,7 @@ namespace PizzaShopServices.Interfaces
 {
     public interface IOrderAppService
     {
-        Task<(bool Success, string Message)> AssignTableAsync(int[] selectedTableIds, int sectionId, int? waitingTokenId, string email, string name, string phoneNumber, int numOfPersons);
+        Task<(bool Success, string Message, int OrderId)> AssignTableAsync(int[] selectedTableIds, int sectionId, int? waitingTokenId, string email, string name, string phoneNumber, int numOfPersons);
         Task<List<SectionDetailsViewModel>> GetSectionDetailsAsync();
         Task<WaitingTokenViewModel> PrepareWaitingTokenModalAsync(int sectionId, string sectionName);
         Task<CustomerDetailsViewModel> PrepareCustomerDetailsOffcanvasAsync(string sectionIds, string sectionName, string selectedTableIds);

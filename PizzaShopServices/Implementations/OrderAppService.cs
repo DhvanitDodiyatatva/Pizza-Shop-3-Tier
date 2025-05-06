@@ -22,13 +22,13 @@ namespace PizzaShopServices.Implementations
         private readonly PizzaShopRepository.Data.PizzaShopContext _context;
 
         public OrderAppService(
-        IOrderAppRepository orderAppRepository,
-        ISectionService sectionService,
-        ITableService tableService,
-        IItemService itemService,
-        ICategoryService categoryService,
-        IWaitingTokenService waitingTokenService,
-        PizzaShopRepository.Data.PizzaShopContext context)
+            IOrderAppRepository orderAppRepository,
+            ISectionService sectionService,
+            ITableService tableService,
+            IItemService itemService,
+            ICategoryService categoryService,
+            IWaitingTokenService waitingTokenService,
+            PizzaShopRepository.Data.PizzaShopContext context)
         {
             _orderAppRepository = orderAppRepository;
             _sectionService = sectionService;
@@ -39,28 +39,28 @@ namespace PizzaShopServices.Implementations
             _context = context;
         }
 
-        public async Task<(bool Success, string Message)> AssignTableAsync(
-        int[] selectedTableIds,
-        int sectionId,
-        int? waitingTokenId,
-        string email,
-        string name,
-        string phoneNumber,
-        int numOfPersons)
+        public async Task<(bool Success, string Message, int OrderId)> AssignTableAsync(
+            int[] selectedTableIds,
+            int sectionId,
+            int? waitingTokenId,
+            string email,
+            string name,
+            string phoneNumber,
+            int numOfPersons)
         {
             if (selectedTableIds == null || !selectedTableIds.Any())
             {
-                return (false, "No tables selected.");
+                return (false, "No tables selected.", 0);
             }
 
             if (string.IsNullOrEmpty(phoneNumber) || numOfPersons <= 0)
             {
-                return (false, "Invalid customer details.");
+                return (false, "Invalid customer details.", 0);
             }
 
             if (string.IsNullOrEmpty(name))
             {
-                return (false, "Customer name is required.");
+                return (false, "Customer name is required.", 0);
             }
 
             try
@@ -68,7 +68,7 @@ namespace PizzaShopServices.Implementations
                 var tables = await _orderAppRepository.GetTablesByIdsAsync(selectedTableIds);
                 if (tables.Any(t => t.Status != "available"))
                 {
-                    return (false, "One or more selected tables are no longer available.");
+                    return (false, "One or more selected tables are no longer available.", 0);
                 }
 
                 var customer = await _orderAppRepository.GetCustomerByEmailAsync(email);
@@ -124,11 +124,11 @@ namespace PizzaShopServices.Implementations
                     }
                 }
 
-                return (true, "Tables assigned successfully.");
+                return (true, "Tables assigned successfully.", order.Id);
             }
             catch (Exception ex)
             {
-                return (false, $"An error occurred: {ex.Message}");
+                return (false, $"An error occurred: {ex.Message}", 0);
             }
         }
 
@@ -154,7 +154,6 @@ namespace PizzaShopServices.Implementations
 
                     if (table.Status == "reserved" || table.Status == "occupied")
                     {
-                        // Fetch the most recent order associated with this table
                         var orderTable = await _context.OrderTables
                             .Include(ot => ot.Order)
                             .Where(ot => ot.TableId == table.Id && ot.Order.OrderStatus == "pending")
@@ -182,7 +181,7 @@ namespace PizzaShopServices.Implementations
                             _ => "Available"
                         },
                         TimeSinceCreated = timeSinceCreated,
-                        CreatedAt = createdAt  // Store the raw timestamp
+                        CreatedAt = createdAt
                     });
                 }
 
@@ -192,7 +191,6 @@ namespace PizzaShopServices.Implementations
             return viewModel;
         }
 
-        // Helper method to format the TimeSpan into a readable string
         private string FormatTimeSpan(TimeSpan timeSpan)
         {
             var parts = new List<string>();
@@ -232,34 +230,34 @@ namespace PizzaShopServices.Implementations
             }
 
             var selectedTables = allTables
-            .Where(t => tableIds.Contains(t.Id))
-            .Select(t => new TableDetailsViewModel
-            {
-                TableId = t.Id,
-                TableName = t.Name,
-                Capacity = t.Capacity,
-                Availability = t.Status switch
+                .Where(t => tableIds.Contains(t.Id))
+                .Select(t => new TableDetailsViewModel
                 {
-                    "available" => "Available",
-                    "occupied" => "Running",
-                    "reserved" => "Assigned",
-                    _ => "Available"
-                }
-            })
-            .ToList();
+                    TableId = t.Id,
+                    TableName = t.Name,
+                    Capacity = t.Capacity,
+                    Availability = t.Status switch
+                    {
+                        "available" => "Available",
+                        "occupied" => "Running",
+                        "reserved" => "Assigned",
+                        _ => "Available"
+                    }
+                })
+                .ToList();
 
             var waitingTokens = await _waitingTokenService.GetAllWaitingTokensAsync();
             var sectionTokens = waitingTokens
-            .Where(t => sectionIdList.Contains((int)t.SectionId) && !t.IsDeleted && !t.IsAssigned)
-            .Select(t => new WaitingTokensViewModel
-            {
-                Id = t.Id,
-                CustomerName = t.CustomerName,
-                Email = t.Email,
-                PhoneNumber = t.PhoneNumber,
-                NumOfPersons = t.NumOfPersons
-            })
-            .ToList();
+                .Where(t => sectionIdList.Contains((int)t.SectionId) && !t.IsDeleted && !t.IsAssigned)
+                .Select(t => new WaitingTokensViewModel
+                {
+                    Id = t.Id,
+                    CustomerName = t.CustomerName,
+                    Email = t.Email,
+                    PhoneNumber = t.PhoneNumber,
+                    NumOfPersons = t.NumOfPersons
+                })
+                .ToList();
 
             return new CustomerDetailsViewModel
             {
@@ -324,13 +322,13 @@ namespace PizzaShopServices.Implementations
         public async Task<UpdateOrderItemStatusViewModel> PrepareKotDetailsModalAsync(int orderId, string status, string selectedCategory, string selectedStatus)
         {
             var order = await _context.Orders
-            .Include(o => o.OrderItems)
-            .ThenInclude(oi => oi.Item)
-            .ThenInclude(i => i.Category)
-            .Include(o => o.OrderItems)
-            .ThenInclude(oi => oi.OrderItemModifiers)
-            .ThenInclude(oim => oim.Modifier)
-            .FirstOrDefaultAsync(o => o.Id == orderId);
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Item)
+                .ThenInclude(i => i.Category)
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.OrderItemModifiers)
+                .ThenInclude(oim => oim.Modifier)
+                .FirstOrDefaultAsync(o => o.Id == orderId);
 
             if (order == null)
             {
@@ -338,30 +336,30 @@ namespace PizzaShopServices.Implementations
             }
 
             var filteredItems = order.OrderItems
-            .Where(oi =>
-            (status == "in_progress" ? oi.Quantity > oi.ReadyQuantity : oi.ReadyQuantity > 0) &&
-            (string.IsNullOrEmpty(selectedCategory) || selectedCategory == "All" || oi.Item.Category == null || oi.Item.Category.Name == selectedCategory)
-            ).ToList();
+                .Where(oi =>
+                    (status == "in_progress" ? oi.Quantity > oi.ReadyQuantity : oi.ReadyQuantity > 0) &&
+                    (string.IsNullOrEmpty(selectedCategory) || selectedCategory == "All" || oi.Item.Category == null || oi.Item.Category.Name == selectedCategory)
+                ).ToList();
 
             var viewModel = new UpdateOrderItemStatusViewModel
             {
                 OrderId = order.Id,
                 OrderItems = filteredItems
-            .Select(oi => new OrderItemDetail
-            {
-                OrderItemId = oi.Id,
-                ItemName = oi.Item?.Name ?? "Unknown Item",
-                Quantity = status == "ready" ? oi.ReadyQuantity : oi.Quantity - oi.ReadyQuantity,
-                ReadyQuantity = oi.ReadyQuantity,
-                Status = oi.ItemStatus ?? "in_progress",
-                Modifiers = oi.OrderItemModifiers
-            .Where(oim => oim.Modifier != null && !string.IsNullOrEmpty(oim.Modifier.Name))
-            .Select(oim => oim.Modifier.Name)
-            .ToList(),
-                IsSelected = true,
-                AdjustedQuantity = status == "ready" ? oi.ReadyQuantity : oi.Quantity - oi.ReadyQuantity,
-                CategoryName = oi.Item?.Category?.Name ?? "Unknown Category"
-            }).ToList()
+                    .Select(oi => new OrderItemDetail
+                    {
+                        OrderItemId = oi.Id,
+                        ItemName = oi.Item?.Name ?? "Unknown Item",
+                        Quantity = status == "ready" ? oi.ReadyQuantity : oi.Quantity - oi.ReadyQuantity,
+                        ReadyQuantity = oi.ReadyQuantity,
+                        Status = oi.ItemStatus ?? "in_progress",
+                        Modifiers = oi.OrderItemModifiers
+                            .Where(oim => oim.Modifier != null && !string.IsNullOrEmpty(oim.Modifier.Name))
+                            .Select(oim => oim.Modifier.Name)
+                            .ToList(),
+                        IsSelected = true,
+                        AdjustedQuantity = status == "ready" ? oi.ReadyQuantity : oi.Quantity - oi.ReadyQuantity,
+                        CategoryName = oi.Item?.Category?.Name ?? "Unknown Category"
+                    }).ToList()
             };
 
             return viewModel;
