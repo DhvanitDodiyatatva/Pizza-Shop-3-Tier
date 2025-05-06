@@ -8,7 +8,7 @@
                 <form method="get" action="javascript:void(0)" onsubmit="return false;">
                     <div class="input-group shadow-lg">
                         <input type="text" name="search" id="searchInput" class="form-control" placeholder="Search"
-                            value="@ViewBag.SearchTerm">
+                               value="@ViewBag.SearchTerm">
                         <button class="btn btn-outline-secondary" type="submit">
                             <span class="bi bi-search"></span>
                         </button>
@@ -18,9 +18,9 @@
             <div class="col-12 col-md-6 col-lg-8">
                 <div class="row">
                     <div class="col d-flex justify-content-end">
-                        <div class=" item-type"><span class="text-success mx-1 fs-3">●</span>Vegetarian</div>
-                        <div class=" item-type"><span class="text-danger mx-1 fs-3">●</span>Non-Vegetarian</div>
-                        <div class=" item-type"><span class="text-warning mx-1 fs-3">●</span>Vegan</div>
+                        <div class="item-type"><span class="text-success mx-1 fs-3">●</span>Vegetarian</div>
+                        <div class="item-type"><span class="text-danger mx-1 fs-3">●</span>Non-Vegetarian</div>
+                        <div class="item-type"><span class="text-warning mx-1 fs-3">●</span>Vegan</div>
                     </div>
                 </div>
             </div>
@@ -29,18 +29,18 @@
 
     <!-- Item Cards -->
     <div class="row custom-scrollbar"
-        style=" max-height: 80%; min-height: 250px; overflow-y: auto; overflow-x: hidden;">
+         style="max-height: 80%; min-height: 250px; overflow-y: auto; overflow-x: hidden;">
         @if (Model.Any())
         {
             foreach (var item in Model)
             {
-                <div class="item-card" data-item-id="@item.Id">
+                <div class="item-card" data-item-id="@item.Id" style="cursor: pointer;">
                     <div class="row">
                         <div class="col-3">
                             <div class="card-icon d-flex justify-content-center align-items-center">
                                 <span>
                                     <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/images/dining-menu.png" : item.ImageUrl)"
-                                        class="rounded-circle" style="height: 40px; width: 40px">
+                                         class="rounded-circle" style="height: 40px; width: 40px">
                                 </span>
                             </div>
                         </div>
@@ -53,21 +53,20 @@
                             <!-- Item Type Badge -->
                             @if (item.ItemType == "vegetarian")
                             {
-                                <span class="badge bg-success position-absolute top-0 end-0 m-0">&nbsp;</span>
+                                <span class="badge bg-success position-absolute top-0 end-0 m-0"> </span>
                             }
                             else if (item.ItemType == "vegan")
                             {
-                                <span class="badge bg-warning position-absolute top-0 end-0 m-0">&nbsp;</span>
+                                <span class="badge bg-warning position-absolute top-0 end-0 m-0"> </span>
                             }
                             else if (item.ItemType == "non_vegetarian")
                             {
-                                <span class="badge bg-danger position-absolute top-0 end-0 m-0">&nbsp;</span>
+                                <span class="badge bg-danger position-absolute top-0 end-0 m-0"> </span>
                             }
 
                             <!-- Heart Icon -->
-                            <span
-                                class="heart position-absolute fs-4 bottom-0 end-0 m-2  @(item.IsFavourite ? "text-primary" : "text-secondary")"
-                                style="cursor: pointer;" onclick="toggleFavorite(@item.Id, this)">♥</span>
+                            <span class="heart position-absolute fs-4 bottom-0 end-0 m-2 @(item.IsFavourite ? "text-primary" : "text-secondary")"
+                                  style="cursor: pointer;" onclick="toggleFavorite(@item.Id, this); event.stopPropagation();">♥</span>
                         </div>
                     </div>
                 </div>
@@ -88,11 +87,8 @@
             data: { itemId: itemId },
             success: function (result) {
                 if (result.success) {
-                    // Toggle the heart icon color based on isFavourite status
                     $(element).toggleClass('text-primary', result.isFavourite);
                     $(element).toggleClass('text-secondary', !result.isFavourite);
-
-                    // Optionally, reload items if the Favorite Items category is active
                     if (currentCategory === 'Favorite Items') {
                         loadItems('Favorite Items', '');
                     }
@@ -106,4 +102,33 @@
             }
         });
     }
+
+    $(document).ready(function () {
+        $(document).on('click', '.item-card', function () {
+            const itemId = $(this).data('item-id');
+            $.ajax({
+                url: '@Url.Action("ShowItemModifiersModal", "OrderApp")',
+                type: 'GET',
+                data: { itemId: itemId },
+                success: function (result) {
+                    // Ensure modal container exists
+                    if (!$('#itemModifiersModal').length) {
+                        $('body').append(`
+                            <div class="modal fade" id="itemModifiersModal" tabindex="-1" aria-labelledby="itemModifiersModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content" id="itemModifiersModalContent"></div>
+                                </div>
+                            </div>
+                        `);
+                    }
+                    $('#itemModifiersModalContent').html(result);
+                    $('#itemModifiersModal').modal('show');
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error loading item modifiers:", error);
+                    alert("Failed to load item modifiers.");
+                }
+            });
+        });
+    });
 </script>

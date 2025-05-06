@@ -216,5 +216,16 @@ namespace PizzaShop.Controllers
                 return Json(new { success = false, message = $"An error occurred: {ex.Message}" });
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ShowItemModifiersModal(int itemId)
+        {
+            var item = await _orderAppRepository.GetItemWithModifiersAsync(itemId);
+            if (item == null)
+            {
+                return NotFound();
+            }
+            return PartialView("_ItemModifiers", item);
+        }
     }
 }

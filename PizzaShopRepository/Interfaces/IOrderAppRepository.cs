@@ -19,5 +19,6 @@ namespace PizzaShopRepository.Interfaces
         Task<Order?> GetOrderByIdAsync(int id);
 
         Task<OrderTable?> GetOrderTableByTableIdAsync(int tableId);
+        Task<Item?> GetItemWithModifiersAsync(int itemId);
     }
 }

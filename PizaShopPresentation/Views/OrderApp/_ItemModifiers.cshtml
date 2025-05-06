@@ -1,0 +1,84 @@
+@model PizzaShopRepository.Models.Item
+
+<div class="modal-header">
+    <h5 class="modal-title" id="itemModifiersModalLabel">@Model.Name - Modifiers</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+    @if (Model.ItemModifierGroups.Any(img => !img.IsDeleted))
+    {
+        <form id="modifierForm">
+            <input type="hidden" id="itemId" value="@Model.Id" />
+            @foreach (var itemModifierGroup in Model.ItemModifierGroups.Where(img => !img.IsDeleted))
+            {
+                var modifierGroup = itemModifierGroup.ModifierGroup;
+                if (modifierGroup != null && !modifierGroup.IsDeleted)
+                {
+                    <div class="modifier-group mb-3">
+                        <h6>@modifierGroup.Name</h6>
+                        <small class="text-muted">
+                            (Select between @itemModifierGroup.MinLoad and @itemModifierGroup.MaxLoad options)
+                        </small>
+                        <input type="hidden" class="min-load" value="@itemModifierGroup.MinLoad" />
+                        <input type="hidden" class="max-load" value="@itemModifierGroup.MaxLoad" />
+                        <div class="modifier-options">
+                            @foreach (var mapping in modifierGroup.ModifierGroupMappings.Where(mgm => !mgm.IsDeleted))
+                            {
+                                var modifier = mapping.Modifier;
+                                if (modifier != null && !modifier.IsDeleted)
+                                {
+                                    <div class="form-check">
+                                        <input class="form-check-input modifier-checkbox" type="checkbox"
+                                               name="modifiers_@modifierGroup.Id" value="@modifier.Id"
+                                               data-price="@modifier.Price" data-group-id="@modifierGroup.Id" />
+                                        <label class="form-check-label">
+                                            @modifier.Name (@(modifier.Price > 0 ? $"₹{modifier.Price}" : "Free"))
+                                        </label>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                }
+            }
+        </form>
+    }
+    else
+    {
+        <p>No modifiers available for this item.</p>
+    }
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    <button type="button" class="btn btn-main text-white" id="addItemButton" disabled>Add</button>
+</div>
+
+<script>
+    $(document).ready(function () {
+        function validateModifiers() {
+            let allRequirementsMet = true;
+
+            $('.modifier-group').each(function () {
+                const group = $(this);
+                const minLoad = parseInt(group.find('.min-load').val()) || 0;
+                const maxLoad = parseInt(group.find('.max-load').val()) || Infinity;
+                const selectedCount = group.find('.modifier-checkbox:checked').length;
+
+                const meetsMin = selectedCount >= minLoad;
+                const meetsMax = selectedCount <= maxLoad;
+
+                if (!meetsMin || !meetsMax) {
+                    allRequirementsMet = false;
+                }
+            });
+
+            $('#addItemButton').prop('disabled', !allRequirementsMet);
+        }
+
+        $('.modifier-checkbox').on('change', function () {
+            validateModifiers();
+        });
+
+        validateModifiers(); // Initial validation
+    });
+</script>

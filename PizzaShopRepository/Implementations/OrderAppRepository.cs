@@ -92,5 +92,15 @@ namespace PizzaShopRepository.Repositories
                 .OrderByDescending(ot => ot.Order.CreatedAt)
                 .FirstOrDefaultAsync();
         }
+
+        public async Task<Item?> GetItemWithModifiersAsync(int itemId)
+        {
+            return await _context.Items
+                .Include(i => i.ItemModifierGroups)
+                    .ThenInclude(img => img.ModifierGroup)
+                        .ThenInclude(mg => mg.ModifierGroupMappings)
+                            .ThenInclude(mgm => mgm.Modifier)
+                .FirstOrDefaultAsync(i => i.Id == itemId && !i.IsDeleted);
+        }
     }
 }
