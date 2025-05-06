@@ -65,5 +65,32 @@ namespace PizzaShopRepository.Repositories
         {
             return await _context.Tables.Where(t => tableIds.Contains(t.Id)).ToListAsync();
         }
+
+        public async Task<Order?> GetOrderByIdAsync(int id)
+        {
+            return await _context.Orders
+                .Include(o => o.Customer)
+                .Include(o => o.OrderTables)
+                    .ThenInclude(ot => ot.Table)
+                    .ThenInclude(t => t.Section)
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Item)
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.OrderItemModifiers)
+                    .ThenInclude(oim => oim.Modifier)
+                .Include(o => o.OrderTaxes)
+                    .ThenInclude(ot => ot.Tax)
+                .FirstOrDefaultAsync(o => o.Id == id);
+        }
+
+        public async Task<OrderTable?> GetOrderTableByTableIdAsync(int tableId)
+        {
+            return await _context.OrderTables
+                .Include(ot => ot.Order)
+                .Where(ot => ot.TableId == tableId &&
+                             (ot.Order.OrderStatus == "pending" || ot.Order.OrderStatus == "in_progress"))
+                .OrderByDescending(ot => ot.Order.CreatedAt)
+                .FirstOrDefaultAsync();
+        }
     }
 }

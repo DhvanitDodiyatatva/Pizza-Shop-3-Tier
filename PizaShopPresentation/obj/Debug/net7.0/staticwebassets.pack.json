@@ -1,527 +1,527 @@
 {
   "Files": [
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\obj\\Debug\\net7.0\\scopedcss\\projectbundle\\PizaShopPresentation.bundle.scp.css",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\obj\\Debug\\net7.0\\scopedcss\\projectbundle\\PizaShopPresentation.bundle.scp.css",
       "PackagePath": "staticwebassets\\PizaShopPresentation.bundle.scp.css"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\css\\site.css",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\css\\site.css",
       "PackagePath": "staticwebassets\\css\\site.css"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\favicon.ico",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\favicon.ico",
       "PackagePath": "staticwebassets\\favicon.ico"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\Default_pfp.svg.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\Default_pfp.svg.png",
       "PackagePath": "staticwebassets\\images\\Default_pfp.svg.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\Kot.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\Kot.png",
       "PackagePath": "staticwebassets\\images\\Kot.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\OrderApp.svg",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\OrderApp.svg",
       "PackagePath": "staticwebassets\\images\\OrderApp.svg"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\QR.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\QR.png",
       "PackagePath": "staticwebassets\\images\\QR.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\Screenshot (3)_085aeeea-c0e3-49a2-a0c6-874c0fd0a500.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\Screenshot (3)_085aeeea-c0e3-49a2-a0c6-874c0fd0a500.png",
       "PackagePath": "staticwebassets\\images\\Screenshot (3)_085aeeea-c0e3-49a2-a0c6-874c0fd0a500.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\dashboard\\customer.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\dashboard\\customer.png",
       "PackagePath": "staticwebassets\\images\\dashboard\\customer.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\dashboard\\dashboard.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\dashboard\\dashboard.png",
       "PackagePath": "staticwebassets\\images\\dashboard\\dashboard.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\dashboard\\menu.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\dashboard\\menu.png",
       "PackagePath": "staticwebassets\\images\\dashboard\\menu.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\dashboard\\orders.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\dashboard\\orders.png",
       "PackagePath": "staticwebassets\\images\\dashboard\\orders.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\dashboard\\rolesAndPermission.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\dashboard\\rolesAndPermission.png",
       "PackagePath": "staticwebassets\\images\\dashboard\\rolesAndPermission.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\dashboard\\tableandSection.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\dashboard\\tableandSection.png",
       "PackagePath": "staticwebassets\\images\\dashboard\\tableandSection.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\dashboard\\tax.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\dashboard\\tax.png",
       "PackagePath": "staticwebassets\\images\\dashboard\\tax.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\dashboard\\users.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\dashboard\\users.png",
       "PackagePath": "staticwebassets\\images\\dashboard\\users.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\delete.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\delete.png",
       "PackagePath": "staticwebassets\\images\\delete.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\dining-menu.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\dining-menu.png",
       "PackagePath": "staticwebassets\\images\\dining-menu.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\dominos_background.jpg",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\dominos_background.jpg",
       "PackagePath": "staticwebassets\\images\\dominos_background.jpg"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\edit.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\edit.png",
       "PackagePath": "staticwebassets\\images\\edit.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\export.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\export.png",
       "PackagePath": "staticwebassets\\images\\export.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\grid.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\grid.png",
       "PackagePath": "staticwebassets\\images\\grid.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\icons\\customer.svg",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\icons\\customer.svg",
       "PackagePath": "staticwebassets\\images\\icons\\customer.svg"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\icons\\dinner-table.svg",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\icons\\dinner-table.svg",
       "PackagePath": "staticwebassets\\images\\icons\\dinner-table.svg"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\icons\\non-veg-icon.svg",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\icons\\non-veg-icon.svg",
       "PackagePath": "staticwebassets\\images\\icons\\non-veg-icon.svg"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\icons\\order-value.svg",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\icons\\order-value.svg",
       "PackagePath": "staticwebassets\\images\\icons\\order-value.svg"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\icons\\passShow.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\icons\\passShow.png",
       "PackagePath": "staticwebassets\\images\\icons\\passShow.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\icons\\passwordhide.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\icons\\passwordhide.png",
       "PackagePath": "staticwebassets\\images\\icons\\passwordhide.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\icons\\total-orders.svg",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\icons\\total-orders.svg",
       "PackagePath": "staticwebassets\\images\\icons\\total-orders.svg"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\icons\\total-sales.svg",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\icons\\total-sales.svg",
       "PackagePath": "staticwebassets\\images\\icons\\total-sales.svg"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\icons\\veg-icon.svg",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\icons\\veg-icon.svg",
       "PackagePath": "staticwebassets\\images\\icons\\veg-icon.svg"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\icons\\vegan-icon.svg",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\icons\\vegan-icon.svg",
       "PackagePath": "staticwebassets\\images\\icons\\vegan-icon.svg"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\icons\\waiting-list.svg",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\icons\\waiting-list.svg",
       "PackagePath": "staticwebassets\\images\\icons\\waiting-list.svg"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\icons\\waiting-time.svg",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\icons\\waiting-time.svg",
       "PackagePath": "staticwebassets\\images\\icons\\waiting-time.svg"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\logos\\icons8-facebook-48.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\logos\\icons8-facebook-48.png",
       "PackagePath": "staticwebassets\\images\\logos\\icons8-facebook-48.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\logos\\icons8-github-48.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\logos\\icons8-github-48.png",
       "PackagePath": "staticwebassets\\images\\logos\\icons8-github-48.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\logos\\icons8-google-48.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\logos\\icons8-google-48.png",
       "PackagePath": "staticwebassets\\images\\logos\\icons8-google-48.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\logos\\pizzashop_logo.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\logos\\pizzashop_logo.png",
       "PackagePath": "staticwebassets\\images\\logos\\pizzashop_logo.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\menuOA.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\menuOA.png",
       "PackagePath": "staticwebassets\\images\\menuOA.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\pdf.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\pdf.png",
       "PackagePath": "staticwebassets\\images\\pdf.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\pencil.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\pencil.png",
       "PackagePath": "staticwebassets\\images\\pencil.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\profile_div_bg.jpg",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\profile_div_bg.jpg",
       "PackagePath": "staticwebassets\\images\\profile_div_bg.jpg"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\qr-code.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\qr-code.png",
       "PackagePath": "staticwebassets\\images\\qr-code.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\tableOA.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\tableOA.png",
       "PackagePath": "staticwebassets\\images\\tableOA.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\toppng.com-warning-icon-2400x2400.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\toppng.com-warning-icon-2400x2400.png",
       "PackagePath": "staticwebassets\\images\\toppng.com-warning-icon-2400x2400.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\transperent-pizza.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\transperent-pizza.png",
       "PackagePath": "staticwebassets\\images\\transperent-pizza.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\Cheeseburger_222a1715-ebe4-4087-8f49-48879d519613.jpg",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\Cheeseburger_222a1715-ebe4-4087-8f49-48879d519613.jpg",
       "PackagePath": "staticwebassets\\images\\uploadimages\\Cheeseburger_222a1715-ebe4-4087-8f49-48879d519613.jpg"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\Cheeseburger_c12e9dc3-5bf4-46f3-bd16-ed0a7d3c5b20.jpg",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\Cheeseburger_c12e9dc3-5bf4-46f3-bd16-ed0a7d3c5b20.jpg",
       "PackagePath": "staticwebassets\\images\\uploadimages\\Cheeseburger_c12e9dc3-5bf4-46f3-bd16-ed0a7d3c5b20.jpg"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\Dhvanit@123_28e28c66-83f4-40e9-9426-fe0b83f06c8f.jpg",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\Dhvanit@123_28e28c66-83f4-40e9-9426-fe0b83f06c8f.jpg",
       "PackagePath": "staticwebassets\\images\\uploadimages\\Dhvanit@123_28e28c66-83f4-40e9-9426-fe0b83f06c8f.jpg"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\Dhvanit@123_ae74b1bc-1d04-4699-8bf7-bfec22272952.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\Dhvanit@123_ae74b1bc-1d04-4699-8bf7-bfec22272952.png",
       "PackagePath": "staticwebassets\\images\\uploadimages\\Dhvanit@123_ae74b1bc-1d04-4699-8bf7-bfec22272952.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\Dhvanit@123_ae7fc33b-2b7e-454c-bbb2-a8d2c8fb74c1.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\Dhvanit@123_ae7fc33b-2b7e-454c-bbb2-a8d2c8fb74c1.png",
       "PackagePath": "staticwebassets\\images\\uploadimages\\Dhvanit@123_ae7fc33b-2b7e-454c-bbb2-a8d2c8fb74c1.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\Dhvanit@123_b7b41d83-4476-4f7b-80ff-9304b296d95b.jpg",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\Dhvanit@123_b7b41d83-4476-4f7b-80ff-9304b296d95b.jpg",
       "PackagePath": "staticwebassets\\images\\uploadimages\\Dhvanit@123_b7b41d83-4476-4f7b-80ff-9304b296d95b.jpg"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\Ham & Cheese_8d5ee920-d654-453a-9b2f-11d9ebf45f9e.jpg",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\Ham & Cheese_8d5ee920-d654-453a-9b2f-11d9ebf45f9e.jpg",
       "PackagePath": "staticwebassets\\images\\uploadimages\\Ham & Cheese_8d5ee920-d654-453a-9b2f-11d9ebf45f9e.jpg"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\charlieb_1c2e4005-08e0-48a7-bd7d-2d74839f1e6c.jpg",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\charlieb_1c2e4005-08e0-48a7-bd7d-2d74839f1e6c.jpg",
       "PackagePath": "staticwebassets\\images\\uploadimages\\charlieb_1c2e4005-08e0-48a7-bd7d-2d74839f1e6c.jpg"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\davidm_6d92a0e2-a850-4191-b955-1445c635f96c.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\davidm_6d92a0e2-a850-4191-b955-1445c635f96c.png",
       "PackagePath": "staticwebassets\\images\\uploadimages\\davidm_6d92a0e2-a850-4191-b955-1445c635f96c.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\davidm_b981f6b4-76da-4225-8d85-559c0664e4cc.jpg",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\davidm_b981f6b4-76da-4225-8d85-559c0664e4cc.jpg",
       "PackagePath": "staticwebassets\\images\\uploadimages\\davidm_b981f6b4-76da-4225-8d85-559c0664e4cc.jpg"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\deadpool_e8274a46-2cef-4539-ab5e-c0bfac3bbefb.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\deadpool_e8274a46-2cef-4539-ab5e-c0bfac3bbefb.png",
       "PackagePath": "staticwebassets\\images\\uploadimages\\deadpool_e8274a46-2cef-4539-ab5e-c0bfac3bbefb.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\dhthtjhe_0244a920-da64-419b-bfbd-213dc5a0d7f3.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\dhthtjhe_0244a920-da64-419b-bfbd-213dc5a0d7f3.png",
       "PackagePath": "staticwebassets\\images\\uploadimages\\dhthtjhe_0244a920-da64-419b-bfbd-213dc5a0d7f3.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\efefeffqeqf_d781607e-7ffc-49ed-8507-da80c5d415ff.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\efefeffqeqf_d781607e-7ffc-49ed-8507-da80c5d415ff.png",
       "PackagePath": "staticwebassets\\images\\uploadimages\\efefeffqeqf_d781607e-7ffc-49ed-8507-da80c5d415ff.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\geqffeeeeee_c76f8611-f407-4660-aa0e-87cd73b6a05d.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\geqffeeeeee_c76f8611-f407-4660-aa0e-87cd73b6a05d.png",
       "PackagePath": "staticwebassets\\images\\uploadimages\\geqffeeeeee_c76f8611-f407-4660-aa0e-87cd73b6a05d.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\hhethe_28f8789a-3a96-4e32-8dc7-ab5f24daef70.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\hhethe_28f8789a-3a96-4e32-8dc7-ab5f24daef70.png",
       "PackagePath": "staticwebassets\\images\\uploadimages\\hhethe_28f8789a-3a96-4e32-8dc7-ab5f24daef70.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\hhhhhhhh_1a0984f3-20f2-4f9a-87f4-70dba3d22276.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\hhhhhhhh_1a0984f3-20f2-4f9a-87f4-70dba3d22276.png",
       "PackagePath": "staticwebassets\\images\\uploadimages\\hhhhhhhh_1a0984f3-20f2-4f9a-87f4-70dba3d22276.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\hhhhhhhh_3752f95a-b08b-41de-9801-a6fe47957188.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\hhhhhhhh_3752f95a-b08b-41de-9801-a6fe47957188.png",
       "PackagePath": "staticwebassets\\images\\uploadimages\\hhhhhhhh_3752f95a-b08b-41de-9801-a6fe47957188.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\hhhhhhhh_736ee1f0-60cf-40e1-b59a-b792b9edfb8d.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\hhhhhhhh_736ee1f0-60cf-40e1-b59a-b792b9edfb8d.png",
       "PackagePath": "staticwebassets\\images\\uploadimages\\hhhhhhhh_736ee1f0-60cf-40e1-b59a-b792b9edfb8d.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\hhhhhhhh_ab9ec02b-c16e-4eda-86c4-4f95f1f3c7a0.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\hhhhhhhh_ab9ec02b-c16e-4eda-86c4-4f95f1f3c7a0.png",
       "PackagePath": "staticwebassets\\images\\uploadimages\\hhhhhhhh_ab9ec02b-c16e-4eda-86c4-4f95f1f3c7a0.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\jfyjfjf_d92bfdb5-b828-4b21-967c-94cb49732366.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\jfyjfjf_d92bfdb5-b828-4b21-967c-94cb49732366.png",
       "PackagePath": "staticwebassets\\images\\uploadimages\\jfyjfjf_d92bfdb5-b828-4b21-967c-94cb49732366.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\jryjryjyjrds_1e119f4d-aee5-42df-8eb2-43e425c63884.jpg",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\jryjryjyjrds_1e119f4d-aee5-42df-8eb2-43e425c63884.jpg",
       "PackagePath": "staticwebassets\\images\\uploadimages\\jryjryjyjrds_1e119f4d-aee5-42df-8eb2-43e425c63884.jpg"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\jryjryjyjrds_38a9fc01-a752-4a7e-8368-03fb0071cb38.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\jryjryjyjrds_38a9fc01-a752-4a7e-8368-03fb0071cb38.png",
       "PackagePath": "staticwebassets\\images\\uploadimages\\jryjryjyjrds_38a9fc01-a752-4a7e-8368-03fb0071cb38.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\jryjryjyjrds_b16be69b-8299-489f-9233-6409ea21564b.jpg",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\jryjryjyjrds_b16be69b-8299-489f-9233-6409ea21564b.jpg",
       "PackagePath": "staticwebassets\\images\\uploadimages\\jryjryjyjrds_b16be69b-8299-489f-9233-6409ea21564b.jpg"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\jryjryjyjrds_d0a16e2a-a9a6-41e8-a271-60f22fa56457.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\jryjryjyjrds_d0a16e2a-a9a6-41e8-a271-60f22fa56457.png",
       "PackagePath": "staticwebassets\\images\\uploadimages\\jryjryjyjrds_d0a16e2a-a9a6-41e8-a271-60f22fa56457.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\jryjryjyjrds_dbd9ab76-2686-4a53-8e3d-d72c510cf77d.jpg",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\jryjryjyjrds_dbd9ab76-2686-4a53-8e3d-d72c510cf77d.jpg",
       "PackagePath": "staticwebassets\\images\\uploadimages\\jryjryjyjrds_dbd9ab76-2686-4a53-8e3d-d72c510cf77d.jpg"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\images\\waitingOA.png",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\waitingOA.png",
       "PackagePath": "staticwebassets\\images\\waitingOA.png"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\js\\bootstrap.bundle.min.js",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\js\\bootstrap.bundle.min.js",
       "PackagePath": "staticwebassets\\js\\bootstrap.bundle.min.js"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\js\\site.js",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\js\\site.js",
       "PackagePath": "staticwebassets\\js\\site.js"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\LICENSE",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\LICENSE",
       "PackagePath": "staticwebassets\\lib\\bootstrap"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css.map",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css.map"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css.map",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css.map"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css.map",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css.map"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css.map",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css.map"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css.map",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css.map"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css.map",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css.map"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css.map",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css.map"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css.map",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css.map"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css.map",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css.map"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css.map",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css.map"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css.map",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css.map"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css.map",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css.map"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.css"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css.map",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.css.map"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.min.css"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css.map",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.min.css.map"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css.map",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css.map"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css.map",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css.map"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js.map",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js.map"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js.map",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js.map"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js.map",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js.map"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js.map",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js.map"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.js"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js.map",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.js.map"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.min.js",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.min.js",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.min.js"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.min.js.map",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.min.js.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.min.js.map"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\jquery-validation-unobtrusive\\LICENSE.txt",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\jquery-validation-unobtrusive\\LICENSE.txt",
       "PackagePath": "staticwebassets\\lib\\jquery-validation-unobtrusive\\LICENSE.txt"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.js",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.js",
       "PackagePath": "staticwebassets\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.js"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.min.js",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.min.js",
       "PackagePath": "staticwebassets\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.min.js"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\jquery-validation\\LICENSE.md",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\jquery-validation\\LICENSE.md",
       "PackagePath": "staticwebassets\\lib\\jquery-validation\\LICENSE.md"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\jquery-validation\\dist\\additional-methods.js",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\jquery-validation\\dist\\additional-methods.js",
       "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\additional-methods.js"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\jquery-validation\\dist\\additional-methods.min.js",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\jquery-validation\\dist\\additional-methods.min.js",
       "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\additional-methods.min.js"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\jquery-validation\\dist\\jquery.validate.js",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\jquery-validation\\dist\\jquery.validate.js",
       "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\jquery.validate.js"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\jquery-validation\\dist\\jquery.validate.min.js",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\jquery-validation\\dist\\jquery.validate.min.js",
       "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\jquery.validate.min.js"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\jquery\\LICENSE.txt",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\jquery\\LICENSE.txt",
       "PackagePath": "staticwebassets\\lib\\jquery\\LICENSE.txt"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\jquery\\dist\\jquery.js",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\jquery\\dist\\jquery.js",
       "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.js"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\jquery\\dist\\jquery.min.js",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\jquery\\dist\\jquery.min.js",
       "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.js"
     },
     {
-      "Id": "D:\\PizzaShop 3-Tier\\Pizza-Shop-3-Tier\\PizaShopPresentation\\wwwroot\\lib\\jquery\\dist\\jquery.min.map",
+      "Id": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\lib\\jquery\\dist\\jquery.min.map",
       "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.map"
     },
     {

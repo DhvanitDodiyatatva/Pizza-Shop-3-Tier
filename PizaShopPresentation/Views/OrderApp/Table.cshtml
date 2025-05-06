@@ -103,28 +103,24 @@
 
                                     <div class="col-md-2" style="cursor: pointer;">
                                         <div class="card @cardClass mb-3 table-card" data-table-id="@table.TableId" data-status="@table.Availability" data-section-id="@floor.FloorId">
-                                            <div class="card-body" >
+                                            <div class="card-body">
                                                 <h5 class="card-title">@table.TableName</h5>
                                                 <div class="d-flex justify-content-between align-items-center">
-                                                <div class=" algin-items-center">
-                                                <i class="bi bi-people text-dark"></i>
-                                                <p class="card-text text-dark">@table.Capacity</p>
-
-                                                </div>
-                                                @if (table.Availability == "Assigned" || table.Availability == "Running")
-                                                {
-
-                                                    <div class="text-end align-items-center">
-                                                    
-                                                    <i class="bi bi-clock text-dark"></i>
-                                                    <p class="card-text text-dark elapsed-time d-flex" data-created-at="@table.CreatedAt?.ToString("o")">
-                                                        @table.TimeSinceCreated
-                                                    </p>
+                                                    <div class="algin-items-center">
+                                                        <i class="bi bi-people text-dark"></i>
+                                                        <p class="card-text text-dark">@table.Capacity</p>
                                                     </div>
-                                                }
-
+                                                    @if (table.Availability == "Assigned" || table.Availability == "Running")
+                                                    {
+                                                        <div class="text-end align-items-center">
+                                                            <i class="bi bi-clock text-dark"></i>
+                                                            <p class="card-text text-dark elapsed-time d-flex" data-created-at="@table.CreatedAt?.ToString("o")">
+                                                                @table.TimeSinceCreated
+                                                            </p>
+                                                        </div>
+                                                    }
                                                 </div>
-                                                <p class="card-text text-dark">Status: @table.Availability</p>
+                                                <p class="card-text text-dark">@table.Availability</p>
                                             </div>
                                         </div>
                                     </div>
@@ -212,6 +208,29 @@
             const status = $(this).data('status');
             const tableId = $(this).data('table-id');
             const sectionId = $(this).data('section-id');
+
+            if (status === 'Assigned' || status === 'Running') {
+                // Redirect to Menu with orderId
+                $.ajax({
+                    url: '@Url.Action("RedirectToMenuFromTable", "OrderApp")',
+                    type: 'GET',
+                    data: { tableId: tableId },
+                    success: function (response) {
+                        if (response.success && response.redirectUrl) {
+                            window.location.href = response.redirectUrl;
+                        } else {
+                            toastr.error('Failed to redirect to menu.');
+                            window.location.href = response.redirectUrl || '@Url.Action("Table", "OrderApp")';
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('AJAX Error: ' + status + ' - ' + error);
+                        toastr.error('Failed to redirect to menu.');
+                        window.location.href = '@Url.Action("Table", "OrderApp")';
+                    }
+                });
+                return;
+            }
 
             if (status !== 'Available') {
                 toastr.error('You cannot select this table.');

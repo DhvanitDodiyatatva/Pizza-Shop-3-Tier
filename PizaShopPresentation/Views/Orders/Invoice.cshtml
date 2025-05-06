@@ -131,8 +131,18 @@
                 <p><strong>Order Details:</strong></p>
                 <p><strong>Invoice Number:</strong> #@Model.InvoiceNo</p>
                 <p><strong>Date:</strong> @Model.CreatedAt?.ToString("dd-MM-yyyy HH:mm")</p>
-                <p><strong>Section:</strong> Ground Floor</p>
-                <p><strong>Table:</strong> T3</p>
+                 @if (Model.OrderTables.Any())
+                            {
+                                foreach (var orderTable in Model.OrderTables)
+                                {
+                                    <p class="mb-0"><strong>Table:</strong> @orderTable.Table?.Name</p>
+                                    <p class="mb-0"><strong>Section:</strong> @orderTable.Table?.Section?.Name</p>
+                                }
+                            }
+                            else
+                            {
+                                <p>No table assigned</p>
+                            }
             </div>
         </div>
 

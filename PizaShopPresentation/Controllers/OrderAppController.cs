@@ -4,6 +4,7 @@ using PizzaShopServices.Interfaces;
 using PizzaShopRepository.ViewModels;
 using System.Threading.Tasks;
 using PizzaShopRepository.Models;
+using PizzaShopRepository.Interfaces;
 
 namespace PizzaShop.Controllers
 {
@@ -16,15 +17,17 @@ namespace PizzaShop.Controllers
         private readonly IWaitingTokenService _waitingTokenService;
         private readonly IKotService _kotService;
         private readonly IOrderAppService _orderAppService;
+        private readonly IOrderAppRepository _orderAppRepository;
 
         public OrderAppController(
-        ISectionService sectionService,
-        ITableService tableService,
-        IItemService itemService,
-        ICategoryService categoryService,
-        IWaitingTokenService waitingTokenService,
-        IKotService kotService,
-        IOrderAppService orderAppService)
+            ISectionService sectionService,
+            ITableService tableService,
+            IItemService itemService,
+            ICategoryService categoryService,
+            IWaitingTokenService waitingTokenService,
+            IKotService kotService,
+            IOrderAppService orderAppService,
+            IOrderAppRepository orderAppRepository)
         {
             _sectionService = sectionService;
             _tableService = tableService;
@@ -33,6 +36,7 @@ namespace PizzaShop.Controllers
             _waitingTokenService = waitingTokenService;
             _kotService = kotService;
             _orderAppService = orderAppService;
+            _orderAppRepository = orderAppRepository;
         }
 
         public async Task<IActionResult> Table()
@@ -82,9 +86,41 @@ namespace PizzaShop.Controllers
             return Json(new { success = result.Success, message = result.Message });
         }
 
-        public async Task<IActionResult> Menu()
+        public async Task<IActionResult> Menu(int? orderId)
         {
-            return View(new MenuViewModel());
+            ViewBag.OrderId = orderId;
+            if (orderId.HasValue)
+            {
+                var order = await _orderAppRepository.GetOrderByIdAsync(orderId.Value);
+                if (order != null)
+                {
+                    ViewBag.Order = order;
+                }
+            }
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetCartPartial(int orderId)
+        {
+            var order = await _orderAppRepository.GetOrderByIdAsync(orderId);
+            if (order == null)
+            {
+                return NotFound();
+            }
+            return PartialView("_AddItemCart", order);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> RedirectToMenuFromTable(int tableId)
+        {
+            var orderTable = await _orderAppRepository.GetOrderTableByTableIdAsync(tableId);
+            if (orderTable == null || orderTable.Order == null ||
+                (orderTable.Order.OrderStatus != "pending" && orderTable.Order.OrderStatus != "in_progress"))
+            {
+                return Json(new { success = false, redirectUrl = Url.Action("Table", "OrderApp") });
+            }
+            return Json(new { success = true, redirectUrl = Url.Action("Menu", "OrderApp", new { orderId = orderTable.OrderId }) });
         }
 
         public async Task<IActionResult> GetCategories()
@@ -157,9 +193,9 @@ namespace PizzaShop.Controllers
             }
 
             var selectedItems = model.OrderItems
-            .Where(oi => oi.IsSelected && oi.AdjustedQuantity >= 0)
-            .Select(oi => (OrderItemId: oi.OrderItemId, AdjustedQuantity: oi.AdjustedQuantity))
-            .ToList();
+                .Where(oi => oi.IsSelected && oi.AdjustedQuantity >= 0)
+                .Select(oi => (OrderItemId: oi.OrderItemId, AdjustedQuantity: oi.AdjustedQuantity))
+                .ToList();
 
             if (!selectedItems.Any())
             {
