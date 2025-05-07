@@ -7,7 +7,6 @@
                 <th scope="col" class="text-nowrap">Name</th>
                 <th scope="col" class="text-nowrap">Type</th>
                 <th scope="col" class="text-nowrap">IsEnabled</th>
-                <th scope="col" class="text-nowrap">Default</th>
                 <th scope="col" class="text-nowrap">Tax Value</th>
                 <th scope="col" class="text-nowrap">Action</th>
             </tr>
@@ -28,14 +27,9 @@
                         <td class="py-3">@taxFee.Type</td>
                         <td class="py-3">
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="isEnabled-@taxFee.Id"
-                                    style="width: 50px; height: 30px;" @(taxFee.IsEnabled ? "checked" : "") disabled />
-                            </div>
-                        </td>
-                        <td class="py-3">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="isDefault-@taxFee.Id"
-                                    style="width: 50px; height: 30px;" @(taxFee.IsDefault ? "checked" : "") disabled />
+                                <input class="form-check-input toggle-enabled" type="checkbox" role="switch"
+                                    id="isEnabled-@taxFee.Id" data-tax-id="@taxFee.Id" style="width: 50px; height: 30px;"
+                                    @(taxFee.IsEnabled ? "checked" : "") />
                             </div>
                         </td>
                         <td class="py-3">
@@ -186,6 +180,34 @@
             });
         });
 
-
+        // Handle toggle IsEnabled
+        $(".toggle-enabled").on("change", function () {
+            var taxId = $(this).data("tax-id");
+            var isEnabled = $(this).is(":checked");
+            $.ajax({
+                url: '@Url.Action("ToggleTaxFeeEnabled", "TaxFee")',
+                type: 'POST',
+                data: { id: taxId, isEnabled: isEnabled },
+                headers: {
+                    "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function (response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        window.loadTaxes(); // Refresh the list
+                    } else {
+                        toastr.error(response.message);
+                        // Revert the toggle state on error
+                        $(this).prop("checked", !isEnabled);
+                    }
+                }.bind(this), // Bind 'this' to maintain context
+                error: function (xhr, status, error) {
+                    console.error("Error toggling tax enabled status:", xhr.responseText);
+                    toastr.error("Failed to update tax/fee status. Please try again.");
+                    // Revert the toggle state on error
+                    $(this).prop("checked", !isEnabled);
+                }.bind(this)
+            });
+        });
     });
 </script>

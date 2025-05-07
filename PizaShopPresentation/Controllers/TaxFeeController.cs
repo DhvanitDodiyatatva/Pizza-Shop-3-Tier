@@ -143,5 +143,35 @@ namespace PizzaShopRepository.Controllers
                 return Json(new { success = false, message = errorMessage });
             }
         }
+
+
+        // POST: TaxFee/ToggleTaxFeeEnabled
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ToggleTaxFeeEnabled(int id, bool isEnabled)
+        {
+            try
+            {
+                var taxFee = _taxFeeService.GetTaxFeeById(id);
+                if (taxFee == null)
+                {
+                    return Json(new { success = false, message = "Tax/Fee not found." });
+                }
+
+                taxFee.IsEnabled = isEnabled;
+                _taxFeeService.UpdateTaxFee(taxFee);
+                return Json(new { success = true, message = $"Tax {(isEnabled ? "enabled" : "disabled")} successfully!" });
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = ex.Message;
+                if (ex.InnerException != null)
+                {
+                    errorMessage += $" Inner Exception: {ex.InnerException.Message}";
+                }
+                Console.WriteLine($"Error toggling tax enabled status: {errorMessage}\nStackTrace: {ex.StackTrace}");
+                return Json(new { success = false, message = errorMessage });
+            }
+        }
     }
 }
