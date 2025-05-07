@@ -125,14 +125,16 @@
                 <div class="d-flex justify-content-between">
                     <span>@tax.Tax.Name</span>
                     <span>
-                        ₹
+
                         @if (tax.TaxFlat.HasValue)
                         {
-                            @tax.TaxFlat.Value.ToString("F2")
+                            <span>₹</span> @tax.TaxFlat.Value.ToString("F2")
                         }
                         else
                         {
-                            @* @((tax.TaxPercentage * Model.OrderItems.Sum(oi => oi.TotalPrice) / 100).ToString("F2")) *@
+                            @tax.TaxPercentage.Value.ToString("F2")
+
+                            <span>%</span>
                         }
                     </span>
                 </div>

@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "i6lmb2PzlQt9t7yqAEaYkzw+P/K4EOJpmysp8Yxh7QY=",
+  "Hash": "whB7ESmBWZQwf2tHDBNK5Ky+avzvAnHF6BiFkTlC1wY=",
   "Source": "PizaShopPresentation",
   "BasePath": "_content/PizaShopPresentation",
   "Mode": "Default",
@@ -1052,6 +1052,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\uploadimages\\Ham & Cheese_8d5ee920-d654-453a-9b2f-11d9ebf45f9e.jpg"
+    },
+    {
+      "Identity": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\Ham & Cheese_b7cae8ea-a71a-403b-976f-6b5cb9723c0a.jpg",
+      "SourceId": "PizaShopPresentation",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\",
+      "BasePath": "_content/PizaShopPresentation",
+      "RelativePath": "images/uploadimages/Ham & Cheese_b7cae8ea-a71a-403b-976f-6b5cb9723c0a.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\uploadimages\\Ham & Cheese_b7cae8ea-a71a-403b-976f-6b5cb9723c0a.jpg"
     },
     {
       "Identity": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\hhethe_28f8789a-3a96-4e32-8dc7-ab5f24daef70.png",

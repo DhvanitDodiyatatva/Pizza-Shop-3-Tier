@@ -40,13 +40,13 @@ namespace PizzaShopServices.Implementations
         }
 
         public async Task<(bool Success, string Message, int OrderId)> AssignTableAsync(
-            int[] selectedTableIds,
-            int sectionId,
-            int? waitingTokenId,
-            string email,
-            string name,
-            string phoneNumber,
-            int numOfPersons)
+    int[] selectedTableIds,
+    int sectionId,
+    int? waitingTokenId,
+    string email,
+    string name,
+    string phoneNumber,
+    int numOfPersons)
         {
             if (selectedTableIds == null || !selectedTableIds.Any())
             {
@@ -96,6 +96,24 @@ namespace PizzaShopServices.Implementations
                     UpdatedAt = DateTime.Now
                 };
                 await _orderAppRepository.AddOrderAsync(order);
+
+                // Add applicable taxes from TaxesFee to OrderTax
+                var applicableTaxes = await _context.TaxesFees
+                    .Where(tf => tf.IsEnabled && !tf.IsDeleted)
+                    .ToListAsync();
+
+                foreach (var tax in applicableTaxes)
+                {
+                    var orderTax = new OrderTax
+                    {
+                        OrderId = order.Id,
+                        TaxId = tax.Id,
+                        TaxPercentage = tax.Type == "percentage" ? tax.Value : null,
+                        TaxFlat = tax.Type == "fixed" ? tax.Value : null
+                    };
+                    _context.OrderTaxes.Add(orderTax);
+                }
+                await _context.SaveChangesAsync();
 
                 if (waitingTokenId.HasValue)
                 {
