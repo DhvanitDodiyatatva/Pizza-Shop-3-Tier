@@ -93,6 +93,28 @@ public class ItemService : IItemService
         return null;
     }
 
+    public async Task<(bool Success, string Message)> ToggleAvailabilityAsync(int itemId, bool isAvailable)
+    {
+        var item = await _itemRepository.GetItemByIdAsync(itemId);
+        if (item == null)
+        {
+            return (false, "Item not found.");
+        }
+
+        item.IsAvailable = isAvailable;
+        item.UpdatedAt = DateTime.Now;
+
+        try
+        {
+            await _itemRepository.UpdateItemAsync(item);
+            return (true, isAvailable ? "Item marked as available." : "Item marked as unavailable.");
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Failed to update availability status: {ex.Message}");
+        }
+    }
+
     public async Task<(bool Success, string Message)> AddItemAsync(ItemVM model)
     {
         // Check if an item with the same name already exists

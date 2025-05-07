@@ -255,6 +255,15 @@ public class MenuController : Controller
         return Json(new { success = result.Success, message = result.Message });
     }
 
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ToggleAvailability(int id, bool isAvailable)
+    {
+        var result = await _itemService.ToggleAvailabilityAsync(id, isAvailable);
+        return Json(new { success = result.Success, message = result.Message });
+    }
+
     [HttpGet]
     public async Task<IActionResult> SearchItems(string searchTerm, int categoryId, int page = 1, int pageSize = 5)
     {

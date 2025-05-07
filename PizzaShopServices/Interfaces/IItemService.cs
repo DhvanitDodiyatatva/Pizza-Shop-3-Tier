@@ -10,6 +10,7 @@ public interface IItemService
     Task<List<Item>> GetAllItemsAsync();
     Task<List<Item>> GetFavoriteItemsAsync();
     Task<(bool Success, string Message)> ToggleFavoriteAsync(int itemId);
+    Task<(bool Success, string Message)> ToggleAvailabilityAsync(int itemId, bool isAvailable);
     Task<(bool Success, string Message)> AddItemAsync(ItemVM model);
     Task<ItemVM?> GetItemForEditAsync(int id);
     Task<(bool Success, string Message)> UpdateItemAsync(ItemVM model, IFormFile ImageFile, string host);

@@ -1,7 +1,5 @@
 @model PizzaShopRepository.ViewModels.PagedItemViewModel
 
-
-
 @if (Model == null || !Model.Items.Any())
 {
     <div class="row g-0 category-side">
@@ -22,7 +20,7 @@ else
             </td>
             <td class="py-3 text-nowrap">
                 <img src="@(!string.IsNullOrEmpty(item.ImageUrl) ? item.ImageUrl : "/images/dining-menu.png")" alt="item-img"
-                    style="max-height: 30px; aspect-ratio: 1/1; margin-right: 3%;  border-radius: 50%; object-fit: cover;">
+                    style="max-height: 30px; aspect-ratio: 1/1; margin-right: 3%; border-radius: 50%; object-fit: cover;">
                 @item.Name
             </td>
             <td class="py-3 text-center text-nowrap">
@@ -46,8 +44,8 @@ else
             <td class="py-3 text-center text-nowrap">@item.Quantity</td>
             <td class="py-3 text-center text-nowrap">
                 <div class="form-check form-switch d-flex justify-content-center">
-                    <input class="form-check-input" type="checkbox" role="switch" id="flexswitchcheckchecked_@item.Id"
-                        style="width: 50px; height: 30px;" @(item.IsAvailable ? "checked" : "") disabled>
+                    <input class="form-check-input toggle-availability" type="checkbox" role="switch" id="flexswitchcheckchecked_@item.Id"
+                        style="width: 50px; height: 30px;" @(item.IsAvailable ? "checked" : "") data-item-id="@item.Id">
                     <label class="form-check-label" for="flexswitchcheckchecked_@item.Id"></label>
                 </div>
             </td>
@@ -106,6 +104,7 @@ else
 
 <script>
     $(document).ready(function () {
+        // Edit item button handler
         $(".edit-item-btn").on("click", function () {
             var itemId = $(this).data("item-id");
             $.ajax({
@@ -123,6 +122,7 @@ else
             });
         });
 
+        // Delete item button handler
         $(".delete-item-btn").on("click", function () {
             var itemId = $(this).data("item-id");
             $.ajax({
@@ -145,6 +145,35 @@ else
                 error: function () {
                     toastr.error("An error occurred while deleting the item.");
                 }
+            });
+        });
+
+        // Toggle availability handler
+        $(".toggle-availability").on("change", function () {
+            var itemId = $(this).data("item-id");
+            var isAvailable = $(this).is(":checked");
+
+            $.ajax({
+                url: '@Url.Action("ToggleAvailability", "Menu")',
+                type: 'POST',
+                data: { id: itemId, isAvailable: isAvailable },
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function (response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                    } else {
+                        toastr.error(response.message);
+                        // Revert the toggle state on error
+                        $(this).prop("checked", !isAvailable);
+                    }
+                }.bind(this), // Bind 'this' to maintain context
+                error: function () {
+                    toastr.error("An error occurred while updating availability.");
+                    // Revert the toggle state on error
+                    $(this).prop("checked", !isAvailable);
+                }.bind(this) // Bind 'this' to maintain context
             });
         });
     });
