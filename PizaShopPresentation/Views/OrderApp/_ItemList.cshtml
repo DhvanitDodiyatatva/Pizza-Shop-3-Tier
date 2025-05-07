@@ -8,7 +8,7 @@
                 <form method="get" action="javascript:void(0)" onsubmit="return false;">
                     <div class="input-group shadow-lg">
                         <input type="text" name="search" id="searchInput" class="form-control" placeholder="Search"
-                               value="@ViewBag.SearchTerm">
+                            value="@ViewBag.SearchTerm">
                         <button class="btn btn-outline-secondary" type="submit">
                             <span class="bi bi-search"></span>
                         </button>
@@ -28,8 +28,7 @@
     </div>
 
     <!-- Item Cards -->
-    <div class="row custom-scrollbar"
-         style="max-height: 80%; min-height: 250px; overflow-y: auto; overflow-x: hidden;">
+    <div class="row custom-scrollbar" style="max-height: 80%; min-height: 250px; overflow-y: auto; overflow-x: hidden;">
         @if (Model.Any())
         {
             foreach (var item in Model)
@@ -40,7 +39,7 @@
                             <div class="card-icon d-flex justify-content-center align-items-center">
                                 <span>
                                     <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/images/dining-menu.png" : item.ImageUrl)"
-                                         class="rounded-circle" style="height: 40px; width: 40px">
+                                        class="rounded-circle" style="height: 40px; width: 40px">
                                 </span>
                             </div>
                         </div>
@@ -65,8 +64,10 @@
                             }
 
                             <!-- Heart Icon -->
-                            <span class="heart position-absolute fs-4 bottom-0 end-0 m-2 @(item.IsFavourite ? "text-primary" : "text-secondary")"
-                                  style="cursor: pointer;" onclick="toggleFavorite(@item.Id, this); event.stopPropagation();">♥</span>
+                            <span
+                                class="heart position-absolute fs-4 bottom-0 end-0 m-2 @(item.IsFavourite ? "text-primary" : "text-secondary")"
+                                style="cursor: pointer;"
+                                onclick="toggleFavorite(@item.Id, this); event.stopPropagation();">♥</span>
                         </div>
                     </div>
                 </div>
@@ -115,7 +116,7 @@
                     if (!$('#itemModifiersModal').length) {
                         $('body').append(`
                             <div class="modal fade" id="itemModifiersModal" tabindex="-1" aria-labelledby="itemModifiersModalLabel" aria-hidden="true">
-                                <div class="modal-dialog">
+                                <div class="modal-dialog modal-dialog-centered">
                                     <div class="modal-content" id="itemModifiersModalContent"></div>
                                 </div>
                             </div>

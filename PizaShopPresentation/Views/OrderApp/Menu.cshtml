@@ -125,19 +125,38 @@
             </div>
         </div>
 
-        <!-- Item List Container -->
-        <div class="col-md-5 p-0">
-            <div style="overflow: auto; height: 91dvh;" class="custom-scrollbar" id="itemListContainer">
-                <!-- Items loaded here via AJAX -->
-            </div>
-        </div>
+        @{
+            var urlParams = new System.Collections.Specialized.NameValueCollection();
+            if (Context.Request.QueryString.HasValue)
+            {
+                urlParams = System.Web.HttpUtility.ParseQueryString(Context.Request.QueryString.Value);
+            }
+            var orderId = urlParams["orderId"];
+        }
 
-        <!-- Order Cart Container -->
-        <div class="col-md-5 p-0">
-            <div id="cartContainer" class="custom-scrollbar" style="overflow: auto; height: 91dvh;">
-                <!-- Cart partial view loaded here via AJAX -->
+        @if (string.IsNullOrEmpty(orderId))
+        {
+            <!-- No OrderId: Show only Item List Container -->
+            <div class="col-md-10 p-0">
+                <div style="overflow: auto; height: 91dvh;" class="custom-scrollbar" id="itemListContainer">
+                    <!-- Items loaded here via AJAX -->
+                </div>
             </div>
-        </div>
+        }
+        else
+        {
+            <!-- OrderId Present: Show Item List and Cart Containers -->
+            <div class="col-md-5 p-0">
+                <div style="overflow: auto; height: 91dvh;" class="custom-scrollbar" id="itemListContainer">
+                    <!-- Items loaded here via AJAX -->
+                </div>
+            </div>
+            <div class="col-md-5 p-0">
+                <div id="cartContainer" class="custom-scrollbar" style="overflow: auto; height: 91dvh;">
+                    <!-- Cart partial view loaded here via AJAX -->
+                </div>
+            </div>
+        }
     </div>
 </div>
 
