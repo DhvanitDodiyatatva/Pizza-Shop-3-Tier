@@ -11,33 +11,34 @@
         <input type="hidden" id="itemPrice" value="@Model.Price" />
         @if (Model.ItemModifierGroups.Any(img => !img.IsDeleted))
         {
-            <div class="custom-scrollbar" style="max-height: 300px; min-height: 250px; overflow-y: auto; overflow-x: hidden;">
+            <div class="custom-scrollbar"
+                style="max-height: 300px; min-height: 250px; overflow-y: auto; overflow-x: hidden;">
                 @foreach (var itemModifierGroup in Model.ItemModifierGroups.Where(img => !img.IsDeleted))
                 {
                     var modifierGroup = itemModifierGroup.ModifierGroup;
                     if (modifierGroup != null && !modifierGroup.IsDeleted)
                     {
                         <div class="modifier-group mb-3">
-                            <h6>@modifierGroup.Name</h6>
+                            <div class="fs-5 text-secondary fw-bold">@modifierGroup.Name</div>
                             <small class="text-muted">
-                                (Select between @itemModifierGroup.MinLoad and @itemModifierGroup.MaxLoad options)
+                                (You can choose Minimum - @itemModifierGroup.MinLoad & Maximum - @itemModifierGroup.MaxLoad options)
                             </small>
                             <input type="hidden" class="min-load" value="@itemModifierGroup.MinLoad" />
                             <input type="hidden" class="max-load" value="@itemModifierGroup.MaxLoad" />
-                            <div class="modifier-options">
+                            <div class="modifier-options d-flex flex-wrap gap-2 mt-2">
                                 @foreach (var mapping in modifierGroup.ModifierGroupMappings.Where(mgm => !mgm.IsDeleted))
                                 {
                                     var modifier = mapping.Modifier;
                                     if (modifier != null && !modifier.IsDeleted)
                                     {
-                                        <div class="form-check">
-                                            <input class="form-check-input modifier-checkbox" type="checkbox"
-                                                   name="modifiers_@modifierGroup.Id" value="@modifier.Id"
-                                                   data-price="@modifier.Price" data-group-id="@modifierGroup.Id"
-                                                   data-modifier-name="@modifier.Name" />
-                                            <label class="form-check-label">
-                                                @modifier.Name (@(modifier.Price > 0 ? $"₹{modifier.Price}" : "Free"))
-                                            </label>
+                                        <div class="card modifier-card"
+                                            style="width: 150px; height:60px ; border: 1px solid #868482; cursor: pointer;"
+                                            data-modifier-id="@modifier.Id" data-price="@modifier.Price" data-group-id="@modifierGroup.Id"
+                                            data-modifier-name="@modifier.Name">
+                                            <div class="card-body p-2 text-center">
+                                                <span class="d-block">@modifier.Name</span>
+                                                <span class="d-block text-muted">₹@modifier.Price</span>
+                                            </div>
                                         </div>
                                     }
                                 }
@@ -76,7 +77,7 @@
                 const group = $(this);
                 const minLoad = parseInt(group.find('.min-load').val()) || 0;
                 const maxLoad = parseInt(group.find('.max-load').val()) || Infinity;
-                const selectedCount = group.find('.modifier-checkbox:checked').length;
+                const selectedCount = group.find('.modifier-card.selected').length;
 
                 const meetsMin = selectedCount >= minLoad;
                 const meetsMax = selectedCount <= maxLoad;
@@ -89,7 +90,14 @@
             $('#addItemButton').prop('disabled', !allRequirementsMet);
         }
 
-        $('.modifier-checkbox').on('change', function () {
+        $('.modifier-card').on('click', function () {
+            $(this).toggleClass('selected');
+            if ($(this).hasClass('selected')) {
+                $(this).css('background-color', '#E6F0FA');
+                $(this).css('border', '1px solid #15508a');
+            } else {
+                $(this).css('background-color', '');
+            }
             validateModifiers();
         });
 
@@ -100,9 +108,9 @@
             const modifiers = [];
 
             // Collect selected modifiers
-            $('.modifier-checkbox:checked').each(function () {
+            $('.modifier-card.selected').each(function () {
                 modifiers.push({
-                    Id: $(this).val(),
+                    Id: $(this).data('modifier-id'),
                     Name: $(this).data('modifier-name'),
                     Price: parseFloat($(this).data('price') || 0)
                 });
@@ -120,8 +128,8 @@
             };
 
             // Check if item with same modifiers exists
-            const existingItemIndex = window.cartItems.findIndex(ci => 
-                ci.Id === itemId && 
+            const existingItemIndex = window.cartItems.findIndex(ci =>
+                ci.Id === itemId &&
                 JSON.stringify(ci.Modifiers.map(m => m.Id).sort()) === JSON.stringify(modifiers.map(m => m.Id).sort())
             );
 
