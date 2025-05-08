@@ -414,12 +414,17 @@ namespace PizzaShopServices.Implementations
                 // 2. Update OrderTax table
                 foreach (var orderTax in order.OrderTaxes)
                 {
-                    if (model.TaxSettings.ContainsKey(orderTax.Tax.Name))
+                    if (orderTax.TaxPercentage.HasValue)
                     {
+                        // Percentage-based taxes are always applied
+                        orderTax.IsApplied = true;
+                    }
+                    else if (orderTax.TaxFlat.HasValue && model.TaxSettings.ContainsKey(orderTax.Tax.Name))
+                    {
+                        // Flat taxes are applied based on TaxSettings
                         orderTax.IsApplied = model.TaxSettings[orderTax.Tax.Name];
                     }
                 }
-
                 // 3. Update Table table
                 foreach (var orderTable in order.OrderTables)
                 {
