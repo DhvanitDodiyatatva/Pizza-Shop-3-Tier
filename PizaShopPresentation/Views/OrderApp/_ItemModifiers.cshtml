@@ -226,12 +226,25 @@
             if (window.orderTaxes) {
                 window.orderTaxes.forEach(tax => {
                     let taxAmount = 0;
-                    if (tax.TaxFlat !== null) {
+                    if (tax.TaxFlat !== null && window.taxSettings[tax.Name]) {
                         taxAmount = parseFloat(tax.TaxFlat) || 0;
                         taxHtml.push(`
                             <div class="d-flex justify-content-between tax-row" data-tax-name="${tax.Name}">
-                                <span>${tax.Name}</span>
+                                <span>
+                                    <input type="checkbox" class="checkbox flat-tax-checkbox" data-tax-name="${tax.Name}" checked> 
+                                    ${tax.Name} (₹${taxAmount.toFixed(2)})
+                                </span>
                                 <span>₹${taxAmount.toFixed(2)}</span>
+                            </div>
+                        `);
+                    } else if (tax.TaxFlat !== null) {
+                        taxHtml.push(`
+                            <div class="d-flex justify-content-between tax-row" data-tax-name="${tax.Name}" style="display: none;">
+                                <span>
+                                    <input type="checkbox" class="checkbox flat-tax-checkbox" data-tax-name="${tax.Name}"> 
+                                    ${tax.Name} (₹${(parseFloat(tax.TaxFlat) || 0).toFixed(2)})
+                                </span>
+                                <span>₹${(parseFloat(tax.TaxFlat) || 0).toFixed(2)}</span>
                             </div>
                         `);
                     } else if (tax.TaxPercentage !== null) {
@@ -239,7 +252,7 @@
                         taxHtml.push(`
                             <div class="d-flex justify-content-between tax-row" data-tax-name="${tax.Name}">
                                 <span>${tax.Name} (${tax.TaxPercentage}%)</span>
-                                <span>₹${taxAmount.toFixed(2)} </span>
+                                <span>₹${taxAmount.toFixed(2)}</span>
                             </div>
                         `);
                     }
@@ -260,12 +273,7 @@
                     <span>₹${subtotal.toFixed(2)}</span>
                 </div>
                 ${taxHtml.join('')}
-                @* <div class="d-flex justify-content-between sgst-row">
-                    <span>
-                        <input type="checkbox" class="checkbox sgst-checkbox" ${isSgstChecked ? 'checked' : ''}> SGST (${sgstPercentage}%)
-                    </span>
-                    <span>₹${sgstAmount.toFixed(2)}</span>
-                </div> *@
+                
                 <div class="d-flex justify-content-between fw-bold">
                     <span>TOTAL</span>
                     <span>₹${(subtotal + totalTaxes).toFixed(2)}</span>
@@ -299,7 +307,39 @@
                 updateCartDisplay();
             });
 
-            // Bind SGST checkbox handler
+            // Bind flat tax checkbox handler
+            $('.flat-tax-checkbox').off('change').on('change', function () {
+                const taxName = $(this).data('tax-name');
+                const isChecked = $(this).is(':checked');
+                window.taxSettings[taxName] = isChecked;
+                const $taxRow = $(this).closest('.tax-row');
+
+                // Show/hide tax row
+                $taxRow.css('display', isChecked ? '' : 'none');
+
+                // Recalculate total
+                const subtotal = parseFloat($('.d-flex.justify-content-between:contains("SUBTOTAL") span:last').text().replace('₹', '')) || 0;
+                let totalTaxes = 0;
+
+                // Apply taxes based on checkbox state
+                window.orderTaxes.forEach(tax => {
+                    if (tax.TaxFlat !== null && window.taxSettings[tax.Name]) {
+                        totalTaxes += parseFloat(tax.TaxFlat) || 0;
+                    } else if (tax.TaxPercentage !== null) {
+                        totalTaxes += subtotal * (tax.TaxPercentage / 100);
+                    }
+                });
+
+                // Apply SGST
+                const sgstAmount = window.sgstSettings.isChecked ? subtotal * (sgstPercentage / 100) : 0;
+                totalTaxes += sgstAmount;
+
+                // Update TOTAL display
+                const total = subtotal + totalTaxes;
+                $('.d-flex.justify-content-between.fw-bold span:last').text(`₹${total.toFixed(2)}`);
+            });
+
+            // Bind SGST checkbox handler (if re-enabled)
             $('.sgst-checkbox').off('change').on('change', function () {
                 const isChecked = $(this).is(':checked');
                 window.sgstSettings.isChecked = isChecked;
@@ -312,7 +352,7 @@
                 // Recalculate total
                 let totalTaxes = 0;
                 window.orderTaxes.forEach(tax => {
-                    if (tax.TaxFlat !== null) {
+                    if (tax.TaxFlat !== null && window.taxSettings[tax.Name]) {
                         totalTaxes += parseFloat(tax.TaxFlat) || 0;
                     } else if (tax.TaxPercentage !== null) {
                         totalTaxes += subtotal * (tax.TaxPercentage / 100);

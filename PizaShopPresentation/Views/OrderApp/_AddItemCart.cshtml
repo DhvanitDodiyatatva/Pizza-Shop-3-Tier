@@ -121,10 +121,13 @@
             decimal subtotal = Model.OrderItems.Sum(oi => oi.TotalPrice + oi.OrderItemModifiers.Sum(m => m.Price));
             // Initialize total taxes
             decimal totalTaxes = 0m;
-            // Calculate taxes
+            // Track flat tax checkbox states (default checked for demo)
+            var flatTaxStates = Model.OrderTaxes.Where(t => t.TaxFlat.HasValue)
+            .ToDictionary(t => t.Tax.Name, t => true); // Default checked
+                                                       // Calculate taxes
             foreach (var tax in Model.OrderTaxes)
             {
-                if (tax.TaxFlat.HasValue)
+                if (tax.TaxFlat.HasValue && flatTaxStates[tax.Tax.Name])
                 {
                     totalTaxes += tax.TaxFlat.Value;
                 }
@@ -134,7 +137,7 @@
                 }
             }
             // SGST (2.5% when checked)
-            const decimal sgstPercentage = 2.5m;
+            const decimal sgstPercentage = 0.0m;
             bool isSgstChecked = true; // Default checked for demo; adjust based on actual logic
             decimal sgstAmount = isSgstChecked ? subtotal * (sgstPercentage / 100m) : 0m;
             totalTaxes += sgstAmount;
@@ -148,17 +151,22 @@
             </div>
             @foreach (var tax in Model.OrderTaxes)
             {
-                <div class="d-flex justify-content-between tax-row" data-tax-name="@tax.Tax.Name">
-                    <span>@tax.Tax.Name
-
+                <div class="d-flex justify-content-between tax-row" data-tax-name="@tax.Tax.Name"
+                    style="@(tax.TaxFlat.HasValue && !flatTaxStates[tax.Tax.Name] ? "display: none;" : "")">
+                    <span>
+                        @if (tax.TaxFlat.HasValue)
+                        {
+                            <input type="checkbox" class="checkbox flat-tax-checkbox" data-tax-name="@tax.Tax.Name"
+                                @(flatTaxStates[tax.Tax.Name] ? "checked" : "")>
+                        }
+                        @tax.Tax.Name
                         @if (tax.TaxFlat.HasValue)
                         {
                             <span>(₹@tax.TaxFlat.Value.ToString("F2"))</span>
                         }
                         else
                         {
-
-                            <span> (@tax.TaxPercentage.Value%)</span>
+                            <span>(@tax.TaxPercentage.Value%)</span>
                         }
                     </span>
                     <span>
@@ -169,18 +177,12 @@
                         else
                         {
                             decimal percentageAmount = subtotal * (tax.TaxPercentage.Value / 100m);
-                            <span>₹@percentageAmount.ToString("F2") </span>
+                            <span>₹@percentageAmount.ToString("F2")</span>
                         }
                     </span>
                 </div>
             }
-            @* <div class="d-flex justify-content-between sgst-row">
-                <span>
-                    <input type="checkbox" class="checkbox sgst-checkbox" @(isSgstChecked ? "checked" : "")> SGST
-                    (@sgstPercentage%)
-                </span>
-                <span>₹@sgstAmount.ToString("F2")</span>
-            </div> *@
+
             <div class="d-flex justify-content-between fw-bold">
                 <span>TOTAL</span>
                 <span>₹@total.ToString("F2")</span>
@@ -220,17 +222,51 @@
     // Serialize tax data for client-side use
     window.orderTaxes = @Html.Raw(JsonConvert.SerializeObject(Model.OrderTaxes.Select(ot => new
         {
-                                                                                                                                                                                        Name = ot.Tax.Name,
-                                                                                                                                                                                        TaxFlat = ot.TaxFlat,
-                                                                                                                                                                                        TaxPercentage = ot.TaxPercentage
+                                                                                                                                                                                    Name = ot.Tax.Name,
+                                                                                                                                                                                    TaxFlat = ot.TaxFlat,
+                                                                                                                                                                                    TaxPercentage = ot.TaxPercentage
     })));
     window.sgstSettings = {
         percentage: @sgstPercentage,
         isChecked: @Json.Serialize(isSgstChecked)
     };
+    // Initialize flat tax checkbox states (default checked)
+    window.taxSettings = @Html.Raw(JsonConvert.SerializeObject(flatTaxStates));
 
     $(document).ready(function () {
-        // Handle SGST checkbox toggle
+        // Handle flat tax checkbox toggle
+        $('.flat-tax-checkbox').on('change', function () {
+            const taxName = $(this).data('tax-name');
+            const isChecked = $(this).is(':checked');
+            window.taxSettings[taxName] = isChecked;
+            const $taxRow = $(this).closest('.tax-row');
+
+            // Show/hide tax row
+            $taxRow.css('display', isChecked ? '' : 'none');
+
+            // Recalculate total
+            const subtotal = parseFloat($('.d-flex.justify-content-between:contains("SUBTOTAL") span:last').text().replace('₹', '')) || 0;
+            let totalTaxes = 0;
+
+            // Apply taxes based on checkbox state
+            window.orderTaxes.forEach(tax => {
+                if (tax.TaxFlat !== null && window.taxSettings[tax.Name]) {
+                    totalTaxes += parseFloat(tax.TaxFlat) || 0;
+                } else if (tax.TaxPercentage !== null) {
+                    totalTaxes += subtotal * (tax.TaxPercentage / 100);
+                }
+            });
+
+            // Apply SGST
+            const sgstAmount = window.sgstSettings.isChecked ? subtotal * (window.sgstSettings.percentage / 100) : 0;
+            totalTaxes += sgstAmount;
+
+            // Update TOTAL display
+            const total = subtotal + totalTaxes;
+            $('.d-flex.justify-content-between.fw-bold span:last').text(`₹${total.toFixed(2)}`);
+        });
+
+        // Handle SGST checkbox toggle (if re-enabled)
         $('.sgst-checkbox').on('change', function () {
             const isChecked = $(this).is(':checked');
             const subtotal = parseFloat($('.d-flex.justify-content-between:contains("SUBTOTAL") span:last').text().replace('₹', '')) || 0;
@@ -243,7 +279,7 @@
             // Recalculate total
             let totalTaxes = 0;
             window.orderTaxes.forEach(tax => {
-                if (tax.TaxFlat !== null) {
+                if (tax.TaxFlat !== null && window.taxSettings[tax.Name]) {
                     totalTaxes += parseFloat(tax.TaxFlat) || 0;
                 } else if (tax.TaxPercentage !== null) {
                     totalTaxes += subtotal * (tax.TaxPercentage / 100);

@@ -816,6 +816,22 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\images\uploadimages\deadpool_e8274a46-2cef-4539-ab5e-c0bfac3bbefb.png))</OriginalItemSpec>
     </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\images\uploadimages\DenStark_9919727b-e17d-4921-91a8-2f6266f2954f.jpg))">
+      <SourceType>Package</SourceType>
+      <SourceId>PizaShopPresentation</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/PizaShopPresentation</BasePath>
+      <RelativePath>images/uploadimages/DenStark_9919727b-e17d-4921-91a8-2f6266f2954f.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\images\uploadimages\DenStark_9919727b-e17d-4921-91a8-2f6266f2954f.jpg))</OriginalItemSpec>
+    </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\images\uploadimages\dhthtjhe_0244a920-da64-419b-bfbd-213dc5a0d7f3.png))">
       <SourceType>Package</SourceType>
       <SourceId>PizaShopPresentation</SourceId>
@@ -911,6 +927,22 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\images\uploadimages\efefeffqeqf_d781607e-7ffc-49ed-8507-da80c5d415ff.png))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\images\uploadimages\eqfgqege_cd7ebdee-744b-4457-ac14-33b64b1bae6e.jpg))">
+      <SourceType>Package</SourceType>
+      <SourceId>PizaShopPresentation</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/PizaShopPresentation</BasePath>
+      <RelativePath>images/uploadimages/eqfgqege_cd7ebdee-744b-4457-ac14-33b64b1bae6e.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\images\uploadimages\eqfgqege_cd7ebdee-744b-4457-ac14-33b64b1bae6e.jpg))</OriginalItemSpec>
     </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\images\uploadimages\geqffeeeeee_c76f8611-f407-4660-aa0e-87cd73b6a05d.png))">
       <SourceType>Package</SourceType>

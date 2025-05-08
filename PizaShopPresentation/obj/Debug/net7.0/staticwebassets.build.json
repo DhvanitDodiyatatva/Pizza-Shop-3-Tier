@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "whB7ESmBWZQwf2tHDBNK5Ky+avzvAnHF6BiFkTlC1wY=",
+  "Hash": "Z4OUdGBo4BswGytFynKWYOcbqZTDwxIcLdBHBQ2pXRQ=",
   "Source": "PizaShopPresentation",
   "BasePath": "_content/PizaShopPresentation",
   "Mode": "Default",
@@ -918,6 +918,23 @@
       "OriginalItemSpec": "wwwroot\\images\\uploadimages\\deadpool_e8274a46-2cef-4539-ab5e-c0bfac3bbefb.png"
     },
     {
+      "Identity": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\DenStark_9919727b-e17d-4921-91a8-2f6266f2954f.jpg",
+      "SourceId": "PizaShopPresentation",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\",
+      "BasePath": "_content/PizaShopPresentation",
+      "RelativePath": "images/uploadimages/DenStark_9919727b-e17d-4921-91a8-2f6266f2954f.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\uploadimages\\DenStark_9919727b-e17d-4921-91a8-2f6266f2954f.jpg"
+    },
+    {
       "Identity": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\dhthtjhe_0244a920-da64-419b-bfbd-213dc5a0d7f3.png",
       "SourceId": "PizaShopPresentation",
       "SourceType": "Discovered",
@@ -1018,6 +1035,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\uploadimages\\efefeffqeqf_d781607e-7ffc-49ed-8507-da80c5d415ff.png"
+    },
+    {
+      "Identity": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\eqfgqege_cd7ebdee-744b-4457-ac14-33b64b1bae6e.jpg",
+      "SourceId": "PizaShopPresentation",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\",
+      "BasePath": "_content/PizaShopPresentation",
+      "RelativePath": "images/uploadimages/eqfgqege_cd7ebdee-744b-4457-ac14-33b64b1bae6e.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\uploadimages\\eqfgqege_cd7ebdee-744b-4457-ac14-33b64b1bae6e.jpg"
     },
     {
       "Identity": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\geqffeeeeee_c76f8611-f407-4660-aa0e-87cd73b6a05d.png",
