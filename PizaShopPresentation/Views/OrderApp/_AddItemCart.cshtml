@@ -122,8 +122,9 @@
             // Initialize total taxes
             decimal totalTaxes = 0m;
             // Track flat tax checkbox states (default checked for demo)
-            var flatTaxStates = Model.OrderTaxes.Where(t => t.TaxFlat.HasValue)
-                .ToDictionary(t => t.Tax.Name, t => true); // Default checked
+          var flatTaxStates = Model.OrderTaxes
+    .Where(t => t.TaxFlat.HasValue)
+    .ToDictionary(t => t.Tax.Name, t => t.IsApplied);
             // Calculate taxes
             foreach (var tax in Model.OrderTaxes)
             {

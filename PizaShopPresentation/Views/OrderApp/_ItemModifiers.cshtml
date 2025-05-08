@@ -231,7 +231,7 @@
                         taxHtml.push(`
                             <div class="d-flex justify-content-between tax-row" data-tax-name="${tax.Name}">
                                 <span>
-                                    <input type="checkbox" class="checkbox flat-tax-checkbox" data-tax-name="${tax.Name}" checked> 
+                                    <input type="checkbox" class="checkbox flat-tax-checkbox form-check-input" data-tax-name="${tax.Name}" checked> 
                                     ${tax.Name} (₹${taxAmount.toFixed(2)})
                                 </span>
                                 <span style="display: block;">
@@ -243,7 +243,7 @@
                         taxHtml.push(`
                             <div class="d-flex justify-content-between tax-row" data-tax-name="${tax.Name}" style="display: none;">
                                 <span>
-                                    <input type="checkbox" class="checkbox flat-tax-checkbox" data-tax-name="${tax.Name}"> 
+                                    <input type="checkbox" class="checkbox flat-tax-checkbox form-check-input" data-tax-name="${tax.Name}"> 
                                     ${tax.Name} (₹${(parseFloat(tax.TaxFlat) || 0).toFixed(2)})
                                 </span>
                                 <span style="display: none;">
