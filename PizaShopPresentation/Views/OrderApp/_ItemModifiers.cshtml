@@ -234,7 +234,9 @@
                                     <input type="checkbox" class="checkbox flat-tax-checkbox" data-tax-name="${tax.Name}" checked> 
                                     ${tax.Name} (₹${taxAmount.toFixed(2)})
                                 </span>
-                                <span>₹${taxAmount.toFixed(2)}</span>
+                                <span style="display: block;">
+                                    ₹${taxAmount.toFixed(2)}
+                                </span>
                             </div>
                         `);
                     } else if (tax.TaxFlat !== null) {
@@ -244,7 +246,9 @@
                                     <input type="checkbox" class="checkbox flat-tax-checkbox" data-tax-name="${tax.Name}"> 
                                     ${tax.Name} (₹${(parseFloat(tax.TaxFlat) || 0).toFixed(2)})
                                 </span>
-                                <span>₹${(parseFloat(tax.TaxFlat) || 0).toFixed(2)}</span>
+                                <span style="display: none;">
+                                    ₹${(parseFloat(tax.TaxFlat) || 0).toFixed(2)}
+                                </span>
                             </div>
                         `);
                     } else if (tax.TaxPercentage !== null) {
@@ -273,7 +277,6 @@
                     <span>₹${subtotal.toFixed(2)}</span>
                 </div>
                 ${taxHtml.join('')}
-                
                 <div class="d-flex justify-content-between fw-bold">
                     <span>TOTAL</span>
                     <span>₹${(subtotal + totalTaxes).toFixed(2)}</span>
@@ -308,7 +311,7 @@
             });
 
             // Bind flat tax checkbox handler
-            $('.flat-tax-checkbox').off('change').on('change', function () {
+            $('.flat-tax-checkbox').off('click').on('change', function () {
                 const taxName = $(this).data('tax-name');
                 const isChecked = $(this).is(':checked');
                 window.taxSettings[taxName] = isChecked;
@@ -316,6 +319,9 @@
 
                 // Show/hide tax row
                 $taxRow.css('display', isChecked ? '' : 'none');
+
+                // Show/hide tax amount span
+                $taxRow.find('span:last').css('display', isChecked ? 'block' : 'none');
 
                 // Recalculate total
                 const subtotal = parseFloat($('.d-flex.justify-content-between:contains("SUBTOTAL") span:last').text().replace('₹', '')) || 0;

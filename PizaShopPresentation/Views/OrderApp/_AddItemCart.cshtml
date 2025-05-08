@@ -123,8 +123,8 @@
             decimal totalTaxes = 0m;
             // Track flat tax checkbox states (default checked for demo)
             var flatTaxStates = Model.OrderTaxes.Where(t => t.TaxFlat.HasValue)
-            .ToDictionary(t => t.Tax.Name, t => true); // Default checked
-                                                       // Calculate taxes
+                .ToDictionary(t => t.Tax.Name, t => true); // Default checked
+            // Calculate taxes
             foreach (var tax in Model.OrderTaxes)
             {
                 if (tax.TaxFlat.HasValue && flatTaxStates[tax.Tax.Name])
@@ -136,7 +136,7 @@
                     totalTaxes += subtotal * (tax.TaxPercentage.Value / 100m);
                 }
             }
-            // SGST (2.5% when checked)
+           
             const decimal sgstPercentage = 0.0m;
             bool isSgstChecked = true; // Default checked for demo; adjust based on actual logic
             decimal sgstAmount = isSgstChecked ? subtotal * (sgstPercentage / 100m) : 0m;
@@ -169,7 +169,7 @@
                             <span>(@tax.TaxPercentage.Value%)</span>
                         }
                     </span>
-                    <span>
+                    <span style="display: @(tax.TaxFlat.HasValue ? (flatTaxStates[tax.Tax.Name] ? "block" : "none") : "block");">
                         @if (tax.TaxFlat.HasValue)
                         {
                             <span>₹@tax.TaxFlat.Value.ToString("F2")</span>
@@ -182,7 +182,6 @@
                     </span>
                 </div>
             }
-
             <div class="d-flex justify-content-between fw-bold">
                 <span>TOTAL</span>
                 <span>₹@total.ToString("F2")</span>
@@ -221,10 +220,10 @@
 <script>
     // Serialize tax data for client-side use
     window.orderTaxes = @Html.Raw(JsonConvert.SerializeObject(Model.OrderTaxes.Select(ot => new
-        {
-                                                                                                                                                                                    Name = ot.Tax.Name,
-                                                                                                                                                                                    TaxFlat = ot.TaxFlat,
-                                                                                                                                                                                    TaxPercentage = ot.TaxPercentage
+    {
+        Name = ot.Tax.Name,
+        TaxFlat = ot.TaxFlat,
+        TaxPercentage = ot.TaxPercentage
     })));
     window.sgstSettings = {
         percentage: @sgstPercentage,
@@ -243,6 +242,9 @@
 
             // Show/hide tax row
             $taxRow.css('display', isChecked ? '' : 'none');
+
+            // Show/hide tax amount span
+            $taxRow.find('span:last').css('display', isChecked ? 'block' : 'none');
 
             // Recalculate total
             const subtotal = parseFloat($('.d-flex.justify-content-between:contains("SUBTOTAL") span:last').text().replace('₹', '')) || 0;
