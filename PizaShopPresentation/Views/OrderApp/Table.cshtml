@@ -104,7 +104,16 @@
                                     <div class="col-md-2" style="cursor: pointer; min-height: 200px; min-width: 300px;">
                                         <div class="card @cardClass mb-3 table-card" data-table-id="@table.TableId" data-status="@table.Availability" data-section-id="@floor.FloorId">
                                             <div class="card-body">
-                                                <h5 class="card-title">@table.TableName</h5>
+                                                <div class="d-flex justify-content-between">
+                                                <div class="card-title">@table.TableName</div>
+                                                 @if (table.Availability == "Running" && table.TotalAmount.HasValue)
+                                                {
+                                                    <div class="d-flex align-items-center">
+                                                       
+                                                        <p class="card-text text-dark">₹@table.TotalAmount.Value.ToString("F2")</p>
+                                                    </div>
+                                                }
+                                                </div>
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <div class="algin-items-center">
                                                         <i class="bi bi-people text-dark"></i>
@@ -121,6 +130,7 @@
                                                     }
                                                 </div>
                                                 <p class="card-text text-dark">@table.Availability</p>
+                                               
                                             </div>
                                         </div>
                                     </div>

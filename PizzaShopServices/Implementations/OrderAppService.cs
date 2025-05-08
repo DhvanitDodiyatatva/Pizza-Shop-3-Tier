@@ -170,6 +170,7 @@ namespace PizzaShopServices.Implementations
                 {
                     string timeSinceCreated = null;
                     DateTime? createdAt = null;
+                    decimal? totalAmount = null; // Initialize TotalAmount
 
                     if (table.Status == "reserved" || table.Status == "occupied")
                     {
@@ -181,12 +182,12 @@ namespace PizzaShopServices.Implementations
                             .OrderByDescending(ot => ot.Order.CreatedAt)
                             .FirstOrDefaultAsync();
 
-
                         if (orderTable?.Order?.CreatedAt != null)
                         {
                             createdAt = orderTable.Order.CreatedAt;
                             var timeSpan = DateTime.Now - createdAt.Value;
                             timeSinceCreated = FormatTimeSpan(timeSpan);
+                            totalAmount = orderTable.Order.TotalAmount; // Fetch TotalAmount
                         }
                     }
 
@@ -203,7 +204,8 @@ namespace PizzaShopServices.Implementations
                             _ => "Available"
                         },
                         TimeSinceCreated = timeSinceCreated,
-                        CreatedAt = createdAt
+                        CreatedAt = createdAt,
+                        TotalAmount = totalAmount // Assign TotalAmount
                     });
                 }
 

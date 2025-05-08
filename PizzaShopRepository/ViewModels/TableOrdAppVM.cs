@@ -15,5 +15,6 @@ namespace PizzaShopRepository.ViewModels
         public string Availability { get; set; }  // Will map to Available, Running, Assigned
         public string TimeSinceCreated { get; set; }
         public DateTime? CreatedAt { get; set; }
+        public decimal? TotalAmount { get; set; }
     }
 }
