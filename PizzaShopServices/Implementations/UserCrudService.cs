@@ -230,9 +230,14 @@ namespace PizzaShopServices.Implementations
 
         public async Task<(bool Success, string Message)> AddNewUserAsync(AddEditUserVM model)
         {
-            if (await _userRepository.UserExistsAsync(model.Username, model.Email))
+            if (await _userRepository.UserExistsAsync(null, model.Email))
             {
-                throw new Exception("Username or Email already exists.");
+                throw new Exception("Email already exists.");
+            }
+
+            if (await _userRepository.UserExistsAsync(model.Username, null))
+            {
+                throw new Exception("Username already exists.");
             }
 
             string temporaryPassword = model.Password;

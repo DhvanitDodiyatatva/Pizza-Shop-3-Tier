@@ -140,3 +140,4 @@ D:\PizzaShop 3-Tier\PizaShopPresentation\bin\Debug\net7.0\runtimes\browser\lib\n
 D:\PizzaShop 3-Tier\Pizza-Shop-3-Tier\PizaShopPresentation\bin\Debug\net7.0\Microsoft.Extensions.Primitives.dll
 D:\PizzaShop 3-Tier\Pizza-Shop-3-Tier\PizaShopPresentation\bin\Debug\net7.0\System.Text.Encodings.Web.dll
 D:\PizzaShop 3-Tier\Pizza-Shop-3-Tier\PizaShopPresentation\bin\Debug\net7.0\runtimes\browser\lib\net7.0\System.Text.Encodings.Web.dll
+D:\PizzaShop 3-Tier\PizaShopPresentation\bin\Debug\net7.0\Newtonsoft.Json.dll

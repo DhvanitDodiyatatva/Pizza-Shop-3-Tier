@@ -1,6 +1,7 @@
 @model PizzaShopRepository.Models.Order
+@using Newtonsoft.Json
 
-<div class="card mt-5 mx-5 border-0 shadow-sm" style="border-radius: 15px; ">
+<div class="card mt-5 mx-5 border-0 shadow-sm" style="border-radius: 15px;">
     <div class="card-body p-3">
         <!-- Table Info -->
         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -115,37 +116,74 @@
         </div>
 
         <!-- Subtotal and Taxes -->
-        <div class="mb-3">
+        @{
+            // Calculate SUBTOTAL: Sum of item base prices and modifier prices
+            decimal subtotal = Model.OrderItems.Sum(oi => oi.TotalPrice + oi.OrderItemModifiers.Sum(m => m.Price));
+            // Initialize total taxes
+            decimal totalTaxes = 0m;
+            // Calculate taxes
+            foreach (var tax in Model.OrderTaxes)
+            {
+                if (tax.TaxFlat.HasValue)
+                {
+                    totalTaxes += tax.TaxFlat.Value;
+                }
+                else if (tax.TaxPercentage.HasValue)
+                {
+                    totalTaxes += subtotal * (tax.TaxPercentage.Value / 100m);
+                }
+            }
+            // SGST (2.5% when checked)
+            const decimal sgstPercentage = 2.5m;
+            bool isSgstChecked = true; // Default checked for demo; adjust based on actual logic
+            decimal sgstAmount = isSgstChecked ? subtotal * (sgstPercentage / 100m) : 0m;
+            totalTaxes += sgstAmount;
+            // Calculate TOTAL
+            decimal total = subtotal + totalTaxes;
+        }
+        <div class="mb-3" id="cartSummary">
             <div class="d-flex justify-content-between">
                 <span>SUBTOTAL</span>
-                <span>₹@Model.OrderItems.Sum(oi => oi.TotalPrice).ToString("F2")</span>
+                <span>₹@subtotal.ToString("F2")</span>
             </div>
             @foreach (var tax in Model.OrderTaxes)
             {
-                <div class="d-flex justify-content-between">
-                    <span>@tax.Tax.Name</span>
-                    <span>
+                <div class="d-flex justify-content-between tax-row" data-tax-name="@tax.Tax.Name">
+                    <span>@tax.Tax.Name
 
                         @if (tax.TaxFlat.HasValue)
                         {
-                            <span>₹</span> @tax.TaxFlat.Value.ToString("F2")
+                            <span>(₹@tax.TaxFlat.Value.ToString("F2"))</span>
                         }
                         else
                         {
-                            @tax.TaxPercentage.Value.ToString("F2")
 
-                            <span>%</span>
+                            <span> (@tax.TaxPercentage.Value%)</span>
+                        }
+                    </span>
+                    <span>
+                        @if (tax.TaxFlat.HasValue)
+                        {
+                            <span>₹@tax.TaxFlat.Value.ToString("F2")</span>
+                        }
+                        else
+                        {
+                            decimal percentageAmount = subtotal * (tax.TaxPercentage.Value / 100m);
+                            <span>₹@percentageAmount.ToString("F2") </span>
                         }
                     </span>
                 </div>
             }
-            <div class="d-flex justify-content-between">
-                <span><input type="checkbox" class="checkbox">SGST</span>
-                <span></span>
-            </div>
+            @* <div class="d-flex justify-content-between sgst-row">
+                <span>
+                    <input type="checkbox" class="checkbox sgst-checkbox" @(isSgstChecked ? "checked" : "")> SGST
+                    (@sgstPercentage%)
+                </span>
+                <span>₹@sgstAmount.ToString("F2")</span>
+            </div> *@
             <div class="d-flex justify-content-between fw-bold">
                 <span>TOTAL</span>
-                <span>₹@Model.TotalAmount.ToString("F2")</span>
+                <span>₹@total.ToString("F2")</span>
             </div>
         </div>
 
@@ -177,3 +215,45 @@
         </div>
     </div>
 </div>
+
+<script>
+    // Serialize tax data for client-side use
+    window.orderTaxes = @Html.Raw(JsonConvert.SerializeObject(Model.OrderTaxes.Select(ot => new
+        {
+                                                                                                                                                                                        Name = ot.Tax.Name,
+                                                                                                                                                                                        TaxFlat = ot.TaxFlat,
+                                                                                                                                                                                        TaxPercentage = ot.TaxPercentage
+    })));
+    window.sgstSettings = {
+        percentage: @sgstPercentage,
+        isChecked: @Json.Serialize(isSgstChecked)
+    };
+
+    $(document).ready(function () {
+        // Handle SGST checkbox toggle
+        $('.sgst-checkbox').on('change', function () {
+            const isChecked = $(this).is(':checked');
+            const subtotal = parseFloat($('.d-flex.justify-content-between:contains("SUBTOTAL") span:last').text().replace('₹', '')) || 0;
+            window.sgstSettings.isChecked = isChecked;
+            const sgstAmount = isChecked ? subtotal * (@sgstPercentage / 100) : 0;
+
+            // Update SGST amount display
+            $(this).closest('.d-flex').find('span:last').text(`₹${sgstAmount.toFixed(2)}`);
+
+            // Recalculate total
+            let totalTaxes = 0;
+            window.orderTaxes.forEach(tax => {
+                if (tax.TaxFlat !== null) {
+                    totalTaxes += parseFloat(tax.TaxFlat) || 0;
+                } else if (tax.TaxPercentage !== null) {
+                    totalTaxes += subtotal * (tax.TaxPercentage / 100);
+                }
+            });
+            totalTaxes += sgstAmount;
+            const total = subtotal + totalTaxes;
+
+            // Update TOTAL display
+            $('.d-flex.justify-content-between.fw-bold span:last').text(`₹${total.toFixed(2)}`);
+        });
+    });
+</script>
