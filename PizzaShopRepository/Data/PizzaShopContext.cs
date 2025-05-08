@@ -383,6 +383,10 @@ public partial class PizzaShopContext : DbContext
             entity.ToTable("order_tax");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.IsApplied)
+                .IsRequired()
+                .HasDefaultValueSql("true")
+                .HasColumnName("is_applied");
             entity.Property(e => e.OrderId).HasColumnName("order_id");
             entity.Property(e => e.TaxFlat).HasColumnName("tax_flat");
             entity.Property(e => e.TaxId).HasColumnName("tax_id");

@@ -227,5 +227,24 @@ namespace PizzaShop.Controllers
             }
             return PartialView("_ItemModifiers", item);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveOrder([FromBody] SaveOrderViewModel model)
+        {
+            if (!ModelState.IsValid || model == null)
+            {
+                return Json(new { success = false, message = "Invalid order data." });
+            }
+
+            try
+            {
+                var result = await _orderAppService.SaveOrderAsync(model);
+                return Json(new { success = result.Success, message = result.Message });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"An error occurred: {ex.Message}" });
+            }
+        }
     }
 }
