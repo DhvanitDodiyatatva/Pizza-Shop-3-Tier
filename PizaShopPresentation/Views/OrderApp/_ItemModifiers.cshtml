@@ -61,13 +61,12 @@
 
 <script>
     $(document).ready(function () {
-        // Frontend cart state
+        // Ensure cart is initialized
         window.cartItems = window.cartItems || [];
 
         function validateModifiers() {
             let allRequirementsMet = true;
 
-            // If no modifier groups exist, enable the Add button
             if ($('.modifier-group').length === 0) {
                 $('#addItemButton').prop('disabled', false);
                 return;
@@ -97,6 +96,7 @@
                 $(this).css('border', '1px solid #15508a');
             } else {
                 $(this).css('background-color', '');
+                $(this).css('border', '1px solid #868482');
             }
             validateModifiers();
         });
@@ -124,7 +124,7 @@
                 ItemPrice: itemPrice,
                 TotalPrice: itemPrice,
                 Modifiers: modifiers,
-                GlobalId: itemName.toLowerCase().replace(/\s+/g, '') + '-' + Date.now() // Unique identifier
+                GlobalId: itemName.toLowerCase().replace(/\s+/g, '') + '-' + Date.now()
             };
 
             // Check if item with same modifiers exists
@@ -134,244 +134,21 @@
             );
 
             if (existingItemIndex !== -1) {
-                // Increment quantity if item with same modifiers exists
                 window.cartItems[existingItemIndex].Quantity += 1;
                 window.cartItems[existingItemIndex].TotalPrice = window.cartItems[existingItemIndex].ItemPrice * window.cartItems[existingItemIndex].Quantity;
             } else {
-                // Add new item to cart
                 window.cartItems.push(cartItem);
             }
 
-            // Update cart display
-            updateCartDisplay();
+            // Trigger cart update in _AddItemCart.cshtml
+            if (typeof updateCartDisplay === 'function') {
+                updateCartDisplay();
+            }
 
             // Close modal
             $('#itemModifiersModal').modal('hide');
         });
 
-        function updateCartDisplay() {
-            const $accordion = $('#cartAccordion');
-            $accordion.empty();
-            const $cartSummary = $('#cartSummary');
-            $cartSummary.empty();
-
-            let subtotal = 0;
-
-            window.cartItems.forEach(item => {
-                const modifiersTotal = item.Modifiers.reduce((sum, mod) => sum + mod.Price, 0) * item.Quantity;
-                const itemBaseTotal = item.ItemPrice * item.Quantity; // Base price * quantity
-                subtotal += itemBaseTotal + modifiersTotal; // Total for subtotal calculation
-
-                const accordionHtml = `
-                    <div class="accordion mt-1" id="itemAccordian-${item.Id}-${item.GlobalId}">
-                        <div class="accordion-item d-flex justify-content-between text-secondary mb-2 mt-1">
-                            <div class="d-flex flex-column">
-                                <div class="accordion-header text-secondary d-flex fw-bolder align-items-center">
-                                    <div class="d-flex align-items-center">
-                                        <button class="accordion-button pe-1 ps-2 text-secondary fw-bolder rounded-2 collapsed"
-                                                type="button" data-bs-toggle="collapse"
-                                                data-bs-target="#collapse-${item.Id}-${item.GlobalId}"
-                                                aria-controls="collapse-${item.Id}-${item.GlobalId}">
-                                        </button>
-                                        <div class="item-name-order-card" data-globalId="${item.GlobalId}"
-                                            data-orderedItemId="${item.Id}">
-                                            <div class="text-truncate" style="max-width:150px;">${item.Name}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="collapse-${item.Id}-${item.GlobalId}" class="accordion-collapse collapse"
-                                    data-bs-parent="#itemAccordian-${item.Id}-${item.GlobalId}">
-                                    <div class="accordion-body">
-                                        ${item.Modifiers.map(mod => `
-                                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                                <span>${mod.Name}</span>
-                                                <span>₹${mod.Price.toFixed(2)}</span>
-                                            </div>
-                                        `).join('')}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="d-flex gap-4 me-3 align-items-center">
-                                <div class="d-flex align-items-center gap-2 border border-secondary rounded px-2 py-1 quantity-selector text-secondary justify-content-between"
-                                    style="width:100px">
-                                    <button class="btn btn-sm border-0 bg-transparent minus px-2 py-1"
-                                        data-itemId="${item.Id}" data-globalId="${item.GlobalId}">-</button>
-                                    <div class="count">${item.Quantity}</div>
-                                    <button class="btn btn-sm border-0 bg-transparent plus px-2 py-1"
-                                        data-itemId="${item.Id}" data-globalId="${item.GlobalId}">+</button>
-                                </div>
-                                <div style="width:100px;">
-                                    <span class="fs-5">₹${itemBaseTotal.toFixed(2)}</span><br>
-                                    <span>₹${modifiersTotal.toFixed(2)}</span>
-                                </div>
-                                <a class="btn border-0 p-0 delete-item" data-globalId="${item.GlobalId}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                                        class="bi bi-trash3" viewBox="0 0 16 16">
-                                        <path
-                                            d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 0 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
-                                    </svg>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                $accordion.append(accordionHtml);
-            });
-
-            // Calculate taxes and total
-            let totalTaxes = 0;
-            const taxHtml = [];
-
-            // Apply database taxes
-            if (window.orderTaxes) {
-                window.orderTaxes.forEach(tax => {
-                    let taxAmount = 0;
-                    if (tax.TaxFlat !== null && window.taxSettings[tax.Name]) {
-                        taxAmount = parseFloat(tax.TaxFlat) || 0;
-                        taxHtml.push(`
-                            <div class="d-flex justify-content-between tax-row" data-tax-name="${tax.Name}">
-                                <span>
-                                    <input type="checkbox" class="checkbox flat-tax-checkbox form-check-input" data-tax-name="${tax.Name}" checked> 
-                                    ${tax.Name} (₹${taxAmount.toFixed(2)})
-                                </span>
-                                <span style="display: block;">
-                                    ₹${taxAmount.toFixed(2)}
-                                </span>
-                            </div>
-                        `);
-                    } else if (tax.TaxFlat !== null) {
-                        taxHtml.push(`
-                            <div class="d-flex justify-content-between tax-row" data-tax-name="${tax.Name}" style="display: none;">
-                                <span>
-                                    <input type="checkbox" class="checkbox flat-tax-checkbox form-check-input" data-tax-name="${tax.Name}"> 
-                                    ${tax.Name} (₹${(parseFloat(tax.TaxFlat) || 0).toFixed(2)})
-                                </span>
-                                <span style="display: none;">
-                                    ₹${(parseFloat(tax.TaxFlat) || 0).toFixed(2)}
-                                </span>
-                            </div>
-                        `);
-                    } else if (tax.TaxPercentage !== null) {
-                        taxAmount = subtotal * (tax.TaxPercentage / 100);
-                        taxHtml.push(`
-                            <div class="d-flex justify-content-between tax-row" data-tax-name="${tax.Name}">
-                                <span>${tax.Name} (${tax.TaxPercentage}%)</span>
-                                <span>₹${taxAmount.toFixed(2)}</span>
-                            </div>
-                        `);
-                    }
-                    totalTaxes += taxAmount;
-                });
-            }
-
-            // Apply SGST
-            const sgstPercentage = window.sgstSettings ? window.sgstSettings.percentage : 0;
-            const isSgstChecked = window.sgstSettings ? window.sgstSettings.isChecked : false;
-            const sgstAmount = isSgstChecked ? subtotal * (sgstPercentage / 100) : 0;
-            totalTaxes += sgstAmount;
-
-            // Update cart summary
-            $cartSummary.append(`
-                <div class="d-flex justify-content-between">
-                    <span>SUBTOTAL</span>
-                    <span>₹${subtotal.toFixed(2)}</span>
-                </div>
-                ${taxHtml.join('')}
-                <div class="d-flex justify-content-between fw-bold">
-                    <span>TOTAL</span>
-                    <span>₹${(subtotal + totalTaxes).toFixed(2)}</span>
-                </div>
-            `);
-
-            // Rebind quantity and delete handlers
-            $('.quantity-selector .plus').off('click').on('click', function () {
-                const globalId = $(this).data('globalid');
-                const item = window.cartItems.find(ci => ci.GlobalId === globalId);
-                if (item) {
-                    item.Quantity += 1;
-                    item.TotalPrice = item.ItemPrice * item.Quantity;
-                    updateCartDisplay();
-                }
-            });
-
-            $('.quantity-selector .minus').off('click').on('click', function () {
-                const globalId = $(this).data('globalid');
-                const item = window.cartItems.find(ci => ci.GlobalId === globalId);
-                if (item && item.Quantity > 1) {
-                    item.Quantity -= 1;
-                    item.TotalPrice = item.ItemPrice * item.Quantity;
-                    updateCartDisplay();
-                }
-            });
-
-            $('.delete-item').off('click').on('click', function () {
-                const globalId = $(this).data('globalid');
-                window.cartItems = window.cartItems.filter(ci => ci.GlobalId !== globalId);
-                updateCartDisplay();
-            });
-
-            // Bind flat tax checkbox handler
-            $('.flat-tax-checkbox').off('click').on('change', function () {
-                const taxName = $(this).data('tax-name');
-                const isChecked = $(this).is(':checked');
-                window.taxSettings[taxName] = isChecked;
-                const $taxRow = $(this).closest('.tax-row');
-
-                // Show/hide tax row
-                $taxRow.css('display', isChecked ? '' : 'none');
-
-                // Show/hide tax amount span
-                $taxRow.find('span:last').css('display', isChecked ? 'block' : 'none');
-
-                // Recalculate total
-                const subtotal = parseFloat($('.d-flex.justify-content-between:contains("SUBTOTAL") span:last').text().replace('₹', '')) || 0;
-                let totalTaxes = 0;
-
-                // Apply taxes based on checkbox state
-                window.orderTaxes.forEach(tax => {
-                    if (tax.TaxFlat !== null && window.taxSettings[tax.Name]) {
-                        totalTaxes += parseFloat(tax.TaxFlat) || 0;
-                    } else if (tax.TaxPercentage !== null) {
-                        totalTaxes += subtotal * (tax.TaxPercentage / 100);
-                    }
-                });
-
-                // Apply SGST
-                const sgstAmount = window.sgstSettings.isChecked ? subtotal * (sgstPercentage / 100) : 0;
-                totalTaxes += sgstAmount;
-
-                // Update TOTAL display
-                const total = subtotal + totalTaxes;
-                $('.d-flex.justify-content-between.fw-bold span:last').text(`₹${total.toFixed(2)}`);
-            });
-
-            // Bind SGST checkbox handler (if re-enabled)
-            $('.sgst-checkbox').off('change').on('change', function () {
-                const isChecked = $(this).is(':checked');
-                window.sgstSettings.isChecked = isChecked;
-                const subtotal = parseFloat($('.d-flex.justify-content-between:contains("SUBTOTAL") span:last').text().replace('₹', '')) || 0;
-                const sgstAmount = isChecked ? subtotal * (sgstPercentage / 100) : 0;
-
-                // Update SGST amount display
-                $(this).closest('.d-flex').find('span:last').text(`₹${sgstAmount.toFixed(2)}`);
-
-                // Recalculate total
-                let totalTaxes = 0;
-                window.orderTaxes.forEach(tax => {
-                    if (tax.TaxFlat !== null && window.taxSettings[tax.Name]) {
-                        totalTaxes += parseFloat(tax.TaxFlat) || 0;
-                    } else if (tax.TaxPercentage !== null) {
-                        totalTaxes += subtotal * (tax.TaxPercentage / 100);
-                    }
-                });
-                totalTaxes += sgstAmount;
-                const total = subtotal + totalTaxes;
-
-                // Update TOTAL display
-                $('.d-flex.justify-content-between.fw-bold span:last').text(`₹${total.toFixed(2)}`);
-            });
-        }
-
-        validateModifiers(); // Initial validation
+        validateModifiers();
     });
 </script>

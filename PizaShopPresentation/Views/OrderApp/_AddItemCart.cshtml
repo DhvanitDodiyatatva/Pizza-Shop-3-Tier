@@ -57,62 +57,6 @@
         <!-- Accordion for Items -->
         <div class="accordion mb-2 custom-scrollbar" id="cartAccordion"
             style="max-height: 260px; min-height: 250px; overflow-y: auto; overflow-x: hidden;">
-            @foreach (var orderItem in Model.OrderItems)
-            {
-                var globalId = orderItem.Item.Name.ToLower().Replace(" ", "");
-                <div class="accordion mt-1" id="itemAccordian-@orderItem.Id-@globalId">
-                    <div class="accordion-item d-flex justify-content-between text-secondary mb-2 mt-1">
-                        <div class="d-flex flex-column">
-                            <div class="accordion-header text-secondary d-flex fw-bolder align-items-center">
-                                <div class="d-flex align-items-center">
-                                    <button class="accordion-button pe-1 ps-2 text-secondary fw-bolder rounded-2 collapsed"
-                                        type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#collapse-@orderItem.Id-@globalId"
-                                        aria-controls="collapse-@orderItem.Id-@globalId">
-                                    </button>
-                                    <div class="item-name-order-card" data-globalId="@globalId"
-                                        data-orderedItemId="@orderItem.Id">
-                                        <div class="text-truncate" style="max-width:150px;"> @orderItem.Item.Name</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="collapse-@orderItem.Id-@globalId" class="accordion-collapse collapse"
-                                data-bs-parent="#itemAccordian-@orderItem.Id-@globalId">
-                                <div class="accordion-body">
-                                    @foreach (var modifier in orderItem.OrderItemModifiers)
-                                    {
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <span> @modifier.Modifier.Name</span>
-                                            <span>₹@modifier.Price.ToString("F2")</span>
-                                        </div>
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                        <div class="d-flex gap-4 me-3 align-items-center">
-                            <div class="d-flex align-items-center gap-2 border border-secondary rounded px-2 py-1 quantity-selector text-secondary justify-content-between"
-                                style="width:100px">
-                                <button class="btn btn-sm border-0 bg-transparent minus px-2 py-1"
-                                    data-itemId="@orderItem.Id" data-globalId="@globalId">-</button>
-                                <div class="count">@orderItem.Quantity</div>
-                                <button class="btn btn-sm border-0 bg-transparent plus px-2 py-1" data-itemId="@orderItem.Id" data-globalId="@globalId">
-+</button>
-                            </div>
-                            <div style="width:100px;">
-                                <span class="fs-5">₹@orderItem.TotalPrice.ToString("F2")</span><br>
-                                <span>₹@(orderItem.OrderItemModifiers.Sum(m => m.Price).ToString("F2"))</span>
-                            </div>
-                            <a class="btn border-0 p-0" id="deleteItem" data-globalId="@globalId">
-                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                                    class="bi bi-trash3" viewBox="0 0 16 16">
-                                    <path
-                                        d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 0 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            }
         </div>
 
         <!-- Subtotal and Taxes -->
@@ -121,10 +65,10 @@
             decimal subtotal = Model.OrderItems.Sum(oi => oi.TotalPrice + oi.OrderItemModifiers.Sum(m => m.Price));
             // Initialize total taxes
             decimal totalTaxes = 0m;
-            // Track flat tax checkbox states (default checked for demo)
-          var flatTaxStates = Model.OrderTaxes
-    .Where(t => t.TaxFlat.HasValue)
-    .ToDictionary(t => t.Tax.Name, t => t.IsApplied);
+            // Track flat tax checkbox states based on IsApplied
+            var flatTaxStates = Model.OrderTaxes
+                .Where(t => t.TaxFlat.HasValue)
+                .ToDictionary(t => t.Tax.Name, t => t.IsApplied);
             // Calculate taxes
             foreach (var tax in Model.OrderTaxes)
             {
@@ -218,6 +162,23 @@
 </div>
 
 <script>
+    // Initialize cart
+    window.cartItems = window.cartItems || @Html.Raw(JsonConvert.SerializeObject(Model.OrderItems.Select(oi => new
+    {
+        Id = oi.ItemId,
+        Name = oi.Item.Name,
+        Quantity = oi.Quantity,
+        ItemPrice = oi.UnitPrice,
+        TotalPrice = oi.TotalPrice,
+        Modifiers = oi.OrderItemModifiers.Select(oim => new
+        {
+            Id = oim.ModifierId,
+            Name = oim.Modifier.Name,
+            Price = oim.Price
+        }).ToList(),
+        GlobalId = oi.Item.Name.ToLower().Replace(" ", "") + "-" + oi.Id
+    })));
+
     // Serialize tax data for client-side use
     window.orderTaxes = @Html.Raw(JsonConvert.SerializeObject(Model.OrderTaxes.Select(ot => new
     {
@@ -229,12 +190,221 @@
         percentage: @sgstPercentage,
         isChecked: @Json.Serialize(isSgstChecked)
     };
-    // Initialize flat tax checkbox states (default checked)
+    // Initialize flat tax checkbox states
     window.taxSettings = @Html.Raw(JsonConvert.SerializeObject(flatTaxStates));
 
+    // Flag to prevent multiple simultaneous requests
+    let isSaving = false;
+
+    function updateCartDisplay() {
+        const $accordion = $('#cartAccordion');
+        const $cartSummary = $('#cartSummary');
+        $accordion.empty();
+        $cartSummary.empty();
+
+        let subtotal = 0;
+
+        window.cartItems.forEach(item => {
+            const modifiersTotal = item.Modifiers.reduce((sum, mod) => sum + mod.Price, 0) * item.Quantity;
+            const itemBaseTotal = item.ItemPrice * item.Quantity;
+            subtotal += itemBaseTotal + modifiersTotal;
+
+            const accordionHtml = `
+                <div class="accordion mt-1" id="itemAccordian-${item.Id}-${item.GlobalId}">
+                    <div class="accordion-item d-flex justify-content-between text-secondary mb-2 mt-1">
+                        <div class="d-flex flex-column">
+                            <div class="accordion-header text-secondary d-flex fw-bolder align-items-center">
+                                <div class="d-flex align-items-center">
+                                    <button class="accordion-button pe-1 ps-2 text-secondary fw-bolder rounded-2 collapsed"
+                                            type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#collapse-${item.Id}-${item.GlobalId}"
+                                            aria-controls="collapse-${item.Id}-${item.GlobalId}">
+                                    </button>
+                                    <div class="item-name-order-card" data-globalId="${item.GlobalId}"
+                                        data-orderedItemId="${item.Id}">
+                                        <div class="text-truncate" style="max-width:150px;">${item.Name}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="collapse-${item.Id}-${item.GlobalId}" class="accordion-collapse collapse"
+                                data-bs-parent="#itemAccordian-${item.Id}-${item.GlobalId}">
+                                <div class="accordion-body">
+                                    ${item.Modifiers.map(mod => `
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span>${mod.Name}</span>
+                                            <span>₹${mod.Price.toFixed(2)}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-4 me-3 align-items-center">
+                            <div class="d-flex align-items-center gap-2 border border-secondary rounded px-2 py-1 quantity-selector text-secondary justify-content-between"
+                                style="width:100px">
+                                <button class="btn btn-sm border-0 bg-transparent minus px-2 py-1"
+                                    data-globalId="${item.GlobalId}">-</button>
+                                <div class="count">${item.Quantity}</div>
+                                <button class="btn btn-sm border-0 bg-transparent plus px-2 py-1"
+                                    data-globalId="${item.GlobalId}">+</button>
+                            </div>
+                            <div style="width:100px;">
+                                <span class="fs-5">₹${itemBaseTotal.toFixed(2)}</span><br>
+                                <span>₹${modifiersTotal.toFixed(2)}</span>
+                            </div>
+                            <a class="btn border-0 p-0 delete-item" data-globalId="${item.GlobalId}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                    class="bi bi-trash3" viewBox="0 0 16 16">
+                                    <path
+                                        d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 0 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+            $accordion.append(accordionHtml);
+        });
+
+        // Calculate taxes and total
+        let totalTaxes = 0;
+        const taxHtml = [];
+        if (window.orderTaxes) {
+            window.orderTaxes.forEach(tax => {
+                let taxAmount = 0;
+                if (tax.TaxFlat !== null && window.taxSettings[tax.Name]) {
+                    taxAmount = parseFloat(tax.TaxFlat) || 0;
+                    taxHtml.push(`
+                        <div class="d-flex justify-content-between tax-row" data-tax-name="${tax.Name}">
+                            <span>
+                                <input type="checkbox" class="checkbox flat-tax-checkbox form-check-input" data-tax-name="${tax.Name}" checked>
+                                ${tax.Name} (₹${taxAmount.toFixed(2)})
+                            </span>
+                            <span style="display: block;">
+                                ₹${taxAmount.toFixed(2)}
+                            </span>
+                        </div>
+                    `);
+                } else if (tax.TaxFlat !== null) {
+                    taxHtml.push(`
+                        <div class="d-flex justify-content-between tax-row" data-tax-name="${tax.Name}" style="display: none;">
+                            <span>
+                                <input type="checkbox" class="checkbox flat-tax-checkbox form-check-input" data-tax-name="${tax.Name}">
+                                ${tax.Name} (₹${(parseFloat(tax.TaxFlat) || 0).toFixed(2)})
+                            </span>
+                            <span style="display: none;">
+                                ₹${(parseFloat(tax.TaxFlat) || 0).toFixed(2)}
+                            </span>
+                        </div>
+                    `);
+                } else if (tax.TaxPercentage !== null) {
+                    taxAmount = subtotal * (tax.TaxPercentage / 100);
+                    taxHtml.push(`
+                        <div class="d-flex justify-content-between tax-row" data-tax-name="${tax.Name}">
+                            <span>${tax.Name} (${tax.TaxPercentage}%)</span>
+                            <span>₹${taxAmount.toFixed(2)}</span>
+                        </div>
+                    `);
+                }
+                totalTaxes += taxAmount;
+            });
+        }
+
+        // Apply SGST
+        const sgstAmount = window.sgstSettings.isChecked ? subtotal * (window.sgstSettings.percentage / 100) : 0;
+        totalTaxes += sgstAmount;
+
+        // Update cart summary
+        $cartSummary.append(`
+            <div class="d-flex justify-content-between">
+                <span>SUBTOTAL</span>
+                <span>₹${subtotal.toFixed(2)}</span>
+            </div>
+            ${taxHtml.join('')}
+            <div class="d-flex justify-content-between fw-bold">
+                <span>TOTAL</span>
+                <span>₹${(subtotal + totalTaxes).toFixed(2)}</span>
+            </div>
+        `);
+    }
+
+    function loadCart(orderId) {
+        console.log('loadCart called with orderId:', orderId);
+        $.ajax({
+            url: '@Url.Action("GetOrderDetails", "OrderApp")',
+            type: 'GET',
+            data: { orderId: orderId },
+            dataType: 'json',
+            success: function (result) {
+                console.log('loadCart success:', result);
+                if (result && typeof result === 'object' && result.success) {
+                    window.cartItems = result.orderItems.map(oi => ({
+                        Id: oi.itemId,
+                        Name: oi.itemName,
+                        Quantity: oi.quantity,
+                        ItemPrice: oi.unitPrice,
+                        TotalPrice: oi.totalPrice,
+                        Modifiers: oi.modifiers.map(oim => ({
+                            Id: oim.modifierId,
+                            Name: oim.modifierName,
+                            Price: oim.price
+                        })),
+                        GlobalId: oi.itemName.toLowerCase().replace(/\s+/g, '') + '-' + oi.id
+                    }));
+                    window.orderTaxes = result.orderTaxes.map(ot => ({
+                        Name: ot.taxName,
+                        TaxFlat: ot.taxFlat,
+                        TaxPercentage: ot.taxPercentage
+                    }));
+                    window.taxSettings = result.orderTaxes.reduce((acc, ot) => {
+                        acc[ot.taxName] = ot.isApplied;
+                        return acc;
+                    }, {});
+                    updateCartDisplay();
+                } else {
+                    console.error('Invalid response from loadCart:', result);
+                    toastr.error(result && result.message ? result.message : 'Failed to load cart data.');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error in loadCart:', { status: status, error: error, response: xhr.responseText });
+                toastr.error('Failed to load cart. Please try again.');
+            }
+        });
+    }
+
     $(document).ready(function () {
+        console.log('Document ready - initializing cart');
+        updateCartDisplay();
+
+        // Delegated event handlers for quantity and delete buttons
+        $('#cartAccordion').on('click', '.quantity-selector .plus', function () {
+            const globalId = $(this).data('globalid');
+            const item = window.cartItems.find(ci => ci.GlobalId === globalId);
+            if (item) {
+                item.Quantity += 1;
+                item.TotalPrice = item.ItemPrice * item.Quantity;
+                updateCartDisplay();
+            }
+        });
+
+        $('#cartAccordion').on('click', '.quantity-selector .minus', function () {
+            const globalId = $(this).data('globalid');
+            const item = window.cartItems.find(ci => ci.GlobalId === globalId);
+            if (item && item.Quantity > 1) {
+                item.Quantity -= 1;
+                item.TotalPrice = item.ItemPrice * item.Quantity;
+                updateCartDisplay();
+            }
+        });
+
+        $('#cartAccordion').on('click', '.delete-item', function () {
+            const globalId = $(this).data('globalid');
+            window.cartItems = window.cartItems.filter(ci => ci.GlobalId !== globalId);
+            updateCartDisplay();
+        });
+
         // Handle flat tax checkbox toggle
-        $('.flat-tax-checkbox').on('change', function () {
+        $('#cartSummary').on('change', '.flat-tax-checkbox', function () {
             const taxName = $(this).data('tax-name');
             const isChecked = $(this).is(':checked');
             window.taxSettings[taxName] = isChecked;
@@ -269,10 +439,10 @@
         });
 
         // Handle SGST checkbox toggle (if re-enabled)
-        $('.sgst-checkbox').on('change', function () {
+        $('#cartSummary').on('change', '.sgst-checkbox', function () {
             const isChecked = $(this).is(':checked');
-            const subtotal = parseFloat($('.d-flex.justify-content-between:contains("SUBTOTAL") span:last').text().replace('₹', '')) || 0;
             window.sgstSettings.isChecked = isChecked;
+            const subtotal = parseFloat($('.d-flex.justify-content-between:contains("SUBTOTAL") span:last').text().replace('₹', '')) || 0;
             const sgstAmount = isChecked ? subtotal * (@sgstPercentage / 100) : 0;
 
             // Update SGST amount display
@@ -294,14 +464,25 @@
             $('.d-flex.justify-content-between.fw-bold span:last').text(`₹${total.toFixed(2)}`);
         });
 
-        // Handle Save button click
-        $('#saveOrderButton').on('click', function () {
+        // Ensure no duplicate event listeners by unbinding first
+        $('#saveOrderButton').off('click').on('click', function (e) {
+            e.preventDefault(); // Prevent any default behavior
+            console.log('Save button clicked');
+
+            // Prevent multiple simultaneous requests
+            if (isSaving) {
+                console.log('Save operation already in progress');
+                return;
+            }
+            isSaving = true;
+
             // Get order ID from URL
             const urlParams = new URLSearchParams(window.location.search);
             const orderId = urlParams.get('orderId');
 
             if (!orderId) {
                 toastr.error('Order ID is missing.');
+                isSaving = false;
                 return;
             }
 
@@ -316,7 +497,7 @@
                 TotalPrice: item.ItemPrice * item.Quantity,
                 Modifiers: item.Modifiers.map(mod => ({
                     ModifierId: mod.Id,
-                    Quantity: item.Quantity, // Modifier quantity same as item quantity
+                    Quantity: item.Quantity,
                     Price: mod.Price
                 }))
             }));
@@ -336,24 +517,46 @@
                 TaxSettings: taxSettings
             };
 
+            console.log('Sending save order request:', orderData);
+
             // Send AJAX request to save order
             $.ajax({
                 url: '@Url.Action("SaveOrder", "OrderApp")',
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(orderData),
+                dataType: 'json',
                 success: function (result) {
-                    if (result.success) {
-                        toastr.success(result.message);
-                        // Reload cart to reflect updated database state
-                        loadCart(orderId);
+                    console.log('SaveOrder success:', result);
+                    if (result && typeof result === 'object' && result.hasOwnProperty('success')) {
+                        if (result.success) {
+                            toastr.success(result.message || 'Order saved successfully.');
+                            // Temporarily comment out loadCart to isolate the issue
+                            // loadCart(orderId);
+                        } else {
+                            toastr.error(result.message || 'Failed to save order.');
+                        }
                     } else {
-                        toastr.error(result.message);
+                        console.error('Invalid response from SaveOrder:', result);
+                        toastr.error('Unexpected response from server. Please try again.');
                     }
                 },
                 error: function (xhr, status, error) {
-                    console.error('Error saving order:', error);
-                    toastr.error('Failed to save order. Please try again.');
+                    console.error('Error in SaveOrder:', { status: status, error: error, response: xhr.responseText });
+                    let errorMessage = 'Failed to save order. Please try again.';
+                    try {
+                        const errorResponse = JSON.parse(xhr.responseText);
+                        if (errorResponse && errorResponse.message) {
+                            errorMessage = errorResponse.message;
+                        }
+                    } catch (e) {
+                        console.error('Error parsing error response:', e);
+                    }
+                    toastr.error(errorMessage);
+                },
+                complete: function () {
+                    console.log('SaveOrder AJAX complete');
+                    isSaving = false;
                 }
             });
         });
