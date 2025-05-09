@@ -233,18 +233,18 @@
             <p><strong>Sub Total:</strong> ₹ @subtotal.ToString("F2")</p>
             @if (Model.OrderTaxes.Any())
             {
-                foreach (var tax in Model.OrderTaxes)
+                foreach (var tax in Model.OrderTaxes.Where(t => t.IsApplied))
                 {
                     if (tax.TaxPercentage.HasValue && tax.TaxPercentage > 0)
                     {
                         <p>
                             <strong>@tax.Tax?.Name:</strong> ₹ @{
-                            decimal taxAmount = subtotal * (tax.TaxPercentage.Value / 100);
-                            @taxAmount.ToString("F2")
-                        }
+                                decimal taxAmount = subtotal * (tax.TaxPercentage.Value / 100);
+                                @taxAmount.ToString("F2")
+                            }
                         </p>
                     }
-                        else if (tax.TaxFlat.HasValue && tax.TaxFlat > 0)
+                    else if (tax.TaxFlat.HasValue && tax.TaxFlat > 0)
                     {
                         <p><strong>@tax.Tax?.Name:</strong> ₹ @tax.TaxFlat.Value.ToString("F2")</p>
                     }

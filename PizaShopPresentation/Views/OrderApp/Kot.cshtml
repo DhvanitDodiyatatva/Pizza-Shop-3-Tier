@@ -39,7 +39,7 @@
         </ul>
     </div>
 
-    <div class="row content-div rounded-2 shadow">
+    <div class="row content-div rounded-2 shadow position-relative overflow-hidden">
         <div class="tab-content w-100">
             <div class="row">
                 <div class="col-md-12 mb-3 d-flex justify-content-end">
@@ -50,10 +50,10 @@
                             <button class="btn btn-main text-white"> > </button>
                 </div>
                 <div class="col-md-12">
-                    <div id="kot-in-progress" class="row"></div>
+                    <div id="kot-in-progress" class="row overflow-hidden position-relative"></div>
                 </div>
                 <div class="col-md-12">
-                    <div id="kot-ready" class="row"></div>
+                    <div id="kot-ready" class="row overflow-hidden position-relative"></div>
                 </div>
             </div>
         </div>
@@ -64,11 +64,22 @@
     let currentSlide = 0;
     const cardsToShow = 1;
     const cardWidth = 370;
-    let selectedCategory = "All"; // Define selectedCategory globally
-    let selectedStatus = 'in_progress'; // Define selectedStatus globally
+    let selectedCategory = "All";
+    let selectedStatus = 'in_progress';
+
+    function updateSliderWidth() {
+        const container = document.querySelector('#kot-in-progress, #kot-ready:not(:empty)');
+        if (!container) return;
+        const cardWrapper = container.querySelector('.card-slider');
+        if (!cardWrapper) return;
+
+        const totalCards = cardWrapper.children.length;
+        cardWrapper.style.width = `${totalCards * cardWidth}px`;
+    }
 
     function nextslide() {
-        const cardWrapper = document.getElementById('cardWrapper');
+        const container = document.querySelector('#kot-in-progress, #kot-ready:not(:empty)');
+        const cardWrapper = container?.querySelector('.card-slider');
         const totalCards = cardWrapper?.children.length ?? 0;
         const maxSlide = totalCards - cardsToShow;
 
@@ -80,7 +91,8 @@
     }
 
     function backslide() {
-        const cardWrapper = document.getElementById('cardWrapper');
+        const container = document.querySelector('#kot-in-progress, #kot-ready:not(:empty)');
+        const cardWrapper = container?.querySelector('.card-slider');
 
         if (currentSlide > 0) {
             currentSlide -= cardsToShow;
@@ -97,20 +109,22 @@
     });
 
     function loadKotData(category, status) {
-        selectedCategory = category; // Update selectedCategory when loading data
-        selectedStatus = status; // Update selectedStatus when loading data
+        selectedCategory = category;
+        selectedStatus = status;
         $.ajax({
             url: `/OrderApp/GetKotByCategoryAndStatus`,
             data: { category: category, status: status },
             success: function (data) {
                 $('#kot-in-progress').html(status === 'in_progress' ? data : '');
                 $('#kot-ready').html(status === 'ready' ? data : '');
+                currentSlide = 0; // Reset slide position
+                updateSliderWidth();
             }
         });
     }
 
     function loadKotDetails(orderId, status) {
-        console.log("Loading modal for orderId:", orderId, "status:", status, "selectedCategory:", selectedCategory, "selectedStatus:", selectedStatus); // Debug log
+        console.log("Loading modal for orderId:", orderId, "status:", status, "selectedCategory:", selectedCategory, "selectedStatus:", selectedStatus);
 
         $('div[id="kotDetailsModal"]').remove();
 
@@ -124,7 +138,6 @@
                 if (modalElement) {
                     var modal = new bootstrap.Modal(modalElement, { backdrop: 'static', keyboard: false });
                     modal.show();
-                    // Ensure modal is removed when hidden
                     modalElement.addEventListener('hidden.bs.modal', function () {
                         $(this).remove();
                     });
@@ -133,7 +146,7 @@
                 }
             },
             error: function (xhr, status, error) {
-                console.error("AJAX Error:", error, "Status:", status, "Response:", xhr.responseText); // Detailed error log
+                console.error("AJAX Error:", error, "Status:", status, "Response:", xhr.responseText);
             }
         });
     }
@@ -197,8 +210,6 @@
             $('#in-progress-btn').removeClass('active').addClass('inactive');
         });
     });
-
-
 </script>
 
 <style>
@@ -234,6 +245,8 @@
         border: 3px dashed #dee2e6;
         border-radius: 0.25rem;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        width: 350px;
+        /* Fixed width for consistency */
     }
 
     .btn-main {
@@ -255,8 +268,11 @@
         margin-bottom: 0.1rem;
     }
 
-    .card-slider.transition {
+    .card-slider {
         transition: transform 0.5s ease;
+        display: flex;
+        flex-wrap: nowrap;
+        /* Prevent wrapping */
     }
 
     .status-btn {
@@ -273,4 +289,22 @@
         background-color: white;
         color: #1f73ae;
     }
+
+    /* Ensure the container doesn't allow overflow */
+    #kot-in-progress,
+    #kot-ready {
+        overflow: hidden;
+        position: relative;
+    }
+
+    /* Responsive adjustments */
+    @* @media (max-width: 576px) {
+        .kot-card {
+            width: 100%; /* Full width on small screens */
+            max-width: 350px;
+        }
+        .card-slider {
+            width: 100% !important; /* Override inline width on small screens */
+        }
+    } *@
 </style>

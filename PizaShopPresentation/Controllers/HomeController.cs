@@ -331,7 +331,7 @@ namespace PizzaShopPresentation.Controllers
             var email = User.Identity?.Name;
             if (string.IsNullOrEmpty(email))
             {
-                return RedirectToAction("Index", "Login");
+                return RedirectToAction("Table", "OrderApp");
             }
 
             var model = await _userCrudService.GetUserProfileAsync(email);
@@ -349,7 +349,7 @@ namespace PizzaShopPresentation.Controllers
             var email = User.Identity?.Name;
             if (string.IsNullOrEmpty(email))
             {
-                return RedirectToAction("Index", "Login");
+                return RedirectToAction("Table", "OrderApp");
             }
 
             try
@@ -362,7 +362,7 @@ namespace PizzaShopPresentation.Controllers
                 TempData["ErrorMessage"] = "Failed to update profile.";
             }
 
-            return RedirectToAction("MyProfile");
+            return RedirectToAction("MyProfileOA");
         }
 
 

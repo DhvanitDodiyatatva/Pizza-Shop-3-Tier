@@ -100,7 +100,7 @@
                             <tr>
                                 <th>Sr.No</th>
                                 <th>Item</th>
-                                <th>Quantity</th>
+                                <th class="text-center">Quantity</th>
                                 <th>Price</th>
                                 <th>Total Amount</th>
                             </tr>
@@ -174,17 +174,18 @@
                         </tbody>
                     </table>
 
+
                     <!-- Tax and Total Summary -->
                     <div class="text-end">
-
                         <p><strong>Subtotal:</strong> ₹ @subtotal.ToString("F2")</p>
                         @if (Model.OrderTaxes.Any())
                         {
-                            foreach (var tax in Model.OrderTaxes)
+                            foreach (var tax in Model.OrderTaxes.Where(t => t.IsApplied))
                             {
                                 if (tax.TaxPercentage.HasValue && tax.TaxPercentage > 0)
                                 {
-                                    <p><strong>@tax.Tax?.Name:</strong> ₹ @{
+                                    <p>
+                                        <strong>@tax.Tax?.Name:</strong> ₹ @{
                                         decimal taxAmount = subtotal * (tax.TaxPercentage.Value / 100);
                                         @taxAmount.ToString("F2")
                                     }
