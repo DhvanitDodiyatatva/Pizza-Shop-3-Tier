@@ -392,10 +392,18 @@
         $('#cartAccordion').on('click', '.quantity-selector .minus', function () {
             const globalId = $(this).data('globalid');
             const item = window.cartItems.find(ci => ci.GlobalId === globalId);
-            if (item && item.Quantity > 1) {
-                item.Quantity -= 1;
-                item.TotalPrice = item.ItemPrice * item.Quantity;
-                updateCartDisplay();
+            if (item) {
+                // Check if decreasing quantity would go below ReadyQuantity
+                if (item.Quantity - 1 < item.ReadyQuantity) {
+                    toastr.error(`You cannot decrease this item's quantity because ${item.ReadyQuantity} item(s) are already prepared.`);
+                    return;
+                }
+                // Only allow decreasing if Quantity is greater than 1 and won't go below ReadyQuantity
+                if (item.Quantity > 1) {
+                    item.Quantity -= 1;
+                    item.TotalPrice = item.ItemPrice * item.Quantity;
+                    updateCartDisplay();
+                }
             }
         });
 
@@ -405,7 +413,7 @@
             if (item) {
                 // Check if ReadyQuantity is greater than 0
                 if (item.ReadyQuantity > 0) {
-                    toastr.error(`You cannot delete this item because ${item.ReadyQuantity} item(s) are already prepared .`);
+                    toastr.error(`You cannot delete this item because ${item.ReadyQuantity} item(s) are already prepared.`);
                     return;
                 }
                 // Proceed with deletion if ReadyQuantity is 0
@@ -542,7 +550,6 @@
                     if (result && typeof result === 'object' && result.hasOwnProperty('success')) {
                         if (result.success) {
                             toastr.success(result.message || 'Order saved successfully.');
-                            // Re-enable loadCart since the original issue is resolved
                             loadCart(orderId);
                         } else {
                             toastr.error(result.message || 'Failed to save order.');
