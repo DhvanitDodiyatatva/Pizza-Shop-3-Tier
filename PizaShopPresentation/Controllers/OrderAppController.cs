@@ -302,11 +302,25 @@ namespace PizzaShop.Controllers
             return Json(new { success = true, areAllItemsReady = areAllItemsReady });
         }
 
+        [HttpGet]
+        public async Task<IActionResult> CheckOrderItemsInProgress(int orderId)
+        {
+            var (success, message) = await _orderAppService.CheckOrderItemsInProgressAsync(orderId);
+            return Json(new { success = success, message = message, areAllItemsInProgress = success && message.Contains("All items are in progress.") });
+        }
+
         [HttpPost]
         public async Task<IActionResult> CompleteOrder(int orderId)
         {
             var (success, message) = await _orderAppService.CompleteOrderAsync(orderId);
             return Json(new { success = success, message = message, showReviewModal = success });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CancelOrder(int orderId)
+        {
+            var (success, message) = await _orderAppService.CancelOrderAsync(orderId);
+            return Json(new { success = success, message = message });
         }
 
         [HttpPost]

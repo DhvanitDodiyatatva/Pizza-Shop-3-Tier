@@ -156,7 +156,7 @@
             <button class="btn btn-main text-white" id="saveOrderButton">Save</button>
             <button class="btn btn-outline text-primary-emphasis" id="completeOrderButton">Complete</button>
             <button class="btn btn-outline text-primary-emphasis">Generate Invoice</button>
-            <button class="btn btn-outline text-primary-emphasis">Cancel</button>
+            <button class="btn btn-outline text-primary-emphasis" id="cancelOrderButton">Cancel</button>
         </div>
 
         <!-- Complete Confirmation Modal -->
@@ -180,6 +180,27 @@
             </div>
         </div>
 
+        <!-- Cancel Confirmation Modal -->
+        <div class="modal fade" id="cancelConfirmationModal" tabindex="-1" aria-labelledby="cancelConfirmationModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="cancelConfirmationModalLabel">Confirm Order Cancellation</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body d-flex align-items-center justify-content-center flex-column">
+                        <img src="~/images/toppng.com-warning-icon-2400x2400.png" alt="CancelModal"
+                             style="height: 80px; width: 80px">
+                        Are you sure you want to cancel this order?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                        <button type="button" class="btn btn-main text-white" id="confirmCancelButton">Yes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Customer Review Modal -->
         <div class="modal fade" id="customerReviewModal" tabindex="-1" aria-labelledby="customerReviewModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -189,8 +210,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <p>Please rate your experience:</p>
-                        <div class="mb-3">
+                        <div class="mb-1 d-flex justify-content-between">
                             <label class="form-label">Food Quality</label>
                             <div class="star-rating" data-rating-type="food">
                                 <span class="star" data-value="1">&#9733;</span>
@@ -200,7 +220,7 @@
                                 <span class="star" data-value="5">&#9733;</span>
                             </div>
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-1 d-flex justify-content-between">
                             <label class="form-label">Service</label>
                             <div class="star-rating" data-rating-type="service">
                                 <span class="star" data-value="1">&#9733;</span>
@@ -210,7 +230,7 @@
                                 <span class="star" data-value="5">&#9733;</span>
                             </div>
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-1 d-flex justify-content-between">
                             <label class="form-label">Ambience</label>
                             <div class="star-rating" data-rating-type="ambience">
                                 <span class="star" data-value="1">&#9733;</span>
@@ -282,6 +302,7 @@
 
     let isSaving = false;
     let isCompleting = false;
+    let isCanceling = false;
     let reviewRatings = {
         food: 0,
         service: 0,
@@ -640,6 +661,86 @@
                 },
                 error: function (xhr) {
                     let errorMessage = 'Failed to complete order. Please try again.';
+                    try {
+                        const errorResponse = JSON.parse(xhr.responseText);
+                        if (errorResponse && errorResponse.message) {
+                            errorMessage = errorResponse.message;
+                        }
+                    } catch (e) {}
+                    toastr.error(errorMessage);
+                }
+            });
+        });
+
+        $('#cancelOrderButton').off('click').on('click', function (e) {
+            e.preventDefault();
+
+            if (isCanceling) {
+                return;
+            }
+            isCanceling = true;
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderId = urlParams.get('orderId');
+
+            if (!orderId) {
+                toastr.error('Order ID is missing.');
+                isCanceling = false;
+                return;
+            }
+
+            // Check if all items are in_progress
+            $.ajax({
+                url: '@Url.Action("CheckOrderItemsInProgress", "OrderApp")',
+                type: 'GET',
+                data: { orderId: orderId },
+                dataType: 'json',
+                success: function (result) {
+                    if (result.success) {
+                        if (result.areAllItemsInProgress) {
+                            $('#cancelConfirmationModal').modal('show');
+                        } else {
+                            toastr.error('You cannot cancel this order because some items are already prepared.');
+                        }
+                    } else {
+                        toastr.error(result.message || 'Failed to check order items status.');
+                    }
+                },
+                error: function () {
+                    toastr.error('Failed to check order items status. Please try again.');
+                },
+                complete: function () {
+                    isCanceling = false;
+                }
+            });
+        });
+
+        $('#confirmCancelButton').off('click').on('click', function () {
+            $('#cancelConfirmationModal').modal('hide');
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderId = urlParams.get('orderId');
+
+            if (!orderId) {
+                toastr.error('Order ID is missing.');
+                return;
+            }
+
+            $.ajax({
+                url: '@Url.Action("CancelOrder", "OrderApp")',
+                type: 'POST',
+                data: { orderId: orderId },
+                dataType: 'json',
+                success: function (result) {
+                    if (result.success) {
+                        toastr.success(result.message || 'Order canceled successfully.');
+                        window.location.href = '@Url.Action("Table", "OrderApp")';
+                    } else {
+                        toastr.error(result.message || 'Failed to cancel order.');
+                    }
+                },
+                error: function (xhr) {
+                    let errorMessage = 'Failed to cancel order. Please try again.';
                     try {
                         const errorResponse = JSON.parse(xhr.responseText);
                         if (errorResponse && errorResponse.message) {
