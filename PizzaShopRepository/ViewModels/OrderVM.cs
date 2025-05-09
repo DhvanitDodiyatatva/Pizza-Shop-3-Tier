@@ -26,4 +26,12 @@ namespace PizzaShopRepository.ViewModels
         public int Quantity { get; set; }
         public decimal Price { get; set; }
     }
+
+
+    public class SpecialInstructionViewModel
+    {
+        public int OrderId { get; set; }
+        public int OrderItemId { get; set; }
+        public string SpecialInstruction { get; set; }
+    }
 }

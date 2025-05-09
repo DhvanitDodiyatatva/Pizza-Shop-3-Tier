@@ -213,31 +213,31 @@
                         <div class="mb-1 d-flex justify-content-between">
                             <label class="form-label">Food Quality</label>
                             <div class="star-rating" data-rating-type="food">
-                                <span class="star" data-value="1">&#9733;</span>
-                                <span class="star" data-value="2">&#9733;</span>
-                                <span class="star" data-value="3">&#9733;</span>
-                                <span class="star" data-value="4">&#9733;</span>
-                                <span class="star" data-value="5">&#9733;</span>
+                                <span class="star" data-value="1">★</span>
+                                <span class="star" data-value="2">★</span>
+                                <span class="star" data-value="3">★</span>
+                                <span class="star" data-value="4">★</span>
+                                <span class="star" data-value="5">★</span>
                             </div>
                         </div>
                         <div class="mb-1 d-flex justify-content-between">
                             <label class="form-label">Service</label>
                             <div class="star-rating" data-rating-type="service">
-                                <span class="star" data-value="1">&#9733;</span>
-                                <span class="star" data-value="2">&#9733;</span>
-                                <span class="star" data-value="3">&#9733;</span>
-                                <span class="star" data-value="4">&#9733;</span>
-                                <span class="star" data-value="5">&#9733;</span>
+                                <span class="star" data-value="1">★</span>
+                                <span class="star" data-value="2">★</span>
+                                <span class="star" data-value="3">★</span>
+                                <span class="star" data-value="4">★</span>
+                                <span class="star" data-value="5">★</span>
                             </div>
                         </div>
                         <div class="mb-1 d-flex justify-content-between">
                             <label class="form-label">Ambience</label>
                             <div class="star-rating" data-rating-type="ambience">
-                                <span class="star" data-value="1">&#9733;</span>
-                                <span class="star" data-value="2">&#9733;</span>
-                                <span class="star" data-value="3">&#9733;</span>
-                                <span class="star" data-value="4">&#9733;</span>
-                                <span class="star" data-value="5">&#9733;</span>
+                                <span class="star" data-value="1">★</span>
+                                <span class="star" data-value="2">★</span>
+                                <span class="star" data-value="3">★</span>
+                                <span class="star" data-value="4">★</span>
+                                <span class="star" data-value="5">★</span>
                             </div>
                         </div>
                         <div class="mb-3">
@@ -248,6 +248,28 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Skip</button>
                         <button type="button" class="btn btn-main text-white" id="submitReviewButton">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Special Instructions Modal -->
+        <div class="modal fade" id="specialInstructionsModal" tabindex="-1" aria-labelledby="specialInstructionsModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="specialInstructionsModalLabel">Special Instructions</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="specialInstructionsInput" class="form-label">Add special instructions for <span id="itemName"></span></label>
+                            <textarea class="form-control" id="specialInstructionsInput" rows="3" placeholder="Enter any special instructions..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-main text-white" id="saveSpecialInstructionsButton">Save</button>
                     </div>
                 </div>
             </div>
@@ -267,18 +289,26 @@
     .star-rating .star.filled {
         color: #f5c518;
     }
+    .item-name-order-card {
+        cursor: pointer;
+    }
+    .item-name-order-card:hover {
+        text-decoration: underline;
+    }
 </style>
 
 <script>
-    // Initialize cart with ReadyQuantity
+    // Initialize cart with ReadyQuantity and SpecialInstructions
     window.cartItems = window.cartItems || @Html.Raw(JsonConvert.SerializeObject(Model.OrderItems.Select(oi => new
     {
         Id = oi.ItemId,
+        OrderItemId = oi.Id,
         Name = oi.Item.Name,
         Quantity = oi.Quantity,
         ItemPrice = oi.UnitPrice,
         TotalPrice = oi.TotalPrice,
         ReadyQuantity = oi.ReadyQuantity,
+        SpecialInstructions = oi.SpecialInstructions,
         Modifiers = oi.OrderItemModifiers.Select(oim => new
         {
             Id = oim.ModifierId,
@@ -308,6 +338,7 @@
         service: 0,
         ambience: 0
     };
+    let currentOrderItemId = null;
 
     function updateCartDisplay() {
         const $accordion = $('#cartAccordion');
@@ -333,8 +364,7 @@
                                             data-bs-target="#collapse-${item.Id}-${item.GlobalId}"
                                             aria-controls="collapse-${item.Id}-${item.GlobalId}">
                                     </button>
-                                    <div class="item-name-order-card" data-globalId="${item.GlobalId}"
-                                        data-orderedItemId="${item.Id}">
+                                    <div class="item-name-order-card" data-order-item-id="${item.OrderItemId}" data-globalId="${item.GlobalId}"  >
                                         <div class="text-truncate" style="max-width:150px;">${item.Name}</div>
                                     </div>
                                 </div>
@@ -448,11 +478,13 @@
                 if (result && typeof result === 'object' && result.success) {
                     window.cartItems = result.orderItems.map(oi => ({
                         Id: oi.itemId,
+                        OrderItemId: oi.id,
                         Name: oi.itemName,
                         Quantity: oi.quantity,
                         ItemPrice: oi.unitPrice,
                         TotalPrice: oi.totalPrice,
                         ReadyQuantity: oi.readyQuantity,
+                        SpecialInstructions: oi.specialInstructions,
                         Modifiers: oi.modifiers.map(oim => ({
                             Id: oim.modifierId,
                             Name: oim.modifierName,
@@ -495,6 +527,54 @@
                     $(this).addClass('filled');
                 } else {
                     $(this).removeClass('filled');
+                }
+            });
+        });
+
+        // Open Special Instructions Modal when clicking on item name
+        $('#cartAccordion').on('click', '.item-name-order-card', function () {
+            const orderItemId = $(this).data('order-item-id');
+            const globalId = $(this).data('globalid');
+            const item = window.cartItems.find(ci => ci.GlobalId === globalId);
+            if (item) {
+                currentOrderItemId = orderItemId;
+                $('#itemName').text(item.Name);
+                $('#specialInstructionsInput').val(item.SpecialInstructions || '');
+                $('#specialInstructionsModal').modal('show');
+            }
+        });
+
+        // Save Special Instructions
+        $('#saveSpecialInstructionsButton').on('click', function () {
+            const specialInstructions = $('#specialInstructionsInput').val();
+            if (!currentOrderItemId) {
+                toastr.error('Order item ID is missing.');
+                return;
+            }
+
+            $.ajax({
+                url: '@Url.Action("SaveSpecialInstructions", "OrderApp")',
+                type: 'POST',
+                data: {
+                    orderItemId: currentOrderItemId,
+                    specialInstructions: specialInstructions
+                },
+                dataType: 'json',
+                success: function (result) {
+                    if (result.success) {
+                        const item = window.cartItems.find(ci => ci.OrderItemId === currentOrderItemId);
+                        if (item) {
+                            item.SpecialInstructions = specialInstructions;
+                            updateCartDisplay();
+                        }
+                        toastr.success(result.message || 'Special instructions saved successfully.');
+                        $('#specialInstructionsModal').modal('hide');
+                    } else {
+                        toastr.error(result.message || 'Failed to save special instructions.');
+                    }
+                },
+                error: function () {
+                    toastr.error('Failed to save special instructions. Please try again.');
                 }
             });
         });

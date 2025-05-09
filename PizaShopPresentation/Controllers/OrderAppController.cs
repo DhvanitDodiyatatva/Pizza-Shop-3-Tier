@@ -245,7 +245,8 @@ namespace PizzaShop.Controllers
                 quantity = oi.Quantity,
                 unitPrice = oi.UnitPrice,
                 totalPrice = oi.TotalPrice,
-                readyQuantity = oi.ReadyQuantity, // Include ReadyQuantity
+                readyQuantity = oi.ReadyQuantity,
+                specialInstructions = oi.SpecialInstructions,
                 modifiers = oi.OrderItemModifiers.Select(oim => new
                 {
                     modifierId = oim.ModifierId,
@@ -268,6 +269,13 @@ namespace PizzaShop.Controllers
                 orderItems = orderItems,
                 orderTaxes = orderTaxes
             });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveSpecialInstructions(int orderItemId, string specialInstructions)
+        {
+            var (success, message) = await _orderAppService.SaveSpecialInstructionsAsync(orderItemId, specialInstructions);
+            return Json(new { success = success, message = message });
         }
 
         [HttpPost]

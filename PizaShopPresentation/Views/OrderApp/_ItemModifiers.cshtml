@@ -103,7 +103,8 @@
 
         $('#addItemButton').on('click', function () {
             const itemId = $('#itemId').val();
-            const itemName = $('#itemName').val();
+            @* const itemName = $('#itemName').val(); *@
+            const itemName = "@Model.Name";
             const itemPrice = parseFloat($('#itemPrice').val());
             const modifiers = [];
 
