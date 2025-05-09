@@ -389,6 +389,19 @@ namespace PizzaShopServices.Implementations
             return viewModel;
         }
 
+        public async Task<Order> GetOrderByIdAsync(int orderId)
+        {
+            return await _context.Orders
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Item)
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.OrderItemModifiers)
+                .ThenInclude(oim => oim.Modifier)
+                .Include(o => o.OrderTaxes)
+                .ThenInclude(ot => ot.Tax)
+                .FirstOrDefaultAsync(o => o.Id == orderId);
+        }
+
         public async Task<(bool Success, string Message)> SaveOrderAsync(SaveOrderViewModel model)
         {
             try

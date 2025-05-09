@@ -162,7 +162,7 @@
 </div>
 
 <script>
-    // Initialize cart
+    // Initialize cart with ReadyQuantity
     window.cartItems = window.cartItems || @Html.Raw(JsonConvert.SerializeObject(Model.OrderItems.Select(oi => new
     {
         Id = oi.ItemId,
@@ -170,6 +170,7 @@
         Quantity = oi.Quantity,
         ItemPrice = oi.UnitPrice,
         TotalPrice = oi.TotalPrice,
+        ReadyQuantity = oi.ReadyQuantity, // Include ReadyQuantity
         Modifiers = oi.OrderItemModifiers.Select(oim => new
         {
             Id = oim.ModifierId,
@@ -343,6 +344,7 @@
                         Quantity: oi.quantity,
                         ItemPrice: oi.unitPrice,
                         TotalPrice: oi.totalPrice,
+                        ReadyQuantity: oi.readyQuantity, // Map ReadyQuantity
                         Modifiers: oi.modifiers.map(oim => ({
                             Id: oim.modifierId,
                             Name: oim.modifierName,
@@ -399,8 +401,17 @@
 
         $('#cartAccordion').on('click', '.delete-item', function () {
             const globalId = $(this).data('globalid');
-            window.cartItems = window.cartItems.filter(ci => ci.GlobalId !== globalId);
-            updateCartDisplay();
+            const item = window.cartItems.find(ci => ci.GlobalId === globalId);
+            if (item) {
+                // Check if ReadyQuantity is greater than 0
+                if (item.ReadyQuantity > 0) {
+                    toastr.error(`You cannot delete this item because ${item.ReadyQuantity} item(s) are already prepared .`);
+                    return;
+                }
+                // Proceed with deletion if ReadyQuantity is 0
+                window.cartItems = window.cartItems.filter(ci => ci.GlobalId !== globalId);
+                updateCartDisplay();
+            }
         });
 
         // Handle flat tax checkbox toggle
@@ -531,8 +542,8 @@
                     if (result && typeof result === 'object' && result.hasOwnProperty('success')) {
                         if (result.success) {
                             toastr.success(result.message || 'Order saved successfully.');
-                            // Temporarily comment out loadCart to isolate the issue
-                            // loadCart(orderId);
+                            // Re-enable loadCart since the original issue is resolved
+                            loadCart(orderId);
                         } else {
                             toastr.error(result.message || 'Failed to save order.');
                         }

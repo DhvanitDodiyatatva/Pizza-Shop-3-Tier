@@ -228,6 +228,48 @@ namespace PizzaShop.Controllers
             return PartialView("_ItemModifiers", item);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetOrderDetails(int orderId)
+        {
+            var order = await _orderAppService.GetOrderByIdAsync(orderId);
+            if (order == null)
+            {
+                return Json(new { success = false, message = "Order not found." });
+            }
+
+            var orderItems = order.OrderItems.Select(oi => new
+            {
+                id = oi.Id,
+                itemId = oi.ItemId,
+                itemName = oi.Item.Name,
+                quantity = oi.Quantity,
+                unitPrice = oi.UnitPrice,
+                totalPrice = oi.TotalPrice,
+                readyQuantity = oi.ReadyQuantity, // Include ReadyQuantity
+                modifiers = oi.OrderItemModifiers.Select(oim => new
+                {
+                    modifierId = oim.ModifierId,
+                    modifierName = oim.Modifier.Name,
+                    price = oim.Price
+                }).ToList()
+            }).ToList();
+
+            var orderTaxes = order.OrderTaxes.Select(ot => new
+            {
+                taxName = ot.Tax.Name,
+                taxFlat = ot.TaxFlat,
+                taxPercentage = ot.TaxPercentage,
+                isApplied = ot.IsApplied
+            }).ToList();
+
+            return Json(new
+            {
+                success = true,
+                orderItems = orderItems,
+                orderTaxes = orderTaxes
+            });
+        }
+
         [HttpPost]
         public async Task<IActionResult> SaveOrder([FromBody] SaveOrderViewModel model)
         {
