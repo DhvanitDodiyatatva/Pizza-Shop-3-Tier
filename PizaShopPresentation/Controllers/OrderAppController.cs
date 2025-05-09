@@ -288,5 +288,25 @@ namespace PizzaShop.Controllers
                 return Json(new { success = false, message = $"An error occurred: {ex.Message}" });
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> CheckOrderItemsReady(int orderId)
+        {
+            var (success, message) = await _orderAppService.CheckOrderItemsReadyAsync(orderId);
+            if (!success)
+            {
+                return Json(new { success = false, message = message });
+            }
+
+            bool areAllItemsReady = message.Contains("All items are ready.");
+            return Json(new { success = true, areAllItemsReady = areAllItemsReady });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CompleteOrder(int orderId)
+        {
+            var (success, message) = await _orderAppService.CompleteOrderAsync(orderId);
+            return Json(new { success = success, message = message });
+        }
     }
 }

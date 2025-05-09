@@ -561,5 +561,82 @@ namespace PizzaShopServices.Implementations
                 return (false, $"An error occurred: {ex.Message}");
             }
         }
+
+
+        public async Task<(bool Success, string Message)> CheckOrderItemsReadyAsync(int orderId)
+        {
+            try
+            {
+                var order = await GetOrderByIdAsync(orderId);
+                if (order == null)
+                {
+                    return (false, "Order not found.");
+                }
+
+                bool areAllItemsReady = order.OrderItems.All(oi => oi.ItemStatus == "ready");
+                return (true, areAllItemsReady ? "All items are ready." : "Some items are not ready.");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"An error occurred: {ex.Message}");
+            }
+        }
+
+        public async Task<(bool Success, string Message)> CompleteOrderAsync(int orderId)
+        {
+            try
+            {
+                // Fetch the order with related data
+                var order = await _orderAppRepository.GetOrderByIdAsync(orderId);
+                if (order == null)
+                {
+                    return (false, "Order not found.");
+                }
+
+                // Check if all items are ready (extra validation)
+                if (!order.OrderItems.All(oi => oi.ItemStatus == "ready"))
+                {
+                    return (false, "Cannot complete order: Some items are not ready.");
+                }
+
+                // 1. Update Order table
+                order.OrderStatus = "completed";
+                order.PaymentStatus = "paid";
+                order.UpdatedAt = DateTime.Now;
+                _context.Orders.Update(order);
+
+                // 2. Update Table table
+                foreach (var orderTable in order.OrderTables)
+                {
+                    if (orderTable.TableId.HasValue) // Check if TableId is not null
+                    {
+                        var table = await _orderAppRepository.GetTableByIdAsync(orderTable.TableId.Value); // Use .Value to get the int
+                        if (table != null)
+                        {
+                            table.Status = "available";
+                            await _orderAppRepository.UpdateTableAsync(table);
+                        }
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+
+                // 3. Update OrderItem table
+                foreach (var orderItem in order.OrderItems)
+                {
+                    orderItem.ItemStatus = "served";
+                    _context.OrderItems.Update(orderItem);
+                }
+
+                await _context.SaveChangesAsync();
+                return (true, "Order completed successfully.");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"An error occurred: {ex.Message}");
+            }
+        }
     }
 }

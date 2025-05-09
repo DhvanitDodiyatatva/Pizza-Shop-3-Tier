@@ -154,9 +154,30 @@
         <!-- Action Buttons -->
         <div class="d-flex justify-content-between">
             <button class="btn btn-main text-white" id="saveOrderButton">Save</button>
-            <button class="btn btn-outline text-primary-emphasis">Complete</button>
+            <button class="btn btn-outline text-primary-emphasis" id="completeOrderButton">Complete</button>
             <button class="btn btn-outline text-primary-emphasis">Generate Invoice</button>
             <button class="btn btn-outline text-primary-emphasis">Cancel</button>
+        </div>
+
+        <!-- Complete Confirmation Modal -->
+        <div class="modal fade" id="completeConfirmationModal" tabindex="-1" aria-labelledby="completeConfirmationModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="completeConfirmationModalLabel">Confirm Order Completion</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body d-flex align-items-center justify-content-center flex-column">
+                         <img src="~/images/toppng.com-warning-icon-2400x2400.png" alt="DeleteModal"
+                                style="height: 80px; width: 80px">
+                        Are you sure you want to complete this order?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                        <button type="button" class="btn btn-main text-white" id="confirmCompleteButton">Yes</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -196,6 +217,7 @@
 
     // Flag to prevent multiple simultaneous requests
     let isSaving = false;
+    let isCompleting = false;
 
     function updateCartDisplay() {
         const $accordion = $('#cartAccordion');
@@ -481,6 +503,101 @@
 
             // Update TOTAL display
             $('.d-flex.justify-content-between.fw-bold span:last').text(`₹${total.toFixed(2)}`);
+        });
+
+        // Handle Complete button click
+        $('#completeOrderButton').off('click').on('click', function (e) {
+            e.preventDefault();
+            console.log('Complete button clicked');
+
+            // Prevent multiple simultaneous requests
+            if (isCompleting) {
+                console.log('Complete operation already in progress');
+                return;
+            }
+            isCompleting = true;
+
+            // Get order ID from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderId = urlParams.get('orderId');
+
+            if (!orderId) {
+                toastr.error('Order ID is missing.');
+                isCompleting = false;
+                return;
+            }
+
+            // Check if all items are ready
+            $.ajax({
+                url: '@Url.Action("CheckOrderItemsReady", "OrderApp")',
+                type: 'GET',
+                data: { orderId: orderId },
+                dataType: 'json',
+                success: function (result) {
+                    if (result.success) {
+                        if (result.areAllItemsReady) {
+                            // Show the confirmation modal
+                            $('#completeConfirmationModal').modal('show');
+                        } else {
+                            toastr.error('You cannot complete this order because some items are still in progress.');
+                        }
+                    } else {
+                        toastr.error(result.message || 'Failed to check order items status.');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error in CheckOrderItemsReady:', { status: status, error: error, response: xhr.responseText });
+                    toastr.error('Failed to check order items status. Please try again.');
+                },
+                complete: function () {
+                    isCompleting = false;
+                }
+            });
+        });
+
+        // Handle Confirm Complete button in modal
+        $('#confirmCompleteButton').off('click').on('click', function () {
+            // Close the modal
+            $('#completeConfirmationModal').modal('hide');
+
+            // Get order ID from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderId = urlParams.get('orderId');
+
+            if (!orderId) {
+                toastr.error('Order ID is missing.');
+                return;
+            }
+
+            // Send AJAX request to complete the order
+            $.ajax({
+                url: '@Url.Action("CompleteOrder", "OrderApp")',
+                type: 'POST',
+                data: { orderId: orderId },
+                dataType: 'json',
+                success: function (result) {
+                    if (result.success) {
+                        toastr.success(result.message || 'Order completed successfully.');
+                        // Redirect to Table action
+                        window.location.href = '@Url.Action("Table", "OrderApp")';
+                    } else {
+                        toastr.error(result.message || 'Failed to complete order.');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error in CompleteOrder:', { status: status, error: error, response: xhr.responseText });
+                    let errorMessage = 'Failed to complete order. Please try again.';
+                    try {
+                        const errorResponse = JSON.parse(xhr.responseText);
+                        if (errorResponse && errorResponse.message) {
+                            errorMessage = errorResponse.message;
+                        }
+                    } catch (e) {
+                        console.error('Error parsing error response:', e);
+                    }
+                    toastr.error(errorMessage);
+                }
+            });
         });
 
         // Ensure no duplicate event listeners by unbinding first
