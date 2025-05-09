@@ -638,5 +638,41 @@ namespace PizzaShopServices.Implementations
                 return (false, $"An error occurred: {ex.Message}");
             }
         }
+
+        public async Task<(bool Success, string Message)> SaveCustomerReviewAsync(CustomerReviewViewModel model)
+        {
+            try
+            {
+                var order = await _context.Orders.FindAsync(model.OrderId);
+                if (order == null)
+                {
+                    return (false, "Order not found.");
+                }
+
+                // Save customer review
+                var review = new CustomerReview
+                {
+                    OrderId = model.OrderId,
+                    FoodRating = model.FoodRating,
+                    ServiceRating = model.ServiceRating,
+                    AmbienceRating = model.AmbienceRating,
+                    Comment = string.IsNullOrEmpty(model.Comment) ? null : model.Comment,
+                    CreatedAt = DateTime.Now
+                };
+                _context.CustomerReviews.Add(review);
+
+                // Calculate average rating and update Order
+                decimal averageRating = (model.FoodRating + model.ServiceRating + model.AmbienceRating) / 3m;
+                order.Rating = (int?)Math.Round(averageRating); // Round to nearest integer and cast to int?
+                _context.Orders.Update(order);
+
+                await _context.SaveChangesAsync();
+                return (true, "Review submitted successfully.");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"An error occurred: {ex.Message}");
+            }
+        }
     }
 }

@@ -306,7 +306,26 @@ namespace PizzaShop.Controllers
         public async Task<IActionResult> CompleteOrder(int orderId)
         {
             var (success, message) = await _orderAppService.CompleteOrderAsync(orderId);
-            return Json(new { success = success, message = message });
+            return Json(new { success = success, message = message, showReviewModal = success });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SubmitCustomerReview([FromBody] CustomerReviewViewModel model)
+        {
+            if (!ModelState.IsValid || model == null)
+            {
+                return Json(new { success = false, message = "Invalid review data." });
+            }
+
+            try
+            {
+                var (success, message) = await _orderAppService.SaveCustomerReviewAsync(model);
+                return Json(new { success = success, message = message });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"An error occurred: {ex.Message}" });
+            }
         }
     }
 }

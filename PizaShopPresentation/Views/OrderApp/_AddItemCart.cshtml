@@ -179,8 +179,75 @@
                 </div>
             </div>
         </div>
+
+        <!-- Customer Review Modal -->
+        <div class="modal fade" id="customerReviewModal" tabindex="-1" aria-labelledby="customerReviewModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="customerReviewModalLabel">We Value Your Feedback</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Please rate your experience:</p>
+                        <div class="mb-3">
+                            <label class="form-label">Food Quality</label>
+                            <div class="star-rating" data-rating-type="food">
+                                <span class="star" data-value="1">&#9733;</span>
+                                <span class="star" data-value="2">&#9733;</span>
+                                <span class="star" data-value="3">&#9733;</span>
+                                <span class="star" data-value="4">&#9733;</span>
+                                <span class="star" data-value="5">&#9733;</span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Service</label>
+                            <div class="star-rating" data-rating-type="service">
+                                <span class="star" data-value="1">&#9733;</span>
+                                <span class="star" data-value="2">&#9733;</span>
+                                <span class="star" data-value="3">&#9733;</span>
+                                <span class="star" data-value="4">&#9733;</span>
+                                <span class="star" data-value="5">&#9733;</span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Ambience</label>
+                            <div class="star-rating" data-rating-type="ambience">
+                                <span class="star" data-value="1">&#9733;</span>
+                                <span class="star" data-value="2">&#9733;</span>
+                                <span class="star" data-value="3">&#9733;</span>
+                                <span class="star" data-value="4">&#9733;</span>
+                                <span class="star" data-value="5">&#9733;</span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="reviewComment" class="form-label">Comments</label>
+                            <textarea class="form-control" id="reviewComment" rows="3" placeholder="Share your thoughts..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Skip</button>
+                        <button type="button" class="btn btn-main text-white" id="submitReviewButton">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+<style>
+    .star-rating {
+        font-size: 24px;
+        color: #ddd;
+        cursor: pointer;
+    }
+    .star-rating .star {
+        margin-right: 5px;
+    }
+    .star-rating .star.filled {
+        color: #f5c518;
+    }
+</style>
 
 <script>
     // Initialize cart with ReadyQuantity
@@ -191,7 +258,7 @@
         Quantity = oi.Quantity,
         ItemPrice = oi.UnitPrice,
         TotalPrice = oi.TotalPrice,
-        ReadyQuantity = oi.ReadyQuantity, // Include ReadyQuantity
+        ReadyQuantity = oi.ReadyQuantity,
         Modifiers = oi.OrderItemModifiers.Select(oim => new
         {
             Id = oim.ModifierId,
@@ -201,7 +268,6 @@
         GlobalId = oi.Item.Name.ToLower().Replace(" ", "") + "-" + oi.Id
     })));
 
-    // Serialize tax data for client-side use
     window.orderTaxes = @Html.Raw(JsonConvert.SerializeObject(Model.OrderTaxes.Select(ot => new
     {
         Name = ot.Tax.Name,
@@ -212,12 +278,15 @@
         percentage: @sgstPercentage,
         isChecked: @Json.Serialize(isSgstChecked)
     };
-    // Initialize flat tax checkbox states
     window.taxSettings = @Html.Raw(JsonConvert.SerializeObject(flatTaxStates));
 
-    // Flag to prevent multiple simultaneous requests
     let isSaving = false;
     let isCompleting = false;
+    let reviewRatings = {
+        food: 0,
+        service: 0,
+        ambience: 0
+    };
 
     function updateCartDisplay() {
         const $accordion = $('#cartAccordion');
@@ -288,7 +357,6 @@
             $accordion.append(accordionHtml);
         });
 
-        // Calculate taxes and total
         let totalTaxes = 0;
         const taxHtml = [];
         if (window.orderTaxes) {
@@ -332,7 +400,6 @@
             });
         }
 
-        // Apply SGST
         const sgstAmount = window.sgstSettings.isChecked ? subtotal * (window.sgstSettings.percentage / 100) : 0;
         totalTaxes += sgstAmount;
 
@@ -351,14 +418,12 @@
     }
 
     function loadCart(orderId) {
-        console.log('loadCart called with orderId:', orderId);
         $.ajax({
             url: '@Url.Action("GetOrderDetails", "OrderApp")',
             type: 'GET',
             data: { orderId: orderId },
             dataType: 'json',
             success: function (result) {
-                console.log('loadCart success:', result);
                 if (result && typeof result === 'object' && result.success) {
                     window.cartItems = result.orderItems.map(oi => ({
                         Id: oi.itemId,
@@ -366,7 +431,7 @@
                         Quantity: oi.quantity,
                         ItemPrice: oi.unitPrice,
                         TotalPrice: oi.totalPrice,
-                        ReadyQuantity: oi.readyQuantity, // Map ReadyQuantity
+                        ReadyQuantity: oi.readyQuantity,
                         Modifiers: oi.modifiers.map(oim => ({
                             Id: oim.modifierId,
                             Name: oim.modifierName,
@@ -385,22 +450,34 @@
                     }, {});
                     updateCartDisplay();
                 } else {
-                    console.error('Invalid response from loadCart:', result);
                     toastr.error(result && result.message ? result.message : 'Failed to load cart data.');
                 }
             },
-            error: function (xhr, status, error) {
-                console.error('Error in loadCart:', { status: status, error: error, response: xhr.responseText });
+            error: function () {
                 toastr.error('Failed to load cart. Please try again.');
             }
         });
     }
 
     $(document).ready(function () {
-        console.log('Document ready - initializing cart');
         updateCartDisplay();
 
-        // Delegated event handlers for quantity and delete buttons
+        // Star rating functionality
+        $('.star-rating .star').on('click', function () {
+            const ratingType = $(this).parent().data('rating-type');
+            const value = parseInt($(this).data('value'));
+            reviewRatings[ratingType] = value;
+
+            $(this).parent().find('.star').each(function () {
+                const starValue = parseInt($(this).data('value'));
+                if (starValue <= value) {
+                    $(this).addClass('filled');
+                } else {
+                    $(this).removeClass('filled');
+                }
+            });
+        });
+
         $('#cartAccordion').on('click', '.quantity-selector .plus', function () {
             const globalId = $(this).data('globalid');
             const item = window.cartItems.find(ci => ci.GlobalId === globalId);
@@ -433,35 +510,27 @@
             const globalId = $(this).data('globalid');
             const item = window.cartItems.find(ci => ci.GlobalId === globalId);
             if (item) {
-                // Check if ReadyQuantity is greater than 0
                 if (item.ReadyQuantity > 0) {
                     toastr.error(`You cannot delete this item because ${item.ReadyQuantity} item(s) are already prepared.`);
                     return;
                 }
-                // Proceed with deletion if ReadyQuantity is 0
                 window.cartItems = window.cartItems.filter(ci => ci.GlobalId !== globalId);
                 updateCartDisplay();
             }
         });
 
-        // Handle flat tax checkbox toggle
         $('#cartSummary').on('change', '.flat-tax-checkbox', function () {
             const taxName = $(this).data('tax-name');
             const isChecked = $(this).is(':checked');
             window.taxSettings[taxName] = isChecked;
             const $taxRow = $(this).closest('.tax-row');
 
-            // Show/hide tax row
             $taxRow.css('display', isChecked ? '' : 'none');
-
-            // Show/hide tax amount span
             $taxRow.find('span:last').css('display', isChecked ? 'block' : 'none');
 
-            // Recalculate total
             const subtotal = parseFloat($('.d-flex.justify-content-between:contains("SUBTOTAL") span:last').text().replace('₹', '')) || 0;
             let totalTaxes = 0;
 
-            // Apply taxes based on checkbox state
             window.orderTaxes.forEach(tax => {
                 if (tax.TaxFlat !== null && window.taxSettings[tax.Name]) {
                     totalTaxes += parseFloat(tax.TaxFlat) || 0;
@@ -470,26 +539,21 @@
                 }
             });
 
-            // Apply SGST
             const sgstAmount = window.sgstSettings.isChecked ? subtotal * (window.sgstSettings.percentage / 100) : 0;
             totalTaxes += sgstAmount;
 
-            // Update TOTAL display
             const total = subtotal + totalTaxes;
             $('.d-flex.justify-content-between.fw-bold span:last').text(`₹${total.toFixed(2)}`);
         });
 
-        // Handle SGST checkbox toggle (if re-enabled)
         $('#cartSummary').on('change', '.sgst-checkbox', function () {
             const isChecked = $(this).is(':checked');
             window.sgstSettings.isChecked = isChecked;
             const subtotal = parseFloat($('.d-flex.justify-content-between:contains("SUBTOTAL") span:last').text().replace('₹', '')) || 0;
             const sgstAmount = isChecked ? subtotal * (@sgstPercentage / 100) : 0;
 
-            // Update SGST amount display
             $(this).closest('.d-flex').find('span:last').text(`₹${sgstAmount.toFixed(2)}`);
 
-            // Recalculate total
             let totalTaxes = 0;
             window.orderTaxes.forEach(tax => {
                 if (tax.TaxFlat !== null && window.taxSettings[tax.Name]) {
@@ -501,23 +565,17 @@
             totalTaxes += sgstAmount;
             const total = subtotal + totalTaxes;
 
-            // Update TOTAL display
             $('.d-flex.justify-content-between.fw-bold span:last').text(`₹${total.toFixed(2)}`);
         });
 
-        // Handle Complete button click
         $('#completeOrderButton').off('click').on('click', function (e) {
             e.preventDefault();
-            console.log('Complete button clicked');
 
-            // Prevent multiple simultaneous requests
             if (isCompleting) {
-                console.log('Complete operation already in progress');
                 return;
             }
             isCompleting = true;
 
-            // Get order ID from URL
             const urlParams = new URLSearchParams(window.location.search);
             const orderId = urlParams.get('orderId');
 
@@ -527,7 +585,6 @@
                 return;
             }
 
-            // Check if all items are ready
             $.ajax({
                 url: '@Url.Action("CheckOrderItemsReady", "OrderApp")',
                 type: 'GET',
@@ -536,7 +593,6 @@
                 success: function (result) {
                     if (result.success) {
                         if (result.areAllItemsReady) {
-                            // Show the confirmation modal
                             $('#completeConfirmationModal').modal('show');
                         } else {
                             toastr.error('You cannot complete this order because some items are still in progress.');
@@ -545,8 +601,7 @@
                         toastr.error(result.message || 'Failed to check order items status.');
                     }
                 },
-                error: function (xhr, status, error) {
-                    console.error('Error in CheckOrderItemsReady:', { status: status, error: error, response: xhr.responseText });
+                error: function () {
                     toastr.error('Failed to check order items status. Please try again.');
                 },
                 complete: function () {
@@ -555,12 +610,9 @@
             });
         });
 
-        // Handle Confirm Complete button in modal
         $('#confirmCompleteButton').off('click').on('click', function () {
-            // Close the modal
             $('#completeConfirmationModal').modal('hide');
 
-            // Get order ID from URL
             const urlParams = new URLSearchParams(window.location.search);
             const orderId = urlParams.get('orderId');
 
@@ -569,7 +621,6 @@
                 return;
             }
 
-            // Send AJAX request to complete the order
             $.ajax({
                 url: '@Url.Action("CompleteOrder", "OrderApp")',
                 type: 'POST',
@@ -578,41 +629,74 @@
                 success: function (result) {
                     if (result.success) {
                         toastr.success(result.message || 'Order completed successfully.');
-                        // Redirect to Table action
-                        window.location.href = '@Url.Action("Table", "OrderApp")';
+                        if (result.showReviewModal) {
+                            $('#customerReviewModal').modal('show');
+                        } else {
+                            window.location.href = '@Url.Action("Table", "OrderApp")';
+                        }
                     } else {
                         toastr.error(result.message || 'Failed to complete order.');
                     }
                 },
-                error: function (xhr, status, error) {
-                    console.error('Error in CompleteOrder:', { status: status, error: error, response: xhr.responseText });
+                error: function (xhr) {
                     let errorMessage = 'Failed to complete order. Please try again.';
                     try {
                         const errorResponse = JSON.parse(xhr.responseText);
                         if (errorResponse && errorResponse.message) {
                             errorMessage = errorResponse.message;
                         }
-                    } catch (e) {
-                        console.error('Error parsing error response:', e);
-                    }
+                    } catch (e) {}
                     toastr.error(errorMessage);
                 }
             });
         });
 
-        // Ensure no duplicate event listeners by unbinding first
-        $('#saveOrderButton').off('click').on('click', function (e) {
-            e.preventDefault(); // Prevent any default behavior
-            console.log('Save button clicked');
+        $('#submitReviewButton').on('click', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderId = urlParams.get('orderId');
+            const comment = $('#reviewComment').val();
 
-            // Prevent multiple simultaneous requests
+            const reviewData = {
+                orderId: orderId,
+                foodRating: reviewRatings.food,
+                serviceRating: reviewRatings.service,
+                ambienceRating: reviewRatings.ambience,
+                comment: comment
+            };
+
+            $.ajax({
+                url: '@Url.Action("SubmitCustomerReview", "OrderApp")',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(reviewData),
+                dataType: 'json',
+                success: function (result) {
+                    if (result.success) {
+                        toastr.success(result.message || 'Thank you for your feedback!');
+                        $('#customerReviewModal').modal('hide');
+                        window.location.href = '@Url.Action("Table", "OrderApp")';
+                    } else {
+                        toastr.error(result.message || 'Failed to submit review.');
+                    }
+                },
+                error: function () {
+                    toastr.error('Failed to submit review. Please try again.');
+                }
+            });
+        });
+
+        $('#customerReviewModal').on('hidden.bs.modal', function () {
+            window.location.href = '@Url.Action("Table", "OrderApp")';
+        });
+
+        $('#saveOrderButton').off('click').on('click', function (e) {
+            e.preventDefault();
+
             if (isSaving) {
-                console.log('Save operation already in progress');
                 return;
             }
             isSaving = true;
 
-            // Get order ID from URL
             const urlParams = new URLSearchParams(window.location.search);
             const orderId = urlParams.get('orderId');
 
@@ -622,10 +706,7 @@
                 return;
             }
 
-            // Get payment method
             const paymentMethod = $('input[name="paymentMethod"]:checked').attr('id');
-
-            // Prepare cart items
             const cartItems = window.cartItems.map(item => ({
                 ItemId: item.Id,
                 Quantity: item.Quantity,
@@ -638,13 +719,11 @@
                 }))
             }));
 
-            // Prepare tax settings
             const taxSettings = {};
             window.orderTaxes.forEach(tax => {
                 taxSettings[tax.Name] = window.taxSettings[tax.Name] || false;
             });
 
-            // Prepare data to send
             const orderData = {
                 OrderId: orderId,
                 TotalAmount: parseFloat($('.d-flex.justify-content-between.fw-bold span:last').text().replace('₹', '')),
@@ -653,9 +732,6 @@
                 TaxSettings: taxSettings
             };
 
-            console.log('Sending save order request:', orderData);
-
-            // Send AJAX request to save order
             $.ajax({
                 url: '@Url.Action("SaveOrder", "OrderApp")',
                 type: 'POST',
@@ -663,7 +739,6 @@
                 data: JSON.stringify(orderData),
                 dataType: 'json',
                 success: function (result) {
-                    console.log('SaveOrder success:', result);
                     if (result && typeof result === 'object' && result.hasOwnProperty('success')) {
                         if (result.success) {
                             toastr.success(result.message || 'Order saved successfully.');
@@ -672,25 +747,20 @@
                             toastr.error(result.message || 'Failed to save order.');
                         }
                     } else {
-                        console.error('Invalid response from SaveOrder:', result);
                         toastr.error('Unexpected response from server. Please try again.');
                     }
                 },
-                error: function (xhr, status, error) {
-                    console.error('Error in SaveOrder:', { status: status, error: error, response: xhr.responseText });
+                error: function (xhr) {
                     let errorMessage = 'Failed to save order. Please try again.';
                     try {
                         const errorResponse = JSON.parse(xhr.responseText);
                         if (errorResponse && errorResponse.message) {
                             errorMessage = errorResponse.message;
                         }
-                    } catch (e) {
-                        console.error('Error parsing error response:', e);
-                    }
+                    } catch (e) {}
                     toastr.error(errorMessage);
                 },
                 complete: function () {
-                    console.log('SaveOrder AJAX complete');
                     isSaving = false;
                 }
             });
