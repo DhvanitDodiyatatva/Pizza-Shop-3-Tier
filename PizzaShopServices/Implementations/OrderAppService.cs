@@ -502,7 +502,7 @@ namespace PizzaShopServices.Implementations
                         existingItem.UnitPrice = cartItem.UnitPrice;
                         existingItem.TotalPrice = cartItem.TotalPrice;
                         existingItem.ItemStatus = "in_progress";
-                        existingItem.ReadyQuantity = 0;
+                        // existingItem.ReadyQuantity = 0;
                         _context.OrderItems.Update(existingItem);
 
                         // Update OrderItemModifiers
