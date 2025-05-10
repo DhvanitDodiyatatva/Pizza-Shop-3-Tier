@@ -39,6 +39,57 @@ namespace PizzaShopServices.Implementations
             _context = context;
         }
 
+        public async Task<(bool Success, string Message)> UpdateCustomerDetailsAsync(CustomerDetailsVM model)
+        {
+            try
+            {
+                // Check if email already exists for a different customer
+                var existingCustomer = await _orderAppRepository.GetCustomerByEmailAsync(model.Email);
+                if (existingCustomer != null && existingCustomer.Id != model.Id)
+                {
+                    return (false, "This email already exists.");
+                }
+
+                var customer = await _context.Customers.FindAsync(model.Id);
+                if (customer == null)
+                {
+                    return (false, "Customer not found.");
+                }
+
+                customer.Name = model.Name;
+                customer.Email = model.Email;
+                customer.PhoneNo = model.PhoneNo;
+                customer.NoOfPersons = model.NoOfPersons;
+
+                _context.Customers.Update(customer);
+                await _context.SaveChangesAsync();
+
+                return (true, "Customer details updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"An error occurred: {ex.Message}");
+            }
+        }
+
+        public async Task<CustomerDetailsVM> GetCustomerDetailsAsync(int customerId)
+        {
+            var customer = await _context.Customers.FindAsync(customerId);
+            if (customer == null)
+            {
+                return null;
+            }
+
+            return new CustomerDetailsVM
+            {
+                Id = customer.Id,
+                Name = customer.Name,
+                Email = customer.Email,
+                PhoneNo = customer.PhoneNo,
+                NoOfPersons = customer.NoOfPersons
+            };
+        }
+
         public async Task<(bool Success, string Message, int OrderId)> AssignTableAsync(
             int[] selectedTableIds,
             int sectionId,
@@ -595,7 +646,7 @@ namespace PizzaShopServices.Implementations
                     return (false, "Order not found.");
                 }
 
-                bool areAllItemsInProgress = order.OrderItems.All(oi => oi.ItemStatus == "in_progress");
+                bool areAllItemsInProgress = order.OrderItems.All(oi => oi.ItemStatus == "in_progress" && oi.ReadyQuantity == 0);
                 return (true, areAllItemsInProgress ? "All items are in progress." : "Some items are not in progress.");
             }
             catch (Exception ex)

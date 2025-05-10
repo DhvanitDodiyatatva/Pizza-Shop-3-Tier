@@ -63,6 +63,40 @@ namespace PizzaShop.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ShowCustomerDetailsModal(int orderId)
+        {
+            var order = await _orderAppService.GetOrderByIdAsync(orderId);
+            if (order == null || order.CustomerId == null)
+            {
+                return Json(new { success = false, message = "Order or customer not found." });
+            }
+
+            var customerDetails = await _orderAppService.GetCustomerDetailsAsync(order.CustomerId.Value);
+            if (customerDetails == null)
+            {
+                return Json(new { success = false, message = "Customer details not found." });
+            }
+
+            return PartialView("_CustomerDetailsModal", customerDetails);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateCustomerDetails([FromBody] CustomerDetailsVM model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                return Json(new { success = false, message = string.Join(" ", errors) });
+            }
+
+            var (success, message) = await _orderAppService.UpdateCustomerDetailsAsync(model);
+            return Json(new { success = success, message = message });
+        }
+
         public async Task<IActionResult> Table()
         {
             var viewModel = await _orderAppService.GetSectionDetailsAsync();

@@ -3,15 +3,12 @@
     Layout = "~/Views/Shared/_LayoutOrdApp.cshtml";
 }
 
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
     crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-
-
 
 <style>
     .sidebar {
@@ -165,6 +162,17 @@
             </div>
         }
     </div>
+
+
+</div>
+<!-- Customer Details Modal -->
+<div class="modal fade" id="customerDetailsModal" tabindex="-1" aria-labelledby="customerDetailsModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div id="customerDetailsModalContent">
+            <!-- Modal content will be loaded via AJAX -->
+        </div>
+    </div>
 </div>
 
 <script>
@@ -231,28 +239,118 @@
 
     function initializeCartInteractions() {
         // Add event listeners for quantity buttons, delete buttons, etc.
-        // Example: Handle quantity increment/decrement
         $('.quantity-selector .plus').on('click', function () {
-            var itemId = $(this).data('itemid');
             var globalId = $(this).data('globalid');
-            // Implement AJAX call to update quantity
-            console.log('Increment quantity for item:', itemId, globalId);
+            var item = window.cartItems.find(ci => ci.GlobalId === globalId);
+            if (item) {
+                item.Quantity += 1;
+                item.TotalPrice = item.ItemPrice * item.Quantity;
+                updateCartDisplay(); // Assuming this function exists in the partial view
+            }
         });
 
         $('.quantity-selector .minus').on('click', function () {
-            var itemId = $(this).data('itemid');
             var globalId = $(this).data('globalid');
-            // Implement AJAX call to update quantity
-            console.log('Decrement quantity for item:', itemId, globalId);
+            var item = window.cartItems.find(ci => ci.GlobalId === globalId);
+            if (item) {
+                if (item.Quantity - 1 < item.ReadyQuantity) {
+                    toastr.error(`You cannot decrease this item's quantity because ${item.ReadyQuantity} item(s) are already prepared.`);
+                    return;
+                }
+                if (item.Quantity > 1) {
+                    item.Quantity -= 1;
+                    item.TotalPrice = item.ItemPrice * item.Quantity;
+                    updateCartDisplay();
+                }
+            }
         });
 
-        $('#deleteItem').on('click', function () {
+        $('.delete-item').on('click', function () {
             var globalId = $(this).data('globalid');
-            // Implement AJAX call to delete item
-            console.log('Delete item:', globalId);
+            var item = window.cartItems.find(ci => ci.GlobalId === globalId);
+            if (item) {
+                if (item.ReadyQuantity > 0) {
+                    toastr.error(`You cannot delete this item because ${item.ReadyQuantity} item(s) are already prepared.`);
+                    return;
+                }
+                window.cartItems = window.cartItems.filter(ci => ci.GlobalId !== globalId);
+                updateCartDisplay();
+            }
         });
 
-        // Add other event handlers as needed (e.g., for Save, Complete buttons)
+        // Open Customer Details Modal
+        $('#customerDetailsButton').on('click', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderId = urlParams.get('orderId');
+            if (!orderId) {
+                toastr.error('Order ID is missing.');
+                return;
+            }
+
+            $.ajax({
+                url: '@Url.Action("ShowCustomerDetailsModal", "OrderApp")',
+                type: 'GET',
+                data: { orderId: orderId },
+                success: function (result) {
+                    $('#customerDetailsModalContent').html(result);
+                    $('#customerDetailsModal').modal('show');
+                },
+                error: function (xhr) {
+                    let errorMessage = 'Failed to load customer details. Please try again.';
+                    try {
+                        const errorResponse = JSON.parse(xhr.responseText);
+                        if (errorResponse && errorResponse.message) {
+                            errorMessage = errorResponse.message;
+                        }
+                    } catch (e) { }
+                    toastr.error(errorMessage);
+                }
+            });
+        });
+
+        // Save Customer Details
+        $(document).on('click', '#saveCustomerDetailsButton', function () {
+            const $form = $('#customerDetailsForm');
+
+            // Validate the form
+            if (!$form.valid()) {
+                return;
+            }
+
+            const formData = {
+                Id: $form.find('input[name="Id"]').val(),
+                Name: $form.find('input[name="Name"]').val(),
+                Email: $form.find('input[name="Email"]').val(),
+                PhoneNo: $form.find('input[name="PhoneNo"]').val(),
+                NoOfPersons: parseInt($form.find('input[name="NoOfPersons"]').val())
+            };
+
+            $.ajax({
+                url: '@Url.Action("UpdateCustomerDetails", "OrderApp")',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                dataType: 'json',
+                success: function (result) {
+                    if (result.success) {
+                        toastr.success(result.message || 'Customer details updated successfully.');
+                        $('#customerDetailsModal').modal('hide');
+                    } else {
+                        toastr.error(result.message || 'Failed to update customer details.');
+                    }
+                },
+                error: function (xhr) {
+                    let errorMessage = 'Failed to update customer details. Please try again.';
+                    try {
+                        const errorResponse = JSON.parse(xhr.responseText);
+                        if (errorResponse && errorResponse.message) {
+                            errorMessage = errorResponse.message;
+                        }
+                    } catch (e) { }
+                    toastr.error(errorMessage);
+                }
+            });
+        });
     }
 
     $(document).ready(function () {
@@ -286,6 +384,4 @@
                 <text>toastr.error('@TempData["ErrorMessage"]');</text>
         }
     });
-
-
 </script>

@@ -1,0 +1,65 @@
+@model PizzaShopRepository.ViewModels.CustomerDetailsVM
+
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title" id="customerDetailsModalLabel">Customer Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <form id="customerDetailsForm" asp-controller="OrderApp" asp-action="UpdateCustomerDetails">
+            <input type="hidden" asp-for="Id" />
+            <div class="row">
+                <div class="mb-3 col-12">
+                    <div class="form-floating">
+                        <input asp-for="Name" class="form-control" id="Name" placeholder="Name" />
+                        <label asp-for="Name" class="form-label">Name*</label>
+                        <span asp-validation-for="Name" class="text-danger d-block mt-1"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3 col-6">
+                    <div class="form-floating">
+                        <input asp-for="PhoneNo" class="form-control" id="PhoneNo" placeholder="Mobile Number" />
+                        <label asp-for="PhoneNo" class="form-label">Mobile Number*</label>
+                        <span asp-validation-for="PhoneNo" class="text-danger d-block mt-1"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3 col-6">
+                    <div class="form-floating">
+                        <input asp-for="NoOfPersons" class="form-control" type="number" id="NoOfPersons"
+                            placeholder="No. of Persons" />
+                        <label asp-for="NoOfPersons" class="form-label">No. of Persons*</label>
+                        <span asp-validation-for="NoOfPersons" class="text-danger d-block mt-1"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3 col-12">
+                    <div class="form-floating">
+                        <input asp-for="Email" class="form-control" id="Email" placeholder="Email" />
+                        <label asp-for="Email" class="form-label">Email*</label>
+                        <span asp-validation-for="Email" class="text-danger d-block mt-1"></span>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-main text-white" id="saveCustomerDetailsButton">Save</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+    </div>
+</div>
+
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+<style>
+    .form-floating>label {
+        padding-left: 0.75rem;
+    }
+
+    .text-danger.d-block.mt-1 {
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+</style>

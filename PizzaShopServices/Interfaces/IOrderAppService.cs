@@ -28,5 +28,7 @@ namespace PizzaShopServices.Interfaces
 
         Task<(bool Success, string Message)> CancelOrderAsync(int orderId);
         Task<(bool Success, string Message)> CheckOrderItemsInProgressAsync(int orderId);
+        Task<CustomerDetailsVM> GetCustomerDetailsAsync(int customerId);
+        Task<(bool Success, string Message)> UpdateCustomerDetailsAsync(CustomerDetailsVM model);
     }
 }
