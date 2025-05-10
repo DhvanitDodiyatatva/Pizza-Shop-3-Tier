@@ -682,6 +682,28 @@ namespace PizzaShopServices.Implementations
             }
         }
 
+        public async Task<(bool Success, string Message)> SaveOrderInstructionsAsync(int orderId, string orderInstructions)
+        {
+            try
+            {
+                var order = await _context.Orders.FindAsync(orderId);
+                if (order == null)
+                {
+                    return (false, "Order not found.");
+                }
+
+                order.OrderInstructions = string.IsNullOrEmpty(orderInstructions) ? null : orderInstructions;
+                order.UpdatedAt = DateTime.Now;
+                _context.Orders.Update(order);
+                await _context.SaveChangesAsync();
+                return (true, "Order instructions saved successfully.");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"An error occurred: {ex.Message}");
+            }
+        }
+
         public async Task<(bool Success, string Message)> CancelOrderAsync(int orderId)
         {
             try

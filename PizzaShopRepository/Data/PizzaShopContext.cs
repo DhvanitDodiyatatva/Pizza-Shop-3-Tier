@@ -269,6 +269,7 @@ public partial class PizzaShopContext : DbContext
             entity.Property(e => e.InvoiceNo)
                 .HasMaxLength(50)
                 .HasColumnName("invoice_no");
+            entity.Property(e => e.OrderInstructions).HasColumnName("order_instructions");
             entity.Property(e => e.OrderStatus)
                 .HasMaxLength(20)
                 .HasDefaultValueSql("'pending'::character varying")

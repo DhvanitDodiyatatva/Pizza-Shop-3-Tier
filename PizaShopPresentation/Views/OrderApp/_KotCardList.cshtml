@@ -91,7 +91,17 @@
                             }
                         }
                     </div>
-                    <div class="card-footer p-3">&nbsp;&nbsp;</div>
+                    @if (order.OrderInstructions == null || order.OrderInstructions == "")
+                    {
+                        <div class="card-footer p-3">&nbsp;&nbsp;</div>
+                    }
+                    else
+                    {
+                        <div class="card-footer p-3"><span class="page-text fw-bold">Order
+                                Instructions:</span>@order.OrderInstructions
+                        </div>
+                    }
+
                 </div>
             </div>
         }

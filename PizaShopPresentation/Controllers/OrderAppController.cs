@@ -39,6 +39,30 @@ namespace PizzaShop.Controllers
             _orderAppRepository = orderAppRepository;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetOrderById(int orderId)
+        {
+            try
+            {
+                var order = await _orderAppService.GetOrderByIdAsync(orderId);
+                if (order == null)
+                {
+                    return Json(new { success = false, message = "Order not found." });
+                }
+
+                // Return the order details, including OrderInstructions
+                return Json(new
+                {
+                    success = true,
+                    OrderInstructions = order.OrderInstructions
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"An error occurred: {ex.Message}" });
+            }
+        }
+
         public async Task<IActionResult> Table()
         {
             var viewModel = await _orderAppService.GetSectionDetailsAsync();
@@ -275,6 +299,13 @@ namespace PizzaShop.Controllers
         public async Task<IActionResult> SaveSpecialInstructions(int orderItemId, string specialInstructions)
         {
             var (success, message) = await _orderAppService.SaveSpecialInstructionsAsync(orderItemId, specialInstructions);
+            return Json(new { success = success, message = message });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveOrderInstructions(int orderId, string orderInstructions)
+        {
+            var (success, message) = await _orderAppService.SaveOrderInstructionsAsync(orderId, orderInstructions);
             return Json(new { success = success, message = message });
         }
 

@@ -27,6 +27,8 @@ public partial class Order
 
     public string? OrderType { get; set; }
 
+    public string? OrderInstructions { get; set; }
+
     public virtual Customer? Customer { get; set; }
 
     public virtual ICollection<CustomerReview> CustomerReviews { get; set; } = new List<CustomerReview>();

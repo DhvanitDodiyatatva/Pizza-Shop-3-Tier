@@ -22,6 +22,7 @@ namespace PizzaShopServices.Interfaces
         Task<(bool Success, string Message)> CheckOrderItemsReadyAsync(int orderId);
 
         Task<(bool Success, string Message)> SaveSpecialInstructionsAsync(int orderItemId, string specialInstructions);
+        Task<(bool Success, string Message)> SaveOrderInstructionsAsync(int orderId, string orderInstructions);
         Task<(bool Success, string Message)> CompleteOrderAsync(int orderId);
         Task<(bool Success, string Message)> SaveCustomerReviewAsync(CustomerReviewViewModel model);
 
