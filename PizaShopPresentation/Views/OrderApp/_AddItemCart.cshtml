@@ -155,7 +155,7 @@
         <div class="d-flex justify-content-between">
             <button class="btn btn-main text-white" id="saveOrderButton">Save</button>
             <button class="btn btn-outline text-primary-emphasis" id="completeOrderButton">Complete</button>
-            <button class="btn btn-outline text-primary-emphasis">Generate Invoice</button>
+            <button class="btn btn-outline text-primary-emphasis" id="generateInvoiceButton">Generate Invoice</button>
             <button class="btn btn-outline text-primary-emphasis" id="cancelOrderButton">Cancel</button>
         </div>
 
@@ -319,6 +319,10 @@
     }
 </style>
 
+<!-- Include jsPDF and html2canvas scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 <script>
     // Initialize cart with ReadyQuantity and SpecialInstructions
     window.cartItems = window.cartItems || @Html.Raw(JsonConvert.SerializeObject(Model.OrderItems.Select(oi => new
@@ -355,6 +359,7 @@
     let isSaving = false;
     let isCompleting = false;
     let isCanceling = false;
+    let isGeneratingInvoice = false;
     let reviewRatings = {
         food: 0,
         service: 0,
@@ -666,6 +671,90 @@
                 },
                 error: function () {
                     toastr.error('Failed to save order comment. Please try again.');
+                }
+            });
+        });
+
+        // Handle Generate Invoice Button Click
+        $('#generateInvoiceButton').on('click', function (e) {
+            e.preventDefault();
+
+            if (isGeneratingInvoice) {
+                return;
+            }
+            isGeneratingInvoice = true;
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderId = urlParams.get('orderId');
+
+            if (!orderId) {
+                toastr.error('Order ID is missing.');
+                isGeneratingInvoice = false;
+                return;
+            }
+
+            // Check if all items are ready
+            $.ajax({
+                url: '@Url.Action("CheckOrderItemsReady", "OrderApp")',
+                type: 'GET',
+                data: { orderId: orderId },
+                dataType: 'json',
+                success: function (result) {
+                    if (result.success) {
+                        if (result.areAllItemsReady) {
+                            // All items are ready, proceed with invoice generation
+                            $.ajax({
+                                url: '/Orders/Invoice',
+                                type: 'GET',
+                                data: { orderId: orderId },
+                                success: function (response) {
+                                    var tempDiv = $("<div>").css({
+                                        "position": "absolute",
+                                        "left": "-9999px",
+                                        "top": "-9999px",
+                                        "width": "1000px",
+                                        "height": "auto",
+                                        "background": "white",
+                                        "z-index": "-1"
+                                    }).html(response).appendTo("body");
+
+                                    setTimeout(function () {
+                                        html2canvas(tempDiv[0], { scale: 2, useCORS: true }).then(function (canvas) {
+                                            var imgData = canvas.toDataURL("image/png");
+                                            var { jsPDF } = window.jspdf;
+                                            var pdf = new jsPDF("p", "mm", "a4");
+                                            var imgWidth = 210;
+                                            var imgHeight = (canvas.height * imgWidth) / canvas.width;
+                                            pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+                                            pdf.save("invoice_" + orderId + ".pdf");
+                                            tempDiv.remove();
+                                        }).catch(function (error) {
+                                            console.error("Error rendering canvas:", error);
+                                            toastr.error("Error generating PDF. Please try again.");
+                                            tempDiv.remove();
+                                        });
+                                    }, 10);
+                                },
+                                error: function (xhr, status, error) {
+                                    console.error("Error fetching invoice:", error);
+                                    toastr.error("Error fetching invoice. Please try again.");
+                                },
+                                complete: function () {
+                                    isGeneratingInvoice = false;
+                                }
+                            });
+                        } else {
+                            toastr.error('You cannot generate invoice because some items are still in Progress.');
+                            isGeneratingInvoice = false;
+                        }
+                    } else {
+                        toastr.error(result.message || 'Failed to check order items status.');
+                        isGeneratingInvoice = false;
+                    }
+                },
+                error: function () {
+                    toastr.error('Failed to check order items status. Please try again.');
+                    isGeneratingInvoice = false;
                 }
             });
         });
