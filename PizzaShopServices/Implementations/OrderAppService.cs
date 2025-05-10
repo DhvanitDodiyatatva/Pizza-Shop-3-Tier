@@ -511,11 +511,14 @@ namespace PizzaShopServices.Implementations
                     else
                     {
                         // Update existing OrderItem
+                        bool quantityIncreased = cartItem.Quantity > existingItem.Quantity;
                         existingItem.Quantity = cartItem.Quantity;
                         existingItem.UnitPrice = cartItem.UnitPrice;
                         existingItem.TotalPrice = cartItem.TotalPrice;
-                        existingItem.ItemStatus = "in_progress";
-                        // existingItem.ReadyQuantity = 0;
+                        if (quantityIncreased)
+                        {
+                            existingItem.ItemStatus = "in_progress";
+                        }
                         _context.OrderItems.Update(existingItem);
 
                         // Update OrderItemModifiers
