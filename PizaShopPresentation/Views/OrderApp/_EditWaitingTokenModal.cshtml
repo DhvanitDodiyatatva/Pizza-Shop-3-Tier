@@ -1,0 +1,56 @@
+@model PizzaShopRepository.ViewModels.WaitingTokenViewModel
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <script type="text/javascript">
+        toastr.error("@TempData["ErrorMessage"]");
+    </script>
+}
+
+<div class="modal fade" id="editWaitingTokenModal" tabindex="-1" aria-labelledby="editWaitingTokenModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="editWaitingTokenModalLabel">Edit Waiting Token Details</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editWaitingTokenForm" asp-action="UpdateWaitingToken" method="post">
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="SectionId" />
+                    <div class="form-floating mb-3">
+                        <input type="email" class="form-control" placeholder="name@example.com" asp-for="Email" />
+                        <label for="Email">Email</label>
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" placeholder="John Doe" asp-for="CustomerName" />
+                        <label for="CustomerName">Name</label>
+                        <span asp-validation-for="CustomerName" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" placeholder="1234567890" asp-for="PhoneNumber" />
+                        <label for="PhoneNumber">Mobile Number</label>
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" placeholder="2" asp-for="NumOfPersons" />
+                        <label for="NumOfPersons">No of Persons</label>
+                        <span asp-validation-for="NumOfPersons" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <select class="form-select" asp-for="SectionName" asp-items="ViewBag.Sections">
+                            <option value="">Select Section</option>
+                        </select>
+                        <label for="SectionName">Section</label>
+                        <span asp-validation-for="SectionName" class="text-danger"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-main text-white">Save</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

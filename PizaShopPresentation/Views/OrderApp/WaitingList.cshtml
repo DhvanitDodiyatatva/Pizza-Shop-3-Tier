@@ -4,14 +4,16 @@
     ViewData["Title"] = "Waiting List";
     Layout = "~/Views/Shared/_LayoutOrdApp.cshtml";
 }
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
     crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 
 <div class="Users-content mt-0 p-xl-5 p-lg-4 p-md-4 p-sm-4 p-4">
     <div class="d-flex align-items-center justify-content-between my-2">
@@ -77,20 +79,21 @@
                                     <td class="elapsed-time text-nowrap" data-created-at="@token.CreatedAt?.ToString("o")">
                                         Calculating...
                                     </td>
-
                                     <td class="text-nowrap">@token.CustomerName</td>
                                     <td class="text-nowrap text-center">@token.NumOfPersons</td>
                                     <td class="text-nowrap">@token.PhoneNumber</td>
                                     <td class="text-nowrap">@token.Email</td>
                                     <td class="text-nowrap">
-                                        <button type="button" class="btn text-body-btn edit-tax-btn p-0 me-2">
+                                        <button type="button" class="btn text-body-btn edit-tax-btn p-0 me-2"
+                                            data-token-id="@token.Id">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                                 fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
                                                 <path
                                                     d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001" />
                                             </svg>
                                         </button>
-                                        <button type="button" class="btn text-body-btn p-0" data-bs-toggle="modal">
+                                        <button type="button" class="btn text-body-btn delete-token-btn p-0 me-2"
+                                            data-token-id="@token.Id">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                                 fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
                                                 <path
@@ -146,14 +149,16 @@
                                         <td class="text-nowrap">@token.PhoneNumber</td>
                                         <td class="text-nowrap">@token.Email</td>
                                         <td class="text-nowrap">
-                                            <button type="button" class="btn text-body-btn edit-tax-btn p-0 me-2">
+                                            <button type="button" class="btn text-body-btn edit-tax-btn p-0 me-2"
+                                                data-token-id="@token.Id">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                                     fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
                                                     <path
                                                         d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001" />
                                                 </svg>
                                             </button>
-                                            <button type="button" class="btn text-body-btn p-0" data-bs-toggle="modal">
+                                            <button type="button" class="btn text-body-btn delete-token-btn p-0 me-2"
+                                                data-token-id="@token.Id">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                                     fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
                                                     <path
@@ -177,7 +182,7 @@
             }
         </div>
     </div>
-    <!-- Placeholder modal container -->
+    <!-- Placeholder modal container for adding waiting token -->
     <div class="modal fade" id="waitingTokenModal" tabindex="-1" aria-labelledby="waitingTokenModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -192,11 +197,46 @@
             </div>
         </div>
     </div>
+    <!-- Placeholder modal container for editing waiting token -->
+    <div class="modal fade" id="editWaitingTokenModal" tabindex="-1" aria-labelledby="editWaitingTokenModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="editWaitingTokenModalLabel">Edit Waiting Token Details</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Partial view form content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="deleteConfirmationModalLabel">Confirm Deletion</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body d-flex align-items-center justify-content-center flex-column">
+                    <img src="~/images/toppng.com-warning-icon-2400x2400.png" alt="CancelModal"
+                        style="height: 80px; width: 80px">
+                    Are you sure you want to delete this waiting token?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-main text-white" id="confirmDeleteBtn">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
     $(document).ready(function () {
-
         function updateElapsedTimes() {
             const now = new Date();
 
@@ -231,31 +271,106 @@
         setInterval(updateElapsedTimes, 1000);
         // Run immediately on page load
         updateElapsedTimes();
+
         // Initialize the first tab as active if not set
         if (!$('#sectionTabs .nav-link.active').length) {
             $('#sectionTabs .nav-link:first').addClass('active').attr('aria-selected', 'true');
             $($('#sectionTabs .nav-link:first').data('bs-target')).addClass('show active');
         }
 
-
+        // Handle Waiting Token button click
         $('.waiting-token-btn').on('click', function () {
-            var sectionId = $(this).data('section-id');
-            var sectionName = $(this).data('section-name');
-            showWaitingTokenModal(sectionId, sectionName);
+            showWaitingTokenModal();
+        });
+
+        // Handle Edit Waiting Token button click
+        $('.edit-tax-btn').on('click', function () {
+            var tokenId = $(this).data('token-id');
+            showEditWaitingTokenModal(tokenId);
+        });
+
+        // Handle Delete Waiting Token button click
+        $('.delete-token-btn').on('click', function () {
+            var tokenId = $(this).data('token-id');
+            $('#confirmDeleteBtn').data('token-id', tokenId);
+            $('#deleteConfirmationModal').modal('show');
+        });
+
+        // Handle Confirm Delete button click
+        $('#confirmDeleteBtn').on('click', function () {
+            var tokenId = $(this).data('token-id');
+            $.ajax({
+                url: '@Url.Action("DeleteWaitingToken", "OrderApp")',
+                type: 'POST',
+                data: { id: tokenId },
+                success: function (response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        $('#deleteConfirmationModal').modal('hide').on('hidden.bs.modal', function () {
+                            $(this).data('bs.modal', null);
+                            $('.modal-backdrop').remove();
+                            window.location.href = '@Url.Action("WaitingList", "OrderApp")';
+                        });
+                    } else {
+                        toastr.error(response.message);
+                        $('#deleteConfirmationModal').modal('hide');
+                    }
+                },
+                error: function () {
+                    toastr.error('An error occurred while deleting the waiting token.');
+                    $('#deleteConfirmationModal').modal('hide');
+                }
+            });
         });
 
         function showWaitingTokenModal(sectionId, sectionName) {
-            $.get('@Url.Action("ShowWaitingTokenModal", "OrderApp")', { sectionId: sectionId, sectionName: sectionName }, function (partialView) {
-                console.log('Partial View Response:', partialView); // Debug log
-                // Extract the inner modal-body content
+            var data = {};
+            if (sectionId && sectionName) {
+                data.sectionId = sectionId;
+                data.sectionName = sectionName;
+            }
+
+            $.get('@Url.Action("ShowWaitingTokenModal", "OrderApp")', data, function (partialView) {
+                console.log('Partial View Response:', partialView);
                 var modalBodyContent = $(partialView).find('.modal-body').html();
                 $('#waitingTokenModal .modal-body').html(modalBodyContent);
-                $('#waitingTokenModal').modal('dispose'); // Dispose existing modal instance
-                $('#waitingTokenModal').modal('show'); // Show the modal with new content
-                $.validator.unobtrusive.parse('#waitingTokenModal'); // Reinitialize validation
+                $('#waitingTokenModal').modal('dispose');
+                $('#waitingTokenModal').modal('show');
+                $.validator.unobtrusive.parse('#waitingTokenModal');
             }).fail(function (xhr, status, error) {
                 console.error('AJAX Error: ' + status + ' - ' + error);
                 toastr.error('Failed to load modal.');
+            });
+        }
+
+        function showEditWaitingTokenModal(tokenId) {
+            $.get('@Url.Action("ShowEditWaitingTokenModal", "OrderApp")', { id: tokenId }, function (partialView) {
+                console.log('Edit Partial View Response:', partialView);
+                var modalBodyContent = $(partialView).find('.modal-body').html();
+                $('#editWaitingTokenModal .modal-body').html(modalBodyContent);
+                $('#editWaitingTokenModal').modal('dispose');
+                $('#editWaitingTokenModal').modal('show');
+                $.validator.unobtrusive.parse('#editWaitingTokenModal');
+
+                // Add custom email validation
+                $('#editWaitingTokenForm').validate().settings.rules.Email.remote = {
+                    url: '@Url.Action("CheckEmailExists", "OrderApp")',
+                    type: 'GET',
+                    data: {
+                        email: function () { return $('#Email').val(); },
+                        waitingTokenId: function () { return $('#Id').val(); }
+                    },
+                    dataFilter: function (data) {
+                        var json = JSON.parse(data);
+                        if (json === false) {
+                            return '"This email already exists. Please choose a different email."';
+                        }
+                        return true;
+                    }
+                };
+            }).fail(function (xhr, status, error) {
+                console.error('AJAX Error: ' + status + ' - ' + error);
+                toastr.error('Failed to load edit modal.');
             });
         }
 
@@ -270,17 +385,17 @@
                     if (response.success) {
                         toastr.success(response.message);
                         $('#waitingTokenModal').modal('hide').on('hidden.bs.modal', function () {
-
-                            $(this).data('bs.modal', null); // Clear modal data
-                            $('.modal-backdrop').remove(); // Remove backdrop manually
+                            $(this).data('bs.modal', null);
+                            $('.modal-backdrop').remove();
+                            window.location.href = '@Url.Action("WaitingList", "OrderApp")';
                         });
                     } else {
                         toastr.error(response.message);
                         var modalBodyContent = $(response).find('.modal-body').html() || response;
                         $('#waitingTokenModal .modal-body').html(modalBodyContent);
-                        $('#waitingTokenModal').modal('dispose'); // Dispose and reinitialize
+                        $('#waitingTokenModal').modal('dispose');
                         $('#waitingTokenModal').modal('show');
-                        $.validator.unobtrusive.parse('#waitingTokenModal'); // Reinitialize validation
+                        $.validator.unobtrusive.parse('#waitingTokenModal');
                     }
                 },
                 error: function () {
@@ -288,6 +403,50 @@
                 }
             });
         });
+
+        $(document).on('submit', '#editWaitingTokenForm', function (e) {
+            e.preventDefault();
+            var form = $(this);
+            $.ajax({
+                url: form.attr('action'),
+                type: 'POST',
+                data: form.serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        $('#editWaitingTokenModal').modal('hide').on('hidden.bs.modal', function () {
+                            $(this).data('bs.modal', null);
+                            $('.modal-backdrop').remove();
+                            window.location.href = '@Url.Action("WaitingList", "OrderApp")';
+                        });
+                    } else {
+                        toastr.error(response.message);
+                        var modalBodyContent = $(response).find('.modal-body').html() || response;
+                        $('#editWaitingTokenModal .modal-body').html(modalBodyContent);
+                        $('#editWaitingTokenModal').modal('dispose');
+                        $('#editWaitingTokenModal').modal('show');
+                        $.validator.unobtrusive.parse('#editWaitingTokenModal');
+                    }
+                },
+                error: function () {
+                    toastr.error('An error occurred.');
+                }
+            });
+        });
+
+        toastr.options = {
+            "positionClass": "toast-top-right",
+            "progressBar": true,
+            "timeOut": "7000"
+        };
+        @if (TempData["SuccessMessage"] != null)
+            {
+                <text>toastr.success('@TempData["SuccessMessage"]');</text>
+        }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <text>toastr.error('@TempData["ErrorMessage"]');</text>
+        }
     });
 </script>
 

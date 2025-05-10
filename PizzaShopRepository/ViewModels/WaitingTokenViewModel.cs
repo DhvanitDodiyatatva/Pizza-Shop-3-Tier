@@ -15,6 +15,8 @@ namespace PizzaShopRepository.ViewModels
 
         [Required(ErrorMessage = "Phone number is required.")]
         [Phone(ErrorMessage = "Invalid phone number.")]
+        [MaxLength(10, ErrorMessage = "Phone number cannot exceed 10 characters.")]
+        [MinLength(10, ErrorMessage = "Phone number must be at least 10 characters.")]
         public string? PhoneNumber { get; set; }
 
         [Required(ErrorMessage = "Number of persons is required.")]
@@ -26,8 +28,8 @@ namespace PizzaShopRepository.ViewModels
 
         public int SectionId { get; set; }
 
-         public DateTime? CreatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; }
 
-          public bool IsDeleted { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

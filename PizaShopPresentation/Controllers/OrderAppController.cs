@@ -123,6 +123,69 @@ namespace PizzaShop.Controllers
             return Json(new { success = true, message = result.Message });
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ShowEditWaitingTokenModal(int id)
+        {
+            var waitingToken = await _waitingTokenService.GetWaitingTokenByIdAsync(id);
+            if (waitingToken == null)
+            {
+                return NotFound();
+            }
+
+            var model = new WaitingTokenViewModel
+            {
+                Id = waitingToken.Id,
+                Email = waitingToken.Email,
+                CustomerName = waitingToken.CustomerName,
+                PhoneNumber = waitingToken.PhoneNumber,
+                NumOfPersons = waitingToken.NumOfPersons,
+                SectionId = waitingToken.SectionId.Value,
+                SectionName = waitingToken.Section?.Name,
+                CreatedAt = waitingToken.CreatedAt,
+                IsDeleted = waitingToken.IsDeleted
+            };
+
+            var sections = await _sectionService.GetAllSectionsAsync();
+            ViewBag.Sections = new SelectList(sections ?? new List<Section>(), "Name", "Name", model.SectionName);
+            return PartialView("_EditWaitingTokenModal", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateWaitingToken(WaitingTokenViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var sections = await _sectionService.GetAllSectionsAsync();
+                ViewBag.Sections = new SelectList(sections ?? new List<Section>(), "Name", "Name", model.SectionName);
+                return PartialView("_EditWaitingTokenModal", model);
+            }
+
+            var result = await _waitingTokenService.UpdateWaitingTokenAsync(model);
+            if (!result.Success)
+            {
+                TempData["ErrorMessage"] = result.Message;
+                var sections = await _sectionService.GetAllSectionsAsync();
+                ViewBag.Sections = new SelectList(sections ?? new List<Section>(), "Name", "Name", model.SectionName);
+                return PartialView("_EditWaitingTokenModal", model);
+            }
+
+            return Json(new { success = true, message = result.Message });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CheckEmailExists(string email, int waitingTokenId)
+        {
+            var exists = await _waitingTokenService.IsEmailExistsAsync(email, waitingTokenId);
+            return Json(!exists); // Return true if email does not exist (valid), false if it exists (invalid)
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteWaitingToken(int id)
+        {
+            var (success, message) = await _waitingTokenService.DeleteWaitingTokenAsync(id);
+            return Json(new { success = success, message = message });
+        }
+
         public async Task<IActionResult> ShowWaitingTokenModal(int sectionId, string sectionName)
         {
             var model = await _orderAppService.PrepareWaitingTokenModalAsync(sectionId, sectionName);

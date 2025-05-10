@@ -35,5 +35,18 @@ namespace PizzaShopRepository.Repositories
         {
             return await _context.Customers.FirstOrDefaultAsync(c => c.Email == email);
         }
+
+        public async Task<WaitingToken> GetWaitingTokenByIdAsync(int id)
+        {
+            return await _context.WaitingTokens
+                .Include(wt => wt.Section)
+                .FirstOrDefaultAsync(wt => wt.Id == id);
+        }
+
+        public async Task UpdateWaitingTokenAsync(WaitingToken waitingToken)
+        {
+            _context.WaitingTokens.Update(waitingToken);
+            await _context.SaveChangesAsync();
+        }
     }
 }
