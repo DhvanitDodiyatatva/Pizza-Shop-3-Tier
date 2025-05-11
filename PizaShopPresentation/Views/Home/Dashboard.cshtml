@@ -12,29 +12,304 @@
     </script>
 }
 
+@* Uncomment if you need Bootstrap for the modal *@
+@* <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> *@
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+    .card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .card h6 {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
+    .card h3 {
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+
+    .chart-container {
+        position: relative;
+        height: 200px;
+        width: 100%;
+    }
+
+    .dropdown-toggle::after {
+        margin-left: 0.5rem;
+    }
+
+    .btn-main {
+        background-color: #007bff;
+    }
+
+    .btn-main:hover {
+        background-color: #0056b3;
+    }
+</style>
+
 <div class="dashboard-content mt-0 p-5">
     <div class="d-flex align-items-center justify-content-between my-2">
         <h2 class="mb-3 fw-bolder fs-2 page-text me-2">Dashboard</h2>
+        <div class="dropdown">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="timeFrameDropdown"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                @(ViewBag.TimeFrame == "Today" ? "Today" :
+                                ViewBag.TimeFrame == "Last7Days" ? "Last 7 Days" :
+                                ViewBag.TimeFrame == "Last30Days" ? "Last 30 Days" :
+                                ViewBag.TimeFrame == "CustomDate" ? "Custom Date" : "Current Month")
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="timeFrameDropdown">
+                <li><a class="dropdown-item"
+                        href="@Url.Action("Dashboard", "Home", new { timeFrame = "Today" })">Today</a></li>
+                <li><a class="dropdown-item"
+                        href="@Url.Action("Dashboard", "Home", new { timeFrame = "Last7Days" })">Last 7 Days</a></li>
+                <li><a class="dropdown-item"
+                        href="@Url.Action("Dashboard", "Home", new { timeFrame = "Last30Days" })">Last 30 Days</a></li>
+                <li><a class="dropdown-item"
+                        href="@Url.Action("Dashboard", "Home", new { timeFrame = "CurrentMonth" })">Current Month</a>
+                </li>
+                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#exampleModal">Custom
+                        Date</a></li>
+            </ul>
+        </div>
     </div>
+
     <div class="row">
-        <div class="col-md-4 col-sm-6 mb-3">
+        <div class="col-md-3 col-sm-6 mb-3">
             <div class="card p-3">
                 <h6>Total Sales</h6>
-                <h3>₹1630</h3>
+                <h3>₹@ViewBag.TotalSales</h3>
             </div>
         </div>
-        <div class="col-md-4 col-sm-6 mb-3">
+        <div class="col-md-3 col-sm-6 mb-3">
             <div class="card p-3">
                 <h6>Total Orders</h6>
-                <h3>17</h3>
+                <h3>@ViewBag.TotalOrders</h3>
             </div>
         </div>
-        <div class="col-md-4 col-sm-6 mb-3">
+        <div class="col-md-3 col-sm-6 mb-3">
             <div class="card p-3">
                 <h6>Avg Order Value</h6>
-                <h3>₹963.6</h3>
+                <h3>₹@Math.Round((decimal)ViewBag.AvgOrderValue, 1)</h3>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card p-3">
+                <h6>Avg Waiting Time</h6>
+                <h3>@ViewBag.AvgWaitingTime mins</h3>
             </div>
         </div>
     </div>
-    <!-- Add more rows/columns for other content -->
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <div class="card p-3">
+                <h6>Revenue</h6>
+                <div class="chart-container">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="card p-3">
+                <h6>Customer Growth</h6>
+                <div class="chart-container">
+                    <canvas id="customerGrowthChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card p-3 h-100">
+                <h6>Top Selling Items</h6>
+                @if (ViewBag.TopSellingItems != null && ViewBag.TopSellingItems.Count > 0)
+                {
+                    int rank = 01;
+                    foreach (var item in ViewBag.TopSellingItems)
+                    {
+                        <div class="text-start d-flex align-items-center mb-2 ">#@rank<span class="ms-1"> <img class=" mx-2"
+                                    src="/images/dining-menu.png" alt="item-img"
+                                    style="max-height: 30px; aspect-ratio: 1/1; margin-right: 3%; border-radius: 50%; object-fit: cover;"></span>
+                            @item.ItemName</div>
+                        rank++;
+                    }
+                }
+                else
+                {
+                    <p>No data available</p>
+                }
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card p-3">
+                <h6>Least Selling Items</h6>
+                @if (ViewBag.LeastSellingItems != null && ViewBag.LeastSellingItems.Count > 0)
+                {
+                    int rank = 1;
+                    foreach (var item in ViewBag.LeastSellingItems)
+                    {
+                        <div class="text-start d-flex align-items-center mb-2 ">#@rank<span class="ms-1"> <img class=" mx-2"
+                                    src="/images/dining-menu.png" alt="item-img"
+                                    style="max-height: 30px; aspect-ratio: 1/1; margin-right: 3%; border-radius: 50%; object-fit: cover;"></span>
+                            @item.ItemName</div>
+                        rank++;
+                    }
+                }
+                else
+                {
+                    <p>No data available</p>
+                }
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card p-3 h-100 text-center">
+                <h6>Waiting Count</h6>
+                <h3>@ViewBag.WaitingListCount</h3>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card p-3 h-100 text-center">
+                <h6>New Customer Count</h6>
+                <h3>@ViewBag.NewCustomerCount</h3>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Select Date Range</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6 form-floating flex-grow-1 flex-md-grow-0 mb-3" style="max-width: 350px;">
+                        <input type="date" class="form-control" id="fromDate" />
+                        <label for="fromDate">From date</label>
+                    </div>
+                    <div class="col-md-6 form-floating flex-grow-1 flex-md-grow-0 mb-3" style="max-width: 350px;">
+                        <input type="date" class="form-control" id="toDate" />
+                        <label for="toDate">To date</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-main text-white" id="submitDateRange">Submit</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Revenue Chart
+    const revenueData = @Html.Raw(Json.Serialize(ViewBag.RevenueData));
+    const revenueLabels = revenueData.length > 0 ? revenueData.map(item => item.date) : ['Invalid Date'];
+    const revenueValues = revenueData.length > 0 ? revenueData.map(item => item.value) : [0];
+
+    const revenueChart = new Chart(document.getElementById('revenueChart'), {
+        type: 'line',
+        data: {
+            labels: revenueLabels,
+            datasets: [{
+                label: 'Revenue',
+                data: revenueValues,
+                borderColor: '#007bff',
+                backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                fill: true,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Date'
+                    },
+                    ticks: {
+                        callback: function (value, index, values) {
+                            const label = revenueLabels[index];
+                            return label === 'Invalid Date' ? label : new Date(label).toLocaleDateString();
+                        }
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Revenue (₹)'
+                    },
+                    beginAtZero: true,
+                    max: 5000 // Adjust based on your data; set to 1 to match the screenshot
+                }
+            }
+        }
+    });
+
+    // Customer Growth Chart
+    const customerGrowthData = @Html.Raw(Json.Serialize(ViewBag.CustomerGrowthData));
+    const customerGrowthLabels = customerGrowthData.length > 0 ? customerGrowthData.map(item => item.date) : ['Invalid Date'];
+    const customerGrowthValues = customerGrowthData.length > 0 ? customerGrowthData.map(item => item.value) : [0];
+
+    const customerGrowthChart = new Chart(document.getElementById('customerGrowthChart'), {
+        type: 'line',
+        data: {
+            labels: customerGrowthLabels,
+            datasets: [{
+                label: 'Customers',
+                data: customerGrowthValues,
+                borderColor: '#007bff',
+                backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                fill: true,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Date'
+                    },
+                    ticks: {
+                        callback: function (value, index, values) {
+                            const label = customerGrowthLabels[index];
+                            return label === 'Invalid Date' ? label : new Date(label).toLocaleDateString();
+                        }
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Customer Count'
+                    },
+                    beginAtZero: true,
+                    max: 10 // Adjust based on your data; set to 1 to match the screenshot
+                }
+            }
+        }
+    });
+
+    // Handle Custom Date Range Submission
+    document.getElementById('submitDateRange').addEventListener('click', function () {
+        const fromDate = document.getElementById('fromDate').value;
+        const toDate = document.getElementById('toDate').value;
+
+        if (fromDate && toDate) {
+            window.location.href = '@Url.Action("Dashboard", "Home", new { timeFrame = "CustomDate" })' + '&fromDate=' + fromDate + '&toDate=' + toDate;
+        }
+    });
+</script>

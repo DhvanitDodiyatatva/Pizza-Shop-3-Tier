@@ -26,10 +26,12 @@ namespace PizzaShopPresentation.Controllers
         private readonly IRoleRepository _roleRepository;
         private readonly IRoleService _roleService;
 
+        private readonly IDashboardRepository _dashboardRepository;
+
         private readonly PizzaShopRepository.Data.PizzaShopContext _context;
 
 
-        public HomeController(ILogger<HomeController> logger, IUserCrudService userCrudService, IRoleService roleService, IRoleRepository roleRepository, PizzaShopRepository.Data.PizzaShopContext context)
+        public HomeController(ILogger<HomeController> logger, IUserCrudService userCrudService, IRoleService roleService, IRoleRepository roleRepository, IDashboardRepository dashboardRepository, PizzaShopRepository.Data.PizzaShopContext context)
 
 
         {
@@ -38,11 +40,73 @@ namespace PizzaShopPresentation.Controllers
             _roleService = roleService;
             _roleRepository = roleRepository;
             _roleService = roleService;
+            _dashboardRepository = dashboardRepository;
             _context = context;
         }
 
-        public IActionResult Dashboard()
+        public async Task<IActionResult> Dashboard(string timeFrame = "CurrentMonth", string fromDate = null, string toDate = null)
         {
+            DateTime startDate, endDate;
+
+            switch (timeFrame)
+            {
+                case "Today":
+                    startDate = DateTime.Today;
+                    endDate = DateTime.Today.AddDays(1).AddTicks(-1);
+                    break;
+                case "Last7Days":
+                    startDate = DateTime.Today.AddDays(-7);
+                    endDate = DateTime.Today.AddDays(1).AddTicks(-1);
+                    break;
+                case "Last30Days":
+                    startDate = DateTime.Today.AddDays(-30);
+                    endDate = DateTime.Today.AddDays(1).AddTicks(-1);
+                    break;
+                case "CustomDate":
+                    if (DateTime.TryParse(fromDate, out var from) && DateTime.TryParse(toDate, out var to))
+                    {
+                        startDate = from;
+                        endDate = to.AddDays(1).AddTicks(-1);
+                    }
+                    else
+                    {
+                        startDate = DateTime.Today;
+                        endDate = DateTime.Today.AddDays(1).AddTicks(-1);
+                        timeFrame = "Today";
+                    }
+                    break;
+                case "CurrentMonth":
+                default:
+                    startDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+                    endDate = startDate.AddMonths(1).AddTicks(-1);
+                    break;
+            }
+
+            var totalSales = await _dashboardRepository.GetTotalSalesAsync(startDate, endDate);
+            var totalOrders = await _dashboardRepository.GetTotalOrdersAsync(startDate, endDate);
+            var avgOrderValue = await _dashboardRepository.GetAverageOrderValueAsync(startDate, endDate);
+            var avgWaitingTime = await _dashboardRepository.GetAverageWaitingTimeAsync(startDate, endDate);
+            var revenueData = await _dashboardRepository.GetRevenueDataAsync(startDate, endDate);
+            var customerGrowthData = await _dashboardRepository.GetCustomerGrowthDataAsync(startDate, endDate);
+            var topSellingItems = await _dashboardRepository.GetTopSellingItemsAsync(startDate, endDate);
+            var leastSellingItems = await _dashboardRepository.GetLeastSellingItemsAsync(startDate, endDate);
+            var waitingListCount = await _dashboardRepository.GetWaitingListCountAsync(startDate, endDate);
+            var newCustomerCount = await _dashboardRepository.GetNewCustomerCountAsync(startDate, endDate);
+
+            ViewBag.TotalSales = totalSales;
+            ViewBag.TotalOrders = totalOrders;
+            ViewBag.AvgOrderValue = avgOrderValue;
+            ViewBag.AvgWaitingTime = avgWaitingTime;
+            ViewBag.RevenueData = revenueData;
+            ViewBag.CustomerGrowthData = customerGrowthData;
+            ViewBag.TopSellingItems = topSellingItems;
+            ViewBag.LeastSellingItems = leastSellingItems;
+            ViewBag.WaitingListCount = waitingListCount;
+            ViewBag.NewCustomerCount = newCustomerCount;
+            ViewBag.TimeFrame = timeFrame;
+            ViewBag.FromDate = fromDate;
+            ViewBag.ToDate = toDate;
+
             return View();
         }
 
