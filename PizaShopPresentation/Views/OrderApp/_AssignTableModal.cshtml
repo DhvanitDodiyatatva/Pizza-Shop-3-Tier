@@ -1,0 +1,181 @@
+@model PizzaShopRepository.ViewModels.AssignTableViewModel
+
+<div class="modal-header">
+    <h1 class="modal-title fs-5" id="assignTableModalLabel">Assign Table</h1>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+    <form id="assignTableForm" asp-action="AssignTableWL" asp-controller="OrderApp" method="post">
+        <input type="hidden" asp-for="WaitingTokenId" />
+        <input type="hidden" asp-for="Email" />
+        <input type="hidden" asp-for="Name" />
+        <input type="hidden" asp-for="PhoneNumber" />
+        <input type="hidden" asp-for="NumOfPersons" />
+        <!-- Container for dynamically added hidden inputs for SelectedTableIds -->
+        <div id="selectedTableIdsContainer"></div>
+        <div class="mb-3">
+            <label asp-for="SectionName" class="form-label">Section* <span class="text-danger">(Required)</span></label>
+            <select asp-for="SectionName" class="form-select" id="sectionDropdown" asp-items="ViewBag.Sections"
+                required>
+                <option value="">Select Section</option>
+            </select>
+            <span asp-validation-for="SectionName" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="SelectedTableIds" class="form-label">Table* <span
+                    class="text-danger">(Required)</span></label>
+            <small class="form-text text-muted d-block mb-2">
+                Select one or more tables. Total capacity must be at least @Model.NumOfPersons for @Model.NumOfPersons
+                person@(Model.NumOfPersons > 1 ? "s" : "").
+            </small>
+            <div id="tableList" class="border rounded p-2" style="max-height: 150px; overflow-y: auto;">
+                <!-- Table checkboxes will be populated here -->
+                <div class="text-muted text-center">Select a section to view available tables</div>
+            </div>
+            <div id="totalCapacity" class="form-text mt-2">Total Capacity: 0</div>
+            <span asp-validation-for="SelectedTableIds" class="text-danger"></span>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-main text-white" id="assignButton" disabled>Assign</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function () {
+        let tablesData = []; // To store table data for capacity calculation
+
+        // Populate tables based on selected section
+        $('#sectionDropdown').on('change', function () {
+            var sectionName = $(this).val();
+            if (sectionName) {
+                $.ajax({
+                    url: '@Url.Action("GetAvailableTablesBySection", "OrderApp")',
+                    type: 'GET',
+                    data: { sectionName: sectionName },
+                    success: function (tables) {
+                        var tableList = $('#tableList');
+                        tableList.empty();
+                        tablesData = tables; // Store table data for capacity calculation
+                        if (tables.length === 0) {
+                            tableList.append('<div class="text-muted text-center">No available tables in this section</div>');
+                            $('#assignButton').prop('disabled', true); // Disable button if no tables
+                        } else {
+                            $.each(tables, function (index, table) {
+                                tableList.append(`
+                                    <div class="form-check">
+                                        <input class="form-check-input table-checkbox" type="checkbox" 
+                                               value="${table.id}" data-capacity="${table.capacity}" 
+                                               id="table-${table.id}">
+                                        <label class="form-check-label" for="table-${table.id}">
+                                            ${table.name} (Capacity: ${table.capacity})
+                                        </label>
+                                    </div>
+                                `);
+                            });
+                        }
+                        updateTotalCapacity(); // Reset total capacity display
+                    },
+                    error: function () {
+                        toastr.error('Failed to load tables.');
+                        $('#assignButton').prop('disabled', true); // Disable button on error
+                    }
+                });
+            } else {
+                $('#tableList').empty();
+                $('#tableList').append('<div class="text-muted text-center">Select a section to view available tables</div>');
+                tablesData = [];
+                updateTotalCapacity(); // Reset total capacity display
+                $('#assignButton').prop('disabled', true); // Disable button if no section
+            }
+        });
+
+        // Update total capacity and selected table IDs when checkboxes change
+        $('#tableList').on('change', '.table-checkbox', function () {
+            updateTotalCapacity();
+            updateSelectedTableIds();
+            // Enable/disable Assign button based on selection
+            var selectedCheckboxes = $('.table-checkbox:checked');
+            $('#assignButton').prop('disabled', selectedCheckboxes.length === 0);
+        });
+
+        // Function to calculate and display total capacity
+        function updateTotalCapacity() {
+            var selectedCheckboxes = $('.table-checkbox:checked');
+            var totalCapacity = 0;
+            selectedCheckboxes.each(function () {
+                var capacity = parseInt($(this).data('capacity')) || 0;
+                totalCapacity += capacity;
+            });
+            $('#totalCapacity').text('Total Capacity: ' + totalCapacity);
+            // Update validation message if capacity is insufficient
+            var numOfPersons = parseInt('@Model.NumOfPersons') || 0;
+            if (selectedCheckboxes.length > 0 && totalCapacity < numOfPersons) {
+                $('#totalCapacity').addClass('text-danger').removeClass('form-text');
+            } else {
+                $('#totalCapacity').addClass('form-text').removeClass('text-danger');
+            }
+        }
+
+        // Function to update the hidden inputs with selected table IDs
+        function updateSelectedTableIds() {
+            var selectedCheckboxes = $('.table-checkbox:checked');
+            var container = $('#selectedTableIdsContainer');
+            container.empty(); // Clear previous inputs
+            selectedCheckboxes.each(function () {
+                var tableId = $(this).val();
+                // Add a hidden input for each selected table ID
+                container.append(`<input type="hidden" name="SelectedTableIds" value="${tableId}" />`);
+            });
+        }
+
+        // Form submission
+        $('#assignTableForm').on('submit', function (e) {
+            e.preventDefault();
+            var form = $(this);
+            var selectedTables = $('.table-checkbox:checked');
+            if (selectedTables.length === 0) {
+                toastr.error('Please select at least one table to assign.');
+                return;
+            }
+
+            // Validate total capacity against number of persons
+            var numOfPersons = parseInt('@Model.NumOfPersons') || 0;
+            var totalCapacity = 0;
+            selectedTables.each(function () {
+                var capacity = parseInt($(this).data('capacity')) || 0;
+                totalCapacity += capacity;
+            });
+
+            if (totalCapacity < numOfPersons) {
+                toastr.error('Selected tables do not have enough capacity. Total capacity must be at least ' + numOfPersons + ' for ' + numOfPersons + ' person' + (numOfPersons > 1 ? 's' : '') + '.');
+                return;
+            }
+
+            $.ajax({
+                url: form.attr('action'),
+                type: 'POST',
+                data: form.serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        $('#assignTableModal').modal('hide').on('hidden.bs.modal', function () {
+                            $(this).data('bs.modal', null);
+                            $('.modal-backdrop').remove();
+                            window.location.href = response.redirectUrl;
+                        });
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function () {
+                    toastr.error('An error occurred while assigning the table.');
+                }
+            });
+        });
+
+        // Initialize form validation
+        $.validator.unobtrusive.parse('#assignTableModal');
+    });
+</script>

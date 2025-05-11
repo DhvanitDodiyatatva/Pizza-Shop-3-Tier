@@ -77,4 +77,15 @@ namespace PizzaShopRepository.ViewModels
         [Range(1, int.MaxValue, ErrorMessage = "Number of persons must be at least 1.")]
         public int? NoOfPersons { get; set; }
     }
+
+    public class AssignTableViewModel
+    {
+        public int WaitingTokenId { get; set; }
+        public string SectionName { get; set; }
+        public int[] SelectedTableIds { get; set; }
+        public string Email { get; set; }
+        public string Name { get; set; }
+        public string PhoneNumber { get; set; }
+        public int NumOfPersons { get; set; }
+    }
 }

@@ -211,6 +211,75 @@ namespace PizzaShop.Controllers
             return Json(new { success = false, message = message });
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ShowAssignTableModal(int waitingTokenId)
+        {
+            var waitingToken = await _waitingTokenService.GetWaitingTokenByIdAsync(waitingTokenId);
+            if (waitingToken == null)
+            {
+                return Json(new { success = false, message = "Waiting token not found." });
+            }
+
+            var model = new AssignTableViewModel
+            {
+                WaitingTokenId = waitingToken.Id,
+                Email = waitingToken.Email,
+                Name = waitingToken.CustomerName,
+                PhoneNumber = waitingToken.PhoneNumber,
+                NumOfPersons = waitingToken.NumOfPersons
+            };
+
+            var sections = await _sectionService.GetAllSectionsAsync();
+            ViewBag.Sections = new SelectList(sections, "Name", "Name");
+            return PartialView("_AssignTableModal", model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAvailableTablesBySection(string sectionName)
+        {
+            var section = await _sectionService.GetAllSectionsAsync();
+            var selectedSection = section.FirstOrDefault(s => s.Name == sectionName);
+            if (selectedSection == null)
+            {
+                return Json(new List<object>());
+            }
+
+            var tables = await _tableService.GetTablesBySectionAsync(selectedSection.Id);
+            var availableTables = tables
+                .Where(t => t.Status == "available")
+                .Select(t => new { id = t.Id, name = t.Name, capacity = t.Capacity })
+                .ToList();
+
+            return Json(availableTables);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> AssignTableWL(int[] selectedTableIds, int sectionId, int? waitingTokenId, string email, string name, string phoneNumber, int numOfPersons, string sectionName)
+        {
+            // If sectionId is 0 (not provided), fetch it using sectionName
+            if (sectionId == 0 && !string.IsNullOrEmpty(sectionName))
+            {
+                var sections = await _sectionService.GetAllSectionsAsync();
+                var section = sections.FirstOrDefault(s => s.Name == sectionName);
+                if (section != null)
+                {
+                    sectionId = section.Id;
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Section not found." });
+                }
+            }
+
+            var (success, message, orderId) = await _orderAppService.AssignTableAsync(selectedTableIds, sectionId, waitingTokenId, email, name, phoneNumber, numOfPersons);
+            if (success)
+            {
+                return Json(new { success = true, message = message, orderId = orderId, redirectUrl = Url.Action("Menu", "OrderApp", new { orderId = orderId }) });
+            }
+            return Json(new { success = false, message = message });
+        }
+
         public async Task<IActionResult> Menu(int? orderId)
         {
             ViewBag.OrderId = orderId;
