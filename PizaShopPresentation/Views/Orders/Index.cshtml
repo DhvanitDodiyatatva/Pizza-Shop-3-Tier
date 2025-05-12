@@ -141,7 +141,7 @@
             });
 
             // Handle PDF invoice generation
-            $(document).on('click', '#pdfInvoice', function () {
+            $(document).on("click", "#pdfInvoice", function () {
                 var orderId = $(this).data("orderid");
                 console.log("Clicked", orderId);
 
@@ -151,18 +151,24 @@
                     data: { orderId: orderId },
                     success: function (response) {
                         console.log("Successfully fetched invoice");
-                        var tempDiv = $("<div>").css({
-                            "position": "absolute", // Changed to fixed to isolate it from the layout
+
+                        // Create a hidden iframe
+                        var iframe = $("<iframe>").css({
+                            "width": "1000px",
+                            "height": "1000px",
+                            "position": "fixed",
+                            "top": "-9999px",
                             "left": "-9999px",
-                            "top": "-9999px", // Move it completely off-screen
-                            "width": "1000px", // Explicit width
-                            "height": "auto", // Let height adjust to content
-                            "background": "white",
-                            "z-index": "-1" // Ensure it’s behind everything
-                        }).html(response).appendTo("body");
+                            "z-index": "-1"
+                        }).appendTo("body");
+
+                        var iframeDoc = iframe[0].contentDocument || iframe[0].contentWindow.document;
+                        iframeDoc.open();
+                        iframeDoc.write(response);
+                        iframeDoc.close();
 
                         setTimeout(function () {
-                            html2canvas(tempDiv[0], { scale: 2, useCORS: true }).then(function (canvas) {
+                            html2canvas(iframeDoc.body, { scale: 2, useCORS: true }).then(function (canvas) {
                                 var imgData = canvas.toDataURL("image/png");
                                 var { jsPDF } = window.jspdf;
                                 var pdf = new jsPDF("p", "mm", "a4");
@@ -170,13 +176,13 @@
                                 var imgHeight = (canvas.height * imgWidth) / canvas.width;
                                 pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
                                 pdf.save("invoice_" + orderId + ".pdf");
-                                tempDiv.remove(); // Remove immediately after PDF generation
+                                iframe.remove();
                             }).catch(function (error) {
                                 console.error("Error rendering canvas:", error);
                                 toastr.error("Error generating PDF. Please try again.");
-                                tempDiv.remove(); // Ensure removal even on error
+                                iframe.remove();
                             });
-                        }, 10); // Consider reducing this delay if possible
+                        }, 1000);
                     },
                     error: function (xhr, status, error) {
                         console.error("Error fetching invoice:", error);
@@ -192,7 +198,7 @@
 
         function loadOrders(url) {
             @* debugger; *@
-                                                        var searchQuery = $('#Search').val();
+                                        var searchQuery = $('#Search').val();
             var statusFilter = $('#statusFilter').val();
             var timeFilter = $('#timeFilter').val();
             var fromDate = $('#fromDate').val();
