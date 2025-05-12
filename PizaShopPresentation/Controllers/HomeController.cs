@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 namespace PizzaShopPresentation.Controllers
 {
 
-    // [CustomAuthorize("super_admin, chef, account_manager")]
+
 
     public class HomeController : Controller
     {
@@ -26,12 +26,14 @@ namespace PizzaShopPresentation.Controllers
         private readonly IRoleRepository _roleRepository;
         private readonly IRoleService _roleService;
 
+        private readonly IUserService _userService;
+
         private readonly IDashboardRepository _dashboardRepository;
 
         private readonly PizzaShopRepository.Data.PizzaShopContext _context;
 
 
-        public HomeController(ILogger<HomeController> logger, IUserCrudService userCrudService, IRoleService roleService, IRoleRepository roleRepository, IDashboardRepository dashboardRepository, PizzaShopRepository.Data.PizzaShopContext context)
+        public HomeController(ILogger<HomeController> logger, IUserCrudService userCrudService, IRoleService roleService, IRoleRepository roleRepository, IDashboardRepository dashboardRepository, IUserService userService, PizzaShopRepository.Data.PizzaShopContext context)
 
 
         {
@@ -40,6 +42,7 @@ namespace PizzaShopPresentation.Controllers
             _roleService = roleService;
             _roleRepository = roleRepository;
             _roleService = roleService;
+            _userService = userService;
             _dashboardRepository = dashboardRepository;
             _context = context;
         }
@@ -409,26 +412,69 @@ namespace PizzaShopPresentation.Controllers
             return View(model);
         }
 
+        // [HttpPost]
+        // public async Task<IActionResult> UpdateProfileOA([Bind("FirstName,LastName,Username,Phone,Country,State,City,Address,Zipcode")] MyProfile model)
+        // {
+        //     var email = User.Identity?.Name;
+        //     if (string.IsNullOrEmpty(email))
+        //     {
+        //         return RedirectToAction("Table", "OrderApp");
+        //     }
+
+        //     try
+        //     {
+        //         await _userCrudService.UpdateUserProfileAsync(email, model);
+        //         TempData["SuccessMessage"] = "Profile updated successfully!";
+        //     }
+        //     catch (Exception)
+        //     {
+        //         TempData["ErrorMessage"] = "Failed to update profile.";
+        //     }
+
+        //     // Check user role for redirection
+        //     var user = await _userService.GetUserByEmailAsync(model.Email);
+        //     if (user != null && user.Role == "chef")
+        //     {
+        //         TempData["successMessage"] = "Profile Updated Successfully successfully!";
+        //         return RedirectToAction("Kot", "OrderApp");
+        //     }
+
+        //     TempData["successMessage"] = "Profile Updated Successfully successfully!";
+        //     return RedirectToAction("Table", "OrderApp");
+        // }
+
         [HttpPost]
-        public async Task<IActionResult> UpdateProfileOA([Bind("FirstName,LastName,Username,Phone,Country,State,City,Address,Zipcode")] MyProfile model)
+        public async Task<IActionResult> UpdateProfileOA(MyProfile model, IFormFile? ImageFile)
         {
             var email = User.Identity?.Name;
+            var user = await _userService.GetUserByEmailAsync(model.Email);
             if (string.IsNullOrEmpty(email))
             {
-                return RedirectToAction("Table", "OrderApp");
+                return RedirectToAction("Index", "Login");
             }
 
             try
             {
+                model.ImageFile = ImageFile; // Bind the uploaded file to the model
                 await _userCrudService.UpdateUserProfileAsync(email, model);
                 TempData["SuccessMessage"] = "Profile updated successfully!";
+
+
+                if (user != null && user.Role == "chef")
+                {
+                    TempData["successMessage"] = "Profile Updated Successfully successfully!";
+                    return RedirectToAction("Kot", "OrderApp");
+                }
+                TempData["successMessage"] = "Profile Updated Successfully successfully!";
+                return RedirectToAction("Table", "OrderApp");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Failed to update profile.";
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("MyProfileOA");
             }
 
-            return RedirectToAction("MyProfileOA");
+
         }
 
 

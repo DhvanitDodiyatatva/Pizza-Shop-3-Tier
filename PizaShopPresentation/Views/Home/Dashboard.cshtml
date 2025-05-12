@@ -54,9 +54,10 @@
 </style>
 
 <div class="dashboard-content mt-0 p-5">
-    <div class="d-flex align-items-center justify-content-between my-2">
-        <h2 class="mb-3 fw-bolder fs-2 page-text me-2">Dashboard</h2>
-        <div class="dropdown">
+    <div class="row my-2  justify-content-between">
+
+        <div class="mb-3 fw-bolder fs-2 page-text me-2 col-md-5">Dashboard</div>
+        <div class="dropdown col-md-6 text-end">
             <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="timeFrameDropdown"
                 data-bs-toggle="dropdown" aria-expanded="false">
                 @(ViewBag.TimeFrame == "Today" ? "Today" :
@@ -84,8 +85,9 @@
         <div class="col-lg-3 col-md-6 col-sm-6  mb-3">
             <div class="card p-3 d-flex flex-row justify-content-between h-100">
                 <div class="justify-content-start">
-                    <h6>Total Sales</h6>
+
                     <h3>₹@ViewBag.TotalSales</h3>
+                    <h6>Total Sales</h6>
                 </div>
                 <div class="justify-content-end ">
                     <div class="rounded-pill p-1" style="border: 2px solid green;">
@@ -103,8 +105,9 @@
         <div class="col-lg-3 col-md-6 col-sm-6 mb-3">
             <div class="card p-3 d-flex flex-row justify-content-between h-100">
                 <div>
-                    <h6>Total Orders</h6>
+
                     <h3>@ViewBag.TotalOrders</h3>
+                    <h6>Total Orders</h6>
                 </div>
                 <div class="justify-content-end ">
                     <div class="rounded-pill p-1" style="border: 2px solid rgb(163, 128, 163);">
@@ -127,8 +130,9 @@
         <div class="col-lg-3 col-md-6 col-sm-6 mb-3">
             <div class="card p-3 h-100 d-flex flex-row justify-content-between ">
                 <div>
-                    <h6>Avg Order Value</h6>
+
                     <h3>₹@Math.Round((decimal)ViewBag.AvgOrderValue, 1)</h3>
+                    <h6>Avg Order Value</h6>
                 </div>
                 <div class="justify-content-end  ">
                     <div class="rounded-pill p-1" style="border: 2px solid green;">
@@ -148,8 +152,9 @@
         <div class="col-lg-3 col-md-6 col-sm-6 mb-3">
             <div class="card p-3 h-100 d-flex flex-row justify-content-between">
                 <div>
-                    <h6>Avg Waiting Time</h6>
+
                     <h3>@ViewBag.AvgWaitingTime mins</h3>
+                    <h6>Avg Waiting Time</h6>
                 </div>
                 <div class="justify-content-end ">
                     <div class="rounded-pill p-1" style="border: 2px solid rgb(209, 72, 72);">
@@ -231,11 +236,14 @@
         </div>
         <div class="col-lg-3 col-md-6 col-sm-6 mb-3">
             <div class="card p-3 h-100 d-flex flex-row justify-content-between">
-                <div>
-                    <h6>Waiting Count</h6>
-                    <h3>@ViewBag.WaitingListCount</h3>
+                <div class="d-flex  align-items-end">
+                    <div>
+
+                        <h3>@ViewBag.WaitingListCount</h3>
+                        <h6>Waiting Count</h6>
+                    </div>
                 </div>
-                <div class="justify-content-end ">
+                <div class=" d-flex align-items-start ">
                     <div class="rounded-pill p-1" style="border: 2px solid orange;">
                         <div class="  rounded-pill p-1 " style="background-color: orange;">
                             <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor"
@@ -250,11 +258,14 @@
         </div>
         <div class="col-lg-3 col-md-6 col-sm-6 mb-3">
             <div class="card p-3 h-100 d-flex flex-row justify-content-between ">
-                <div class="">
-                    <h6>New Customer Count</h6>
-                    <h3>@ViewBag.NewCustomerCount</h3>
+                <div class="d-flex  align-items-end">
+                    <div>
+                        <h3>@ViewBag.NewCustomerCount</h3>
+                        <h6>New Customer Count</h6>
+
+                    </div>
                 </div>
-                <div class="justify-content-end ">
+                <div class="d-flex align-items-start ">
                     <div class="rounded-pill p-1" style="border: 2px solid orange;">
                         <div class="  rounded-pill p-1 " style="background-color: orange;">
                             <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor"

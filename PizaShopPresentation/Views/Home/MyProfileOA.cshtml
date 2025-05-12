@@ -28,7 +28,7 @@
     <div class="card shadow-lg content-div rounded-3 shadow p-0">
         <div class="profile-header"></div>
         <div class="card-body profile-container">
-            <form id="profileForm" method="post" asp-controller="Home" asp-action="UpdateProfile"
+            <form id="profileForm" method="post" asp-controller="Home" asp-action="UpdateProfileOA"
                 enctype="multipart/form-data">
                 <div class="mt-1 d-flex justify-content-between">
                     <div class="d-flex">
@@ -165,13 +165,21 @@
 
                 <div class="d-flex justify-content-end mt-4">
                     <button type="submit" class="btn btn-main text-white me-2">Update</button>
+                     @if (!User.IsInRole("chef"))
+                                    {
                     <a type="button" class="btn btn-secondary" asp-action="Table" asp-controller="OrderApp">Cancel</a>
+                    }
+                     @if (User.IsInRole("chef"))
+                                    {
+                    <a type="button" class="btn btn-secondary" asp-action="Kot" asp-controller="OrderApp">Cancel</a>
+                    }
                 </div>
             </form>
         </div>
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
