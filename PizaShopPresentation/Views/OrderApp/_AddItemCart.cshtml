@@ -152,18 +152,18 @@
         </div>
 
         <!-- Action Buttons -->
-        <div >
+    <div >
         <div class="d-flex justify-content-end">
-            <button class="btn btn-main text-white m-1" id="saveOrderButton" style="min-width: 180px;">Save</button>
-            <button class="btn btn-outline text-primary-emphasis m-1" id="completeOrderButton" style="min-width: 180px;">Complete</button>
-            <button class="btn btn-outline text-primary-emphasis m-1" id="generateInvoiceButton" style="min-width: 180px;">
-                <span class="button-text">Generate Invoice</span>
-                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-            </button>
-            </div>
-            <div class="d-flex justify-content-end">
-            <button class="btn btn-outline text-primary-emphasis m-1" id="cancelOrderButton" style="min-width: 180px;">Cancel</button>
-        </div>
+    <button class="btn btn-main text-white m-1" id="saveOrderButton" style="min-width: 120px;">Save</button>
+    <button class="btn btn-outline text-primary-emphasis m-1" id="completeOrderButton" style="min-width: 120px;" @(Model.OrderItems.Any() ? "" : "disabled")>Complete</button>
+    <button class="btn btn-outline text-primary-emphasis m-1" id="generateInvoiceButton" style="min-width: 120px;" @(Model.OrderItems.Any() ? "" : "disabled")>
+        <span class="button-text">Generate Invoice</span>
+        <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+    </button>
+</div>
+<div class="d-flex justify-content-end">
+    <button class="btn btn-outline text-primary-emphasis m-1" id="cancelOrderButton" style="min-width: 120px;">Cancel</button>
+</div>
 
         <!-- Complete Confirmation Modal -->
         <div class="modal fade" id="completeConfirmationModal" tabindex="-1" aria-labelledby="completeConfirmationModalLabel" aria-hidden="true">
@@ -404,6 +404,21 @@
     };
     let currentOrderItemId = null;
 
+    // Function to update button states based on cart items
+    function updateButtonStates() {
+        const hasItems = window.cartItems.length > 0;
+        const $completeButton = $('#completeOrderButton');
+        const $generateInvoiceButton = $('#generateInvoiceButton');
+
+        if (hasItems) {
+            $completeButton.prop('disabled', false);
+            $generateInvoiceButton.prop('disabled', false);
+        } else {
+            $completeButton.prop('disabled', true);
+            $generateInvoiceButton.prop('disabled', true);
+        }
+    }
+
     function updateCartDisplay() {
         const $accordion = $('#cartAccordion');
         const $cartSummary = $('#cartSummary');
@@ -530,6 +545,9 @@
                 <span>₹${(subtotal + totalTaxes).toFixed(2)}</span>
             </div>
         `);
+
+        // Update button states after rendering cart
+        updateButtonStates();
     }
 
     function loadCart(orderId) {
@@ -770,6 +788,12 @@
         $('#generateInvoiceButton').on('click', function (e) {
             e.preventDefault();
 
+            // Check if the button is disabled
+            if ($(this).prop('disabled')) {
+                toastr.error('Add items to generate invoice.');
+                return;
+            }
+
             if (isGeneratingInvoice) {
                 return;
             }
@@ -803,61 +827,61 @@
                     if (result.success) {
                         if (result.areAllItemsReady) {
                             // All items are ready, proceed with invoice generation
-                             $.ajax({
-                url: "/Orders/Invoice",
-                type: "GET",
-                data: { orderId: orderId },
-                success: function (response) {
-                    // Create a hidden iframe for rendering the invoice off-screen
-                    const iframe = $("<iframe>").css({
-                        position: "fixed",
-                        left: "-9999px",
-                        top: "-9999px",
-                        width: "1000px",
-                        height: "1000px",
-                        background: "white",
-                        zIndex: "-1",
-                        visibility: "hidden"
-                    }).appendTo("body");
+                            $.ajax({
+                                url: "/Orders/Invoice",
+                                type: "GET",
+                                data: { orderId: orderId },
+                                success: function (response) {
+                                    // Create a hidden iframe for rendering the invoice off-screen
+                                    const iframe = $("<iframe>").css({
+                                        position: "fixed",
+                                        left: "-9999px",
+                                        top: "-9999px",
+                                        width: "1000px",
+                                        height: "1000px",
+                                        background: "white",
+                                        zIndex: "-1",
+                                        visibility: "hidden"
+                                    }).appendTo("body");
 
-                    const iframeDoc = iframe[0].contentDocument || iframe[0].contentWindow.document;
-                    iframeDoc.open();
-                    iframeDoc.write(response);
-                    iframeDoc.close();
+                                    const iframeDoc = iframe[0].contentDocument || iframe[0].contentWindow.document;
+                                    iframeDoc.open();
+                                    iframeDoc.write(response);
+                                    iframeDoc.close();
 
-                    // Render to canvas after a brief delay to ensure iframe content is ready
-                    setTimeout(function () {
-                        html2canvas(iframeDoc.body, { scale: 2, useCORS: true }).then(function (canvas) {
-                            const imgData = canvas.toDataURL("image/png");
-                            const { jsPDF } = window.jspdf;
-                            const pdf = new jsPDF("p", "mm", "a4");
-                            const imgWidth = 210; // A4 width in mm
-                            const imgHeight = (canvas.height * imgWidth) / canvas.width;
-                            pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
-                            pdf.save("invoice_" + orderId + ".pdf");
-                            iframe.remove(); // Clean up
-                        }).catch(function (error) {
-                            console.error("Error rendering canvas:", error);
-                            toastr.error("Error generating PDF. Please try again.");
-                            iframe.remove();
-                        }).finally(function () {
-                            // Reset button state
-                            $button.prop("disabled", false);
-                            $button.find(".button-text").text("Generate Invoice");
-                            $button.find(".spinner-border").addClass("d-none");
-                            isGeneratingInvoice = false;
-                        });
-                    }, 1000); // Minimal delay to ensure iframe rendering
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error fetching invoice:", error);
-                    toastr.error("Error fetching invoice. Please try again.");
-                    $button.prop("disabled", false);
-                    $button.find(".button-text").text("Generate Invoice");
-                    $button.find(".spinner-border").addClass("d-none");
-                    isGeneratingInvoice = false;
-                }
-            });
+                                    // Render to canvas after a brief delay to ensure iframe content is ready
+                                    setTimeout(function () {
+                                        html2canvas(iframeDoc.body, { scale: 2, useCORS: true }).then(function (canvas) {
+                                            const imgData = canvas.toDataURL("image/png");
+                                            const { jsPDF } = window.jspdf;
+                                            const pdf = new jsPDF("p", "mm", "a4");
+                                            const imgWidth = 210; // A4 width in mm
+                                            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                                            pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+                                            pdf.save("invoice_" + orderId + ".pdf");
+                                            iframe.remove(); // Clean up
+                                        }).catch(function (error) {
+                                            console.error("Error rendering canvas:", error);
+                                            toastr.error("Error generating PDF. Please try again.");
+                                            iframe.remove();
+                                        }).finally(function () {
+                                            // Reset button state
+                                            $button.prop("disabled", false);
+                                            $button.find(".button-text").text("Generate Invoice");
+                                            $button.find(".spinner-border").addClass("d-none");
+                                            isGeneratingInvoice = false;
+                                        });
+                                    }, 1000); // Minimal delay to ensure iframe rendering
+                                },
+                                error: function (xhr, status, error) {
+                                    console.error("Error fetching invoice:", error);
+                                    toastr.error("Error fetching invoice. Please try again.");
+                                    $button.prop("disabled", false);
+                                    $button.find(".button-text").text("Generate Invoice");
+                                    $button.find(".spinner-border").addClass("d-none");
+                                    isGeneratingInvoice = false;
+                                }
+                            });
                         } else {
                             toastr.error('You cannot generate invoice because some items are still in Progress.');
                             $button.prop('disabled', false);
@@ -973,8 +997,15 @@
             $('.d-flex.justify-content-between.fw-bold span:last').text(`₹${total.toFixed(2)}`);
         });
 
+        // Handle Complete Order Button Click
         $('#completeOrderButton').off('click').on('click', function (e) {
             e.preventDefault();
+
+            // Check if the button is disabled
+            if ($(this).prop('disabled')) {
+                toastr.error('Add items to complete order.');
+                return;
+            }
 
             if (isCompleting) {
                 return;
