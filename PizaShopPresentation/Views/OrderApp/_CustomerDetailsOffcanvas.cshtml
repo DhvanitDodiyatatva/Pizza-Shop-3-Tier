@@ -88,6 +88,14 @@
 
 <script>
     $(document).ready(function () {
+        // Store selected tables' data from the model for validation
+        const selectedTables = [
+            @foreach (var table in Model.SelectedTables)
+            {
+                @: { TableId: @table.TableId, Capacity: @table.Capacity },
+            }
+        ];
+
         $('.select-token').on('change', function () {
             const name = $(this).data('name');
             const email = $(this).data('email');
@@ -105,6 +113,26 @@
         $('#assignTableForm').on('submit', function (e) {
             e.preventDefault();
             var form = $(this);
+
+            // Get the number of persons
+            const numOfPersons = parseInt($('#numOfPersons').val(), 10);
+
+            // Validate: Single person cannot select more than one table
+            if (numOfPersons === 1 && selectedTables.length > 1) {
+                toastr.error('A single person cannot select more than one table.');
+                return;
+            }
+
+            // Calculate total capacity of selected tables
+            const totalCapacity = selectedTables.reduce((sum, table) => sum + table.Capacity, 0);
+
+            // Validate: Number of persons cannot exceed total table capacity
+            if (numOfPersons > totalCapacity) {
+                toastr.error('Number of persons exceeds the capacity of the selected table(s). Please add a new table or adjust the number of persons.');
+                return;
+            }
+
+            // Proceed with form submission if validations pass
             $.ajax({
                 url: form.attr('action'),
                 type: 'POST',
