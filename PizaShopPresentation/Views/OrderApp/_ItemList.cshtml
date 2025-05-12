@@ -104,30 +104,83 @@
         });
     }
 
+    function addItemToCart(itemId, itemName, itemPrice) {
+        // Create cart item
+        const cartItem = {
+            Id: itemId,
+            Name: itemName,
+            Quantity: 1,
+            ItemPrice: itemPrice,
+            TotalPrice: itemPrice,
+            Modifiers: [],
+            GlobalId: itemName.toLowerCase().replace(/\s+/g, '') + '-' + Date.now()
+        };
+
+        // Check if item with no modifiers exists
+        const existingItemIndex = window.cartItems.findIndex(ci =>
+            ci.Id === itemId && ci.Modifiers.length === 0
+        );
+
+        if (existingItemIndex !== -1) {
+            window.cartItems[existingItemIndex].Quantity += 1;
+            window.cartItems[existingItemIndex].TotalPrice = window.cartItems[existingItemIndex].ItemPrice * window.cartItems[existingItemIndex].Quantity;
+        } else {
+            window.cartItems.push(cartItem);
+        }
+
+        // Update cart display
+        if (typeof updateCartDisplay === 'function') {
+            updateCartDisplay();
+        }
+
+        toastr.success(`${itemName} added to cart.`);
+    }
+
     $(document).ready(function () {
         $(document).on('click', '.item-card', function () {
             const itemId = $(this).data('item-id');
+            const itemName = $(this).find('.card-title').text();
+            const itemPrice = parseFloat($(this).find('.card-text').text().replace('₹', ''));
+
+            // Check if item has modifiers
             $.ajax({
-                url: '@Url.Action("ShowItemModifiersModal", "OrderApp")',
+                url: '@Url.Action("HasModifiers", "OrderApp")',
                 type: 'GET',
                 data: { itemId: itemId },
                 success: function (result) {
-                    // Ensure modal container exists
-                    if (!$('#itemModifiersModal').length) {
-                        $('body').append(`
-                            <div class="modal fade" id="itemModifiersModal" tabindex="-1" aria-labelledby="itemModifiersModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered modal-lg">
-                                    <div class="modal-content" id="itemModifiersModalContent"></div>
-                                </div>
-                            </div>
-                        `);
+                    if (result.hasModifiers) {
+                        // Item has modifiers, show modal
+                        $.ajax({
+                            url: '@Url.Action("ShowItemModifiersModal", "OrderApp")',
+                            type: 'GET',
+                            data: { itemId: itemId },
+                            success: function (result) {
+                                // Ensure modal container exists
+                                if (!$('#itemModifiersModal').length) {
+                                    $('body').append(`
+                                        <div class="modal fade" id="itemModifiersModal" tabindex="-1" aria-labelledby="itemModifiersModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered modal-lg">
+                                                <div class="modal-content" id="itemModifiersModalContent"></div>
+                                            </div>
+                                        </div>
+                                    `);
+                                }
+                                $('#itemModifiersModalContent').html(result);
+                                $('#itemModifiersModal').modal('show');
+                            },
+                            error: function (xhr, status, error) {
+                                console.error("Error loading item modifiers:", error);
+                                alert("Failed to load item modifiers.");
+                            }
+                        });
+                    } else {
+                        // No modifiers, add directly to cart
+                        addItemToCart(itemId, itemName, itemPrice);
                     }
-                    $('#itemModifiersModalContent').html(result);
-                    $('#itemModifiersModal').modal('show');
                 },
                 error: function (xhr, status, error) {
-                    console.error("Error loading item modifiers:", error);
-                    alert("Failed to load item modifiers.");
+                    console.error("Error checking modifiers:", error);
+                    alert("Failed to check item modifiers.");
                 }
             });
         });

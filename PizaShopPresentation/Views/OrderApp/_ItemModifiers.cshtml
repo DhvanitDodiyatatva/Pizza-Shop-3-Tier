@@ -146,6 +146,9 @@
                 updateCartDisplay();
             }
 
+            // Show success message
+            toastr.success(`${itemName} added to cart.`);
+
             // Close modal
             $('#itemModifiersModal').modal('hide');
         });

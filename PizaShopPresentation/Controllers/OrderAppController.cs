@@ -40,6 +40,19 @@ namespace PizzaShop.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> HasModifiers(int itemId)
+        {
+            var item = await _orderAppRepository.GetItemWithModifiersAsync(itemId);
+            if (item == null)
+            {
+                return Json(new { success = false, message = "Item not found." });
+            }
+
+            bool hasModifiers = item.ItemModifierGroups.Any(img => !img.IsDeleted && img.ModifierGroup != null && !img.ModifierGroup.IsDeleted);
+            return Json(new { success = true, hasModifiers = hasModifiers });
+        }
+
+        [HttpGet]
         public async Task<IActionResult> GetOrderById(int orderId)
         {
             try
