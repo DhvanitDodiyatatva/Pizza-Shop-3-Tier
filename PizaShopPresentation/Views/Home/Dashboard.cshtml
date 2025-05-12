@@ -81,28 +81,88 @@
     </div>
 
     <div class="row">
-        <div class="col-md-3 col-sm-6 mb-3">
-            <div class="card p-3">
-                <h6>Total Sales</h6>
-                <h3>₹@ViewBag.TotalSales</h3>
+        <div class="col-lg-3 col-md-6 col-sm-6  mb-3">
+            <div class="card p-3 d-flex flex-row justify-content-between h-100">
+                <div class="justify-content-start">
+                    <h6>Total Sales</h6>
+                    <h3>₹@ViewBag.TotalSales</h3>
+                </div>
+                <div class="justify-content-end ">
+                    <div class="rounded-pill p-1" style="border: 2px solid green;">
+                        <div class="  rounded-pill p-1 bg-success-subtle">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="green"
+                                class="bi bi-bar-chart" viewBox="0 0 16 16">
+                                <path
+                                    d="M4 11H2v3h2zm5-4H7v7h2zm5-5v12h-2V2zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM6 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm-5 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1z" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="col-md-3 col-sm-6 mb-3">
-            <div class="card p-3">
-                <h6>Total Orders</h6>
-                <h3>@ViewBag.TotalOrders</h3>
+        <div class="col-lg-3 col-md-6 col-sm-6 mb-3">
+            <div class="card p-3 d-flex flex-row justify-content-between h-100">
+                <div>
+                    <h6>Total Orders</h6>
+                    <h3>@ViewBag.TotalOrders</h3>
+                </div>
+                <div class="justify-content-end ">
+                    <div class="rounded-pill p-1" style="border: 2px solid rgb(163, 128, 163);">
+                        <div class="  rounded-pill p-1 " style="background-color: rgb(163, 128, 163);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="purple"
+                                class="bi bi-journal-text" viewBox="0 0 16 16">
+                                <path
+                                    d="M5 10.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5" />
+                                <path
+                                    d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2" />
+                                <path
+                                    d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1z" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6 mb-3">
+            <div class="card p-3 h-100 d-flex flex-row justify-content-between ">
+                <div>
+                    <h6>Avg Order Value</h6>
+                    <h3>₹@Math.Round((decimal)ViewBag.AvgOrderValue, 1)</h3>
+                </div>
+                <div class="justify-content-end  ">
+                    <div class="rounded-pill p-1" style="border: 2px solid green;">
+                        <div class="  rounded-pill p-1 bg-success-subtle">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="green"
+                                class="bi bi-receipt-cutoff" viewBox="0 0 16 16">
+                                <path
+                                    d="M3 4.5a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5M11.5 4a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1z" />
+                                <path
+                                    d="M2.354.646a.5.5 0 0 0-.801.13l-.5 1A.5.5 0 0 0 1 2v13H.5a.5.5 0 0 0 0 1h15a.5.5 0 0 0 0-1H15V2a.5.5 0 0 0-.053-.224l-.5-1a.5.5 0 0 0-.8-.13L13 1.293l-.646-.647a.5.5 0 0 0-.708 0L11 1.293l-.646-.647a.5.5 0 0 0-.708 0L9 1.293 8.354.646a.5.5 0 0 0-.708 0L7 1.293 6.354.646a.5.5 0 0 0-.708 0L5 1.293 4.354.646a.5.5 0 0 0-.708 0L3 1.293zm-.217 1.198.51.51a.5.5 0 0 0 .707 0L4 1.707l.646.647a.5.5 0 0 0 .708 0L6 1.707l.646.647a.5.5 0 0 0 .708 0L8 1.707l.646.647a.5.5 0 0 0 .708 0L10 1.707l.646.647a.5.5 0 0 0 .708 0L12 1.707l.646.647a.5.5 0 0 0 .708 0l.509-.51.137.274V15H2V2.118z" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="col-md-3 col-sm-6 mb-3">
-            <div class="card p-3">
-                <h6>Avg Order Value</h6>
-                <h3>₹@Math.Round((decimal)ViewBag.AvgOrderValue, 1)</h3>
-            </div>
-        </div>
-        <div class="col-md-3 col-sm-6 mb-3">
-            <div class="card p-3">
-                <h6>Avg Waiting Time</h6>
-                <h3>@ViewBag.AvgWaitingTime mins</h3>
+        <div class="col-lg-3 col-md-6 col-sm-6 mb-3">
+            <div class="card p-3 h-100 d-flex flex-row justify-content-between">
+                <div>
+                    <h6>Avg Waiting Time</h6>
+                    <h3>@ViewBag.AvgWaitingTime mins</h3>
+                </div>
+                <div class="justify-content-end ">
+                    <div class="rounded-pill p-1" style="border: 2px solid rgb(209, 72, 72);">
+                        <div class="  rounded-pill p-1" style="background-color: #ca8d8d;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="brown"
+                                class="bi bi-stopwatch " viewBox="0 0 16 16">
+                                <path d="M8.5 5.6a.5.5 0 1 0-1 0v2.9h-3a.5.5 0 0 0 0 1H8a.5.5 0 0 0 .5-.5z" />
+                                <path
+                                    d="M6.5 1A.5.5 0 0 1 7 .5h2a.5.5 0 0 1 0 1v.57c1.36.196 2.594.78 3.584 1.64l.012-.013.354-.354-.354-.353a.5.5 0 0 1 .707-.708l1.414 1.415a.5.5 0 1 1-.707.707l-.353-.354-.354.354-.013.012A7 7 0 1 1 7 2.071V1.5a.5.5 0 0 1-.5-.5M8 3a6 6 0 1 0 .001 12A6 6 0 0 0 8 3" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -127,7 +187,7 @@
     </div>
 
     <div class="row">
-        <div class="col-md-3 col-sm-6 mb-3">
+        <div class="col-lg-3 col-md-6 col-sm-6 mb-3">
             <div class="card p-3 h-100">
                 <h6>Top Selling Items</h6>
                 @if (ViewBag.TopSellingItems != null && ViewBag.TopSellingItems.Count > 0)
@@ -148,8 +208,8 @@
                 }
             </div>
         </div>
-        <div class="col-md-3 col-sm-6 mb-3">
-            <div class="card p-3">
+        <div class="col-lg-3 col-md-6 col-sm-6 mb-3">
+            <div class="card p-3 h-100">
                 <h6>Least Selling Items</h6>
                 @if (ViewBag.LeastSellingItems != null && ViewBag.LeastSellingItems.Count > 0)
                 {
@@ -169,16 +229,41 @@
                 }
             </div>
         </div>
-        <div class="col-md-3 col-sm-6 mb-3">
-            <div class="card p-3 h-100 text-center">
-                <h6>Waiting Count</h6>
-                <h3>@ViewBag.WaitingListCount</h3>
+        <div class="col-lg-3 col-md-6 col-sm-6 mb-3">
+            <div class="card p-3 h-100 d-flex flex-row justify-content-between">
+                <div>
+                    <h6>Waiting Count</h6>
+                    <h3>@ViewBag.WaitingListCount</h3>
+                </div>
+                <div class="justify-content-end ">
+                    <div class="rounded-pill p-1" style="border: 2px solid orange;">
+                        <div class="  rounded-pill p-1 " style="background-color: orange;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor"
+                                class="bi bi-hourglass" viewBox="0 0 16 16">
+                                <path
+                                    d="M2 1.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-1v1a4.5 4.5 0 0 1-2.557 4.06c-.29.139-.443.377-.443.59v.7c0 .213.154.451.443.59A4.5 4.5 0 0 1 12.5 13v1h1a.5.5 0 0 1 0 1h-11a.5.5 0 1 1 0-1h1v-1a4.5 4.5 0 0 1 2.557-4.06c.29-.139.443-.377.443-.59v-.7c0-.213-.154-.451-.443-.59A4.5 4.5 0 0 1 3.5 3V2h-1a.5.5 0 0 1-.5-.5m2.5.5v1a3.5 3.5 0 0 0 1.989 3.158c.533.256 1.011.791 1.011 1.491v.702c0 .7-.478 1.235-1.011 1.491A3.5 3.5 0 0 0 4.5 13v1h7v-1a3.5 3.5 0 0 0-1.989-3.158C8.978 9.586 8.5 9.052 8.5 8.351v-.702c0-.7.478-1.235 1.011-1.491A3.5 3.5 0 0 0 11.5 3V2z" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="col-md-3 col-sm-6 mb-3">
-            <div class="card p-3 h-100 text-center">
-                <h6>New Customer Count</h6>
-                <h3>@ViewBag.NewCustomerCount</h3>
+        <div class="col-lg-3 col-md-6 col-sm-6 mb-3">
+            <div class="card p-3 h-100 d-flex flex-row justify-content-between ">
+                <div class="">
+                    <h6>New Customer Count</h6>
+                    <h3>@ViewBag.NewCustomerCount</h3>
+                </div>
+                <div class="justify-content-end ">
+                    <div class="rounded-pill p-1" style="border: 2px solid orange;">
+                        <div class="  rounded-pill p-1 " style="background-color: orange;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor"
+                                class="bi bi-person-fill" viewBox="0 0 16 16">
+                                <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -44,6 +44,8 @@ namespace PizzaShopPresentation.Controllers
             _context = context;
         }
 
+        [CustomAuthorize("RoleAndPermission", PermissionType.View, "super_admin", "account_manager")]
+
         public async Task<IActionResult> Dashboard(string timeFrame = "CurrentMonth", string fromDate = null, string toDate = null)
         {
             DateTime startDate, endDate;
@@ -116,7 +118,7 @@ namespace PizzaShopPresentation.Controllers
         }
 
 
-        [CustomAuthorize("Users", PermissionType.View, "super_admin", "account_manager", "chef")]
+        [CustomAuthorize("Users", PermissionType.View, "super_admin", "account_manager")]
         public async Task<IActionResult> Users(string searchQuery = "", int page = 1, int pageSize = 5, string sortBy = "Id", string sortOrder = "asc")
         {
             var (users, totalUsers) = await _userCrudService.GetUsersAsync(searchQuery, page, pageSize, sortBy, sortOrder);
@@ -300,7 +302,7 @@ namespace PizzaShopPresentation.Controllers
         }
 
 
-        [CustomAuthorize("RoleAndPermission", PermissionType.View, "super_admin", "account_manager", "chef")]
+        [CustomAuthorize("RoleAndPermission", PermissionType.View, "super_admin", "account_manager")]
         public IActionResult Roles()
         {
             var roles = _roleService.GetAllRoles();

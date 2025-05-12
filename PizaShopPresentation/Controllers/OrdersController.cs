@@ -11,7 +11,7 @@ using PizzaShopServices.Attributes;
 
 namespace PizzaShopPresentation.Controllers;
 
-[CustomAuthorize("Order", PermissionType.View, "super_admin", "account_manager", "chef")]
+[CustomAuthorize("Order", PermissionType.View, "super_admin", "account_manager")]
 public class OrdersController : Controller
 {
     private readonly IOrderService _orderService;

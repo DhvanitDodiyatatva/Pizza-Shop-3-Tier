@@ -12,7 +12,7 @@ using PizzaShopServices.Attributes;
 
 namespace PizaShopPresentation.Controllers
 {
-     [CustomAuthorize("Customers", PermissionType.View, "super_admin", "account_manager", "chef")]
+     [CustomAuthorize("Customers", PermissionType.View, "super_admin", "account_manager")]
     public class CustomerController : Controller
     {
         private readonly ICustomerService _customerService;

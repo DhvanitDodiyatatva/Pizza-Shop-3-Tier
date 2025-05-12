@@ -84,6 +84,14 @@ namespace PizzaShopPresentation.Controllers
                     Expires = DateTime.UtcNow.AddHours(expireHours)
                 });
 
+                // Check user role for redirection
+                var user = await _userService.GetUserByEmailAsync(model.Email);
+                if (user != null && user.Role == "chef")
+                {
+                    TempData["successMessage"] = "User Logged in successfully!";
+                    return RedirectToAction("Kot", "OrderApp");
+                }
+
                 TempData["successMessage"] = "User Logged in successfully !";
 
                 // Redirect to the provided returnUrl if valid; otherwise, redirect to the dashboard
