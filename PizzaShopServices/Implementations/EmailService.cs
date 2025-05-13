@@ -7,19 +7,24 @@ using PizzaShopRepository.Models;
 using PizzaShopRepository.Interfaces;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
+using System.IO;
+using System.Net.Mime;
+using Microsoft.AspNetCore.Hosting; // For IWebHostEnvironment
 
 namespace PizzaShopServices.Implementations
 {
     public class EmailService : IEmailService
     {
         private readonly IUserRepository _userRepository;
+        private readonly string _logoPath;
 
-        private readonly string _logoPath = Path.Combine(Directory.GetCurrentDirectory(), "images", "logos", "pizzashop_logo.png");
-
-        public EmailService(IUserRepository userRepository)
+        public EmailService(IUserRepository userRepository, IWebHostEnvironment env)
         {
             _userRepository = userRepository;
+            // Resolve the path to the image in wwwroot/images/logos
+            _logoPath = Path.Combine(env.WebRootPath, "images", "logos", "pizzashop_logo.png");
         }
+
         public async Task SendResetPasswordEmailAsync(string email, string resetPasswordUrl)
         {
             var user = await _userRepository.GetUserByEmailAsync(email);
@@ -32,94 +37,118 @@ namespace PizzaShopServices.Implementations
             var token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
             var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
 
-            // Set token and expiry (e.g., 24 hours from now)
+            // Set token and expiry 
             user.ResetPasswordToken = encodedToken;
-            user.ResetPasswordTokenExpiry = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(24), DateTimeKind.Unspecified);
+            user.ResetPasswordTokenExpiry = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(1), DateTimeKind.Unspecified);
             await _userRepository.UpdateUserAsync(user);
+
             // Append the token to the reset URL
             var resetUrlWithToken = $"{resetPasswordUrl}?token={Uri.EscapeDataString(encodedToken)}";
 
-            var smtpClient = new SmtpClient("mail.etatvasoft.com")
+            using var smtpClient = new SmtpClient("mail.etatvasoft.com")
             {
                 Port = 587,
                 Credentials = new NetworkCredential("test.dotnet@etatvasoft.com", "P}N^{z-]7Ilp"),
                 EnableSsl = true
             };
 
-            var mailMessage = new MailMessage
+            using var mailMessage = new MailMessage
             {
                 From = new MailAddress("test.dotnet@etatvasoft.com"),
                 Subject = "Reset Password - PIZZASHOP",
-                IsBodyHtml = true,
-                Body = $@"
-                    <html lang='en'>
-                    <head>
-                        <meta charset='UTF-8'>
-                        <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-                        <title>Reset Password - PIZZASHOP</title>
-                        <style>
-                            body {{
-                                font-family: Arial, sans-serif;
-                                background-color: #f4f4f4;
-                                margin: 0;
-                                padding: 0;
-                                height: 100vh;
-                            }}
-                            .container {{
-                                background-color: white;
-                                width: 750px;
-                                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                                border-radius: 8px;
-                                overflow: hidden;
-                            }}
-                            .header {{
-                                background-color: #0d5e99;
-                                color: white;
-                                text-align: center;
-                                padding: 15px;
-                                font-size: 24px;
-                                display: flex;
-                                justify-content: center;
-                                align-items: center;
-                            }}
-                            .content {{
-                                padding: 20px;
-                            }}
-                            .content a {{
-                                color: #0d5e99;
-                                text-decoration: none;
-                                font-weight: bold;
-                            }}
-                            .content a:hover {{
-                                text-decoration: underline;
-                            }}
-                            .important-note {{
-                                background-color: #fff5cc;
-                                padding: 10px;
-                                border-left: 5px solid #ffcc00;
-                                font-size: 14px Eugenia;
-                                margin-top: 10px;
-                            }}
-                        </style>
-                    </head>
-                    <body>
-                        <div class='container'>
-                            <div class='header'>
-                                <img src='https://dcassetcdn.com/design_img/75540/80399/80399_1296199_75540_image.png' alt='logo' style='max-height: 120px; max-width: 120px;'>
-                                <h1>PIZZASHOP</h1>
-                            </div>
-                            <div class='content'>
-                                <p><strong>Pizza shop,</strong></p>
-                                <p>Please <a href='{resetUrlWithToken}' style='color: #1f73ae; text-decoration: underline;'>click here</a> to reset your account password.</p>
-                                <p>If you encounter any issues or have any questions, please do not hesitate to contact our support team.</p>
-                                <p class='important-note'><strong>Important Note:</strong> For security reasons, the link will expire in 24 hours. If you did not request a password reset, please ignore this email or contact our support team immediately.</p>
-                            </div>
-                        </div>
-                    </body>
-                    </html>"
+                IsBodyHtml = true
             };
 
+            // HTML content for the email
+            var htmlBody = $@"
+                <html lang='en'>
+                <head>
+                    <meta charset='UTF-8'>
+                    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+                    <title>Reset Password - PIZZASHOP</title>
+                    <style>
+                        body {{
+                            font-family: Arial, sans-serif;
+                            background-color: #f4f4f4;
+                            margin: 0;
+                            padding: 0;
+                            height: 100vh;
+                        }}
+                        .container {{
+                            background-color: white;
+                            width: 750px;
+                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                            border-radius: 8px;
+                            overflow: hidden;
+                        }}
+                        .header {{
+                            background-color: #0d5e99;
+                            color: white;
+                            text-align: center;
+                            padding: 15px;
+                            font-size: 24px;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                        }}
+                        .content {{
+                            padding: 20px;
+                        }}
+                        .content a {{
+                            color: #0d5e99;
+                            text-decoration: none;
+                            font-weight: bold;
+                        }}
+                        .content a:hover {{
+                            text-decoration: underline;
+                        }}
+                        .important-note {{
+                            background-color: #fff5cc;
+                            padding: 10px;
+                            border-left: 5px solid #ffcc00;
+                            font-size: 14px;
+                            margin-top: 10px;
+                        }}
+                    </style>
+                </head>
+                <body>
+                    <div class='container'>
+                        <div class='header'>
+                            <img src='cid:logo' alt='PIZZASHOP Logo' style='max-height: 120px; max-width: 120px;'>
+                            <h1>PIZZASHOP</h1>
+                        </div>
+                        <div class='content'>
+                            <p><strong>Pizza shop,</strong></p>
+                            <p>Please <a href='{resetUrlWithToken}' style='color: #1f73ae; text-decoration: underline;'>click here</a> to reset your account password.</p>
+                            <p>If you encounter any issues or have any questions, please do not hesitate to contact our support team.</p>
+                            <p class='important-note'><strong>Important Note:</strong> For security reasons, the link will expire in 24 hours. If you did not request a password reset, please ignore this email or contact our support team immediately.</p>
+                        </div>
+                    </div>
+                </body>
+                </html>";
+
+            // Create alternate view for HTML content
+            var htmlView = AlternateView.CreateAlternateViewFromString(htmlBody, null, "text/html");
+
+            // Embed the logo image if it exists
+            if (File.Exists(_logoPath))
+            {
+                var logoStream = new FileStream(_logoPath, FileMode.Open, FileAccess.Read);
+                var logoImage = new LinkedResource(logoStream, "image/png")
+                {
+                    ContentId = "logo"
+                };
+                htmlView.LinkedResources.Add(logoImage);
+            }
+            else
+            {
+                // Log or throw an exception for debugging
+                System.Diagnostics.Debug.WriteLine($"Logo file not found at: {_logoPath}");
+            }
+
+            mailMessage.AlternateViews.Add(htmlView);
             mailMessage.To.Add(email);
+
             await smtpClient.SendMailAsync(mailMessage);
         }
 
@@ -127,115 +156,137 @@ namespace PizzaShopServices.Implementations
         {
             var fromEmail = "test.dotnet@etatvasoft.com"; // Sender email
             var subject = "Your Temporary Login Details for PIZZASHOP";
-            var emailBody = $@"<!DOCTYPE html>
-                        <html lang=""en"">
-                        <head>
-                            <meta charset=""UTF-8"">
-                            <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
-                            <title>PIZZASHOP Email</title>
-                            <style>
-                                body {{
-                                    font-family: Arial, sans-serif;
-                                    margin: 0;
-                                    padding: 0;
-                                    background-color: #f4f4f4;
-                                }}
-                                .container {{
-                                    max-width: 600px;
-                                    margin: 20px auto;
-                                    background: #fff;
-                                    padding: 20px;
-                                    border-radius: 5px;
-                                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                                }}
-                                .header {{
-                                    background: #005a9c;
-                                    color: white;
-                                    text-align: left;
-                                    padding: 15px;
-                                    font-size: 24px;
-                                    font-weight: bold;
-                                    display: flex;
-                                    align-items: center;
-                                    gap: 10px;
-                                }}
-                                .header img {{
-                                    height: 30px;
-                                }}
-                                .content {{
-                                    padding: 20px 0;
-                                    text-align: left;
-                                }}
-                                a{{
-                                    color: #005a9c;
-                                    text-decoration: none;
-                                }}
-                                a:hover {{
-                                    text-decoration: underline;
-                                }}
-                                .login-box {{
-                                    border: 1px solid #000;
-                                    padding: 15px;
-                                    margin: 20px 0;
-                                    background: #fff;
-                                }}
-                                .login-box b {{
-                                    font-size: 16px;
-                                }}
-                                .footer {{
-                                    text-align: left;
-                                    font-size: 14px;
-                                    color: #555;
-                                    margin-top: 20px;
-                                }}
-                                @media (max-width: 600px) {{
-                                    .container {{
-                                        width: 90%;
-                                    }}
-                                    .header {{
-                                        font-size: 20px;
-                                    }}
-                                }}
-                            </style>
-                        </head>
-                        <body>
-                            <div class=""container"">
-                                <div class=""header"">
-                                    <img src=""https://dcassetcdn.com/design_img/75540/80399/80399_1296199_75540_image.png"" alt=""PIZZASHOP Logo"">
-                                    PIZZASHOP
-                                </div>
-                                <div class=""content"">
-                                    <p>Welcome to PIZZASHOP</p>
-                                    <p>Please find the details below for login into your account.</p>
-                                    <div class=""login-box"">
-                                        <b>Login Details:</b><br><br>
-                                        <b>Username:</b> {username}<br>
-                                        <b>Temporary Password:</b> {temporaryPassword}
-                                    </div>
-                                    <p>If you encounter any issues or have any questions, please do not hesitate to contact our support team.</p>
-                                </div>
-                            </div>
-                        </body>
-                        </html>";
 
-            using (var smtpClient = new SmtpClient("mail.etatvasoft.com")
+            using var smtpClient = new SmtpClient("mail.etatvasoft.com")
             {
                 Port = 587,
                 Credentials = new NetworkCredential("test.dotnet@etatvasoft.com", "P}N^{z-]7Ilp"),
                 EnableSsl = true
-            })
-            {
-                var mailMessage = new MailMessage
-                {
-                    From = new MailAddress(fromEmail, "PIZZASHOP"),
-                    Subject = subject,
-                    Body = emailBody,
-                    IsBodyHtml = true
-                };
+            };
 
-                mailMessage.To.Add(toEmail);
-                await smtpClient.SendMailAsync(mailMessage);
+            using var mailMessage = new MailMessage
+            {
+                From = new MailAddress(fromEmail, "PIZZASHOP"),
+                Subject = subject,
+                IsBodyHtml = true
+            };
+
+            // HTML content for the email
+            var htmlBody = $@"
+                <!DOCTYPE html>
+                <html lang=""en"">
+                <head>
+                    <meta charset=""UTF-8"">
+                    <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+                    <title>PIZZASHOP Email</title>
+                    <style>
+                        body {{
+                            font-family: Arial, sans-serif;
+                            margin: 0;
+                            padding: 0;
+                            background-color: #f4f4f4;
+                        }}
+                        .container {{
+                            max-width: 600px;
+                            margin: 20px auto;
+                            background: #fff;
+                            padding: 20px;
+                            border-radius: 5px;
+                            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                        }}
+                        .header {{
+                            background: #005a9c;
+                            color: white;
+                            text-align: left;
+                            padding: 15px;
+                            font-size: 24px;
+                            font-weight: bold;
+                            display: flex;
+                            align-items: center;
+                            gap: 10px;
+                        }}
+                        .header img {{
+                            height: 30px;
+                        }}
+                        .content {{
+                            padding: 20px 0;
+                            text-align: left;
+                        }}
+                        a{{
+                            color: #005a9c;
+                            text-decoration: none;
+                        }}
+                        a:hover {{
+                            text-decoration: underline;
+                        }}
+                        .login-box {{
+                            border: 1px solid #000;
+                            padding: 15px;
+                            margin: 20px 0;
+                            background: #fff;
+                        }}
+                        .login-box b {{
+                            font-size: 16px;
+                        }}
+                        .footer {{
+                            text-align: left;
+                            font-size: 14px;
+                            color: #555;
+                            margin-top: 20px;
+                        }}
+                        @media (max-width: 600px) {{
+                            .container {{
+                                width: 90%;
+                            }}
+                            .header {{
+                                font-size: 20px;
+                            }}
+                        }}
+                    </style>
+                </head>
+                <body>
+                    <div class=""container"">
+                        <div class=""header"">
+                             <img src='cid:logo' alt='PIZZASHOP Logo' style='max-height: 120px; max-width: 120px;'>
+                            PIZZASHOP
+                        </div>
+                        <div class=""content"">
+                            <p>Welcome to PIZZASHOP</p>
+                            <p>Please find the details below for login into your account.</p>
+                            <div class=""login-box"">
+                                <b>Login Details:</b><br><br>
+                                <b>Username:</b> {username}<br>
+                                <b>Temporary Password:</b> {temporaryPassword}
+                            </div>
+                            <p>If you encounter any issues or have any questions, please do not hesitate to contact our support team.</p>
+                        </div>
+                    </div>
+                </body>
+                </html>";
+
+            // Create alternate view for HTML content
+            var htmlView = AlternateView.CreateAlternateViewFromString(htmlBody, null, "text/html");
+
+            // Embed the logo image if it exists
+            if (File.Exists(_logoPath))
+            {
+                var logoStream = new FileStream(_logoPath, FileMode.Open, FileAccess.Read);
+                var logoImage = new LinkedResource(logoStream, "image/png")
+                {
+                    ContentId = "logo"
+                };
+                htmlView.LinkedResources.Add(logoImage);
             }
+            else
+            {
+                // Log or throw an exception for debugging
+                System.Diagnostics.Debug.WriteLine($"Logo file not found at: {_logoPath}");
+            }
+
+            mailMessage.AlternateViews.Add(htmlView);
+            mailMessage.To.Add(toEmail);
+
+            await smtpClient.SendMailAsync(mailMessage);
         }
     }
 }

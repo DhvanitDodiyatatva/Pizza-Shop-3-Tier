@@ -4,19 +4,21 @@ using PizzaShopServices.Interfaces;
 using System.Threading.Tasks;
 using PizzaShopServices.Attributes;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Hosting; // For IWebHostEnvironment
 
 namespace PizzaShopPresentation.Controllers
 {
-
     public class LoginController : Controller
     {
         private readonly IUserService _userService;
-        private readonly IEmailService _emailService; // New service for email functionality
+        private readonly IEmailService _emailService;
+        private readonly IWebHostEnvironment _env; // Add IWebHostEnvironment
 
-        public LoginController(IUserService userService, IEmailService emailService)
+        public LoginController(IUserService userService, IEmailService emailService, IWebHostEnvironment env)
         {
             _userService = userService;
             _emailService = emailService;
+            _env = env;
         }
 
         // GET: Login Page
@@ -54,7 +56,6 @@ namespace PizzaShopPresentation.Controllers
 
             try
             {
-
                 var (token, expireHours, Success, Message) = await _userService.ValidateUserAsync(model);
 
                 // Handle "Remember Me" functionality with cookies
@@ -142,12 +143,10 @@ namespace PizzaShopPresentation.Controllers
             }
             catch (DbUpdateException ex)
             {
-
                 ViewData["ErrorMessage"] = "Failed to send email due to a database error. Please try again later.";
             }
             catch (Exception ex)
             {
-
                 ViewData["ErrorMessage"] = "Failed to send email. Error: " + ex.Message;
             }
 
