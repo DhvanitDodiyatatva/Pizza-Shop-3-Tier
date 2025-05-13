@@ -177,6 +177,7 @@
                                 pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
                                 pdf.save("invoice_" + orderId + ".pdf");
                                 iframe.remove();
+                                toastr.success("Pdf Downloaded Succefully.")
                             }).catch(function (error) {
                                 console.error("Error rendering canvas:", error);
                                 toastr.error("Error generating PDF. Please try again.");
@@ -198,7 +199,7 @@
 
         function loadOrders(url) {
             @* debugger; *@
-                                        var searchQuery = $('#Search').val();
+                                                                                                                        var searchQuery = $('#Search').val();
             var statusFilter = $('#statusFilter').val();
             var timeFilter = $('#timeFilter').val();
             var fromDate = $('#fromDate').val();
