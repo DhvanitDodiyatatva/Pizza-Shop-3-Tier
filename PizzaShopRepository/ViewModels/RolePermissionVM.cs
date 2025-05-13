@@ -17,4 +17,13 @@ namespace PizzaShopRepository.ViewModels
         public bool CanAddEdit { get; set; }
         public bool CanDelete { get; set; }
     }
+
+    public class ChangedPermission
+    {
+        public int index { get; set; }
+        public bool isSelected { get; set; }
+        public bool canView { get; set; }
+        public bool canAddEdit { get; set; }
+        public bool canDelete { get; set; }
+    }
 }

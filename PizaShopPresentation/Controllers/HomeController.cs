@@ -47,7 +47,7 @@ namespace PizzaShopPresentation.Controllers
             _context = context;
         }
 
-        [CustomAuthorize("RoleAndPermission", PermissionType.View, "super_admin", "account_manager")]
+        // [CustomAuthorize("RoleAndPermission", PermissionType.View, "super_admin", "account_manager")]
 
         public async Task<IActionResult> Dashboard(string timeFrame = "CurrentMonth", string fromDate = null, string toDate = null)
         {
@@ -232,12 +232,14 @@ namespace PizzaShopPresentation.Controllers
             }
         }
 
+        [CustomAuthorize("Users", PermissionType.Alter, "super_admin", "account_manager")]
         [HttpGet]
         public IActionResult AddNewUser()
         {
             return View();
         }
 
+        [CustomAuthorize("Users", PermissionType.Alter, "super_admin", "account_manager")]
         [HttpPost]
         public async Task<IActionResult> AddNewUser(AddEditUserVM model)
         {
@@ -259,6 +261,7 @@ namespace PizzaShopPresentation.Controllers
             }
         }
 
+        [CustomAuthorize("Users", PermissionType.Alter, "super_admin", "account_manager")]
         [HttpGet]
         public async Task<IActionResult> EditUser(int id)
         {
@@ -270,6 +273,7 @@ namespace PizzaShopPresentation.Controllers
             return View(model);
         }
 
+        [CustomAuthorize("Users", PermissionType.Alter, "super_admin", "account_manager")]
         [HttpPost]
         public async Task<IActionResult> UpdateUser([Bind("Id,FirstName,LastName,Username,Phone,Country,State,City,Address,Zipcode,Status,Role,ProfileImage,RemoveImage")] AddEditUserVM model, IFormFile ImageFile)
         {
@@ -288,6 +292,7 @@ namespace PizzaShopPresentation.Controllers
             return RedirectToAction("Users", new { id = model.Id });
         }
 
+        [CustomAuthorize("Users", PermissionType.Delete, "super_admin", "account_manager")]
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
@@ -312,6 +317,7 @@ namespace PizzaShopPresentation.Controllers
             return View(roles);
         }
 
+        [CustomAuthorize("RoleAndPermission", PermissionType.View, "super_admin", "account_manager")]
         public IActionResult Permissions(int roleId)
         {
             var viewModel = _roleService.GetRolePermissions(roleId);
@@ -322,6 +328,7 @@ namespace PizzaShopPresentation.Controllers
             return View(viewModel);
         }
 
+        [CustomAuthorize("RoleAndPermission", PermissionType.Alter, "super_admin", "account_manager")]
         [HttpPost]
         public IActionResult UpdatePermissions(RolePermissionVM model, [FromForm] string changedPermissions)
         {
@@ -373,15 +380,7 @@ namespace PizzaShopPresentation.Controllers
             return Json(new { success = true });
         }
 
-        // Add a new class to deserialize the changed permissions
-        public class ChangedPermission
-        {
-            public int index { get; set; }
-            public bool isSelected { get; set; }
-            public bool canView { get; set; }
-            public bool canAddEdit { get; set; }
-            public bool canDelete { get; set; }
-        }
+
 
 
 
@@ -411,37 +410,6 @@ namespace PizzaShopPresentation.Controllers
 
             return View(model);
         }
-
-        // [HttpPost]
-        // public async Task<IActionResult> UpdateProfileOA([Bind("FirstName,LastName,Username,Phone,Country,State,City,Address,Zipcode")] MyProfile model)
-        // {
-        //     var email = User.Identity?.Name;
-        //     if (string.IsNullOrEmpty(email))
-        //     {
-        //         return RedirectToAction("Table", "OrderApp");
-        //     }
-
-        //     try
-        //     {
-        //         await _userCrudService.UpdateUserProfileAsync(email, model);
-        //         TempData["SuccessMessage"] = "Profile updated successfully!";
-        //     }
-        //     catch (Exception)
-        //     {
-        //         TempData["ErrorMessage"] = "Failed to update profile.";
-        //     }
-
-        //     // Check user role for redirection
-        //     var user = await _userService.GetUserByEmailAsync(model.Email);
-        //     if (user != null && user.Role == "chef")
-        //     {
-        //         TempData["successMessage"] = "Profile Updated Successfully successfully!";
-        //         return RedirectToAction("Kot", "OrderApp");
-        //     }
-
-        //     TempData["successMessage"] = "Profile Updated Successfully successfully!";
-        //     return RedirectToAction("Table", "OrderApp");
-        // }
 
         [HttpPost]
         public async Task<IActionResult> UpdateProfileOA(MyProfile model, IFormFile? ImageFile)
