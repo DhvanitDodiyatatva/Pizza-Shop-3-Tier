@@ -111,40 +111,58 @@
                         <td class="py-3 text-nowrap">@order.CreatedAt?.ToString("dd-MM-yyyy")</td>
                         <td class="py-3">@order.Customer?.Name</td>
                         <td class="py-3">
-
                             @order.OrderStatus
-
                         </td>
                         <td class="py-3">@order.PaymentMethod</td>
                         <td class="py-3">
-                            <span class="text-warning fs-4">@(new string('★', order.Rating ?? 0))@(new string('☆', 5
-                                                            - (order.Rating ?? 0)))</span>
-                    </td>
-                    <td class="py-3">@order.TotalAmount.ToString("C")</td>
-                    <td class="py-3">
-                        <a href="@Url.Action("OrderDetails", "Orders", new { id = order.Id })"
-                            class="text-decoration-none text-black text-body-btn me-2 view-order-details">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                                class="bi bi-eye" viewBox="0 0 16 16">
-                                <path
-                                    d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z" />
-                                <path
-                                    d="M8 5.5a2.5 2.5 0 0 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
-                            </svg>
-                        </a>
-                        <a href="#" class="text-decoration-none text-black text-body-btn me-2" id="pdfInvoice"
-                            data-orderid="@order.Id">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                                class="bi bi-file-earmark-pdf" viewBox="0 0 16 16">
-                                <path
-                                    d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
-                                <path
-                                    d="M4.603 14.087a.81.81 0 0 1-.658-.405c-.128-.286-.19-.586-.19-.883 0-.296.062-.598.19-.883a.739.739 0 0 1 .658-.405.738.738 0 0 1 .657.405c.128.286.19.587.19.883 0 .297-.062.597-.19.883a.81.81 0 0 1-.657.405zm2.315-2.588c-.297 0-.57-.113-.767-.34-.198-.226-.297-.51-.297-.794v-2.02c0-.283.099-.567.297-.794.198-.226.47-.34.767-.34.297 0 .57.114.767.34.198.227.297.51.297.794v2.02c0 .284-.099.568-.297.794-.198.227-.47.34-.767.34zm3.252 2.588a.81.81 0 0 1-.658-.405c-.128-.286-.19-.586-.19-.883 0-.296.062-.598.19-.883a.739.739 0 0 1 .658-.405.738.738 0 0 1 .657.405c.128.286.19.587.19.883 0 .297-.062.597-.19.883a.81.81 0 0 1-.657.405z" />
-                            </svg>
-                        </a>
-                    </td>
-                </tr>
-                                }
+                            @{
+                                decimal rating = order.Rating ?? 0;
+                                int fullStars = (int)Math.Floor(rating); 
+                                bool hasHalfStar = (rating - fullStars) >= 0.5m; 
+                                int emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0); 
+
+                                // Display stars using Bootstrap Icons
+                                <span class="text-warning fs-4">
+                                    @for (int i = 0; i < fullStars; i++)
+                                    {
+                                        <i class="bi bi-star-fill"></i>
+                                    }
+                                    @if (hasHalfStar)
+                                    {
+                                        <i class="bi bi-star-half"></i>
+                                    }
+                                    @for (int i = 0; i < emptyStars; i++)
+                                    {
+                                        <i class="bi bi-star"></i>
+                                    }
+                                </span>
+                            }
+                        </td>
+                        <td class="py-3">@order.TotalAmount.ToString("C")</td>
+                        <td class="py-3">
+                            <a href="@Url.Action("OrderDetails", "Orders", new { id = order.Id })"
+                                class="text-decoration-none text-black text-body-btn me-2 view-order-details">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                    class="bi bi-eye" viewBox="0 0 16 16">
+                                    <path
+                                        d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z" />
+                                    <path
+                                        d="M8 5.5a2.5 2.5 0 0 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
+                                </svg>
+                            </a>
+                            <a href="#" class="text-decoration-none text-black text-body-btn me-2" id="pdfInvoice"
+                                data-orderid="@order.Id">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                    class="bi bi-file-earmark-pdf" viewBox="0 0 16 16">
+                                    <path
+                                        d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
+                                    <path
+                                        d="M4.603 14.087a.81.81 0 0 1-.658-.405c-.128-.286-.19-.586-.19-.883 0-.296.062-.598.19-.883a.739.739 0 0 1 .658-.405.738.738 0 0 1 .657.405c.128.286.19.587.19.883 0 .297-.062.597-.19.883a.81.81 0 0 1-.657.405zm2.315-2.588c-.297 0-.57-.113-.767-.34-.198-.226-.297-.51-.297-.794v-2.02c0-.283.099-.567.297-.794.198-.226.47-.34.767-.34.297 0 .57.114.767.34.198.227.297.51.297.794v2.02c0 .284-.099.568-.297.794-.198.227-.47.34-.767.34zm3.252 2.588a.81.81 0 0 1-.658-.405c-.128-.286-.19-.586-.19-.883 0-.296.062-.598.19-.883a.739.739 0 0 1 .658-.405.738.738 0 0 1 .657.405c.128.286.19.587.19.883 0 .297-.062.597-.19.883a.81.81 0 0 1-.657.405z" />
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>
@@ -174,9 +192,6 @@
             </div>
         </div>
         <ul class="pagination d-flex align-items-center mb-4">
-            @* <p class="m-0 me-1">Showing @(((Model.CurrentPage - 1) * Model.PageSize) + 1) - @(Model.CurrentPage *
-                                Model.PageSize > Model.TotalPages * Model.PageSize ? Model.TotalPages * Model.PageSize :
-                                Model.CurrentPage * Model.PageSize) of @(Model.TotalPages* Model.PageSize)</p> *@
             <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
                 <a class="page-link text-secondary"
                     href="@Url.Action("GetOrderList", new { searchQuery = Model.SearchQuery, sortColumn = Model.SortColumn, sortDirection = Model.SortDirection, page = Model.CurrentPage - 1, pageSize = Model.PageSize })">

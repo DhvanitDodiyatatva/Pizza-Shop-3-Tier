@@ -21,7 +21,7 @@ public partial class Order
 
     public DateTime? UpdatedAt { get; set; }
 
-    public int? Rating { get; set; }
+    public decimal? Rating { get; set; }
 
     public string InvoiceNo { get; set; } = null!;
 

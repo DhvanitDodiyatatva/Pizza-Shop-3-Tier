@@ -836,7 +836,7 @@ namespace PizzaShopServices.Implementations
 
                 // Calculate average rating and update Order
                 decimal averageRating = (model.FoodRating + model.ServiceRating + model.AmbienceRating) / 3m;
-                order.Rating = (int?)Math.Round(averageRating); // Round to nearest integer and cast to int?
+                order.Rating = averageRating; 
                 _context.Orders.Update(order);
 
                 await _context.SaveChangesAsync();
