@@ -47,39 +47,23 @@ namespace PizzaShopRepository.Controllers
             return PartialView("_AddTaxFee", new TaxFeeAddEditViewModel());
         }
 
-        // POST: TaxFee/AddNewTaxFee (Handles the form submission via AJAX)
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult AddNewTaxFee(TaxFeeAddEditViewModel model)
         {
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    var errors = ModelState.Values
-                        .SelectMany(v => v.Errors)
-                        .Select(e => e.ErrorMessage)
-                        .ToArray();
-                    return Json(new { success = false, message = "Validation failed: " + string.Join(" ", errors) });
-                }
-
                 _taxFeeService.AddTaxFee(model);
-                return Json(new { success = true, message = "Tax/Fee added successfully!" });
+                return Json(new { success = true, message = "Tax/fee added successfully." });
             }
             catch (Exception ex)
             {
-                // Log the full exception details
-                string errorMessage = ex.Message;
-                if (ex.InnerException != null)
-                {
-                    errorMessage += $" Inner Exception: {ex.InnerException.Message}";
-                }
-                Console.WriteLine($"Error adding tax/fee: {errorMessage}\nStackTrace: {ex.StackTrace}");
-                return Json(new { success = false, message = errorMessage });
+                return Json(new { success = false, message = ex.Message });
             }
         }
 
-        // GET: TaxFee/EditTaxFee/5 (Returns the partial view for the "Edit Tax" modal)
+
         [HttpGet]
         public IActionResult EditTaxFee(int id)
         {
@@ -97,28 +81,12 @@ namespace PizzaShopRepository.Controllers
         {
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    var errors = ModelState.Values
-                        .SelectMany(v => v.Errors)
-                        .Select(e => e.ErrorMessage)
-                        .ToArray();
-                    return Json(new { success = false, message = "Validation failed: " + string.Join(" ", errors) });
-                }
-
                 _taxFeeService.UpdateTaxFee(model);
-                return Json(new { success = true, message = "Tax/Fee updated successfully!" });
+                return Json(new { success = true, message = "Tax/fee updated successfully." });
             }
             catch (Exception ex)
             {
-                // Log the full exception details
-                string errorMessage = ex.Message;
-                if (ex.InnerException != null)
-                {
-                    errorMessage += $" Inner Exception: {ex.InnerException.Message}";
-                }
-                Console.WriteLine($"Error updating tax/fee: {errorMessage}\nStackTrace: {ex.StackTrace}");
-                return Json(new { success = false, message = errorMessage });
+                return Json(new { success = false, message = ex.Message });
             }
         }
 

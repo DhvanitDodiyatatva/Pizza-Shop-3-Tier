@@ -65,6 +65,12 @@ namespace PizzaShopRepository.Services
                     throw new Exception("A tax/fee with this name already exists.");
                 }
 
+                // Validate percentage
+                if (model.Type == "percentage" && model.Value > 100)
+                {
+                    throw new Exception("Percentage cannot exceed 100%.");
+                }
+
                 var taxFee = new TaxesFee
                 {
                     Name = model.Name,
@@ -78,7 +84,7 @@ namespace PizzaShopRepository.Services
             }
             catch (Exception ex)
             {
-                string errorMessage = $"Failed to add tax/fee in service layer. Details: {ex.Message}";
+                string errorMessage = $" {ex.Message}";
                 if (ex.InnerException != null)
                 {
                     errorMessage += $" Inner Exception: {ex.InnerException.Message}";
@@ -102,6 +108,12 @@ namespace PizzaShopRepository.Services
                     throw new Exception($"Tax/Fee with ID {model.Id} not found.");
                 }
 
+                // Validate percentage
+                if (model.Type == "percentage" && model.Value > 100)
+                {
+                    throw new Exception("Percentage cannot exceed 100%.");
+                }
+
                 taxFee.Name = model.Name;
                 taxFee.Type = model.Type;
                 taxFee.Value = model.Value;
@@ -111,8 +123,7 @@ namespace PizzaShopRepository.Services
             }
             catch (Exception ex)
             {
-                // Include the inner exception details
-                string errorMessage = $"Failed to update tax/fee in service layer. Details: {ex.Message}";
+                string errorMessage = $" {ex.Message}";
                 if (ex.InnerException != null)
                 {
                     errorMessage += $" Inner Exception: {ex.InnerException.Message}";
