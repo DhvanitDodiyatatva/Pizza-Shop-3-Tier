@@ -136,7 +136,8 @@
         toastr.success(`${itemName} added to cart.`);
     }
 
-    $(document).ready(function () {
+    // Check if the event handler has already been attached
+    if (!$(document).data('itemCardHandlerAttached')) {
         $(document).on('click', '.item-card', function () {
             const itemId = $(this).data('item-id');
             const itemName = $(this).find('.card-title').text();
@@ -184,5 +185,7 @@
                 }
             });
         });
-    });
+        // Set the flag to indicate the handler is attached
+        $(document).data('itemCardHandlerAttached', true);
+    }
 </script>

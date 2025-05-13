@@ -114,12 +114,12 @@
                             @order.OrderStatus
                         </td>
                         <td class="py-3">@order.PaymentMethod</td>
-                        <td class="py-3">
+                        <td class="py-3 text-nowrap">
                             @{
                                 decimal rating = order.Rating ?? 0;
-                                int fullStars = (int)Math.Floor(rating); 
-                                bool hasHalfStar = (rating - fullStars) >= 0.5m; 
-                                int emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0); 
+                                int fullStars = (int)Math.Floor(rating);
+                                bool hasHalfStar = (rating - fullStars) >= 0.5m;
+                                int emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
 
                                 // Display stars using Bootstrap Icons
                                 <span class="text-warning fs-4">
