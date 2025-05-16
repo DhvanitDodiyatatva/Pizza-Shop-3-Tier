@@ -230,7 +230,7 @@ namespace PizzaShopServices.Implementations
 
         public async Task<(bool Success, string Message)> AddNewUserAsync(AddEditUserVM model)
         {
-            if (await _userRepository.UserExistsAsync(null, model.Email))
+            if (await _userRepository.UserExistsAsync(null, model.Email.ToLower().Trim()))
             {
                 throw new Exception("Email already exists.");
             }
@@ -257,7 +257,7 @@ namespace PizzaShopServices.Implementations
                 FirstName = model.FirstName,
                 LastName = model.LastName,
                 Username = model.Username,
-                Email = model.Email,
+                Email = model.Email.ToLower().Trim(),
                 Password = BCrypt.Net.BCrypt.HashPassword(temporaryPassword),
                 Role = model.Role,
                 Phone = model.Phone,

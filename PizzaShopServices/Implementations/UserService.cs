@@ -24,7 +24,7 @@ namespace PizzaShopServices.Implementations
 
         public async Task<(string Token, double ExpireHours, bool Success, string Message)> ValidateUserAsync(Authenticate model)
         {
-            var user = await _userRepository.GetUserByEmailAsync(model.Email);
+            var user = await _userRepository.GetUserByEmailAsync(model.Email.ToLower().Trim());
             if (user == null)
             {
                 throw new Exception("User does not exist.");
