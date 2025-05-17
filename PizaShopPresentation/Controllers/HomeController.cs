@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PizaShopPresentation.Models;
 using PizzaShopRepository.Models;
 using PizzaShopRepository.Repositories;
@@ -48,16 +49,18 @@ namespace PizzaShopPresentation.Controllers
         }
 
         // [CustomAuthorize("RoleAndPermission", PermissionType.View, "super_admin", "account_manager")]
+        // In HomeController.cs
 
         public async Task<IActionResult> Dashboard(string timeFrame = "CurrentMonth", string fromDate = null, string toDate = null)
         {
             DateTime startDate, endDate;
+            string groupBy = "day";
 
             switch (timeFrame)
             {
                 case "Today":
-                    startDate = DateTime.Today;
-                    endDate = DateTime.Today.AddDays(1).AddTicks(-1);
+                    startDate = DateTime.Today.AddHours(9);
+                    endDate = DateTime.Today.AddHours(21).AddTicks(-1);
                     break;
                 case "Last7Days":
                     startDate = DateTime.Today.AddDays(-7);
@@ -72,6 +75,11 @@ namespace PizzaShopPresentation.Controllers
                     {
                         startDate = from;
                         endDate = to.AddDays(1).AddTicks(-1);
+                        var totalDays = (endDate - startDate).TotalDays;
+                        if (totalDays > 31)
+                        {
+                            groupBy = "month";
+                        }
                     }
                     else
                     {
@@ -91,8 +99,20 @@ namespace PizzaShopPresentation.Controllers
             var totalOrders = await _dashboardRepository.GetTotalOrdersAsync(startDate, endDate);
             var avgOrderValue = await _dashboardRepository.GetAverageOrderValueAsync(startDate, endDate);
             var avgWaitingTime = await _dashboardRepository.GetAverageWaitingTimeAsync(startDate, endDate);
-            var revenueData = await _dashboardRepository.GetRevenueDataAsync(startDate, endDate);
-            var customerGrowthData = await _dashboardRepository.GetCustomerGrowthDataAsync(startDate, endDate);
+
+            List<ChartDataViewModel> revenueData;
+            List<ChartDataViewModel> customerGrowthData;
+            if (timeFrame == "Today")
+            {
+                revenueData = await GetHourlyRevenueData(startDate, endDate);
+                customerGrowthData = await GetHourlyCustomerGrowthData(startDate, endDate);
+            }
+            else
+            {
+                revenueData = await _dashboardRepository.GetRevenueDataAsync(startDate, endDate, groupBy);
+                customerGrowthData = await _dashboardRepository.GetCustomerGrowthDataAsync(startDate, endDate, groupBy);
+            }
+
             var topSellingItems = await _dashboardRepository.GetTopSellingItemsAsync(startDate, endDate);
             var leastSellingItems = await _dashboardRepository.GetLeastSellingItemsAsync(startDate, endDate);
             var waitingListCount = await _dashboardRepository.GetWaitingListCountAsync(startDate, endDate);
@@ -113,6 +133,66 @@ namespace PizzaShopPresentation.Controllers
             ViewBag.ToDate = toDate;
 
             return View();
+        }
+
+
+        // Helper methods for hourly data
+        private async Task<List<ChartDataViewModel>> GetHourlyRevenueData(DateTime startDate, DateTime endDate)
+        {
+            var revenueData = await _context.Orders
+                .Where(o => o.CreatedAt >= startDate && o.CreatedAt <= endDate && o.OrderStatus == "completed")
+                .GroupBy(o => o.CreatedAt!.Value.Hour)
+                .Select(g => new
+                {
+                    Hour = g.Key,
+                    Value = g.Sum(o => o.TotalAmount)
+                })
+                .OrderBy(x => x.Hour)
+                .ToListAsync();
+
+            // Generate all hours from 9 AM to 9 PM
+            var allHours = new List<ChartDataViewModel>();
+            for (int hour = 9; hour <= 21; hour++)
+            {
+                var hourStr = hour.ToString("D2") + ":00";
+                var revenueEntry = revenueData.FirstOrDefault(r => r.Hour == hour);
+                allHours.Add(new ChartDataViewModel
+                {
+                    Date = hourStr,
+                    Value = revenueEntry?.Value ?? 0
+                });
+            }
+
+            return allHours;
+        }
+
+        private async Task<List<ChartDataViewModel>> GetHourlyCustomerGrowthData(DateTime startDate, DateTime endDate)
+        {
+            var customerGrowthData = await _context.Orders
+                .Where(o => o.CreatedAt >= startDate && o.CreatedAt <= endDate && o.OrderStatus == "completed")
+                .GroupBy(o => o.CreatedAt!.Value.Hour)
+                .Select(g => new
+                {
+                    Hour = g.Key,
+                    Value = g.Select(o => o.CustomerId).Distinct().Count()
+                })
+                .OrderBy(x => x.Hour)
+                .ToListAsync();
+
+            // Generate all hours from 9 AM to 9 PM
+            var allHours = new List<ChartDataViewModel>();
+            for (int hour = 9; hour <= 21; hour++)
+            {
+                var hourStr = hour.ToString("D2") + ":00";
+                var growthEntry = customerGrowthData.FirstOrDefault(g => g.Hour == hour);
+                allHours.Add(new ChartDataViewModel
+                {
+                    Date = hourStr,
+                    Value = growthEntry?.Value ?? 0
+                });
+            }
+
+            return allHours;
         }
 
         public IActionResult Privacy()
