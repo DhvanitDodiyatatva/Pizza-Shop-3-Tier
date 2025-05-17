@@ -362,15 +362,32 @@
                 type: 'GET',
                 success: function (result) {
                     $("#categoriesContainer").html(result);
-                    $(".category-link").on("click", function (e) {
+                    if ($(".category-link").length > 0) {
+                        // Select the first category and load its items
+                        const firstCategory = $(".category-link").first();
+                        const categoryId = firstCategory.data("category-id");
+                        firstCategory.addClass('active');
+                        currentCategoryId = categoryId;
+                        loadItems(categoryId, 1, pageSize);
+                    } else {
+                        $("#GetItemList").html("<tr><td colspan='7'>No categories available.</td></tr>");
+                    }
+
+                    // Attach click handlers for category links
+                    $(".category-link").off("click").on("click", function (e) {
                         e.preventDefault();
+                        $("#categoriesContainer .category-link").removeClass('active');
+                        $(this).addClass('active');
                         var categoryId = $(this).data("category-id");
                         loadItems(categoryId, 1, pageSize);
                     });
+
                     attachEditCategoryHandler();
                 },
                 error: function (xhr, status, error) {
                     console.error("Error loading categories:", error);
+                    $("#categoriesContainer").html("<div>Error loading categories.</div>");
+                    $("#GetItemList").html("<tr><td colspan='7'>Failed to load items.</td></tr>");
                 }
             });
         }
@@ -663,20 +680,28 @@
                 type: 'GET',
                 success: function (result) {
                     $("#ModifierGroupList").html(result);
+                    if ($(".ModifierGroup-link").length > 0) {
+                        // Select the first modifier group and load its modifiers
+                        const firstModifierGroup = $(".ModifierGroup-link").first();
+                        const modifierGroupId = firstModifierGroup.data("modifiergroup-id");
+                        firstModifierGroup.addClass('active');
+                        currentModifierGroupId = modifierGroupId;
+                        loadModifier(modifierGroupId, 1, pageSize, "");
+                    } else {
+                        $(".GetModifierList").html("<p>No modifier groups available.</p>");
+                    }
 
                     // Reattach click handlers for ModifierGroup links
                     $(".ModifierGroup-link").off("click").on("click", function (e) {
                         e.preventDefault();
+                        $("#ModifierGroupList .ModifierGroup-link").removeClass('active');
+                        $(this).addClass('active');
                         currentModifierGroupId = $(this).data("modifiergroup-id");
-                        console.log("Modifier Group clicked, ID:", currentModifierGroupId); // Debug
                         loadModifier(currentModifierGroupId, 1, pageSize, "");
                     });
 
                     // Reattach delete form handler
                     attachDeleteModifierGroupFormHandler();
-
-                    // After loading modifier groups, refresh the modifier list
-                    refreshModifierList();
                 },
                 error: function (xhr, status, error) {
                     console.error("Error loading modifier groups:", error);

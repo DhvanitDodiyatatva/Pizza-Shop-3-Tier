@@ -29,23 +29,28 @@
     </div>
     <div class="row mb-3 upper-div rounded-2 shadow py-3 d-flex">
         <ul class="nav nav-underline" id="sectionTabs">
-            <!-- Add "All" tab -->
+            <!-- Add "All" tab with total token count -->
+            @{
+                var allTokensCount = Model.Count(t => !t.IsDeleted);
+            }
             <li class="nav-item">
                 <a class="nav-link custom-tag mx-3 @(ViewBag.SelectedSection == "All" ? "active" : "text-decoration-none text-black")"
                     id="all-tab" data-bs-toggle="tab" data-bs-target="#all-tab-pane" type="button" role="tab"
                     aria-controls="all-tab-pane" aria-selected="@(ViewBag.SelectedSection == "All" ? "true" : "false")">
-                    All
+                    All &nbsp;&nbsp; <span class="text-white badge bg-secondary rounded-5">@allTokensCount</span>
                 </a>
             </li>
             @foreach (SelectListItem sec in ViewBag.Sections)
             {
                 var sectionId = sec.Text.ToLower().Replace(" ", "-");
+                var tokenCount = Model.Count(t => t.Section?.Name == sec.Text && !t.IsDeleted);
                 <li class="nav-item">
                     <a class="nav-link custom-tag mx-3 @(sec.Text == ViewBag.SelectedSection ? "active" : "text-decoration-none text-black")"
                         id="@sectionId-tab" data-bs-toggle="tab" data-bs-target="#@sectionId-tab-pane" type="button"
                         role="tab" aria-controls="@sectionId-tab-pane"
                         aria-selected="@(sec.Text == ViewBag.SelectedSection ? "true" : "false")">
-                        @sec.Text
+                        @sec.Text &nbsp;&nbsp; <span class="text-white badge bg-secondary rounded-5">
+                            @tokenCount</span>
                     </a>
                 </li>
             }
@@ -101,7 +106,8 @@
                                             </svg>
                                         </button>
                                         <button type="button" class="btn text-body-btn ps-1 assign-table-btn"
-                                            data-token-id="@token.Id" data-bs-toggle="modal" data-bs-target="#assignTableModal">
+                                            data-token-id="@token.Id" data-bs-toggle="modal"
+                                            data-bs-target="#assignTableModal">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
                                                 fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16">
                                                 <path
@@ -167,7 +173,8 @@
                                                 </svg>
                                             </button>
                                             <button type="button" class="btn text-body-btn ps-1 assign-table-btn"
-                                                data-token-id="@token.Id" data-bs-toggle="modal" data-bs-target="#assignTableModal">
+                                                data-token-id="@token.Id" data-bs-toggle="modal"
+                                                data-bs-target="#assignTableModal">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
                                                     fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16">
                                                     <path
