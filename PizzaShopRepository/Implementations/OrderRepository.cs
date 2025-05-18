@@ -26,7 +26,7 @@ public class OrderRepository : IOrderRepository
         // Search 
         if (!string.IsNullOrEmpty(searchQuery))
         {
-            var lowerSearchQuery = searchQuery.ToLower();
+            var lowerSearchQuery = searchQuery.ToLower().Trim();
             query = query.Where(o => o.Customer.Name.ToLower().Contains(lowerSearchQuery) ||
                                    o.Id.ToString().ToLower().Contains(lowerSearchQuery) ||
                                    o.OrderStatus.ToLower().Contains(lowerSearchQuery));
@@ -106,7 +106,7 @@ public class OrderRepository : IOrderRepository
 
         if (!string.IsNullOrEmpty(searchQuery))
         {
-            query = query.Where(o => o.Customer.Name.Contains(searchQuery) ||
+            query = query.Where(o => o.Customer.Name.Contains(searchQuery.Trim()) ||
                                    o.Id.ToString().Contains(searchQuery) ||
                                    o.OrderStatus.Contains(searchQuery));
         }
@@ -136,7 +136,7 @@ public class OrderRepository : IOrderRepository
         }
 
 
-        
+
 
         if (!string.IsNullOrEmpty(fromDate))
         {

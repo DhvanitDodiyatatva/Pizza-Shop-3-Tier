@@ -36,10 +36,10 @@ namespace PizzaShopServices.Implementations
             {
                 searchQuery = searchQuery.ToLower();
                 query = query.Where(u =>
-                    u.FirstName.ToLower().Contains(searchQuery) ||
-                    u.LastName.ToLower().Contains(searchQuery) ||
-                    u.Email.ToLower().Contains(searchQuery) ||
-                    u.Phone.Contains(searchQuery));
+                    u.FirstName.ToLower().Contains(searchQuery.Trim()) ||
+                    u.LastName.ToLower().Contains(searchQuery.Trim()) ||
+                    u.Email.ToLower().Contains(searchQuery.Trim()) ||
+                    u.Phone.Contains(searchQuery.Trim()));
             }
 
             // Apply sorting

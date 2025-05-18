@@ -616,7 +616,6 @@ namespace PizzaShopServices.Implementations
             }
         }
 
-
         public async Task<(bool Success, string Message)> CheckOrderItemsReadyAsync(int orderId)
         {
             try
@@ -671,6 +670,17 @@ namespace PizzaShopServices.Implementations
                 {
                     return (false, "Cannot complete order: Some items are not ready.");
                 }
+
+                // Fetch the customer to update TotalOrders
+                var customer = await _context.Customers.FindAsync(order.CustomerId);
+                if (customer == null)
+                {
+                    return (false, "Customer not found.");
+                }
+
+                // Increment TotalOrders
+                customer.TotalOrders = (customer.TotalOrders ?? 0) + 1;
+                _context.Customers.Update(customer);
 
                 // 1. Update Order table
                 order.OrderStatus = "completed";

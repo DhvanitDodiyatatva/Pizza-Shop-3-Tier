@@ -20,7 +20,7 @@ namespace PizzaShopRepository.Repositories
 
             if (!string.IsNullOrEmpty(searchQuery))
             {
-                query = query.Where(c => c.Name.Contains(searchQuery) ||
+                query = query.Where(c => c.Name.Contains(searchQuery.Trim()) ||
                                        c.Email.Contains(searchQuery) ||
                                        c.PhoneNo.Contains(searchQuery));
             }
@@ -49,7 +49,7 @@ namespace PizzaShopRepository.Repositories
 
             if (!string.IsNullOrEmpty(searchQuery))
             {
-                query = query.Where(c => c.Name.Contains(searchQuery) ||
+                query = query.Where(c => c.Name.Contains(searchQuery.Trim()) ||
                                        c.Email.Contains(searchQuery) ||
                                        c.PhoneNo.Contains(searchQuery));
             }
