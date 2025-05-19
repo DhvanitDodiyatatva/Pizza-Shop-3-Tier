@@ -40,6 +40,7 @@ public class MenuController : Controller
     }
 
     [HttpGet]
+    // [CustomAuthorize("Menu", PermissionType.Alter, "super_admin", "account_manager")]
     public IActionResult AddNewCategory()
     {
         // Return a fresh view model if needed.
@@ -95,6 +96,14 @@ public class MenuController : Controller
         };
 
         return PartialView("_ItemList", viewModel);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAllItemIdsByCategory(int categoryId)
+    {
+        var items = await _itemService.GetItemsByCategoryAsync(categoryId);
+        var itemIds = items.Select(i => i.Id.ToString()).ToList();
+        return Json(itemIds);
     }
 
     [HttpPost]

@@ -293,6 +293,7 @@
         let pageSize = 5;
         let currentCategoryId = 1;
         let currentModifierGroupId = 1;
+        let selectedItemIds = [];
 
         // Function to load items with pagination
         function loadItems(categoryId, page = 1, size = pageSize) {
@@ -304,6 +305,12 @@
                     $("#GetItemList").html(result);
                     currentPage = page;
                     currentCategoryId = categoryId;
+                    // Reapply checkbox states
+                    $(".itemCheckbox").each(function () {
+                        const itemId = $(this).val();
+                        $(this).prop("checked", selectedItemIds.includes(itemId));
+                    });
+                    updateSelectAllCheckbox(); // Update selectAll state
                     updatePaginationControls();
                 },
                 error: function (xhr, status, error) {
@@ -311,6 +318,24 @@
                     $("#GetItemList").html("Failed to load items");
                 }
             });
+        }
+
+        // Function to update selectAll checkbox state
+        function updateSelectAllCheckbox() {
+            const totalCheckboxes = $(".itemCheckbox").length;
+            const checkedCheckboxes = $(".itemCheckbox:checked").length;
+            const selectAllCheckbox = $("#selectAll");
+
+            if (checkedCheckboxes === 0) {
+                selectAllCheckbox.prop("checked", false);
+                selectAllCheckbox.prop("indeterminate", false);
+            } else if (checkedCheckboxes === totalCheckboxes && totalCheckboxes > 0) {
+                selectAllCheckbox.prop("checked", true);
+                selectAllCheckbox.prop("indeterminate", false);
+            } else {
+                selectAllCheckbox.prop("checked", false);
+                selectAllCheckbox.prop("indeterminate", true);
+            }
         }
 
         // Function to update pagination controls
@@ -401,6 +426,12 @@
                 data: { searchTerm: searchTerm, categoryId: currentCategoryId, page: 1, pageSize: pageSize },
                 success: function (response) {
                     $("#GetItemList").html(response);
+                    // Reapply checkbox states
+                    $(".itemCheckbox").each(function () {
+                        const itemId = $(this).val();
+                        $(this).prop("checked", selectedItemIds.includes(itemId));
+                    });
+                    updateSelectAllCheckbox();
                     updatePaginationControls();
                 },
                 error: function () {
@@ -408,6 +439,7 @@
                 }
             });
         });
+
 
         // Page size change handler
         $("#pageSizeSelect").on("change", function () {
@@ -635,42 +667,150 @@
         });
 
 
-        $("#selectAll").click(function () {
-            $(".itemCheckbox").prop("checked", this.checked);
+        // Select All checkbox handler
+        $("#selectAll").on("click", function () {
+            var isChecked = $(this).prop("checked");
+            $(this).prop("indeterminate", false); // Clear indeterminate state
+
+            if (isChecked) {
+                // Fetch all item IDs for the current category
+                $.ajax({
+                    url: '@Url.Action("GetAllItemIdsByCategory", "Menu")',
+                    type: 'GET',
+                    data: { categoryId: currentCategoryId },
+                    success: function (itemIds) {
+                        // Update selectedItemIds with all item IDs
+                        selectedItemIds = [...new Set([...selectedItemIds, ...itemIds])];
+                        // Check all checkboxes on the current page
+                        $(".itemCheckbox").prop("checked", true);
+                        updateSelectAllCheckbox();
+                    },
+                    error: function () {
+                        toastr.error("Failed to fetch item IDs.");
+                        $("#selectAll").prop("checked", false); // Revert on error
+                    }
+                });
+            } else {
+                // Clear all item IDs for the current category
+                $.ajax({
+                    url: '@Url.Action("GetAllItemIdsByCategory", "Menu")',
+                    type: 'GET',
+                    data: { categoryId: currentCategoryId },
+                    success: function (itemIds) {
+                        // Remove all category item IDs from selectedItemIds
+                        selectedItemIds = selectedItemIds.filter(id => !itemIds.includes(id));
+                        // Uncheck all checkboxes on the current page
+                        $(".itemCheckbox").prop("checked", false);
+                        updateSelectAllCheckbox();
+                    },
+                    error: function () {
+                        toastr.error("Failed to fetch item IDs.");
+                        $("#selectAll").prop("checked", true); // Revert on error
+                    }
+                });
+            }
         });
 
-        $("#deleteSelected").click(function () {
-            var selectedIds = $(".itemCheckbox:checked").map(function () {
-                return $(this).val();
-            }).get();
-
-            if (selectedIds.length === 0) {
-                alert("Please select at least one item to delete.");
-                return;
-            }
-
-            if (!confirm("Are you sure you want to delete the selected items?")) {
-                return;
-            }
-
-            $.ajax({
-                url: "/Menu/DeleteItems",
-                type: "POST",
-                contentType: "application/json",
-                data: JSON.stringify(selectedIds),
-                success: function (response) {
-                    if (response.success) {
-                        selectedIds.forEach(id => {
-                            $("tr[data-id='" + id + "']").remove();
-                        });
-                    } else {
-                        alert("Error: " + response.message);
-                    }
-                },
-                error: function () {
-                    alert("An error occurred while deleting items.");
+        // Handle individual checkbox changes to update selectAll state
+        $(document).on("change", ".itemCheckbox", function () {
+            const itemId = $(this).val();
+            if ($(this).is(":checked")) {
+                if (!selectedItemIds.includes(itemId)) {
+                    selectedItemIds.push(itemId);
                 }
-            });
+            } else {
+                selectedItemIds = selectedItemIds.filter(id => id !== itemId);
+            }
+            updateSelectAllCheckbox();
+        });
+
+
+        $("#deleteSelected").click(function () {
+            // Check if selectAll is checked
+            if ($("#selectAll").is(":checked")) {
+                // Confirm deletion of all category items
+                if (!confirm("Are you sure you want to delete ALL items in this category?")) {
+                    return;
+                }
+
+                // Fetch all item IDs for the current category
+                $.ajax({
+                    url: '@Url.Action("GetAllItemIdsByCategory", "Menu")',
+                    type: 'GET',
+                    data: { categoryId: currentCategoryId },
+                    success: function (itemIds) {
+                        if (itemIds.length === 0) {
+                            alert("No items to delete in this category.");
+                            return;
+                        }
+
+                        // Send all item IDs for deletion
+                        $.ajax({
+                            url: "/Menu/DeleteItems",
+                            type: "POST",
+                            contentType: "application/json",
+                            data: JSON.stringify(itemIds),
+                            success: function (response) {
+                                if (response.success) {
+                                    // Clear selectedItemIds
+                                    selectedItemIds = [];
+                                    // Remove deleted rows from UI
+                                    $(".itemCheckbox").closest("tr").remove();
+                                    // Reload items to reflect changes
+                                    loadItems(currentCategoryId, 1, pageSize);
+                                    toastr.success("All items in category deleted successfully.");
+                                } else {
+                                    alert("Error: " + response.message);
+                                }
+                            },
+                            error: function () {
+                                alert("An error occurred while deleting items.");
+                            }
+                        });
+                    },
+                    error: function () {
+                        toastr.error("Failed to fetch item IDs.");
+                    }
+                });
+            } else {
+                // Delete only checked items on the current page
+                var selectedIds = $(".itemCheckbox:checked").map(function () {
+                    return $(this).val();
+                }).get();
+
+                if (selectedIds.length === 0) {
+                    alert("Please select at least one item to delete.");
+                    return;
+                }
+
+                if (!confirm("Are you sure you want to delete the selected items?")) {
+                    return;
+                }
+
+                $.ajax({
+                    url: "/Menu/DeleteItems",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(selectedIds),
+                    success: function (response) {
+                        if (response.success) {
+                            // Remove deleted IDs from selectedItemIds
+                            selectedIds.forEach(id => {
+                                selectedItemIds = selectedItemIds.filter(itemId => itemId !== id);
+                                $("tr[data-id='" + id + "']").remove();
+                            });
+                            // Reload items to reflect changes
+                            loadItems(currentCategoryId, currentPage, pageSize);
+                            toastr.success("Selected items deleted successfully.");
+                        } else {
+                            alert("Error: " + response.message);
+                        }
+                    },
+                    error: function () {
+                        alert("An error occurred while deleting items.");
+                    }
+                });
+            }
         });
 
         // Load modifier groups
