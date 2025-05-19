@@ -294,6 +294,7 @@
         let currentCategoryId = 1;
         let currentModifierGroupId = 1;
         let selectedItemIds = [];
+        let selectedModifierIds = [];
 
         // Function to load items with pagination
         function loadItems(categoryId, page = 1, size = pageSize) {
@@ -325,6 +326,24 @@
             const totalCheckboxes = $(".itemCheckbox").length;
             const checkedCheckboxes = $(".itemCheckbox:checked").length;
             const selectAllCheckbox = $("#selectAll");
+
+            if (checkedCheckboxes === 0) {
+                selectAllCheckbox.prop("checked", false);
+                selectAllCheckbox.prop("indeterminate", false);
+            } else if (checkedCheckboxes === totalCheckboxes && totalCheckboxes > 0) {
+                selectAllCheckbox.prop("checked", true);
+                selectAllCheckbox.prop("indeterminate", false);
+            } else {
+                selectAllCheckbox.prop("checked", false);
+                selectAllCheckbox.prop("indeterminate", true);
+            }
+        }
+
+        // Function to update selectAllModifiers checkbox state for modifiers
+        function updateSelectAllModifiersCheckbox() {
+            const totalCheckboxes = $(".modifierCheckbox").length;
+            const checkedCheckboxes = $(".modifierCheckbox:checked").length;
+            const selectAllCheckbox = $("#selectAllModifiers");
 
             if (checkedCheckboxes === 0) {
                 selectAllCheckbox.prop("checked", false);
@@ -725,46 +744,44 @@
         });
 
 
+        // Delete selected items handler
         $("#deleteSelected").click(function () {
-            // Check if selectAll is checked
             if ($("#selectAll").is(":checked")) {
-                // Confirm deletion of all category items
                 if (!confirm("Are you sure you want to delete ALL items in this category?")) {
                     return;
                 }
 
-                // Fetch all item IDs for the current category
                 $.ajax({
                     url: '@Url.Action("GetAllItemIdsByCategory", "Menu")',
                     type: 'GET',
                     data: { categoryId: currentCategoryId },
                     success: function (itemIds) {
                         if (itemIds.length === 0) {
-                            alert("No items to delete in this category.");
+                            toastr.warning("No items to delete in this category.");
                             return;
                         }
 
-                        // Send all item IDs for deletion
                         $.ajax({
                             url: "/Menu/DeleteItems",
                             type: "POST",
                             contentType: "application/json",
-                            data: JSON.stringify(itemIds),
+                            data: JSON.stringify(itemIds.map(id => parseInt(id))),
+                            headers: {
+                                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                            },
                             success: function (response) {
                                 if (response.success) {
-                                    // Clear selectedItemIds
                                     selectedItemIds = [];
-                                    // Remove deleted rows from UI
                                     $(".itemCheckbox").closest("tr").remove();
-                                    // Reload items to reflect changes
                                     loadItems(currentCategoryId, 1, pageSize);
                                     toastr.success("All items in category deleted successfully.");
+                                    $("#selectAll").prop("checked", false);
                                 } else {
-                                    alert("Error: " + response.message);
+                                    toastr.error(response.message || "Failed to delete items.");
                                 }
                             },
-                            error: function () {
-                                alert("An error occurred while deleting items.");
+                            error: function (xhr) {
+                                toastr.error("Error deleting items: " + (xhr.responseText || "Unknown error"));
                             }
                         });
                     },
@@ -773,41 +790,55 @@
                     }
                 });
             } else {
-                // Delete only checked items on the current page
-                var selectedIds = $(".itemCheckbox:checked").map(function () {
-                    return $(this).val();
-                }).get();
-
-                if (selectedIds.length === 0) {
-                    alert("Please select at least one item to delete.");
-                    return;
-                }
-
-                if (!confirm("Are you sure you want to delete the selected items?")) {
-                    return;
-                }
-
+                // Fetch all item IDs for the current Category to filter selectedItemIds
                 $.ajax({
-                    url: "/Menu/DeleteItems",
-                    type: "POST",
-                    contentType: "application/json",
-                    data: JSON.stringify(selectedIds),
-                    success: function (response) {
-                        if (response.success) {
-                            // Remove deleted IDs from selectedItemIds
-                            selectedIds.forEach(id => {
-                                selectedItemIds = selectedItemIds.filter(itemId => itemId !== id);
-                                $("tr[data-id='" + id + "']").remove();
-                            });
-                            // Reload items to reflect changes
-                            loadItems(currentCategoryId, currentPage, pageSize);
-                            toastr.success("Selected items deleted successfully.");
-                        } else {
-                            alert("Error: " + response.message);
+                    url: '@Url.Action("GetAllItemIdsByCategory", "Menu")',
+                    type: 'GET',
+                    data: { categoryId: currentCategoryId },
+                    success: function (allItemIds) {
+                        // Filter selectedItemIds to include only those in the current Category
+                        const selectedIds = selectedItemIds
+                            .filter(id => allItemIds.includes(id))
+                            .map(id => parseInt(id));
+
+                        if (selectedIds.length === 0) {
+                            toastr.warning("Please select at least one item to delete.");
+                            return;
                         }
+
+                        if (!confirm("Are you sure you want to delete the selected items?")) {
+                            return;
+                        }
+
+                        $.ajax({
+                            url: "/Menu/DeleteItems",
+                            type: "POST",
+                            contentType: "application/json",
+                            data: JSON.stringify(selectedIds),
+                            headers: {
+                                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                            },
+                            success: function (response) {
+                                if (response.success) {
+                                    // Remove deleted IDs from selectedItemIds
+                                    selectedIds.forEach(id => {
+                                        selectedItemIds = selectedItemIds.filter(itemId => itemId !== id.toString());
+                                    });
+                                    // Reload items to reflect changes
+                                    loadItems(currentCategoryId, currentPage, pageSize);
+                                    toastr.success("Selected items deleted successfully.");
+                                    $("#selectAll").prop("checked", false);
+                                } else {
+                                    toastr.error(response.message || "Failed to delete items.");
+                                }
+                            },
+                            error: function (xhr) {
+                                toastr.error("Error deleting items: " + (xhr.responseText || "Unknown error"));
+                            }
+                        });
                     },
                     error: function () {
-                        alert("An error occurred while deleting items.");
+                        toastr.error("Failed to fetch item IDs.");
                     }
                 });
             }
@@ -821,7 +852,6 @@
                 success: function (result) {
                     $("#ModifierGroupList").html(result);
                     if ($(".ModifierGroup-link").length > 0) {
-                        // Select the first modifier group and load its modifiers
                         const firstModifierGroup = $(".ModifierGroup-link").first();
                         const modifierGroupId = firstModifierGroup.data("modifiergroup-id");
                         firstModifierGroup.addClass('active');
@@ -831,7 +861,6 @@
                         $(".GetModifierList").html("<p>No modifier groups available.</p>");
                     }
 
-                    // Reattach click handlers for ModifierGroup links
                     $(".ModifierGroup-link").off("click").on("click", function (e) {
                         e.preventDefault();
                         $("#ModifierGroupList .ModifierGroup-link").removeClass('active');
@@ -840,7 +869,6 @@
                         loadModifier(currentModifierGroupId, 1, pageSize, "");
                     });
 
-                    // Reattach delete form handler
                     attachDeleteModifierGroupFormHandler();
                 },
                 error: function (xhr, status, error) {
@@ -853,7 +881,7 @@
 
         // Load modifiers with pagination and search
         function loadModifier(modifierGroupId, page = 1, size = pageSize, searchString = "") {
-            console.log("Loading modifiers for ModifierGroupId:", modifierGroupId); // Debug
+            console.log("Loading modifiers for ModifierGroupId:", modifierGroupId);
             $.ajax({
                 url: '@Url.Action("GetModifiers", "Menu")',
                 type: 'GET',
@@ -867,7 +895,12 @@
                     $(".GetModifierList").html(result);
                     currentPage = page;
                     currentModifierGroupId = modifierGroupId;
-                    console.log("Current Modifier Group ID set to:", currentModifierGroupId); // Debug
+                    // Reapply checkbox states
+                    $(".modifierCheckbox").each(function () {
+                        const modifierId = $(this).val();
+                        $(this).prop("checked", selectedModifierIds.includes(modifierId));
+                    });
+                    updateSelectAllModifiersCheckbox();
                     updateModifierPaginationControls();
                 },
                 error: function (xhr, status, error) {
@@ -884,6 +917,7 @@
             let paginationHtml = '';
 
             if (totalPages > 1) {
+                paginationHtml += '<nav aria-label="Modifier page navigation"><ul class="pagination mb-0">';
                 paginationHtml += '<li class="page-item ' + (currentPage === 1 ? 'disabled' : '') + '">';
                 paginationHtml += '<a class="page-link text-secondary" href="#" data-page="' + (currentPage - 1) + '"> < </a>';
                 paginationHtml += '</li>';
@@ -897,6 +931,7 @@
                 paginationHtml += '<li class="page-item ' + (currentPage === totalPages ? 'disabled' : '') + '">';
                 paginationHtml += '<a class="page-link text-secondary" href="#" data-page="' + (currentPage + 1) + '"> > </a>';
                 paginationHtml += '</li>';
+                paginationHtml += '</ul></nav>';
             }
 
             $(".GetModifierList .pagination").html(paginationHtml);
@@ -1069,18 +1104,53 @@
 
         // Select All Modifiers Checkbox
         $(document).on("click", "#selectAllModifiers", function () {
-            $(".modifierCheckbox").prop("checked", this.checked);
-            console.log("Select All clicked, checked:", this.checked); // Debug
+            var isChecked = $(this).prop("checked");
+            $(this).prop("indeterminate", false);
+
+            if (isChecked) {
+                $.ajax({
+                    url: '@Url.Action("GetAllModifierIdsByGroup", "Menu")',
+                    type: 'GET',
+                    data: { modifierGroupId: currentModifierGroupId },
+                    success: function (modifierIds) {
+                        selectedModifierIds = [...new Set([...selectedModifierIds, ...modifierIds])];
+                        $(".modifierCheckbox").prop("checked", true);
+                        updateSelectAllModifiersCheckbox();
+                    },
+                    error: function () {
+                        toastr.error("Failed to fetch modifier IDs.");
+                        $("#selectAllModifiers").prop("checked", false);
+                    }
+                });
+            } else {
+                $.ajax({
+                    url: '@Url.Action("GetAllModifierIdsByGroup", "Menu")',
+                    type: 'GET',
+                    data: { modifierGroupId: currentModifierGroupId },
+                    success: function (modifierIds) {
+                        selectedModifierIds = selectedModifierIds.filter(id => !modifierIds.includes(id));
+                        $(".modifierCheckbox").prop("checked", false);
+                        updateSelectAllModifiersCheckbox();
+                    },
+                    error: function () {
+                        toastr.error("Failed to fetch modifier IDs.");
+                        $("#selectAllModifiers").prop("checked", true);
+                    }
+                });
+            }
         });
 
         // Single Modifier Checkbox Toggle
         $(document).on("change", ".modifierCheckbox", function () {
-            console.log("Checkbox changed, ID:", $(this).val(), "Checked:", $(this).is(":checked")); // Debug
-            if ($(".modifierCheckbox:checked").length === $(".modifierCheckbox").length) {
-                $("#selectAllModifiers").prop("checked", true);
+            const modifierId = $(this).val();
+            if ($(this).is(":checked")) {
+                if (!selectedModifierIds.includes(modifierId)) {
+                    selectedModifierIds.push(modifierId);
+                }
             } else {
-                $("#selectAllModifiers").prop("checked", false);
+                selectedModifierIds = selectedModifierIds.filter(id => id !== modifierId);
             }
+            updateSelectAllModifiersCheckbox();
         });
 
         // Single Modifier Delete from Group
@@ -1115,63 +1185,102 @@
 
         // Mass Modifier Delete from Group
         $("#deleteSelectedModifiers").off("click").on("click", function () {
-            // Collect selected modifier IDs from checked checkboxes
-            var selectedIds = $(".modifierCheckbox:checked").map(function () {
-                return parseInt($(this).val());
-            }).get();
-
-            // Log for debugging
-            console.log("Selected Modifier IDs:", selectedIds);
-            console.log("Current Modifier Group ID:", currentModifierGroupId);
-
-            // Check if any modifiers are selected
-            if (selectedIds.length === 0) {
-                toastr.warning("Please select at least one modifier to remove.");
-                return;
-            }
-
-            // Check if modifier group ID is valid
-            if (!currentModifierGroupId) {
-                toastr.error("No modifier group selected.");
-                return;
-            }
-
-            // Confirm deletion
-            if (!confirm("Are you sure you want to remove the selected modifiers from this group?")) {
-                return;
-            }
-
-            // Send AJAX request to delete selected modifiers
-            $.ajax({
-                url: '@Url.Action("DeleteModifiers", "Menu")' + '?modifierGroupId=' + currentModifierGroupId,
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(selectedIds), // Send only the ids array as the body
-                headers: {
-                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-                },
-                success: function (response) {
-                    console.log("DeleteModifiers Response:", response);
-                    if (response.success) {
-                        toastr.success(response.message);
-                        $('.modal-backdrop').remove();
-                        $('body').removeClass('modal-open');
-                        loadModifier(currentModifierGroupId, 1, pageSize, $("#searchModifierInput").val().trim());
-                        $("#selectAllModifiers").prop("checked", false);
-                    } else {
-                        toastr.error(response.message || "Failed to remove modifiers.");
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error("Delete Modifiers AJAX Error:", {
-                        status: status,
-                        error: error,
-                        responseText: xhr.responseText,
-                        statusCode: xhr.status
-                    });
-                    toastr.error("Error removing modifiers: " + (xhr.responseText || "Unknown error"));
+            if ($("#selectAllModifiers").is(":checked")) {
+                if (!confirm("Are you sure you want to remove ALL modifiers from this modifier group?")) {
+                    return;
                 }
-            });
+
+                $.ajax({
+                    url: '@Url.Action("GetAllModifierIdsByGroup", "Menu")',
+                    type: 'GET',
+                    data: { modifierGroupId: currentModifierGroupId },
+                    success: function (modifierIds) {
+                        if (modifierIds.length === 0) {
+                            toastr.warning("No modifiers to remove in this modifier group.");
+                            return;
+                        }
+
+                        $.ajax({
+                            url: '@Url.Action("DeleteModifiers", "Menu")' + '?modifierGroupId=' + currentModifierGroupId,
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(modifierIds.map(id => parseInt(id))),
+                            headers: {
+                                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                            },
+                            success: function (response) {
+                                if (response.success) {
+                                    selectedModifierIds = [];
+                                    $(".modifierCheckbox").closest("tr").remove();
+                                    loadModifier(currentModifierGroupId, 1, pageSize, $("#searchModifierInput").val().trim());
+                                    toastr.success("All modifiers removed from group successfully.");
+                                    $("#selectAllModifiers").prop("checked", false);
+                                } else {
+                                    toastr.error(response.message || "Failed to remove modifiers.");
+                                }
+                            },
+                            error: function (xhr) {
+                                toastr.error("Error removing modifiers: " + (xhr.responseText || "Unknown error"));
+                            }
+                        });
+                    },
+                    error: function () {
+                        toastr.error("Failed to fetch modifier IDs.");
+                    }
+                });
+            } else {
+                // Fetch all modifier IDs for the current ModifierGroup to filter selectedModifierIds
+                $.ajax({
+                    url: '@Url.Action("GetAllModifierIdsByGroup", "Menu")',
+                    type: 'GET',
+                    data: { modifierGroupId: currentModifierGroupId },
+                    success: function (allModifierIds) {
+                        // Filter selectedModifierIds to include only those in the current ModifierGroup
+                        const selectedIds = selectedModifierIds
+                            .filter(id => allModifierIds.includes(id))
+                            .map(id => parseInt(id));
+
+                        if (selectedIds.length === 0) {
+                            toastr.warning("Please select at least one modifier to remove.");
+                            return;
+                        }
+
+                        if (!confirm("Are you sure you want to remove the selected modifiers from this group?")) {
+                            return;
+                        }
+
+                        $.ajax({
+                            url: '@Url.Action("DeleteModifiers", "Menu")' + '?modifierGroupId=' + currentModifierGroupId,
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(selectedIds),
+                            headers: {
+                                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                            },
+                            success: function (response) {
+                                if (response.success) {
+                                    // Remove deleted IDs from selectedModifierIds
+                                    selectedIds.forEach(id => {
+                                        selectedModifierIds = selectedModifierIds.filter(modifierId => modifierId !== id.toString());
+                                    });
+                                    // Reload modifiers to reflect changes
+                                    loadModifier(currentModifierGroupId, currentPage, pageSize, $("#searchModifierInput").val().trim());
+                                    toastr.success("Selected modifiers removed successfully.");
+                                    $("#selectAllModifiers").prop("checked", false);
+                                } else {
+                                    toastr.error(response.message || "Failed to remove modifiers.");
+                                }
+                            },
+                            error: function (xhr) {
+                                toastr.error("Error removing modifiers: " + (xhr.responseText || "Unknown error"));
+                            }
+                        });
+                    },
+                    error: function () {
+                        toastr.error("Failed to fetch modifier IDs.");
+                    }
+                });
+            }
         });
 
 

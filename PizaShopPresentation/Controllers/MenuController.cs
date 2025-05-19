@@ -373,6 +373,15 @@ public class MenuController : Controller
     }
 
     [HttpGet]
+    public async Task<IActionResult> GetAllModifierIdsByGroup(int modifierGroupId)
+    {
+        var modifiers = await _modifierGroupMappingService.GetModifiersByGroupIdAsync(modifierGroupId);
+        var modifierIds = modifiers.Where(m => !m.IsDeleted).Select(m => m.Id.ToString()).ToList();
+        return Json(modifierIds);
+    }
+
+
+    [HttpGet]
     public async Task<IActionResult> AddNewModifier()
     {
         var modifierGroups = await _modifierGroupService.GetAllModifierGroupAsync();
