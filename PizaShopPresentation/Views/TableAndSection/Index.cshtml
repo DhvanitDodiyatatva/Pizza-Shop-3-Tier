@@ -248,8 +248,24 @@
 
         // Function to update the select all checkbox state
         function updateSelectAllState() {
-            const allChecked = allTableIds.length > 0 && allTableIds.every(id => selectedTableIds.includes(id));
-            $("#selectAll").prop("checked", allChecked);
+            const selectAllCheckbox = $("#selectAll");
+            if (allTableIds.length === 0) {
+                selectAllCheckbox.prop("checked", false);
+                selectAllCheckbox.prop("indeterminate", false);
+                return;
+            }
+
+            const selectedInSection = allTableIds.filter(id => selectedTableIds.includes(id)).length;
+            if (selectedInSection === allTableIds.length) {
+                selectAllCheckbox.prop("checked", true);
+                selectAllCheckbox.prop("indeterminate", false);
+            } else if (selectedInSection > 0) {
+                selectAllCheckbox.prop("checked", true);
+                selectAllCheckbox.prop("indeterminate", true);
+            } else {
+                selectAllCheckbox.prop("checked", false);
+                selectAllCheckbox.prop("indeterminate", false);
+            }
         }
 
         // Function to load sections and select the first one
