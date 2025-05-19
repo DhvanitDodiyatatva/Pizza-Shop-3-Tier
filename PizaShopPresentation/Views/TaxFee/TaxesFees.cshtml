@@ -25,10 +25,13 @@
                     </span>
                 </div>
             </form>
-            <button class="btn btn-main bg-primary rounded-2 ms-1 text-white fs-6 d-none d-lg-block"
-                id="addNewTaxBtn">+New Tax</button>
-            <button class="btn btn-main bg-primary rounded- ms-1 text-white fs-6 d-block d-lg-none"
-                id="addNewTaxBtnMobile">+</button>
+            @if (User.HasClaim(c => c.Type == "Permission_TaxAndFee" && (c.Value == "Alter")))
+            {
+                <button class="btn btn-main bg-primary rounded-2 ms-1 text-white fs-6 d-none d-lg-block"
+                    id="addNewTaxBtn">+New Tax</button>
+                <button class="btn btn-main bg-primary rounded- ms-1 text-white fs-6 d-block d-lg-none"
+                    id="addNewTaxBtnMobile">+</button>
+            }
         </div>
     </div>
     <div class="content-div rounded-2 shadow p-3">

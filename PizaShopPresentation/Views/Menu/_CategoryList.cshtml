@@ -20,17 +20,23 @@ else
                     <div class="edit-category d-none ">
                         <div class="d-flex ">
                             <div class="edit-category">
-                                <button type="button " class="btn  p-0 edit-category-btn" data-category-id="@category.Id">
-                                    <img src="~/images/edit.png" alt="" class="pe-2 text-body-btn"
-                                        style="height: 20px; width: 20px;">
-                                </button>
+                                @if (User.HasClaim(c => c.Type == "Permission_Menu" && (c.Value == "Alter")))
+                                {
+                                    <button type="button " class="btn  p-0 edit-category-btn" data-category-id="@category.Id">
+                                        <img src="~/images/edit.png" alt="" class="pe-2 text-body-btn"
+                                            style="height: 20px; width: 20px;">
+                                    </button>
+                                }
                             </div>
                             <div class="delete-category">
-                                <button type="button" class="btn p-0" data-bs-toggle="modal"
-                                    data-bs-target="#deletemodal-@category.Id">
-                                    <img src="~/images/delete.png" alt="" class="pe-2 text-body-btn"
-                                        style="height: 20px; width: 20px;">
-                                </button>
+                                @if (User.HasClaim(c => c.Type == "Permission_Menu" && (c.Value == "Delete")))
+                                {
+                                    <button type="button" class="btn p-0" data-bs-toggle="modal"
+                                        data-bs-target="#deletemodal-@category.Id">
+                                        <img src="~/images/delete.png" alt="" class="pe-2 text-body-btn"
+                                            style="height: 20px; width: 20px;">
+                                    </button>
+                                }
                             </div>
                         </div>
                     </div>
@@ -62,6 +68,11 @@ else
                                 <button type="submit" class="btn btn-main bg-primary text-white">Yes, Delete</button>
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                             </form>
+
+
+
+
+
                         </div>
                     </div>
                 </div>

@@ -3,16 +3,19 @@ using PizzaShopRepository.Repositories;
 using PizzaShopRepository.ViewModels;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Logging; // Add for logging
 
 namespace PizzaShopRepository.Services
 {
     public class RoleService : IRoleService
     {
         private readonly IRoleRepository _roleRepository;
+        private readonly ILogger<RoleService> _logger; // Add logger
 
-        public RoleService(IRoleRepository roleRepository)
+        public RoleService(IRoleRepository roleRepository, ILogger<RoleService> logger)
         {
             _roleRepository = roleRepository;
+            _logger = logger;
         }
 
         public IEnumerable<Role> GetAllRoles()
@@ -70,8 +73,10 @@ namespace PizzaShopRepository.Services
 
             _roleRepository.AddRolePermissions(newPermissions);
             _roleRepository.SaveChanges();
-        }
 
+            // Log permission update to indicate users should re-authenticate
+            _logger.LogInformation("Permissions updated for role {RoleId}. Users with this role should re-authenticate.", model.RoleId);
+        }
 
         public async Task<RolePermission> GetPermissionForRoleAndModule(int roleId, string moduleName)
         {

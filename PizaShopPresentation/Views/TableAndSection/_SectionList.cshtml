@@ -13,26 +13,32 @@ else
         {
             <div class="row my-2 ">
                 <div class="d-flex align-items-center justify-content-between category-option">
-                    
+
                     <a class="section-link" data-sections-id="@sections.Id" href="#">
                         <img src="~/images/grid.png" alt="" style="height: 20px; width: 20px;">
                         @sections.Name
                     </a>
                     <div class="edit-category d-none ">
                         <div class="d-flex ">
-                            <div class="edit-category">
-                                <button type="button " class="btn  p-0 edit-category-btn" data-sections-id="@sections.Id">
-                                    <img src="~/images/edit.png" alt="" class="pe-2 text-body-btn"
-                                        style="height: 20px; width: 20px;">
-                                </button>
-                            </div>
-                            <div class="delete-category">
-                                <button type="button" class="btn p-0" data-bs-toggle="modal"
-                                    data-bs-target="#deletemodal-@sections.Id">
-                                    <img src="~/images/delete.png" alt="" class="pe-2 text-body-btn"
-                                        style="height: 20px; width: 20px;">
-                                </button>
-                            </div>
+                            @if (User.HasClaim(c => c.Type == "Permission_TableAndSection" && (c.Value == "Alter")))
+                            {
+                                <div class="edit-category">
+                                    <button type="button " class="btn  p-0 edit-category-btn" data-sections-id="@sections.Id">
+                                        <img src="~/images/edit.png" alt="" class="pe-2 text-body-btn"
+                                            style="height: 20px; width: 20px;">
+                                    </button>
+                                </div>
+                            }
+                            @if (User.HasClaim(c => c.Type == "Permission_TableAndSection" && (c.Value == "Delete")))
+                            {
+                                <div class="delete-category">
+                                    <button type="button" class="btn p-0" data-bs-toggle="modal"
+                                        data-bs-target="#deletemodal-@sections.Id">
+                                        <img src="~/images/delete.png" alt="" class="pe-2 text-body-btn"
+                                            style="height: 20px; width: 20px;">
+                                    </button>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>

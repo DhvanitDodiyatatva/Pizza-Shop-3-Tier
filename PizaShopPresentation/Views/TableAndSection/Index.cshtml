@@ -30,14 +30,17 @@
             <div class="row d-flex py-3 pe-3">
                 <div class="d-flex align-items-center fw-bold justify-content-between page-text fs-5">
                     Sections
-                    <button type="button" class="btn bg-white btn-outline-dark text-black" data-bs-toggle="modal"
-                        data-bs-target="#exampleModal12" data-bs-whatever="">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" fill="currentColor"
-                            class="bi bi-plus-lg" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd"
-                                d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2" />
-                        </svg>
-                    </button>
+                    @if (User.HasClaim(c => c.Type == "Permission_TableAndSection" && (c.Value == "Alter")))
+                    {
+                        <button type="button" class="btn bg-white btn-outline-dark text-black" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal12" data-bs-whatever="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" fill="currentColor"
+                                class="bi bi-plus-lg" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd"
+                                    d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2" />
+                            </svg>
+                        </button>
+                    }
                 </div>
             </div>
             <div style="overflow: auto; height: 50dvh;" class="custom-scrollbar" id="sectionsContainer">
@@ -74,21 +77,26 @@
                         </div>
                     </form>
                     <div>
-                        <button class="btn btn-outline-secondary rounded-2 fs-6" id="deleteSelected" type="submit">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
-                                class="bi bi-trash3-fill" viewBox="0 0 16 16">
-                                <path
-                                    d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
-                            </svg>
-                        </button>
+                        @if (User.HasClaim(c => c.Type == "Permission_TableAndSection" && (c.Value == "Delete")))
+                        {
+                            <button class="btn btn-outline-secondary rounded-2 fs-6" id="deleteSelected" type="submit">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
+                                    class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                    <path
+                                        d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                                </svg>
+                            </button>
+                        }
                     </div>
 
                     <div>
-                        <button type="button" class="btn btn-main btn-main text-white d-none d-lg-block ms-2"
-                            id="addNewItemBtn">+ New Table</button>
-                        <button class="btn btn-main bg-primary rounded-2 ms-2 text-white fs-6 d-block d-lg-none"
-                            id="addNewItemBtnMobile">+</button>
-
+                        @if (User.HasClaim(c => c.Type == "Permission_TableAndSection" && (c.Value == "Alter")))
+                        {
+                            <button type="button" class="btn btn-main btn-main text-white d-none d-lg-block ms-2"
+                                id="addNewItemBtn">+ New Table</button>
+                            <button class="btn btn-main bg-primary rounded-2 ms-2 text-white fs-6 d-block d-lg-none"
+                                id="addNewItemBtnMobile">+</button>
+                        }
                     </div>
                 </div>
             </div>

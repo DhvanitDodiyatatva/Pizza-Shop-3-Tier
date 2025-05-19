@@ -8,18 +8,22 @@ using PizzaShopRepository.ViewModels;
 using PizzaShopServices.Interfaces;
 using System.Threading.Tasks;
 using PizzaShopRepository.Models;
+using PizzaShopRepository.Services;
 
 namespace PizzaShopServices.Implementations
 {
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IRoleService _roleService;
         private readonly IConfiguration _configuration;
 
-        public UserService(IUserRepository userRepository, IConfiguration configuration)
+        public UserService(IUserRepository userRepository, IRoleService roleService, IConfiguration configuration)
         {
             _userRepository = userRepository;
+            _roleService = roleService;
             _configuration = configuration;
+
         }
 
         public async Task<(string Token, double ExpireHours, bool Success, string Message)> ValidateUserAsync(Authenticate model)
@@ -38,7 +42,32 @@ namespace PizzaShopServices.Implementations
 
             if (user.Status != true)
             {
-                throw new Exception("Invalid Username or Password .");
+                throw new Exception("Invalid Username or Password.");
+            }
+
+            // Get role permissions
+            var role = _roleService.GetAllRoles().FirstOrDefault(r => r.Name == user.Role);
+            if (role == null)
+            {
+                throw new Exception("Role not found.");
+            }
+
+            // Define modules to include in claims
+            var modules = new[] { "Menu", "TableAndSection", "TaxAndFee" };
+            var permissionClaims = new List<Claim>();
+
+            foreach (var module in modules)
+            {
+                var permission = await _roleService.GetPermissionForRoleAndModule(role.Id, module);
+                if (permission != null)
+                {
+                    if (permission.CanView == true)
+                        permissionClaims.Add(new Claim($"Permission_{module}", "View"));
+                    if (permission.CanAddEdit == true)
+                        permissionClaims.Add(new Claim($"Permission_{module}", "Alter"));
+                    if (permission.CanDelete == true)
+                        permissionClaims.Add(new Claim($"Permission_{module}", "Delete"));
+                }
             }
 
             // Create JWT token
@@ -47,8 +76,9 @@ namespace PizzaShopServices.Implementations
                 new Claim(ClaimTypes.Name, user.Email),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Role, user.Role),
-                new Claim("profile_image", user.ProfileImage?? string.Empty)
+                new Claim("profile_image", user.ProfileImage ?? string.Empty)
             };
+            claims.AddRange(permissionClaims);
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -63,16 +93,13 @@ namespace PizzaShopServices.Implementations
 
             var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
-            // return ();
-
             try
             {
-
-                return (tokenString, expireHours, true, "Profile Edited successfully.");
+                return (tokenString, expireHours, true, "Login successful.");
             }
             catch (Exception ex)
             {
-                return (tokenString, expireHours, false, " " + ex.Message);
+                return (tokenString, expireHours, false, ex.Message);
             }
         }
 
