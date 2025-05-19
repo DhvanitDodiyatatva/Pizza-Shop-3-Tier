@@ -28,10 +28,10 @@
             <div class="col-12 col-lg-7">
                 <div class="form-floating">
                     <input type="text" class="form-control w-75" id="roleName" 
-       value="@(Model.RoleName?.ToLower() == "super_admin" ? "Super Admin" : 
-                Model.RoleName?.ToLower() == "account_manager" ? "Account Manager" : 
-                Model.RoleName?.ToLower() == "chef" ? "Chef" : Model.RoleName)" 
-       disabled>
+                           value="@(Model.RoleName?.ToLower() == "super_admin" ? "Super Admin" : 
+                                   Model.RoleName?.ToLower() == "account_manager" ? "Account Manager" : 
+                                   Model.RoleName?.ToLower() == "chef" ? "Chef" : Model.RoleName)" 
+                           disabled>
                     <label for="roleName">Role</label>
                 </div>
             </div>
@@ -123,6 +123,26 @@
             const changedPermissionsInput = document.getElementById('changedPermissions');
             let changedPermissions = [];
 
+            // Function to update the select all checkbox state with indeterminate support
+            function updateSelectAllState() {
+                const totalPermissions = permissionCheckboxes.length;
+                const checkedPermissions = Array.from(permissionCheckboxes).filter(cb => cb.checked).length;
+
+                if (checkedPermissions === totalPermissions) {
+                    // All permissions are selected
+                    selectAll.checked = true;
+                    selectAll.indeterminate = false;
+                } else if (checkedPermissions > 0) {
+                    // Some, but not all, permissions are selected
+                    selectAll.checked = true;
+                    selectAll.indeterminate = true;
+                } else {
+                    // No permissions are selected
+                    selectAll.checked = false;
+                    selectAll.indeterminate = false;
+                }
+            }
+
             // Function to toggle related checkboxes based on permission-checkbox
             function togglePermissionDependencies(index, isEnabled) {
                 canViewCheckboxes[index].disabled = !isEnabled;
@@ -134,6 +154,7 @@
             permissionCheckboxes.forEach((checkbox, index) => {
                 togglePermissionDependencies(index, checkbox.checked);
             });
+            updateSelectAllState(); // Set initial select all state
 
             // Track initial states
             const initialStates = Array.from(permissionCheckboxes).map((checkbox, index) => ({
@@ -148,6 +169,7 @@
             permissionCheckboxes.forEach((checkbox, index) => {
                 checkbox.addEventListener('change', function () {
                     togglePermissionDependencies(index, this.checked);
+                    updateSelectAllState(); // Update select all state
                     const initialState = initialStates.find(s => s.index === index);
                     if (this.checked !== initialState.isSelected) {
                         changedPermissions.push({
@@ -210,6 +232,7 @@
                         changedPermissions = changedPermissions.filter(cp => cp.index !== index);
                     }
                 });
+                updateSelectAllState(); // Update select all state
             });
 
             // Dependency logic
