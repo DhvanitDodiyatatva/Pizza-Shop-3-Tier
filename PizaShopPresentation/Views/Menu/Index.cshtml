@@ -1819,18 +1819,8 @@
         }
 
 
-        @* // Ensure modal backdrop is properly managed when any modal is hidden
-        $('.modal').on('hidden.bs.modal', function () {
-            // Remove lingering backdrop if no modals are open
-            if ($('.modal.show').length === 0) {
-                $('.modal-backdrop').remove();
-                $('body').removeClass('modal-open');
-            }
-        }); *@
-
-
-            // Initial load of categories, items, and the Add Category form
-            loadCategories();
+        // Initial load of categories, items, and the Add Category form
+        loadCategories();
         loadItems(1);
         loadAddCategory();
         loadModifierGroups();

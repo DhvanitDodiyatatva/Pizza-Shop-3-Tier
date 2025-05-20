@@ -391,8 +391,13 @@ namespace PizzaShopPresentation.Controllers
 
 
         [CustomAuthorize("RoleAndPermission", PermissionType.View, "super_admin", "account_manager")]
-        public IActionResult Roles()
+        public IActionResult Roles(string successMessage = null)
         {
+            if (!string.IsNullOrEmpty(successMessage))
+            {
+                TempData["SuccessMessage"] = successMessage;
+            }
+
             var roles = _roleService.GetAllRoles();
             return View(roles);
         }
@@ -412,52 +417,77 @@ namespace PizzaShopPresentation.Controllers
         [HttpPost]
         public IActionResult UpdatePermissions(RolePermissionVM model, [FromForm] string changedPermissions)
         {
+            // Check if the model state is valid
             if (!ModelState.IsValid)
             {
-                return View("Permissions", model);
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                return Json(new { success = false, message = "Validation failed: " + string.Join(", ", errors) });
             }
 
-            if (!string.IsNullOrEmpty(changedPermissions))
+            // Check if changedPermissions is provided
+            if (string.IsNullOrEmpty(changedPermissions))
+            {
+                return Json(new { success = false, message = "No permissions were changed." });
+            }
+
+            try
             {
                 var changedPerms = System.Text.Json.JsonSerializer.Deserialize<List<ChangedPermission>>(changedPermissions);
-                if (changedPerms != null)
+                if (changedPerms == null || !changedPerms.Any())
                 {
-                    var role = _roleRepository.GetRoleWithPermissions(model.RoleId);
-                    if (role != null)
+                    return Json(new { success = false, message = "No valid permissions data provided." });
+                }
+
+                var role = _roleRepository.GetRoleWithPermissions(model.RoleId);
+                if (role == null)
+                {
+                    return Json(new { success = false, message = "Role not found." });
+                }
+
+                foreach (var change in changedPerms)
+                {
+                    // Validate the index to prevent out-of-range errors
+                    if (change.index < 0 || change.index >= model.Permissions.Count)
                     {
-                        foreach (var change in changedPerms)
+                        return Json(new { success = false, message = "Invalid permission index." });
+                    }
+
+                    var permission = model.Permissions[change.index];
+                    var rolePermission = role.RolePermissions
+                        .FirstOrDefault(rp => rp.PermissionId == permission.PermissionId);
+
+                    if (rolePermission != null)
+                    {
+                        rolePermission.CanView = change.canView;
+                        rolePermission.CanAddEdit = change.canAddEdit;
+                        rolePermission.CanDelete = change.canDelete;
+                        if (!change.isSelected)
                         {
-                            var permission = model.Permissions[change.index];
-                            var rolePermission = role.RolePermissions
-                                .FirstOrDefault(rp => rp.PermissionId == permission.PermissionId);
-                            if (rolePermission != null)
-                            {
-                                rolePermission.CanView = change.canView;
-                                rolePermission.CanAddEdit = change.canAddEdit;
-                                rolePermission.CanDelete = change.canDelete;
-                                if (!change.isSelected)
-                                {
-                                    _context.RolePermissions.Remove(rolePermission);
-                                }
-                            }
-                            else if (change.isSelected)
-                            {
-                                _context.RolePermissions.Add(new RolePermission
-                                {
-                                    RoleId = model.RoleId,
-                                    PermissionId = permission.PermissionId,
-                                    CanView = change.canView,
-                                    CanAddEdit = change.canAddEdit,
-                                    CanDelete = change.canDelete
-                                });
-                            }
+                            _context.RolePermissions.Remove(rolePermission);
                         }
-                        _roleRepository.SaveChanges();
+                    }
+                    else if (change.isSelected)
+                    {
+                        _context.RolePermissions.Add(new RolePermission
+                        {
+                            RoleId = model.RoleId,
+                            PermissionId = permission.PermissionId,
+                            CanView = change.canView,
+                            CanAddEdit = change.canAddEdit,
+                            CanDelete = change.canDelete
+                        });
                     }
                 }
-            }
 
-            return Json(new { success = true });
+                _roleRepository.SaveChanges();
+                return Json(new { success = true, message = "Permissions updated successfully!" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "An error occurred while updating permissions: " + ex.Message });
+            }
         }
 
 

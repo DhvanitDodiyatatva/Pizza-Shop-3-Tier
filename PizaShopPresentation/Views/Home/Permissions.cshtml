@@ -304,14 +304,29 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            window.location.href = '@Url.Action("Roles", "Home")';
+                            // Redirect to Roles action with the success message as a query parameter
+                            const redirectUrl = '@Url.Action("Roles", "Home")' + '?successMessage=' + encodeURIComponent(data.message);
+                            window.location.href = redirectUrl;
                         } else {
+                            toastr.error(data.message);
                             console.error('Update failed:', data.message);
                         }
                     })
-                    .catch(error => console.error('Error:', error));
+                    .catch(error => {
+                        toastr.error('An unexpected error occurred. Please try again.');
+                        console.error('Error:', error);
+                    });
+                } else {
+                    toastr.warning('No changes to save.');
                 }
             });
+
+            // Toastr options
+            toastr.options = {
+                "positionClass": "toast-top-right",
+                "progressBar": true,
+                "timeOut": "5000"
+            };
         });
     </script>
 }
