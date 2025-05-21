@@ -44,17 +44,17 @@ else
             <td class="py-3 text-center text-nowrap">@item.Quantity</td>
             <td class="py-3 text-center text-nowrap">
                 <div class="form-check form-switch d-flex justify-content-center">
-                     @if (User.HasClaim(c => c.Type == "Permission_Menu" && (c.Value == "Alter")))
-                                {
-                    <input class="form-check-input toggle-availability" type="checkbox" role="switch"
-                        id="flexswitchcheckchecked_@item.Id" style="width: 50px; height: 30px;" @(item.IsAvailable ? "checked" :
-                                                                                                                "") data-item-id="@item.Id">
-                    }
-            <label class="form-check-label" for="flexswitchcheckchecked_@item.Id"></label>
-        </div>
-    </td>
-    <td class="py-3 text-center text-nowrap">
-        @if (User.HasClaim(c => c.Type == "Permission_Menu" && (c.Value == "Alter")))
+                    @if (User.HasClaim(c => c.Type == "Permission_Menu" && (c.Value == "Alter")))
+                    {
+                        <input class="form-check-input toggle-availability" type="checkbox" role="switch"
+                            id="flexswitchcheckchecked_@item.Id" style="width: 50px; height: 30px;" @(item.IsAvailable ? "checked" :
+                                                                                                                    "") data-item-id="@item.Id">
+                        }
+                    <label class="form-check-label" for="flexswitchcheckchecked_@item.Id"></label>
+                </div>
+            </td>
+            <td class="py-3 text-center text-nowrap">
+                @if (User.HasClaim(c => c.Type == "Permission_Menu" && (c.Value == "Alter")))
                 {
                     <button type="button" class="btn p-0 text-body-btn edit-item-btn" data-item-id="@item.Id">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
@@ -64,17 +64,17 @@ else
                         </svg>
                     </button>
                 }
-         @if (User.HasClaim(c => c.Type == "Permission_Menu" && (c.Value == "Delete")))
-            {
-                <button type="button" class="btn p-0 text-body-btn" data-bs-toggle="modal"
-                    data-bs-target="#examplemodal_@item.Id">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash3"
-                        viewBox="0 0 16 16">
-                        <path
-                            d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 0 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
-                    </svg>
-                </button>
-            }
+                @if (User.HasClaim(c => c.Type == "Permission_Menu" && (c.Value == "Delete")))
+                {
+                    <button type="button" class="btn p-0 text-body-btn" data-bs-toggle="modal"
+                        data-bs-target="#examplemodal_@item.Id">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash3"
+                            viewBox="0 0 16 16">
+                            <path
+                                d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 0 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
+                        </svg>
+                    </button>
+                }
                 <!-- Modal for Delete Confirmation -->
                 <div class="modal fade" id="examplemodal_@item.Id" tabindex="-1" aria-labelledby="examplemodallabel_@item.Id"
                     aria-hidden="true">
@@ -146,8 +146,14 @@ else
                     var modal = new bootstrap.Modal(document.getElementById("editItemModal_" + itemId));
                     modal.show();
                 },
-                error: function () {
-                    toastr.error("Failed to load edit item form.");
+                error: function (xhr, status, error) {
+                    if (xhr.status === 401) {
+                        window.location.href = '@Url.Action("Index", "Login")';
+                    } else if (xhr.status === 403) {
+                        window.location.href = '@Url.Action("AccessDenied", "Error")';
+                    } else {
+                        toastr.error("Failed to load edit item form.");
+                    }
                 }
             });
         });
@@ -174,8 +180,14 @@ else
                         toastr.error("Failed to delete item: " + response.message);
                     }
                 },
-                error: function () {
-                    toastr.error("An error occurred while deleting the item.");
+                error: function (xhr, status, error) {
+                    if (xhr.status === 401) {
+                        window.location.href = '@Url.Action("Index", "Login")';
+                    } else if (xhr.status === 403) {
+                        window.location.href = '@Url.Action("AccessDenied", "Error")';
+                    } else {
+                        toastr.error("An error occurred while deleting the item.");
+                    }
                 }
             });
         });
@@ -200,12 +212,18 @@ else
                         // Revert the toggle state on error
                         $(this).prop("checked", !isAvailable);
                     }
-                }.bind(this), // Bind 'this' to maintain context
-                error: function () {
-                    toastr.error("An error occurred while updating availability.");
-                    // Revert the toggle state on error
-                    $(this).prop("checked", !isAvailable);
-                }.bind(this) // Bind 'this' to maintain context
+                }.bind(this),
+                error: function (xhr, status, error) {
+                    if (xhr.status === 401) {
+                        window.location.href = '@Url.Action("Index", "Login")';
+                    } else if (xhr.status === 403) {
+                        window.location.href = '@Url.Action("AccessDenied", "Error")';
+                    } else {
+                        toastr.error("An error occurred while updating availability.");
+                        // Revert the toggle state on error
+                        $(this).prop("checked", !isAvailable);
+                    }
+                }.bind(this)
             });
         });
     });

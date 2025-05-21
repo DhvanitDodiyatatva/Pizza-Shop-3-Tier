@@ -67,15 +67,18 @@
                         </div>
                     </a>
                 }
-                <a asp-controller="Menu" asp-action="Index">
-                    <div
-                        class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Menu" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
-                        <div class="d-flex align-items-center" style="gap: 10px">
-                            <img src="~/images/dashboard/menu.png" alt="menu-icon" style="height: 20px; width: 20px;">
-                            <span>Menu</span>
+                @if (User.HasClaim(c => c.Type == "Permission_Menu" && (c.Value == "View")))
+                {
+                    <a asp-controller="Menu" asp-action="Index">
+                        <div
+                            class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Menu" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
+                            <div class="d-flex align-items-center" style="gap: 10px">
+                                <img src="~/images/dashboard/menu.png" alt="menu-icon" style="height: 20px; width: 20px;">
+                                <span>Menu</span>
+                            </div>
                         </div>
-                    </div>
-                </a>
+                    </a>
+                }
                 <a asp-controller="TableAndSection" asp-action="Index">
                     <div
                         class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "TableAndSection" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
@@ -251,16 +254,19 @@
                                         </div>
                                     </a>
                                 }
-                                <a asp-controller="Menu" asp-action="Index">
-                                    <div
-                                        class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Menu" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
-                                        <div class="d-flex align-items-center" style="gap: 10px">
-                                            <img src="~/images/dashboard/menu.png" alt="menu-icon"
-                                                style="height: 20px; width: 20px;">
-                                            <span>Menu</span>
+                                @if (User.HasClaim(c => c.Type == "Permission_Menu" && (c.Value == "View")))
+                                {
+                                    <a asp-controller="Menu" asp-action="Index">
+                                        <div
+                                            class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Menu" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
+                                            <div class="d-flex align-items-center" style="gap: 10px">
+                                                <img src="~/images/dashboard/menu.png" alt="menu-icon"
+                                                    style="height: 20px; width: 20px;">
+                                                <span>Menu</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                </a>
+                                    </a>
+                                }
                                 <a asp-controller="TableAndSection" asp-action="Index">
                                     <div
                                         class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "TableAndSection" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">

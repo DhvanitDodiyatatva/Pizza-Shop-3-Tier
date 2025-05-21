@@ -552,12 +552,21 @@
                         }
                     },
                     error: function (xhr, status, error) {
-                        console.error("Error adding category:", error);
-                        toastr.error("Error adding category. Please try again.");
-                        var modalEl = document.getElementById('exampleModal12');
-                        if (modalEl) {
-                            var modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
-                            modal.show();
+                        if (xhr.status === 401) {
+                            // Redirect to login page if user is not authenticated
+                            window.location.href = '@Url.Action("Index", "Login")';
+                        } else if (xhr.status === 403) {
+                            // Redirect to access denied page if user lacks permission
+                            window.location.href = '@Url.Action("AccessDenied", "Error")';
+                        } else {
+                            // Handle other errors (e.g., network issues, server errors)
+                            console.error("Error adding category:", error);
+                            toastr.error("Error adding category: " + (xhr.responseText || "Unknown error"));
+                            var modalEl = document.getElementById('exampleModal12');
+                            if (modalEl) {
+                                var modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                                modal.show();
+                            }
                         }
                     }
                 });
@@ -592,7 +601,14 @@
                         }
                     },
                     error: function (xhr, status, error) {
-                        console.error("Error loading edit partial view for ID " + categoryId + ":", error);
+                        if (xhr.status === 401) {
+                            window.location.href = '@Url.Action("Index", "Login")';
+                        } else if (xhr.status === 403) {
+                            window.location.href = '@Url.Action("AccessDenied", "Error")';
+                        } else {
+                            console.error("Error loading edit partial view for ID " + categoryId + ":", error);
+                            toastr.error("Error loading edit form: " + error);
+                        }
                     }
                 });
             });
@@ -651,8 +667,14 @@
                     modal.show();
 
                 },
-                error: function () {
-                    toastr.error("Failed to load add item form.");
+                error: function (xhr, status, error) {
+                    if (xhr.status === 401) {
+                        window.location.href = '@Url.Action("Index", "Login")';
+                    } else if (xhr.status === 403) {
+                        window.location.href = '@Url.Action("AccessDenied", "Error")';
+                    } else {
+                        toastr.error("Failed to load add item form.");
+                    }
                 }
             });
         });
@@ -694,8 +716,14 @@
                         toastr.error("Error: " + response.message);
                     }
                 },
-                error: function () {
-                    toastr.error("Failed to delete category. Please try again.");
+                error: function (xhr, status, error) {
+                    if (xhr.status === 401) {
+                        window.location.href = '@Url.Action("Index", "Login")';
+                    } else if (xhr.status === 403) {
+                        window.location.href = '@Url.Action("AccessDenied", "Error")';
+                    } else {
+                        toastr.error("Failed to delete category. Please try again.");
+                    }
                 }
             });
         });
@@ -795,8 +823,14 @@
                                     toastr.error(response.message || "Failed to delete items.");
                                 }
                             },
-                            error: function (xhr) {
-                                toastr.error("Error deleting items: " + (xhr.responseText || "Unknown error"));
+                            error: function (xhr, status, error) {
+                                if (xhr.status === 401) {
+                                    window.location.href = '@Url.Action("Index", "Login")';
+                                } else if (xhr.status === 403) {
+                                    window.location.href = '@Url.Action("AccessDenied", "Error")';
+                                } else {
+                                    toastr.error("Error deleting items: " + (xhr.responseText || "Unknown error"));
+                                }
                             }
                         });
                     },
@@ -847,8 +881,14 @@
                                     toastr.error(response.message || "Failed to delete items.");
                                 }
                             },
-                            error: function (xhr) {
-                                toastr.error("Error deleting items: " + (xhr.responseText || "Unknown error"));
+                            error: function (xhr, status, error) {
+                                if (xhr.status === 401) {
+                                    window.location.href = '@Url.Action("Index", "Login")';
+                                } else if (xhr.status === 403) {
+                                    window.location.href = '@Url.Action("AccessDenied", "Error")';
+                                } else {
+                                    toastr.error("Error deleting items: " + (xhr.responseText || "Unknown error"));
+                                }
                             }
                         });
                     },

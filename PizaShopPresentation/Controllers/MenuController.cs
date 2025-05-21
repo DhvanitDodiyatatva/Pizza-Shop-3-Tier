@@ -40,7 +40,7 @@ public class MenuController : Controller
     }
 
     [HttpGet]
-    // [CustomAuthorize("Menu", PermissionType.Alter, "super_admin", "account_manager")]
+    [CustomAuthorize("Menu", PermissionType.Alter, "super_admin", "account_manager")]
     public IActionResult AddNewCategory()
     {
         // Return a fresh view model if needed.
@@ -48,6 +48,7 @@ public class MenuController : Controller
     }
 
     [HttpPost]
+    [CustomAuthorize("Menu", PermissionType.Alter, "super_admin", "account_manager")]
     public async Task<IActionResult> AddNewCategory(CrudCategoryViewModel model)
     {
         if (!ModelState.IsValid)
@@ -107,6 +108,7 @@ public class MenuController : Controller
     }
 
     [HttpPost]
+    [CustomAuthorize("Menu", PermissionType.Delete, "super_admin", "account_manager")]
     public async Task<IActionResult> Delete(int id)
     {
         try
@@ -122,6 +124,8 @@ public class MenuController : Controller
     }
 
     [HttpPost]
+    [CustomAuthorize("Menu", PermissionType.Delete, "super_admin", "account_manager")]
+
     public async Task<IActionResult> DeleteItem(int id)
     {
         try
@@ -136,6 +140,8 @@ public class MenuController : Controller
     }
 
     [HttpPost]
+    [CustomAuthorize("Menu", PermissionType.Delete, "super_admin", "account_manager")]
+
     public async Task<IActionResult> DeleteItems([FromBody] List<int> ids)
     {
         try
@@ -151,6 +157,7 @@ public class MenuController : Controller
 
 
     [HttpGet]
+    [CustomAuthorize("Menu", PermissionType.Alter, "super_admin", "account_manager")]
     public async Task<IActionResult> EditCategory(int id)
     {
         var model = await _categoryService.GetCategoryForEditAsync(id)
@@ -163,6 +170,7 @@ public class MenuController : Controller
     }
 
     [HttpPost]
+    [CustomAuthorize("Menu", PermissionType.Alter, "super_admin", "account_manager")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> UpdateCategory(CrudCategoryViewModel model)
     {
@@ -190,6 +198,7 @@ public class MenuController : Controller
     }
 
     [HttpGet]
+    [CustomAuthorize("Menu", PermissionType.Alter, "super_admin", "account_manager")]
     public async Task<IActionResult> AddNewItem()
     {
         var categories = await _categoryService.GetAllCategoriesAsync();
@@ -200,6 +209,7 @@ public class MenuController : Controller
     }
 
     [HttpPost]
+    [CustomAuthorize("Menu", PermissionType.Alter, "super_admin", "account_manager")]
     public async Task<IActionResult> AddNewItem(ItemVM model)
     {
         if (!ModelState.IsValid)
@@ -226,6 +236,7 @@ public class MenuController : Controller
 
 
     [HttpGet]
+    [CustomAuthorize("Menu", PermissionType.Alter, "super_admin", "account_manager")]
     public async Task<IActionResult> EditItem(int id)
     {
         var model = await _itemService.GetItemForEditAsync(id);
@@ -240,6 +251,7 @@ public class MenuController : Controller
     }
 
     [HttpPost]
+    [CustomAuthorize("Menu", PermissionType.Alter, "super_admin", "account_manager")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> UpdateItem(ItemVM model, IFormFile ImageFile)
     {
@@ -266,6 +278,7 @@ public class MenuController : Controller
 
 
     [HttpPost]
+    [CustomAuthorize("Menu", PermissionType.Alter, "super_admin", "account_manager")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ToggleAvailability(int id, bool isAvailable)
     {

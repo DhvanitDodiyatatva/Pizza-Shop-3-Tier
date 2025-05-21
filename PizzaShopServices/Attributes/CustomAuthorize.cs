@@ -75,9 +75,19 @@ namespace PizzaShopServices.Attributes
             var token = jwtService.GetJWTToken(context.HttpContext.Request);
             var principal = jwtService.ValidateToken(token);
 
+            // Check if the request is an AJAX request
+            bool isAjaxRequest = context.HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+
             if (principal == null)
             {
-                context.Result = new RedirectToActionResult("Index", "Login", null);
+                if (isAjaxRequest)
+                {
+                    context.Result = new StatusCodeResult(401); // Unauthorized
+                }
+                else
+                {
+                    context.Result = new RedirectToActionResult("Index", "Login", null);
+                }
                 return;
             }
 
@@ -89,17 +99,17 @@ namespace PizzaShopServices.Attributes
                 var userRole = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
                 if (string.IsNullOrEmpty(userRole) || !_roles.Contains(userRole))
                 {
-                    context.Result = new RedirectToActionResult("AccessDenied", "Error", null);
+                    SetResultBasedOnRequestType(context, isAjaxRequest);
                     return;
                 }
             }
 
-            // Extract roleId from claims (assuming Role claim holds the role name, not ID)
+            // Extract roleId from claims
             var roleName = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
             var role = roleService.GetAllRoles().FirstOrDefault(r => r.Name == roleName);
             if (role == null || !int.TryParse(role.Id.ToString(), out int roleId))
             {
-                context.Result = new RedirectToActionResult("AccessDenied", "Error", null);
+                SetResultBasedOnRequestType(context, isAjaxRequest);
                 return;
             }
 
@@ -107,7 +117,7 @@ namespace PizzaShopServices.Attributes
             var permission = roleService.GetPermissionForRoleAndModule(roleId, _moduleName).GetAwaiter().GetResult();
             if (permission == null)
             {
-                context.Result = new RedirectToActionResult("AccessDenied", "Error", null);
+                SetResultBasedOnRequestType(context, isAjaxRequest);
                 return;
             }
 
@@ -120,6 +130,18 @@ namespace PizzaShopServices.Attributes
             };
 
             if (!hasPermission)
+            {
+                SetResultBasedOnRequestType(context, isAjaxRequest);
+            }
+        }
+
+        private void SetResultBasedOnRequestType(AuthorizationFilterContext context, bool isAjaxRequest)
+        {
+            if (isAjaxRequest)
+            {
+                context.Result = new StatusCodeResult(403); // Forbidden
+            }
+            else
             {
                 context.Result = new RedirectToActionResult("AccessDenied", "Error", null);
             }
