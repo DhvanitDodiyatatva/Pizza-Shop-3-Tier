@@ -25,6 +25,10 @@ public partial class OrderItem
 
     public int ReadyQuantity { get; set; }
 
+    public DateTime? ReadyAt { get; set; }
+
+    public DateTime? CreatedAt { get; set; }
+
     public virtual Item Item { get; set; } = null!;
 
     public virtual Order Order { get; set; } = null!;

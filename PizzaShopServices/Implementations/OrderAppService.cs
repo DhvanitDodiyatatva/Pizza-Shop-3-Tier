@@ -482,12 +482,10 @@ namespace PizzaShopServices.Implementations
                 {
                     if (orderTax.TaxPercentage.HasValue)
                     {
-                        // Percentage-based taxes are always applied
                         orderTax.IsApplied = true;
                     }
                     else if (orderTax.TaxFlat.HasValue && model.TaxSettings.ContainsKey(orderTax.Tax.Name))
                     {
-                        // Flat taxes are applied based on TaxSettings
                         orderTax.IsApplied = model.TaxSettings[orderTax.Tax.Name];
                     }
                 }
@@ -503,7 +501,6 @@ namespace PizzaShopServices.Implementations
                 }
 
                 // 4 & 5. Update OrderItem and OrderItemModifier tables
-                // Create a dictionary of incoming items for easier comparison
                 var incomingItems = model.CartItems.ToDictionary(
                     ci => ci.ItemId + "-" + string.Join(",", ci.Modifiers.OrderBy(m => m.ModifierId).Select(m => m.ModifierId)),
                     ci => ci
@@ -541,10 +538,11 @@ namespace PizzaShopServices.Implementations
                             UnitPrice = cartItem.UnitPrice,
                             TotalPrice = cartItem.TotalPrice,
                             ItemStatus = "in_progress",
-                            ReadyQuantity = 0
+                            ReadyQuantity = 0,
+                            CreatedAt = DateTime.Now // Set CreatedAt
                         };
                         _context.OrderItems.Add(orderItem);
-                        await _context.SaveChangesAsync(); // Save to generate OrderItem.Id
+                        await _context.SaveChangesAsync();
 
                         // Add OrderItemModifiers
                         foreach (var modifier in cartItem.Modifiers)
@@ -846,7 +844,7 @@ namespace PizzaShopServices.Implementations
 
                 // Calculate average rating and update Order
                 decimal averageRating = (model.FoodRating + model.ServiceRating + model.AmbienceRating) / 3m;
-                order.Rating = averageRating; 
+                order.Rating = averageRating;
                 _context.Orders.Update(order);
 
                 await _context.SaveChangesAsync();

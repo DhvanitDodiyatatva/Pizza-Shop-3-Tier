@@ -38,14 +38,33 @@ namespace PizzaShopRepository.Repositories
         public async Task<double> GetAverageWaitingTimeAsync(DateTime startDate, DateTime endDate)
         {
             var orders = await _context.Orders
-                .Where(o => o.CreatedAt >= startDate && o.CreatedAt <= endDate && o.OrderStatus == "completed" && o.UpdatedAt != null)
+                .Include(o => o.OrderItems)
+                .Where(o => o.CreatedAt >= startDate && o.CreatedAt <= endDate && o.OrderStatus == "completed")
                 .ToListAsync();
-            if (!orders.Any()) return 0;
-            var avgMinutes = orders.Average(o => (o.UpdatedAt!.Value - o.CreatedAt!.Value).TotalMinutes);
-            return Math.Round(avgMinutes, 2);
+
+            var completedOrders = orders
+                .Where(o => o.OrderItems.Any(oi => oi.ReadyQuantity > 0 && oi.ReadyAt.HasValue))
+                .ToList();
+
+            var waitingTimes = completedOrders.Select(o =>
+            {
+                var createdItems = o.OrderItems.Where(oi => oi.CreatedAt.HasValue);
+                if (createdItems.Any())
+                {
+                    var earliestCreatedAt = createdItems.Min(oi => oi.CreatedAt.Value);
+                    var readyItems = o.OrderItems.Where(oi => oi.ReadyQuantity > 0 && oi.ReadyAt.HasValue);
+                    if (readyItems.Any())
+                    {
+                        var earliestReadyAt = readyItems.Min(oi => oi.ReadyAt.Value);
+                        var waitingTime = (earliestReadyAt - earliestCreatedAt).TotalMinutes;
+                        return waitingTime > 0 ? waitingTime : 0;
+                    }
+                }
+                return 0.0;
+            }).Where(t => t > 0).ToList();
+
+            return waitingTimes.Any() ? Math.Round(waitingTimes.Average(), 2) : 0;
         }
-
-
 
         public async Task<List<ChartDataViewModel>> GetRevenueDataAsync(DateTime startDate, DateTime endDate, string groupBy = "day")
         {
@@ -82,7 +101,7 @@ namespace PizzaShopRepository.Repositories
                 }
                 return allMonths;
             }
-            else // groupBy == "day"
+            else
             {
                 var revenueData = await query
                     .GroupBy(o => o.CreatedAt!.Value.Date)
@@ -144,7 +163,7 @@ namespace PizzaShopRepository.Repositories
                 }
                 return allMonths;
             }
-            else // groupBy == "day"
+            else
             {
                 var customerGrowthData = await query
                     .GroupBy(o => o.CreatedAt!.Value.Date)

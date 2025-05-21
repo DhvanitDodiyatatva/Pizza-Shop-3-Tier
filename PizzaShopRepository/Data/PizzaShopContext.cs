@@ -306,6 +306,9 @@ public partial class PizzaShopContext : DbContext
             entity.ToTable("order_items");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("created_at");
             entity.Property(e => e.CurrentTaxPercentage).HasColumnName("current_tax_percentage");
             entity.Property(e => e.ItemId).HasColumnName("item_id");
             entity.Property(e => e.ItemStatus)
@@ -314,6 +317,9 @@ public partial class PizzaShopContext : DbContext
                 .HasColumnName("item_status");
             entity.Property(e => e.OrderId).HasColumnName("order_id");
             entity.Property(e => e.Quantity).HasColumnName("quantity");
+            entity.Property(e => e.ReadyAt)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("ready_at");
             entity.Property(e => e.ReadyQuantity).HasColumnName("ready_quantity");
             entity.Property(e => e.SpecialInstructions).HasColumnName("special_instructions");
             entity.Property(e => e.TotalPrice)

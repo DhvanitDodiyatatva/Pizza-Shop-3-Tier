@@ -3,8 +3,6 @@ using PizzaShopRepository.Data;
 using PizzaShopRepository.Interfaces;
 using PizzaShopRepository.Models;
 
-
-
 namespace PizzaShopRepository.Repositories
 {
     public class KotRepository : IKotRepository
@@ -28,7 +26,7 @@ namespace PizzaShopRepository.Repositories
                 .Include(o => o.OrderTables)
                     .ThenInclude(ot => ot.Table)
                     .ThenInclude(t => t.Section)
-                .Where(o => o.OrderItems.Any()); // Ensure this doesn’t filter out items
+                .Where(o => o.OrderItems.Any());
 
             if (categoryId.HasValue)
             {
@@ -37,7 +35,7 @@ namespace PizzaShopRepository.Repositories
 
             if (!string.IsNullOrEmpty(status))
             {
-                query = query.Where(o => o.OrderItems.Any(oi => oi.ItemStatus == status || oi.ItemStatus == "in_progress")); // Adjust if needed
+                query = query.Where(o => o.OrderItems.Any(oi => oi.ItemStatus == status || oi.ItemStatus == "in_progress"));
             }
 
             return await query.ToListAsync();
@@ -77,26 +75,35 @@ namespace PizzaShopRepository.Repositories
 
                         if (newStatus == "ready")
                         {
-                            // Increment ready_quantity by AdjustedQuantity if it exceeds current value, cap at quantity
                             int newReadyQuantity = Math.Min(item.ReadyQuantity + updateItem.AdjustedQuantity, item.Quantity);
                             item.ReadyQuantity = newReadyQuantity;
                             item.ItemStatus = item.ReadyQuantity >= item.Quantity ? "ready" : "in_progress";
+                            if (item.ReadyQuantity > originalReadyQuantity && item.ReadyAt == null)
+                            {
+                                item.ReadyAt = DateTime.Now; // Set ReadyAt when item becomes ready
+                            }
                             entry.Property(e => e.ReadyQuantity).IsModified = true;
                             entry.Property(e => e.ItemStatus).IsModified = true;
-                            Console.WriteLine($"Updated Item {item.Id} (Ready): Original ReadyQuantity={originalReadyQuantity}, AdjustedQuantity={updateItem.AdjustedQuantity}, New ReadyQuantity={item.ReadyQuantity}, Original Status={originalItemStatus}, New Status={item.ItemStatus}");
+                            entry.Property(e => e.ReadyAt).IsModified = true;
+                            Console.WriteLine($"Updated Item {item.Id} (Ready): Original ReadyQuantity={originalReadyQuantity}, AdjustedQuantity={updateItem.AdjustedQuantity}, New ReadyQuantity={item.ReadyQuantity}, Original Status={originalItemStatus}, New Status={item.ItemStatus}, ReadyAt={item.ReadyAt}");
                         }
                         else if (newStatus == "in_progress")
                         {
                             int reduction = Math.Min(updateItem.AdjustedQuantity, item.ReadyQuantity);
                             item.ReadyQuantity -= reduction;
                             item.ItemStatus = item.ReadyQuantity < item.Quantity ? "in_progress" : "ready";
+                            if (item.ReadyQuantity == 0)
+                            {
+                                item.ReadyAt = null; // Reset ReadyAt if no items are ready
+                            }
                             entry.Property(e => e.ReadyQuantity).IsModified = true;
                             entry.Property(e => e.ItemStatus).IsModified = true;
-                            Console.WriteLine($"Updated Item {item.Id} (In Progress): Original ReadyQuantity={originalReadyQuantity}, Reduced by {reduction}, New ReadyQuantity={item.ReadyQuantity}, Original Status={originalItemStatus}, New Status={item.ItemStatus}");
+                            entry.Property(e => e.ReadyAt).IsModified = true;
+                            Console.WriteLine($"Updated Item {item.Id} (In Progress): Original ReadyQuantity={originalReadyQuantity}, Reduced by {reduction}, New ReadyQuantity={item.ReadyQuantity}, Original Status={originalItemStatus}, New Status={item.ItemStatus}, ReadyAt={item.ReadyAt}");
                         }
 
                         Console.WriteLine($"Entity State after Update for Item {item.Id}: {entry.State}");
-                        Console.WriteLine($"UPDATE Parameters: ReadyQuantity={item.ReadyQuantity}, ItemStatus={item.ItemStatus}");
+                        Console.WriteLine($"UPDATE Parameters: ReadyQuantity={item.ReadyQuantity}, ItemStatus={item.ItemStatus}, ReadyAt={item.ReadyAt}");
                         hasChanges = true;
                     }
                 }
@@ -117,6 +124,3 @@ namespace PizzaShopRepository.Repositories
         }
     }
 }
-
-
-

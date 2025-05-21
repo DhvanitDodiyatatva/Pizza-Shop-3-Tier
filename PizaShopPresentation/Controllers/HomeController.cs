@@ -60,7 +60,7 @@ namespace PizzaShopPresentation.Controllers
             {
                 case "Today":
                     startDate = DateTime.Today.AddHours(9);
-                    endDate = DateTime.Today.AddHours(21).AddTicks(-1);
+                    endDate = DateTime.Today.AddHours(24).AddTicks(-1);
                     break;
                 case "Last7Days":
                     startDate = DateTime.Today.AddDays(-7);
@@ -152,7 +152,7 @@ namespace PizzaShopPresentation.Controllers
 
             // Generate all hours from 9 AM to 9 PM
             var allHours = new List<ChartDataViewModel>();
-            for (int hour = 9; hour <= 21; hour++)
+            for (int hour = 9; hour <= 24; hour++)
             {
                 var hourStr = hour.ToString("D2") + ":00";
                 var revenueEntry = revenueData.FirstOrDefault(r => r.Hour == hour);
@@ -181,7 +181,7 @@ namespace PizzaShopPresentation.Controllers
 
             // Generate all hours from 9 AM to 9 PM
             var allHours = new List<ChartDataViewModel>();
-            for (int hour = 9; hour <= 21; hour++)
+            for (int hour = 9; hour <= 24; hour++)
             {
                 var hourStr = hour.ToString("D2") + ":00";
                 var growthEntry = customerGrowthData.FirstOrDefault(g => g.Hour == hour);
