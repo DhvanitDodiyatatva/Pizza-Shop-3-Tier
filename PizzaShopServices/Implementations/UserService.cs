@@ -53,7 +53,7 @@ namespace PizzaShopServices.Implementations
             }
 
             // Define modules to include in claims
-            var modules = new[] { "Menu", "TableAndSection", "TaxAndFee" };
+            var modules = new[] { "Menu", "TableAndSection", "TaxAndFee", "Users", "Order", "Customers" };
             var permissionClaims = new List<Claim>();
 
             foreach (var module in modules)

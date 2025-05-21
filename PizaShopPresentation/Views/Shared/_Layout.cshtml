@@ -44,16 +44,18 @@
                         </div>
                     </div>
                 </a>
-                <a asp-area="" asp-controller="Home" asp-action="Users">
-                    <div
-                        class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Users" ? "active" : "")">
-                        <div class="d-flex align-items-center" style="gap: 10px">
-                            <img src="~/images/dashboard/users.png" alt="users-icon" style="height: 20px; width: 20px;">
-                            <span>Users</span>
+                @if (User.HasClaim(c => c.Type == "Permission_Users" && (c.Value == "View")))
+                {
+                    <a asp-area="" asp-controller="Home" asp-action="Users">
+                        <div
+                            class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Users" ? "active" : "")">
+                            <div class="d-flex align-items-center" style="gap: 10px">
+                                <img src="~/images/dashboard/users.png" alt="users-icon" style="height: 20px; width: 20px;">
+                                <span>Users</span>
+                            </div>
                         </div>
-                    </div>
-                </a>
-
+                    </a>
+                }
                 @if (!User.IsInRole("chef"))
                 {
                     <a asp-area="" asp-controller="Home" asp-action="Roles">
@@ -79,45 +81,57 @@
                         </div>
                     </a>
                 }
-                <a asp-controller="TableAndSection" asp-action="Index">
-                    <div
-                        class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "TableAndSection" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
-                        <div class="d-flex align-items-center" style="gap: 10px">
-                            <img src="~/images/dashboard/tableandSection.png" alt="tables-icon"
-                                style="height: 20px; width: 20px;">
-                            <span>Table and section</span>
+                @if (User.HasClaim(c => c.Type == "Permission_TableAndSection" && (c.Value == "View")))
+                {
+                    <a asp-controller="TableAndSection" asp-action="Index">
+                        <div
+                            class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "TableAndSection" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
+                            <div class="d-flex align-items-center" style="gap: 10px">
+                                <img src="~/images/dashboard/tableandSection.png" alt="tables-icon"
+                                    style="height: 20px; width: 20px;">
+                                <span>Table and section</span>
+                            </div>
                         </div>
-                    </div>
-                </a>
-                <a asp-controller="TaxFee" asp-action="TaxesFees">
-                    <div
-                        class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "TaxFee" && ViewContext.RouteData.Values["Action"]?.ToString() == "TaxesFees" ? "active" : "")">
-                        <div class="d-flex align-items-center" style="gap: 10px">
-                            <img src="~/images/dashboard/tax.png" alt="tax-icon" style="height: 20px; width: 20px;">
-                            <span>Taxes and Fees</span>
+                    </a>
+                }
+                @if (User.HasClaim(c => c.Type == "Permission_TaxAndFee" && (c.Value == "View")))
+                {
+                    <a asp-controller="TaxFee" asp-action="TaxesFees">
+                        <div
+                            class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "TaxFee" && ViewContext.RouteData.Values["Action"]?.ToString() == "TaxesFees" ? "active" : "")">
+                            <div class="d-flex align-items-center" style="gap: 10px">
+                                <img src="~/images/dashboard/tax.png" alt="tax-icon" style="height: 20px; width: 20px;">
+                                <span>Taxes and Fees</span>
+                            </div>
                         </div>
-                    </div>
-                </a>
-                <a asp-controller="Orders" asp-action="Index">
-                    <div
-                        class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Orders" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
-                        <div class="d-flex align-items-center" style="gap: 10px">
-                            <img src="~/images/dashboard/orders.png" alt="orders-icon"
-                                style="height: 20px; width: 20px;">
-                            <span>Orders</span>
+                    </a>
+                }
+                @if (User.HasClaim(c => c.Type == "Permission_Order" && (c.Value == "View")))
+                {
+                    <a asp-controller="Orders" asp-action="Index">
+                        <div
+                            class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Orders" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
+                            <div class="d-flex align-items-center" style="gap: 10px">
+                                <img src="~/images/dashboard/orders.png" alt="orders-icon"
+                                    style="height: 20px; width: 20px;">
+                                <span>Orders</span>
+                            </div>
                         </div>
-                    </div>
-                </a>
-                <a asp-controller="Customer" asp-action="Index">
-                    <div
-                        class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Customer" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
-                        <div class="d-flex align-items-center" style="gap: 10px">
-                            <img src="~/images/dashboard/customer.png" alt="customer-icon"
-                                style="height: 20px; width: 20px;">
-                            <span>Customers</span>
+                    </a>
+                }
+                @if (User.HasClaim(c => c.Type == "Permission_Customers" && (c.Value == "View")))
+                {
+                    <a asp-controller="Customer" asp-action="Index">
+                        <div
+                            class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Customer" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
+                            <div class="d-flex align-items-center" style="gap: 10px">
+                                <img src="~/images/dashboard/customer.png" alt="customer-icon"
+                                    style="height: 20px; width: 20px;">
+                                <span>Customers</span>
+                            </div>
                         </div>
-                    </div>
-                </a>
+                    </a>
+                }
             </div>
 
             <!-- Main Content -->
@@ -231,16 +245,19 @@
                                         </div>
                                     </div>
                                 </a>
-                                <a asp-area="" asp-controller="Home" asp-action="Users">
-                                    <div
-                                        class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Users" ? "active" : "")">
-                                        <div class="d-flex align-items-center" style="gap: 10px">
-                                            <img src="~/images/dashboard/users.png" alt="users-icon"
-                                                style="height: 20px; width: 20px;">
-                                            <span>Users</span>
+                                @if (User.HasClaim(c => c.Type == "Permission_Users" && (c.Value == "View")))
+                                {
+                                    <a asp-area="" asp-controller="Home" asp-action="Users">
+                                        <div
+                                            class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Users" ? "active" : "")">
+                                            <div class="d-flex align-items-center" style="gap: 10px">
+                                                <img src="~/images/dashboard/users.png" alt="users-icon"
+                                                    style="height: 20px; width: 20px;">
+                                                <span>Users</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                </a>
+                                    </a>
+                                }
                                 @if (!User.IsInRole("chef"))
                                 {
                                     <a asp-area="" asp-controller="Home" asp-action="Roles">
@@ -267,46 +284,58 @@
                                         </div>
                                     </a>
                                 }
-                                <a asp-controller="TableAndSection" asp-action="Index">
-                                    <div
-                                        class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "TableAndSection" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
-                                        <div class="d-flex align-items-center" style="gap: 10px">
-                                            <img src="~/images/dashboard/tableandSection.png" alt="tables-icon"
-                                                style="height: 20px; width: 20px;">
-                                            <span>Table and section</span>
+                                @if (User.HasClaim(c => c.Type == "Permission_TableAndSection" && (c.Value == "View")))
+                                {
+                                    <a asp-controller="TableAndSection" asp-action="Index">
+                                        <div
+                                            class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "TableAndSection" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
+                                            <div class="d-flex align-items-center" style="gap: 10px">
+                                                <img src="~/images/dashboard/tableandSection.png" alt="tables-icon"
+                                                    style="height: 20px; width: 20px;">
+                                                <span>Table and section</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                </a>
-                                <a asp-controller="TaxFee" asp-action="TaxesFees">
-                                    <div
-                                        class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "TaxFee" && ViewContext.RouteData.Values["Action"]?.ToString() == "TaxesFees" ? "active" : "")">
-                                        <div class="d-flex align-items-center" style="gap: 10px">
-                                            <img src="~/images/dashboard/tax.png" alt="tax-icon"
-                                                style="height: 20px; width: 20px;">
-                                            <span>Taxes and Fees</span>
+                                    </a>
+                                }
+                                @if (User.HasClaim(c => c.Type == "Permission_TaxAndFee" && (c.Value == "View")))
+                                {
+                                    <a asp-controller="TaxFee" asp-action="TaxesFees">
+                                        <div
+                                            class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "TaxFee" && ViewContext.RouteData.Values["Action"]?.ToString() == "TaxesFees" ? "active" : "")">
+                                            <div class="d-flex align-items-center" style="gap: 10px">
+                                                <img src="~/images/dashboard/tax.png" alt="tax-icon"
+                                                    style="height: 20px; width: 20px;">
+                                                <span>Taxes and Fees</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                </a>
-                                <a asp-controller="Orders" asp-action="Index">
-                                    <div
-                                        class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Orders" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
-                                        <div class="d-flex align-items-center" style="gap: 10px">
-                                            <img src="~/images/dashboard/orders.png" alt="orders-icon"
-                                                style="height: 20px; width: 20px;">
-                                            <span>Orders</span>
+                                    </a>
+                                }
+                                @if (User.HasClaim(c => c.Type == "Permission_Order" && (c.Value == "View")))
+                                {
+                                    <a asp-controller="Orders" asp-action="Index">
+                                        <div
+                                            class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Orders" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
+                                            <div class="d-flex align-items-center" style="gap: 10px">
+                                                <img src="~/images/dashboard/orders.png" alt="orders-icon"
+                                                    style="height: 20px; width: 20px;">
+                                                <span>Orders</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                </a>
-                                <a asp-controller="Customer" asp-action="Index">
-                                    <div
-                                        class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Customer" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
-                                        <div class="d-flex align-items-center" style="gap: 10px">
-                                            <img src="~/images/dashboard/customer.png" alt="customer-icon"
-                                                style="height: 20px; width: 20px;">
-                                            <span>Customers</span>
+                                    </a>
+                                }
+                                @if (User.HasClaim(c => c.Type == "Permission_Customers" && (c.Value == "View")))
+                                {
+                                    <a asp-controller="Customer" asp-action="Index">
+                                        <div
+                                            class="row sidebar-item my-3 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Customer" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
+                                            <div class="d-flex align-items-center" style="gap: 10px">
+                                                <img src="~/images/dashboard/customer.png" alt="customer-icon"
+                                                    style="height: 20px; width: 20px;">
+                                                <span>Customers</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                </a>
+                                    </a>
+                                }
                             </div>
                         </div>
                     </div>
