@@ -119,8 +119,14 @@
                     $.validator.unobtrusive.parse("#editTaxFeeForm");
                     attachEditTaxFormHandler();
                 },
-                error: function () {
-                    toastr.error("Failed to load edit tax form.");
+                error: function (xhr, status, error) {
+                    if (xhr.status === 401) {
+                        window.location.href = '@Url.Action("Index", "Login")';
+                    } else if (xhr.status === 403) {
+                        window.location.href = '@Url.Action("AccessDenied", "Error")';
+                    } else {
+                        toastr.error("Failed to load edit tax form.");
+                    }
                 }
             });
         });
@@ -182,9 +188,15 @@
                     }
                 },
                 error: function (xhr, status, error) {
-                    console.error("Error deleting tax:", xhr.responseText);
-                    var errorMsg = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : "Failed to delete tax/fee. Please try again.";
-                    toastr.error(errorMsg);
+                    if (xhr.status === 401) {
+                        window.location.href = '@Url.Action("Index", "Login")';
+                    } else if (xhr.status === 403) {
+                        window.location.href = '@Url.Action("AccessDenied", "Error")';
+                    } else {
+                        console.error("Error deleting tax:", xhr.responseText);
+                        var errorMsg = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : "Failed to delete tax/fee. Please try again.";
+                        toastr.error(errorMsg);
+                    }
                 }
             });
         });
@@ -211,10 +223,16 @@
                     }
                 }.bind(this), // Bind 'this' to maintain context
                 error: function (xhr, status, error) {
-                    console.error("Error toggling tax enabled status:", xhr.responseText);
-                    toastr.error("Failed to update tax/fee status. Please try again.");
-                    // Revert the toggle state on error
-                    $(this).prop("checked", !isEnabled);
+                    if (xhr.status === 401) {
+                        window.location.href = '@Url.Action("Index", "Login")';
+                    } else if (xhr.status === 403) {
+                        window.location.href = '@Url.Action("AccessDenied", "Error")';
+                    } else {
+                        console.error("Error toggling tax enabled status:", xhr.responseText);
+                        toastr.error("Failed to update tax/fee status. Please try again.");
+                        // Revert the toggle state on error
+                        $(this).prop("checked", !isEnabled);
+                    }
                 }.bind(this)
             });
         });

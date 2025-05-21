@@ -160,8 +160,14 @@
                     $.validator.unobtrusive.parse("#addTaxFeeForm");
                     attachAddTaxFormHandler();
                 },
-                error: function () {
-                    toastr.error("Failed to load add tax form.");
+                error: function (xhr, status, error) {
+                    if (xhr.status === 401) {
+                        window.location.href = '@Url.Action("Index", "Login")';
+                    } else if (xhr.status === 403) {
+                        window.location.href = '@Url.Action("AccessDenied", "Error")';
+                    } else {
+                        toastr.error("Failed to load add tax form.");
+                    }
                 }
             });
         });

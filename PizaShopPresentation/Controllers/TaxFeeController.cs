@@ -8,7 +8,6 @@ using System.Linq;
 namespace PizzaShopRepository.Controllers
 {
     // [CustomAuthorize("super_admin, chef, account_manager")]
-    [CustomAuthorize("TaxAndFee", PermissionType.View, "super_admin", "account_manager")]
     public class TaxFeeController : Controller
     {
         private readonly ITaxFeeService _taxFeeService;
@@ -19,6 +18,7 @@ namespace PizzaShopRepository.Controllers
         }
 
         // GET: TaxFee/TaxesFees
+        [CustomAuthorize("TaxAndFee", PermissionType.View, "super_admin", "account_manager")]
         public IActionResult TaxesFees()
         {
             return View();
@@ -42,6 +42,7 @@ namespace PizzaShopRepository.Controllers
 
         // GET: TaxFee/AddNewTaxFee (Returns the partial view for the "Add New Tax" modal)
         [HttpGet]
+        [CustomAuthorize("TaxAndFee", PermissionType.Alter, "super_admin", "account_manager")]
         public IActionResult AddNewTaxFee()
         {
             return PartialView("_AddTaxFee", new TaxFeeAddEditViewModel());
@@ -49,6 +50,7 @@ namespace PizzaShopRepository.Controllers
 
 
         [HttpPost]
+        [CustomAuthorize("TaxAndFee", PermissionType.Alter, "super_admin", "account_manager")]
         [ValidateAntiForgeryToken]
         public IActionResult AddNewTaxFee(TaxFeeAddEditViewModel model)
         {
@@ -65,6 +67,7 @@ namespace PizzaShopRepository.Controllers
 
 
         [HttpGet]
+        [CustomAuthorize("TaxAndFee", PermissionType.Alter, "super_admin", "account_manager")]
         public IActionResult EditTaxFee(int id)
         {
             var taxFee = _taxFeeService.GetTaxFeeById(id);
@@ -76,6 +79,7 @@ namespace PizzaShopRepository.Controllers
         }
 
         [HttpPost]
+        [CustomAuthorize("TaxAndFee", PermissionType.Alter, "super_admin", "account_manager")]
         [ValidateAntiForgeryToken]
         public IActionResult EditTaxFee(TaxFeeAddEditViewModel model)
         {
@@ -90,8 +94,9 @@ namespace PizzaShopRepository.Controllers
             }
         }
 
-        // POST: TaxFee/DeleteTaxFee/5 (Handles the delete operation via AJAX)
+        // POST: TaxFee/DeleteTaxFee
         [HttpPost]
+        [CustomAuthorize("TaxAndFee", PermissionType.Delete, "super_admin", "account_manager")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteTaxFee(int id)
         {
@@ -115,6 +120,7 @@ namespace PizzaShopRepository.Controllers
 
         // POST: TaxFee/ToggleTaxFeeEnabled
         [HttpPost]
+        [CustomAuthorize("TaxAndFee", PermissionType.Alter, "super_admin", "account_manager")]
         [ValidateAntiForgeryToken]
         public IActionResult ToggleTaxFeeEnabled(int id, bool isEnabled)
         {
