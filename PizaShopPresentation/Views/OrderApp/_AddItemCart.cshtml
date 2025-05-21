@@ -432,59 +432,106 @@
             const itemBaseTotal = item.ItemPrice * item.Quantity;
             subtotal += itemBaseTotal + modifiersTotal;
 
-            const accordionHtml = `
-                <div class="accordion mt-1" id="itemAccordian-${item.Id}-${item.GlobalId}">
-                    <div class="accordion-item d-flex justify-content-between text-secondary mb-2 mt-1">
-                        <div class="d-flex flex-column">
-                            <div class="accordion-header text-secondary d-flex fw-bolder align-items-center">
-                                <div class="d-flex align-items-center">
-                                    <button class="accordion-button pe-1 ps-2 text-secondary fw-bolder rounded-2 collapsed"
-                                            type="button" data-bs-toggle="collapse"
-                                            data-bs-target="#collapse-${item.Id}-${item.GlobalId}"
-                                            aria-controls="collapse-${item.Id}-${item.GlobalId}">
-                                    </button>
-                                    <div class="item-name-order-card" data-order-item-id="${item.OrderItemId}" data-globalId="${item.GlobalId}"  >
-                                        <div class="text-truncate" style="max-width:150px;">${item.Name}</div>
+            // Determine if item has modifiers
+            const hasModifiers = item.Modifiers && item.Modifiers.length > 0;
+            let itemHtml;
+
+            if (hasModifiers) {
+                // Item with modifiers: Full accordion structure
+                itemHtml = `
+                    <div class="accordion mt-1" id="itemAccordian-${item.Id}-${item.GlobalId}">
+                        <div class="accordion-item border border-secondary rounded mb-2 mt-1">
+                            <div class="d-flex justify-content-between text-secondary">
+                                <div class="d-flex flex-column">
+                                    <div class="accordion-header text-secondary d-flex fw-bolder align-items-center">
+                                        <div class="d-flex align-items-center">
+                                            <button class="accordion-button pe-1 ps-2 text-secondary fw-bolder rounded-2 collapsed"
+                                                    type="button" data-bs-toggle="collapse"
+                                                    data-bs-target="#collapse-${item.Id}-${item.GlobalId}"
+                                                    aria-controls="collapse-${item.Id}-${item.GlobalId}">
+                                            </button>
+                                            <div class="item-name-order-card" data-order-item-id="${item.OrderItemId}" data-globalId="${item.GlobalId}">
+                                                <div class="text-truncate" style="max-width:150px;">${item.Name}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="collapse-${item.Id}-${item.GlobalId}" class="accordion-collapse collapse"
+                                        data-bs-parent="#itemAccordian-${item.Id}-${item.GlobalId}">
+                                        <div class="accordion-body">
+                                            ${item.Modifiers.map(mod => `
+                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                    <span>${mod.Name}</span>
+                                                    <span>₹${mod.Price.toFixed(2)}</span>
+                                                </div>
+                                            `).join('')}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div id="collapse-${item.Id}-${item.GlobalId}" class="accordion-collapse collapse"
-                                data-bs-parent="#itemAccordian-${item.Id}-${item.GlobalId}">
-                                <div class="accordion-body">
-                                    ${item.Modifiers.map(mod => `
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <span>${mod.Name}</span>
-                                            <span>₹${mod.Price.toFixed(2)}</span>
-                                        </div>
-                                    `).join('')}
+                                <div class="d-flex gap-4 me-3 align-items-center">
+                                    <div class="d-flex align-items-center gap-2 border border-secondary rounded px-2 py-1 quantity-selector text-secondary justify-content-between"
+                                        style="width:100px">
+                                        <button class="btn btn-sm border-0 bg-transparent minus px-2 py-1"
+                                            data-globalId="${item.GlobalId}">-</button>
+                                        <div class="count">${item.Quantity}</div>
+                                        <button class="btn btn-sm border-0 bg-transparent plus px-2 py-1"
+                                            data-globalId="${item.GlobalId}">+</button>
+                                    </div>
+                                    <div style="width:100px;">
+                                        <span class="fs-5">₹${itemBaseTotal.toFixed(2)}</span><br>
+                                        <span>₹${modifiersTotal.toFixed(2)}</span>
+                                    </div>
+                                    <a class="btn border-0 p-0 delete-item" data-globalId="${item.GlobalId}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                            class="bi bi-trash3" viewBox="0 0 16 16">
+                                            <path
+                                                d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 0 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
+                                        </svg>
+                                    </a>
                                 </div>
                             </div>
                         </div>
-                        <div class="d-flex gap-4 me-3 align-items-center">
-                            <div class="d-flex align-items-center gap-2 border border-secondary rounded px-2 py-1 quantity-selector text-secondary justify-content-between"
-                                style="width:100px">
-                                <button class="btn btn-sm border-0 bg-transparent minus px-2 py-1"
-                                    data-globalId="${item.GlobalId}">-</button>
-                                <div class="count">${item.Quantity}</div>
-                                <button class="btn btn-sm border-0 bg-transparent plus px-2 py-1"
-                                    data-globalId="${item.GlobalId}">+</button>
+                    </div>
+                `;
+            } else {
+
+                itemHtml = `
+                    <div class="accordion mt-1" id="itemAccordian-${item.Id}-${item.GlobalId}">
+                        <div class="accordion-item border border-secondary rounded mb-2 mt-1 py-2">
+                            <div class="d-flex justify-content-between text-secondary">
+                                <div class="d-flex flex-column">
+                                    <div class="text-secondary d-flex fw-bolder align-items-center">
+                                        <div class="item-name-order-card ps-4 " data-order-item-id="${item.OrderItemId}" data-globalId="${item.GlobalId}">
+                                            <div class="text-truncate mt-2" style="max-width:150px;">${item.Name}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-4 me-3 align-items-center">
+                                    <div class="d-flex align-items-center gap-2 border border-secondary rounded px-2 py-1 quantity-selector text-secondary justify-content-between"
+                                        style="width:100px">
+                                        <button class="btn btn-sm border-0 bg-transparent minus px-2 py-1"
+                                            data-globalId="${item.GlobalId}">-</button>
+                                        <div class="count">${item.Quantity}</div>
+                                        <button class="btn btn-sm border-0 bg-transparent plus px-2 py-1"
+                                            data-globalId="${item.GlobalId}">+</button>
+                                    </div>
+                                    <div style="width:100px;">
+                                        <span class="fs-5">₹${itemBaseTotal.toFixed(2)}</span>
+                                    </div>
+                                    <a class="btn border-0 p-0 delete-item" data-globalId="${item.GlobalId}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                            class="bi bi-trash3" viewBox="0 0 16 16">
+                                            <path
+                                                d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 0 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
+                                        </svg>
+                                    </a>
+                                </div>
                             </div>
-                            <div style="width:100px;">
-                                <span class="fs-5">₹${itemBaseTotal.toFixed(2)}</span><br>
-                                <span>₹${modifiersTotal.toFixed(2)}</span>
-                            </div>
-                            <a class="btn border-0 p-0 delete-item" data-globalId="${item.GlobalId}">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                                    class="bi bi-trash3" viewBox="0 0 16 16">
-                                    <path
-                                        d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 0 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
-                                </svg>
-                            </a>
                         </div>
                     </div>
-                </div>
-            `;
-            $accordion.append(accordionHtml);
+                `;
+            }
+
+            $accordion.append(itemHtml);
         });
 
         let totalTaxes = 0;
@@ -1283,3 +1330,10 @@
         });
     });
 </script>
+
+@* <style>
+    /* Ensure non-accordion items have padding to align with accordion items */
+    .d-flex.justify-content-between.text-secondary .d-flex.flex-column {
+        padding-left: 30px; /* Matches approximate width of accordion-button */
+    }
+</style> *@

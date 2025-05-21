@@ -125,13 +125,15 @@
                 ItemPrice: itemPrice,
                 TotalPrice: itemPrice,
                 Modifiers: modifiers,
-                GlobalId: itemName.toLowerCase().replace(/\s+/g, '') + '-' + Date.now()
+                GlobalId: itemName.toLowerCase().replace(/\s+/g, '') + '-' + Date.now(),
+                HasModifiers: modifiers.length > 0 // Set HasModifiers based on selected modifiers
             };
 
             // Check if item with same modifiers exists
             const existingItemIndex = window.cartItems.findIndex(ci =>
                 ci.Id === itemId &&
-                JSON.stringify(ci.Modifiers.map(m => m.Id).sort()) === JSON.stringify(modifiers.map(m => m.Id).sort())
+                JSON.stringify(ci.Modifiers.map(m => m.Id).sort()) === JSON.stringify(modifiers.map(m => m.Id).sort()) &&
+                ci.HasModifiers === (modifiers.length > 0)
             );
 
             if (existingItemIndex !== -1) {

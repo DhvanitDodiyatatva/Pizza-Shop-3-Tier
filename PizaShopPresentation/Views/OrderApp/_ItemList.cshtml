@@ -104,7 +104,7 @@
         });
     }
 
-    function addItemToCart(itemId, itemName, itemPrice) {
+    function addItemToCart(itemId, itemName, itemPrice, hasModifiers) {
         // Create cart item
         const cartItem = {
             Id: itemId,
@@ -113,12 +113,13 @@
             ItemPrice: itemPrice,
             TotalPrice: itemPrice,
             Modifiers: [],
-            GlobalId: itemName.toLowerCase().replace(/\s+/g, '') + '-' + Date.now()
+            GlobalId: itemName.toLowerCase().replace(/\s+/g, '') + '-' + Date.now(),
+            HasModifiers: hasModifiers // Add flag to indicate if item has modifiers
         };
 
         // Check if item with no modifiers exists
         const existingItemIndex = window.cartItems.findIndex(ci =>
-            ci.Id === itemId && ci.Modifiers.length === 0
+            ci.Id === itemId && ci.Modifiers.length === 0 && ci.HasModifiers === hasModifiers
         );
 
         if (existingItemIndex !== -1) {
@@ -175,8 +176,8 @@
                             }
                         });
                     } else {
-                        // No modifiers, add directly to cart
-                        addItemToCart(itemId, itemName, itemPrice);
+                        // No modifiers, add directly to cart with HasModifiers=false
+                        addItemToCart(itemId, itemName, itemPrice, false);
                     }
                 },
                 error: function (xhr, status, error) {
