@@ -382,12 +382,18 @@
                         }
                     },
                     error: function (xhr, status, error) {
-                        console.error("Error adding section:", error);
-                        toastr.error("Error adding section. Please try again.");
-                        var modalEl = document.getElementById('exampleModal12');
-                        if (modalEl) {
-                            var modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
-                            modal.show();
+                        if (xhr.status === 401) {
+                            window.location.href = '@Url.Action("Index", "Login")';
+                        } else if (xhr.status === 403) {
+                            window.location.href = '@Url.Action("AccessDenied", "Error")';
+                        } else {
+                            console.error("Error adding section:", error);
+                            toastr.error("Error adding section. Please try again.");
+                            var modalEl = document.getElementById('exampleModal12');
+                            if (modalEl) {
+                                var modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                                modal.show();
+                            }
                         }
                     }
                 });
@@ -417,8 +423,14 @@
                         }
                     },
                     error: function (xhr, status, error) {
-                        console.error("Error loading edit partial view for ID " + sectionId + ":", error);
-                        toastr.error("Failed to load edit section form.");
+                        if (xhr.status === 401) {
+                            window.location.href = '@Url.Action("Index", "Login")';
+                        } else if (xhr.status === 403) {
+                            window.location.href = '@Url.Action("AccessDenied", "Error")';
+                        } else {
+                            console.error("Error loading edit partial view for ID " + sectionId + ":", error);
+                            toastr.error("Failed to load edit section form.");
+                        }
                     }
                 });
             });
@@ -473,8 +485,14 @@
                     const modal = new bootstrap.Modal(document.getElementById("exampleModal2"));
                     modal.show();
                 },
-                error: function () {
-                    toastr.error("Failed to load add table form.");
+                error: function (xhr, status, error) {
+                    if (xhr.status === 401) {
+                        window.location.href = '@Url.Action("Index", "Login")';
+                    } else if (xhr.status === 403) {
+                        window.location.href = '@Url.Action("AccessDenied", "Error")';
+                    } else {
+                        toastr.error("Failed to load add table form.");
+                    }
                 }
             });
         });
@@ -504,8 +522,14 @@
                         toastr.error("Error: " + response.message);
                     }
                 },
-                error: function () {
-                    toastr.error("Failed to delete section. Please try again.");
+                error: function (xhr, status, error) {
+                    if (xhr.status === 401) {
+                        window.location.href = '@Url.Action("Index", "Login")';
+                    } else if (xhr.status === 403) {
+                        window.location.href = '@Url.Action("AccessDenied", "Error")';
+                    } else {
+                        toastr.error("Failed to delete section. Please try again.");
+                    }
                 }
             });
         });
@@ -574,8 +598,14 @@
                         toastr.error(response.message);
                     }
                 },
-                error: function () {
-                    toastr.error("An error occurred while deleting tables.");
+                error: function (xhr, status, error) {
+                    if (xhr.status === 401) {
+                        window.location.href = '@Url.Action("Index", "Login")';
+                    } else if (xhr.status === 403) {
+                        window.location.href = '@Url.Action("AccessDenied", "Error")';
+                    } else {
+                        toastr.error("An error occurred while deleting tables.");
+                    }
                 }
             });
         });

@@ -7,7 +7,6 @@ using PizzaShopServices.Interfaces;
 namespace PizaShopPresentation.Controllers;
 
 // [CustomAuthorize("super_admin, chef, account_manager")]
-[CustomAuthorize("TableAndSection", PermissionType.View, "super_admin", "account_manager")]
 public class TableAndSectionController : Controller
 {
     private readonly ISectionService _sectionService;
@@ -19,6 +18,7 @@ public class TableAndSectionController : Controller
         _tableService = tableService;
     }
 
+    [CustomAuthorize("TableAndSection", PermissionType.View, "super_admin", "account_manager")]
     public IActionResult Index()
     {
         return View();
@@ -32,12 +32,14 @@ public class TableAndSectionController : Controller
     }
 
     [HttpGet]
+    [CustomAuthorize("TableAndSection", PermissionType.Alter, "super_admin", "account_manager")]
     public IActionResult AddNewSection()
     {
         return PartialView("_AddSection", new SectionViewModel());
     }
 
     [HttpPost]
+    [CustomAuthorize("TableAndSection", PermissionType.Alter, "super_admin", "account_manager")]
     public async Task<IActionResult> AddNewSection(SectionViewModel model)
     {
         if (!ModelState.IsValid)
@@ -86,6 +88,7 @@ public class TableAndSectionController : Controller
     }
 
     [HttpPost]
+    [CustomAuthorize("TableAndSection", PermissionType.Delete, "super_admin", "account_manager")]
     public async Task<IActionResult> Delete(int id)
     {
         try
@@ -100,6 +103,7 @@ public class TableAndSectionController : Controller
     }
 
     [HttpPost]
+    [CustomAuthorize("TableAndSection", PermissionType.Delete, "super_admin", "account_manager")]
     public async Task<IActionResult> DeleteTable(int id)
     {
         var result = await _tableService.SoftDeleteTableAsync(id);
@@ -107,6 +111,7 @@ public class TableAndSectionController : Controller
     }
 
     [HttpPost]
+    [CustomAuthorize("TableAndSection", PermissionType.Delete, "super_admin", "account_manager")]
     public async Task<IActionResult> DeleteTables([FromBody] List<int> ids)
     {
         var result = await _tableService.SoftDeleteTablesAsync(ids);
@@ -114,6 +119,7 @@ public class TableAndSectionController : Controller
     }
 
     [HttpGet]
+    [CustomAuthorize("TableAndSection", PermissionType.Alter, "super_admin", "account_manager")]
     public async Task<IActionResult> EditSection(int id)
     {
         var model = await _sectionService.GetSectionForEditAsync(id);
@@ -125,6 +131,7 @@ public class TableAndSectionController : Controller
     }
 
     [HttpPost]
+    [CustomAuthorize("TableAndSection", PermissionType.Alter, "super_admin", "account_manager")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> UpdateSection(SectionViewModel model)
     {
@@ -152,6 +159,7 @@ public class TableAndSectionController : Controller
     }
 
     [HttpGet]
+    [CustomAuthorize("TableAndSection", PermissionType.Alter, "super_admin", "account_manager")]
     public async Task<IActionResult> AddNewTable()
     {
         var sections = await _sectionService.GetAllSectionsAsync();
@@ -160,6 +168,7 @@ public class TableAndSectionController : Controller
     }
 
     [HttpPost]
+    [CustomAuthorize("TableAndSection", PermissionType.Alter, "super_admin", "account_manager")]
     public async Task<IActionResult> AddNewTable(TableViewModel model)
     {
         if (!ModelState.IsValid)
@@ -173,6 +182,7 @@ public class TableAndSectionController : Controller
     }
 
     [HttpGet]
+    [CustomAuthorize("TableAndSection", PermissionType.Alter, "super_admin", "account_manager")]
     public async Task<IActionResult> EditTable(int id)
     {
         var model = await _tableService.GetTableForEditAsync(id);
@@ -185,6 +195,7 @@ public class TableAndSectionController : Controller
     }
 
     [HttpPost]
+    [CustomAuthorize("TableAndSection", PermissionType.Alter, "super_admin", "account_manager")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> UpdateTable(TableViewModel model)
     {
