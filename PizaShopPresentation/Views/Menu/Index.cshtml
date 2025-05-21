@@ -1028,8 +1028,14 @@
                     modal.show();
                     attachAddModifierFormHandler();
                 },
-                error: function () {
-                    toastr.error("Failed to load add modifier form.");
+                error: function (xhr, status, error) {
+                    if (xhr.status === 401) {
+                        window.location.href = '@Url.Action("Index", "Login")';
+                    } else if (xhr.status === 403) {
+                        window.location.href = '@Url.Action("AccessDenied", "Error")';
+                    } else {
+                        toastr.error("Failed to load add modifier form.");
+                    }
                 }
             });
         });
@@ -1099,8 +1105,14 @@
                     modal.show();
                     attachEditModifierFormHandler();
                 },
-                error: function () {
-                    toastr.error("Failed to load edit modifier form.");
+                error: function (xhr, status, error) {
+                    if (xhr.status === 401) {
+                        window.location.href = '@Url.Action("Index", "Login")';
+                    } else if (xhr.status === 403) {
+                        window.location.href = '@Url.Action("AccessDenied", "Error")';
+                    } else {
+                        toastr.error("Failed to load edit modifier form.");
+                    }
                 }
             });
         });
@@ -1232,8 +1244,14 @@
                     }
                 },
                 error: function (xhr, status, error) {
-                    console.error("Error deleting modifier:", error);
-                    toastr.error("Failed to remove modifier from group.");
+                    if (xhr.status === 401) {
+                        window.location.href = '@Url.Action("Index", "Login")';
+                    } else if (xhr.status === 403) {
+                        window.location.href = '@Url.Action("AccessDenied", "Error")';
+                    } else {
+                        console.error("Error deleting modifier:", error);
+                        toastr.error("Failed to remove modifier from group.");
+                    }
                 }
             });
         });
@@ -1274,8 +1292,14 @@
                                     toastr.error(response.message || "Failed to remove modifiers.");
                                 }
                             },
-                            error: function (xhr) {
-                                toastr.error("Error removing modifiers: " + (xhr.responseText || "Unknown error"));
+                            error: function (xhr, status, error) {
+                                if (xhr.status === 401) {
+                                    window.location.href = '@Url.Action("Index", "Login")';
+                                } else if (xhr.status === 403) {
+                                    window.location.href = '@Url.Action("AccessDenied", "Error")';
+                                } else {
+                                    toastr.error("Error removing modifiers: " + (xhr.responseText || "Unknown error"));
+                                }
                             }
                         });
                     },
@@ -1326,8 +1350,14 @@
                                     toastr.error(response.message || "Failed to remove modifiers.");
                                 }
                             },
-                            error: function (xhr) {
-                                toastr.error("Error removing modifiers: " + (xhr.responseText || "Unknown error"));
+                            error: function (xhr, status, error) {
+                                if (xhr.status === 401) {
+                                    window.location.href = '@Url.Action("Index", "Login")';
+                                } else if (xhr.status === 403) {
+                                    window.location.href = '@Url.Action("AccessDenied", "Error")';
+                                } else {
+                                     toastr.error("Error removing modifiers: " + (xhr.responseText || "Unknown error"));
+                                }
                             }
                         });
                     },
@@ -1350,8 +1380,14 @@
                     modal.show();
                     attachAddModifierGroupFormHandler();
                 },
-                error: function () {
-                    toastr.error("Failed to load add modifier group form.");
+                error: function (xhr, status, error) {
+                    if (xhr.status === 401) {
+                        window.location.href = '@Url.Action("Index", "Login")';
+                    } else if (xhr.status === 403) {
+                        window.location.href = '@Url.Action("AccessDenied", "Error")';
+                    } else {
+                         toastr.error("Failed to load add modifier group form.");
+                    }
                 }
             });
         }
@@ -1403,8 +1439,14 @@
                     modal.show();
                     attachEditModifierGroupFormHandler();
                 },
-                error: function () {
-                    toastr.error("Failed to load edit modifier group form.");
+                error: function (xhr, status, error) {
+                    if (xhr.status === 401) {
+                        window.location.href = '@Url.Action("Index", "Login")';
+                    } else if (xhr.status === 403) {
+                        window.location.href = '@Url.Action("AccessDenied", "Error")';
+                    } else {
+                        toastr.error("Failed to load edit modifier group form.");
+                    }
                 }
             });
         });
@@ -1851,8 +1893,14 @@
                             toastr.error(response.message);
                         }
                     },
-                    error: function () {
-                        toastr.error("Error deleting modifier group.");
+                    error: function (xhr, status, error) {
+                        if (xhr.status === 401) {
+                            window.location.href = '@Url.Action("Index", "Login")';
+                        } else if (xhr.status === 403) {
+                            window.location.href = '@Url.Action("AccessDenied", "Error")';
+                        } else {
+                            toastr.error("Error deleting modifier group.");
+                        }
                     }
                 });
             });

@@ -395,6 +395,7 @@ public class MenuController : Controller
 
 
     [HttpGet]
+    [CustomAuthorize("Menu", PermissionType.Alter, "super_admin", "account_manager")]
     public async Task<IActionResult> AddNewModifier()
     {
         var modifierGroups = await _modifierGroupService.GetAllModifierGroupAsync();
@@ -403,6 +404,7 @@ public class MenuController : Controller
     }
 
     [HttpPost]
+    [CustomAuthorize("Menu", PermissionType.Alter, "super_admin", "account_manager")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddNewModifier(ModifierViewModel model)
     {
@@ -426,6 +428,7 @@ public class MenuController : Controller
     }
 
     [HttpGet]
+    [CustomAuthorize("Menu", PermissionType.Alter, "super_admin", "account_manager")]
     public async Task<IActionResult> EditModifier(int id)
     {
         var model = await _modifierService.GetModifierForEditAsync(id);
@@ -438,6 +441,7 @@ public class MenuController : Controller
     }
 
     [HttpPost]
+    [CustomAuthorize("Menu", PermissionType.Alter, "super_admin", "account_manager")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> UpdateModifier(ModifierViewModel model)
     {
@@ -462,6 +466,7 @@ public class MenuController : Controller
 
     //Soft Delete a Single Modifier from a Specific Group
     [HttpPost]
+    [CustomAuthorize("Menu", PermissionType.Delete, "super_admin", "account_manager")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteModifier(int id, int modifierGroupId)
     {
@@ -478,6 +483,7 @@ public class MenuController : Controller
 
     //Mass Soft Delete Modifiers from a Specific Group
     [HttpPost]
+    [CustomAuthorize("Menu", PermissionType.Delete, "super_admin", "account_manager")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteModifiers([FromBody] List<int> ids, int modifierGroupId)
     {
@@ -503,12 +509,14 @@ public class MenuController : Controller
 
 
     [HttpGet]
+    [CustomAuthorize("Menu", PermissionType.Alter, "super_admin", "account_manager")]
     public IActionResult AddNewModifierGroup()
     {
         return PartialView("_AddModifierGroup", new ModifierGroupViewModel());
     }
 
     [HttpPost]
+    [CustomAuthorize("Menu", PermissionType.Alter, "super_admin", "account_manager")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddNewModifierGroup(ModifierGroupViewModel model)
     {
@@ -530,6 +538,7 @@ public class MenuController : Controller
     }
 
     [HttpGet]
+    [CustomAuthorize("Menu", PermissionType.Alter, "super_admin", "account_manager")]
     public async Task<IActionResult> EditModifierGroup(int id)
     {
         var model = await _modifierGroupService.GetModifierGroupForEditAsync(id);
@@ -540,6 +549,7 @@ public class MenuController : Controller
     }
 
     [HttpPost]
+    [CustomAuthorize("Menu", PermissionType.Alter, "super_admin", "account_manager")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> UpdateModifierGroup(ModifierGroupViewModel model)
     {
@@ -573,6 +583,7 @@ public class MenuController : Controller
     }
 
     [HttpPost]
+    [CustomAuthorize("Menu", PermissionType.Delete, "super_admin", "account_manager")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteModifierGroup(int id)
     {
