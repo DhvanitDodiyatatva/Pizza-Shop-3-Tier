@@ -150,7 +150,7 @@ namespace PizzaShopPresentation.Controllers
                 .OrderBy(x => x.Hour)
                 .ToListAsync();
 
-            // Generate all hours from 9 AM to 9 PM
+            // Generate all hours from 9 AM to 12 PM
             var allHours = new List<ChartDataViewModel>();
             for (int hour = 9; hour <= 24; hour++)
             {
@@ -179,7 +179,7 @@ namespace PizzaShopPresentation.Controllers
                 .OrderBy(x => x.Hour)
                 .ToListAsync();
 
-            // Generate all hours from 9 AM to 9 PM
+            // Generate all hours from 9 AM to 12 PM
             var allHours = new List<ChartDataViewModel>();
             for (int hour = 9; hour <= 24; hour++)
             {

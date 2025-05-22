@@ -199,9 +199,11 @@ namespace PizzaShopRepository.Repositories
                 .Select(g => new SellingItemViewModel
                 {
                     ItemName = g.Key,
-                    Quantity = g.Sum(oi => oi.Quantity)
+                    Quantity = g.Sum(oi => oi.Quantity), 
+                    OrderCount = g.Select(oi => oi.OrderId).Distinct().Count() // Count distinct orders
                 })
-                .OrderByDescending(x => x.Quantity)
+                .OrderByDescending(x => x.OrderCount) // Order by number of orders
+                .ThenByDescending(x => x.Quantity) // Secondary sort by quantity in case of ties
                 .Take(topN)
                 .ToListAsync();
         }
@@ -215,9 +217,11 @@ namespace PizzaShopRepository.Repositories
                 .Select(g => new SellingItemViewModel
                 {
                     ItemName = g.Key,
-                    Quantity = g.Sum(oi => oi.Quantity)
+                    Quantity = g.Sum(oi => oi.Quantity),
+                    OrderCount = g.Select(oi => oi.OrderId).Distinct().Count() // Count distinct orders
                 })
-                .OrderBy(x => x.Quantity)
+                .OrderBy(x => x.OrderCount) // Order by number of orders
+                .ThenBy(x => x.Quantity) // Secondary sort by quantity in case of ties
                 .Take(leastN)
                 .ToListAsync();
         }
