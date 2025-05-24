@@ -142,3 +142,5 @@ D:\PizzaShop 3-Tier\Pizza-Shop-3-Tier\PizaShopPresentation\bin\Debug\net7.0\Syst
 D:\PizzaShop 3-Tier\Pizza-Shop-3-Tier\PizaShopPresentation\bin\Debug\net7.0\runtimes\browser\lib\net7.0\System.Text.Encodings.Web.dll
 D:\PizzaShop 3-Tier\PizaShopPresentation\bin\Debug\net7.0\Newtonsoft.Json.dll
 D:\PizzaShop 3-Tier\Pizza-Shop-3-Tier\PizaShopPresentation\bin\Debug\net7.0\Newtonsoft.Json.dll
+D:\PizzaShop 3-Tier\Pizza-Shop-3-Tier\PizaShopPresentation\bin\Debug\net7.0\Dapper.dll
+D:\PizzaShop 3-Tier\Pizza-Shop-3-Tier\PizaShopPresentation\bin\Debug\net7.0\Microsoft.Bcl.AsyncInterfaces.dll

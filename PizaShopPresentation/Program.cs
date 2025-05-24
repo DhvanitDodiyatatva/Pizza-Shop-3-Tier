@@ -9,10 +9,11 @@ using PizzaShopRepository.Repositories;
 using PizzaShopRepository.Services;
 using PizzaShopService;
 using PizzaShopService.Interfaces;
-using PizzaShopService.Services;
 using PizzaShopServices.Implementations;
 using PizzaShopServices.Interfaces;
-
+using Npgsql;
+using System.Data;
+using PizzaShopService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,14 @@ var builder = WebApplication.CreateBuilder(args);
 var conn = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<PizzaShopContext>(options =>
     options.UseNpgsql(conn));
+
+// Register IDbConnection for Dapper
+builder.Services.AddScoped<IDbConnection>(provider =>
+{
+    var connection = new NpgsqlConnection(conn);
+    connection.Open();
+    return connection;
+});
 
 // Register services
 builder.Services.AddScoped<IUserService, UserService>();
@@ -58,7 +67,6 @@ builder.Services.AddScoped<IKotService, KotService>();
 builder.Services.AddScoped<IOrderAppRepository, OrderAppRepository>();
 builder.Services.AddScoped<IOrderAppService, OrderAppService>();
 builder.Services.AddScoped<IDashboardRepository, DashboardRepository>();
-
 
 // Configure JWT authentication
 builder.Services.AddAuthentication(options =>
@@ -121,8 +129,6 @@ app.UseStatusCodePages(async context =>
         context.HttpContext.Response.Redirect("/Error/404");
     }
 });
-
-
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
