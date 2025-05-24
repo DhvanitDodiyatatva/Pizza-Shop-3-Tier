@@ -6,6 +6,7 @@ using System.Data;
 using Npgsql;
 using Dapper;
 using System.Text.Json;
+using PizzaShopRepository.ViewModels;
 
 namespace PizzaShopRepository.Repositories
 {
@@ -20,33 +21,108 @@ namespace PizzaShopRepository.Repositories
             _dbConnection = dbConnection;
         }
 
-        public async Task<List<Order>> GetOrdersByCategoryAndStatusAsync(int? categoryId, string status)
+        // public async Task<List<Order>> GetOrdersByCategoryAndStatusAsync(int? categoryId, string status)
+        // {
+        //     var query = _context.Orders
+        //         .Include(o => o.OrderItems)
+        //             .ThenInclude(oi => oi.Item)
+        //             .ThenInclude(i => i.Category)
+        //         .Include(o => o.OrderItems)
+        //             .ThenInclude(oi => oi.OrderItemModifiers)
+        //             .ThenInclude(oim => oim.Modifier)
+        //         .Include(o => o.OrderTables)
+        //             .ThenInclude(ot => ot.Table)
+        //             .ThenInclude(t => t.Section)
+        //         .Where(o => o.OrderItems.Any());
+
+        //     if (categoryId.HasValue)
+        //     {
+        //         query = query.Where(o => o.OrderItems.Any(oi => oi.Item.CategoryId == categoryId));
+        //     }
+
+        //     if (!string.IsNullOrEmpty(status))
+        //     {
+        //         query = query.Where(o => o.OrderItems.Any(oi => oi.ItemStatus == status || oi.ItemStatus == "in_progress"));
+        //     }
+
+        //     return await query.ToListAsync();
+        // }
+
+        public async Task<List<KotOrderViewModel>> GetOrdersByCategoryAndStatusAsync(int? categoryId, string status)
         {
-            var query = _context.Orders
-                .Include(o => o.OrderItems)
-                    .ThenInclude(oi => oi.Item)
-                    .ThenInclude(i => i.Category)
-                .Include(o => o.OrderItems)
-                    .ThenInclude(oi => oi.OrderItemModifiers)
-                    .ThenInclude(oim => oim.Modifier)
-                .Include(o => o.OrderTables)
-                    .ThenInclude(ot => ot.Table)
-                    .ThenInclude(t => t.Section)
-                .Where(o => o.OrderItems.Any());
-
-            if (categoryId.HasValue)
+            try
             {
-                query = query.Where(o => o.OrderItems.Any(oi => oi.Item.CategoryId == categoryId));
-            }
+                // Prepare parameters for the function
+                var parameters = new
+                {
+                    p_category_id = categoryId.HasValue ? categoryId : (int?)null,
+                    p_status = string.IsNullOrEmpty(status) ? null : status
+                };
 
-            if (!string.IsNullOrEmpty(status))
+                // Call the PostgreSQL function using Dapper
+                var results = await _dbConnection.QueryAsync<dynamic>(
+                    "SELECT * FROM get_orders_by_category_and_status(@p_category_id, @p_status)",
+                    parameters,
+                    commandType: CommandType.Text
+                );
+
+                // Group the results by order_id to build the KotOrderViewModel
+                var ordersDict = new Dictionary<int, KotOrderViewModel>();
+
+                foreach (var row in results)
+                {
+                    int orderId = row.order_id;
+                    if (!ordersDict.ContainsKey(orderId))
+                    {
+                        ordersDict[orderId] = new KotOrderViewModel
+                        {
+                            Id = orderId,
+                            CreatedAt = row.order_created_at,
+                            OrderInstructions = row.order_instructions
+                        };
+                    }
+
+                    var order = ordersDict[orderId];
+
+                    // Add order item
+                    if (row.order_item_id != null)
+                    {
+                        var orderItem = new KotOrderItemViewModel
+                        {
+                            Id = row.order_item_id,
+                            Quantity = row.order_item_quantity,
+                            ReadyQuantity = row.order_item_ready_quantity,
+                            SpecialInstructions = row.order_item_special_instructions,
+                            ItemName = row.item_name,
+                            CategoryName = row.category_name,
+                            ModifierNames = row.modifier_names != null ? ((string[])row.modifier_names).ToList() : new List<string>()
+                        };
+                        order.OrderItems.Add(orderItem);
+                    }
+
+                    // Add order table (if not already added)
+                    if (row.table_name != null && row.section_name != null)
+                    {
+                        var orderTable = new KotOrderTableViewModel
+                        {
+                            TableName = row.table_name,
+                            SectionName = row.section_name
+                        };
+                        if (!order.OrderTables.Any(ot => ot.TableName == orderTable.TableName && ot.SectionName == orderTable.SectionName))
+                        {
+                            order.OrderTables.Add(orderTable);
+                        }
+                    }
+                }
+
+                return ordersDict.Values.ToList();
+            }
+            catch (Exception ex)
             {
-                query = query.Where(o => o.OrderItems.Any(oi => oi.ItemStatus == status || oi.ItemStatus == "in_progress"));
+                Console.WriteLine($"Repository Error: {ex.Message}\nStackTrace: {ex.StackTrace}");
+                return new List<KotOrderViewModel>();
             }
-
-            return await query.ToListAsync();
         }
-
         //  public async Task<bool> UpdateOrderItemStatusesAsync(int orderId, List<(int OrderItemId, int AdjustedQuantity)> items, string newStatus)
         // {
         //     if (items == null || !items.Any())

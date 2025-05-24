@@ -1,4 +1,4 @@
-@model List<PizzaShopRepository.Models.Order>
+@model List<PizzaShopRepository.ViewModels.KotOrderViewModel>
 
 @{
     var selectedCategory = ViewBag.SelectedCategory as string;
@@ -13,7 +13,7 @@
         // Apply category filter
         if (!string.IsNullOrEmpty(selectedCategory) && selectedCategory != "All")
         {
-            filteredOrderItems = filteredOrderItems.Where(oi => oi.Item.Category?.Name == selectedCategory);
+            filteredOrderItems = filteredOrderItems.Where(oi => oi.CategoryName == selectedCategory);
         }
 
         // Filter based on item status and ReadyQuantity
@@ -52,15 +52,14 @@
                         </div>
                         <p><strong></strong>@(order.OrderTables.Any()
                                                 ? string.Join(", ", order.OrderTables
-                                                .Where(ot => ot.Table != null && !string.IsNullOrEmpty(ot.Table.Name) && ot.Table.Section != null &&
-                                                !string.IsNullOrEmpty(ot.Table.Section.Name))
-                                                .Select(ot => $" {ot.Table.Section.Name} : {ot.Table.Name}"))
+                                                .Where(ot => !string.IsNullOrEmpty(ot.TableName) && !string.IsNullOrEmpty(ot.SectionName))
+                                                .Select(ot => $" {ot.SectionName} : {ot.TableName}"))
                                                 : "N/A")</p>
-            </div>
+                    </div>
 
                     <div class="custom-scrollbar"
                         style="width: 350px; max-height: 250px; min-height: 250px; overflow-y: auto; overflow-x: hidden;">
-                @foreach (var orderItem in filteredOrderItems)
+                        @foreach (var orderItem in filteredOrderItems)
                         {
                             int displayQuantity = itemStatus == "ready" ? orderItem.ReadyQuantity : orderItem.Quantity -
                             orderItem.ReadyQuantity;
@@ -68,17 +67,17 @@
                             {
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between">
-                                        <div class="text-secondary">@orderItem.Item.Name</div>
+                                        <div class="text-secondary">@orderItem.ItemName</div>
                                         <div class="text-secondary">@displayQuantity</div>
                                     </div>
-                                    @if (orderItem.OrderItemModifiers.Any())
+                                    @if (orderItem.ModifierNames.Any())
                                     {
                                         <ul class="list ms-3">
-                                            @foreach (var mod in orderItem.OrderItemModifiers)
+                                            @foreach (var mod in orderItem.ModifierNames)
                                             {
-                                                if (!string.IsNullOrEmpty(mod.Modifier?.Name))
+                                                if (!string.IsNullOrEmpty(mod))
                                                 {
-                                                    <li class="mt-0 text-secondary">@mod.Modifier.Name</li>
+                                                    <li class="mt-0 text-secondary">@mod</li>
                                                 }
                                             }
                                         </ul>
@@ -101,7 +100,6 @@
                                 Instructions:</span>@order.OrderInstructions
                         </div>
                     }
-
                 </div>
             </div>
         }

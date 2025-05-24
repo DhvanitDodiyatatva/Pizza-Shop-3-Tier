@@ -1,13 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using PizzaShopRepository.Interfaces;
-using PizzaShopRepository.Models;
 using PizzaShopRepository.ViewModels;
 using PizzaShopServices.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Data;
+using Dapper;
+using PizzaShopRepository.Models;
 
 namespace PizzaShopServices.Implementations
 {
@@ -20,6 +22,7 @@ namespace PizzaShopServices.Implementations
         private readonly ICategoryService _categoryService;
         private readonly IWaitingTokenService _waitingTokenService;
         private readonly PizzaShopRepository.Data.PizzaShopContext _context;
+        private readonly IDbConnection _dbConnection;
 
         public OrderAppService(
             IOrderAppRepository orderAppRepository,
@@ -28,7 +31,8 @@ namespace PizzaShopServices.Implementations
             IItemService itemService,
             ICategoryService categoryService,
             IWaitingTokenService waitingTokenService,
-            PizzaShopRepository.Data.PizzaShopContext context)
+            PizzaShopRepository.Data.PizzaShopContext context,
+            IDbConnection dbConnection)
         {
             _orderAppRepository = orderAppRepository;
             _sectionService = sectionService;
@@ -37,6 +41,7 @@ namespace PizzaShopServices.Implementations
             _categoryService = categoryService;
             _waitingTokenService = waitingTokenService;
             _context = context;
+            _dbConnection = dbConnection;
         }
 
         public async Task<(bool Success, string Message)> UpdateCustomerDetailsAsync(CustomerDetailsVM model)
@@ -394,50 +399,103 @@ namespace PizzaShopServices.Implementations
             return (waitingTokens, sectionSelectList);
         }
 
+        //   public async Task<UpdateOrderItemStatusViewModel> PrepareKotDetailsModalAsync(int orderId, string status, string selectedCategory, string selectedStatus)
+        // {
+        //     var order = await _context.Orders
+        //         .Include(o => o.OrderItems)
+        //         .ThenInclude(oi => oi.Item)
+        //         .ThenInclude(i => i.Category)
+        //         .Include(o => o.OrderItems)
+        //         .ThenInclude(oi => oi.OrderItemModifiers)
+        //         .ThenInclude(oim => oim.Modifier)
+        //         .FirstOrDefaultAsync(o => o.Id == orderId);
+
+        //     if (order == null)
+        //     {
+        //         return null;
+        //     }
+
+        //     var filteredItems = order.OrderItems
+        //         .Where(oi =>
+        //             (status == "in_progress" ? oi.Quantity > oi.ReadyQuantity : oi.ReadyQuantity > 0) &&
+        //             (string.IsNullOrEmpty(selectedCategory) || selectedCategory == "All" || oi.Item.Category == null || oi.Item.Category.Name == selectedCategory)
+        //         ).ToList();
+
+        //     var viewModel = new UpdateOrderItemStatusViewModel
+        //     {
+        //         OrderId = order.Id,
+        //         OrderItems = filteredItems
+        //             .Select(oi => new OrderItemDetail
+        //             {
+        //                 OrderItemId = oi.Id,
+        //                 ItemName = oi.Item?.Name ?? "Unknown Item",
+        //                 Quantity = status == "ready" ? oi.ReadyQuantity : oi.Quantity - oi.ReadyQuantity,
+        //                 ReadyQuantity = oi.ReadyQuantity,
+        //                 Status = oi.ItemStatus ?? "in_progress",
+        //                 Modifiers = oi.OrderItemModifiers
+        //                     .Where(oim => oim.Modifier != null && !string.IsNullOrEmpty(oim.Modifier.Name))
+        //                     .Select(oim => oim.Modifier.Name)
+        //                     .ToList(),
+        //                 IsSelected = true,
+        //                 AdjustedQuantity = status == "ready" ? oi.ReadyQuantity : oi.Quantity - oi.ReadyQuantity,
+        //                 CategoryName = oi.Item?.Category?.Name ?? "Unknown Category"
+        //             }).ToList()
+        //     };
+
+        //     return viewModel;
+        // }
+
         public async Task<UpdateOrderItemStatusViewModel> PrepareKotDetailsModalAsync(int orderId, string status, string selectedCategory, string selectedStatus)
         {
-            var order = await _context.Orders
-                .Include(o => o.OrderItems)
-                .ThenInclude(oi => oi.Item)
-                .ThenInclude(i => i.Category)
-                .Include(o => o.OrderItems)
-                .ThenInclude(oi => oi.OrderItemModifiers)
-                .ThenInclude(oim => oim.Modifier)
-                .FirstOrDefaultAsync(o => o.Id == orderId);
-
-            if (order == null)
+            try
             {
+                // Call the PostgreSQL function using Dapper
+                var results = await _dbConnection.QueryAsync<dynamic>(
+                    "SELECT * FROM get_order_for_kot_details(@p_order_id)",
+                    new { p_order_id = orderId },
+                    commandType: CommandType.Text
+                );
+
+                if (!results.Any())
+                {
+                    return null;
+                }
+
+                var orderItems = new List<OrderItemDetail>();
+                foreach (var row in results)
+                {
+                    // Apply status and category filters
+                    bool matchesStatus = status == "in_progress" ? (row.quantity > row.ready_quantity) : (row.ready_quantity > 0);
+                    bool matchesCategory = string.IsNullOrEmpty(selectedCategory) || selectedCategory == "All" || row.category_name == selectedCategory;
+
+                    if (matchesStatus && matchesCategory)
+                    {
+                        var orderItem = new OrderItemDetail
+                        {
+                            OrderItemId = row.order_item_id,
+                            ItemName = row.item_name ?? "Unknown Item",
+                            Quantity = status == "ready" ? row.ready_quantity : (row.quantity - row.ready_quantity),
+                            AdjustedQuantity = status == "ready" ? row.ready_quantity : (row.quantity - row.ready_quantity),
+                            Modifiers = row.modifier_names != null ? ((string[])row.modifier_names).ToList() : new List<string>(),
+                            IsSelected = true
+                        };
+                        orderItems.Add(orderItem);
+                    }
+                }
+
+                var viewModel = new UpdateOrderItemStatusViewModel
+                {
+                    OrderId = orderId,
+                    OrderItems = orderItems
+                };
+
+                return viewModel;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in PrepareKotDetailsModalAsync: {ex.Message}\nStackTrace: {ex.StackTrace}");
                 return null;
             }
-
-            var filteredItems = order.OrderItems
-                .Where(oi =>
-                    (status == "in_progress" ? oi.Quantity > oi.ReadyQuantity : oi.ReadyQuantity > 0) &&
-                    (string.IsNullOrEmpty(selectedCategory) || selectedCategory == "All" || oi.Item.Category == null || oi.Item.Category.Name == selectedCategory)
-                ).ToList();
-
-            var viewModel = new UpdateOrderItemStatusViewModel
-            {
-                OrderId = order.Id,
-                OrderItems = filteredItems
-                    .Select(oi => new OrderItemDetail
-                    {
-                        OrderItemId = oi.Id,
-                        ItemName = oi.Item?.Name ?? "Unknown Item",
-                        Quantity = status == "ready" ? oi.ReadyQuantity : oi.Quantity - oi.ReadyQuantity,
-                        ReadyQuantity = oi.ReadyQuantity,
-                        Status = oi.ItemStatus ?? "in_progress",
-                        Modifiers = oi.OrderItemModifiers
-                            .Where(oim => oim.Modifier != null && !string.IsNullOrEmpty(oim.Modifier.Name))
-                            .Select(oim => oim.Modifier.Name)
-                            .ToList(),
-                        IsSelected = true,
-                        AdjustedQuantity = status == "ready" ? oi.ReadyQuantity : oi.Quantity - oi.ReadyQuantity,
-                        CategoryName = oi.Item?.Category?.Name ?? "Unknown Category"
-                    }).ToList()
-            };
-
-            return viewModel;
         }
 
         public async Task<Order> GetOrderByIdAsync(int orderId)

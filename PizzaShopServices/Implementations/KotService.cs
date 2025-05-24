@@ -19,7 +19,20 @@ namespace PizzaShopServices.Implementations
             _categoryService = categoryService;
         }
 
-        public async Task<List<Order>> GetOrdersByCategoryAndStatusAsync(string categoryName, string status)
+        // public async Task<List<Order>> GetOrdersByCategoryAndStatusAsync(string categoryName, string status)
+        // {
+        //     int? categoryId = null;
+        //     if (!string.IsNullOrEmpty(categoryName) && categoryName != "All")
+        //     {
+        //         var categories = await _categoryService.GetAllCategoriesAsync();
+        //         var category = categories.FirstOrDefault(c => c.Name == categoryName);
+        //         categoryId = category?.Id;
+        //     }
+
+        //     return await _kotRepository.GetOrdersByCategoryAndStatusAsync(categoryId, status);
+        // }
+
+        public async Task<List<KotOrderViewModel>> GetOrdersByCategoryAndStatusAsync(string categoryName, string status)
         {
             int? categoryId = null;
             if (!string.IsNullOrEmpty(categoryName) && categoryName != "All")
