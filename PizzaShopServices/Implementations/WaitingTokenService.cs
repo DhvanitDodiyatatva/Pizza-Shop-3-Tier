@@ -29,6 +29,55 @@ namespace PizzaShopServices.Implementations
             _dbConnection = dbConnection;
         }
 
+        // public async Task<(bool Success, string Message)> AddWaitingTokenAsync(WaitingTokenViewModel model)
+        // {
+        //     var section = await _sectionRepository.GetSection(model.SectionName);
+        //     if (section == null)
+        //     {
+        //         return (false, "Section not found.");
+        //     }
+
+        //     try
+        //     {
+        //         // Check if customer exists by email
+        //         var existingCustomer = await _waitingTokenRepository.GetCustomerByEmailAsync(model.Email);
+
+        //         if (existingCustomer == null)
+        //         {
+        //             // Customer does not exist, create new customer
+        //             var customer = new Customer
+        //             {
+        //                 Name = model.CustomerName,
+        //                 Email = model.Email,
+        //                 PhoneNo = model.PhoneNumber,
+        //                 NoOfPersons = model.NumOfPersons,
+        //                 Date = DateOnly.FromDateTime(DateTime.Now)
+        //             };
+        //             await _waitingTokenRepository.AddCustomerAsync(customer);
+        //         }
+
+        //         // Create waiting token (whether customer existed or was just created)
+        //         var waitingToken = new WaitingToken
+        //         {
+        //             CustomerName = model.CustomerName,
+        //             Email = model.Email,
+        //             PhoneNumber = model.PhoneNumber,
+        //             NumOfPersons = model.NumOfPersons,
+        //             SectionId = section.Id,
+        //             Status = "waiting",
+        //             CreatedAt = DateTime.Now,
+        //             IsDeleted = false
+        //         };
+
+        //         await _waitingTokenRepository.AddWaitingTokenAsync(waitingToken);
+        //         return (true, "Waiting token assigned successfully.");
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return (false, "Failed to assign waiting token: " + ex.Message);
+        //     }
+        // }
+
         public async Task<(bool Success, string Message)> AddWaitingTokenAsync(WaitingTokenViewModel model)
         {
             var section = await _sectionRepository.GetSection(model.SectionName);
@@ -39,37 +88,24 @@ namespace PizzaShopServices.Implementations
 
             try
             {
-                // Check if customer exists by email
-                var existingCustomer = await _waitingTokenRepository.GetCustomerByEmailAsync(model.Email);
-
-                if (existingCustomer == null)
+                // Prepare parameters for the stored procedure
+                var parameters = new
                 {
-                    // Customer does not exist, create new customer
-                    var customer = new Customer
-                    {
-                        Name = model.CustomerName,
-                        Email = model.Email,
-                        PhoneNo = model.PhoneNumber,
-                        NoOfPersons = model.NumOfPersons,
-                        Date = DateOnly.FromDateTime(DateTime.Now)
-                    };
-                    await _waitingTokenRepository.AddCustomerAsync(customer);
-                }
-
-                // Create waiting token (whether customer existed or was just created)
-                var waitingToken = new WaitingToken
-                {
-                    CustomerName = model.CustomerName,
-                    Email = model.Email,
-                    PhoneNumber = model.PhoneNumber,
-                    NumOfPersons = model.NumOfPersons,
-                    SectionId = section.Id,
-                    Status = "waiting",
-                    CreatedAt = DateTime.Now,
-                    IsDeleted = false
+                    p_customer_name = model.CustomerName,
+                    p_email = model.Email,
+                    p_phone_number = model.PhoneNumber,
+                    p_num_of_persons = model.NumOfPersons,
+                    p_section_id = section.Id,
+                    p_status = "waiting"
                 };
 
-                await _waitingTokenRepository.AddWaitingTokenAsync(waitingToken);
+                // Call the stored procedure using Dapper
+                await _dbConnection.ExecuteAsync(
+                    "CALL add_waiting_token(@p_customer_name, @p_email, @p_phone_number, @p_num_of_persons, @p_section_id, @p_status)",
+                    parameters,
+                    commandType: CommandType.Text
+                );
+
                 return (true, "Waiting token assigned successfully.");
             }
             catch (Exception ex)
@@ -117,6 +153,43 @@ namespace PizzaShopServices.Implementations
             return await _waitingTokenRepository.GetWaitingTokenByIdAsync(id);
         }
 
+        // public async Task<(bool Success, string Message)> UpdateWaitingTokenAsync(WaitingTokenViewModel model)
+        // {
+        //     var section = await _sectionRepository.GetSection(model.SectionName);
+        //     if (section == null)
+        //     {
+        //         return (false, "Section not found.");
+        //     }
+
+        //     try
+        //     {
+        //         var waitingToken = await _waitingTokenRepository.GetWaitingTokenByIdAsync(model.Id);
+        //         if (waitingToken == null)
+        //         {
+        //             return (false, "Waiting token not found.");
+        //         }
+
+        //         // Check if the new email exists in Customers table (excluding the current waiting token's customer)
+        //         // if (await IsEmailExistsAsync(model.Email, model.Id))
+        //         // {
+        //         //     return (false, "This email already exists. Please choose a different email.");
+        //         // }
+        //         // Update waiting token fields
+        //         waitingToken.CustomerName = model.CustomerName;
+        //         waitingToken.Email = model.Email;
+        //         waitingToken.PhoneNumber = model.PhoneNumber;
+        //         waitingToken.NumOfPersons = model.NumOfPersons;
+        //         waitingToken.SectionId = section.Id;
+
+        //         await _waitingTokenRepository.UpdateWaitingTokenAsync(waitingToken);
+        //         return (true, "Waiting token edited successfully.");
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return (false, "Failed to update waiting token: " + ex.Message);
+        //     }
+        // }
+
         public async Task<(bool Success, string Message)> UpdateWaitingTokenAsync(WaitingTokenViewModel model)
         {
             var section = await _sectionRepository.GetSection(model.SectionName);
@@ -133,19 +206,24 @@ namespace PizzaShopServices.Implementations
                     return (false, "Waiting token not found.");
                 }
 
-                // Check if the new email exists in Customers table (excluding the current waiting token's customer)
-                // if (await IsEmailExistsAsync(model.Email, model.Id))
-                // {
-                //     return (false, "This email already exists. Please choose a different email.");
-                // }
-                // Update waiting token fields
-                waitingToken.CustomerName = model.CustomerName;
-                waitingToken.Email = model.Email;
-                waitingToken.PhoneNumber = model.PhoneNumber;
-                waitingToken.NumOfPersons = model.NumOfPersons;
-                waitingToken.SectionId = section.Id;
+                // Prepare parameters for the stored procedure
+                var parameters = new
+                {
+                    p_id = model.Id,
+                    p_customer_name = model.CustomerName,
+                    p_email = model.Email,
+                    p_phone_number = model.PhoneNumber,
+                    p_num_of_persons = model.NumOfPersons,
+                    p_section_id = section.Id
+                };
 
-                await _waitingTokenRepository.UpdateWaitingTokenAsync(waitingToken);
+                // Call the stored procedure using Dapper
+                await _dbConnection.ExecuteAsync(
+                    "CALL update_waiting_token(@p_id, @p_customer_name, @p_email, @p_phone_number, @p_num_of_persons, @p_section_id)",
+                    parameters,
+                    commandType: CommandType.Text
+                );
+
                 return (true, "Waiting token edited successfully.");
             }
             catch (Exception ex)
@@ -169,6 +247,31 @@ namespace PizzaShopServices.Implementations
             return existingToken != null;
         }
 
+        // public async Task<(bool Success, string Message)> DeleteWaitingTokenAsync(int id)
+        // {
+        //     try
+        //     {
+        //         var waitingToken = await _waitingTokenRepository.GetWaitingTokenByIdAsync(id);
+        //         if (waitingToken == null)
+        //         {
+        //             return (false, "Waiting token not found.");
+        //         }
+
+        //         if (waitingToken.IsDeleted)
+        //         {
+        //             return (false, "Waiting token is already deleted.");
+        //         }
+
+        //         waitingToken.IsDeleted = true;
+        //         await _waitingTokenRepository.UpdateWaitingTokenAsync(waitingToken);
+        //         return (true, "Waiting token deleted successfully.");
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return (false, "Failed to delete waiting token: " + ex.Message);
+        //     }
+        // }
+
         public async Task<(bool Success, string Message)> DeleteWaitingTokenAsync(int id)
         {
             try
@@ -184,8 +287,16 @@ namespace PizzaShopServices.Implementations
                     return (false, "Waiting token is already deleted.");
                 }
 
-                waitingToken.IsDeleted = true;
-                await _waitingTokenRepository.UpdateWaitingTokenAsync(waitingToken);
+                // Prepare parameters for the stored procedure
+                var parameters = new { p_id = id };
+
+                // Call the stored procedure using Dapper
+                await _dbConnection.ExecuteAsync(
+                    "CALL delete_waiting_token(@p_id)",
+                    parameters,
+                    commandType: CommandType.Text
+                );
+
                 return (true, "Waiting token deleted successfully.");
             }
             catch (Exception ex)
