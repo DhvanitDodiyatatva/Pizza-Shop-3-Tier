@@ -32,4 +32,18 @@ namespace PizzaShopRepository.ViewModels
 
         public bool IsDeleted { get; set; }
     }
+
+    public class WaitingTokenListViewModel
+    {
+        public int Id { get; set; }
+        public string CustomerName { get; set; } = null!;
+        public string? PhoneNumber { get; set; }
+        public string? Email { get; set; }
+        public int NumOfPersons { get; set; }
+        public int? SectionId { get; set; }
+        public string? SectionName { get; set; }
+        public DateTime? CreatedAt { get; set; }
+        public bool IsDeleted { get; set; }
+        public bool IsAssigned { get; set; }
+    }
 }

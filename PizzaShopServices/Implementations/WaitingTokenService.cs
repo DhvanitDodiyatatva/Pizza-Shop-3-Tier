@@ -3,6 +3,10 @@ using PizzaShopRepository.Interfaces;
 using PizzaShopRepository.Models;
 using PizzaShopRepository.ViewModels;
 using PizzaShopServices.Interfaces;
+using System.Data;
+using Dapper;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace PizzaShopServices.Implementations
 {
@@ -11,12 +15,18 @@ namespace PizzaShopServices.Implementations
         private readonly IWaitingTokenRepository _waitingTokenRepository;
         private readonly ISectionRepository _sectionRepository;
         private readonly PizzaShopRepository.Data.PizzaShopContext _context;
+        private readonly IDbConnection _dbConnection;
 
-        public WaitingTokenService(IWaitingTokenRepository waitingTokenRepository, ISectionRepository sectionRepository, PizzaShopRepository.Data.PizzaShopContext context)
+        public WaitingTokenService(
+            IWaitingTokenRepository waitingTokenRepository,
+            ISectionRepository sectionRepository,
+            PizzaShopRepository.Data.PizzaShopContext context,
+            IDbConnection dbConnection)
         {
             _waitingTokenRepository = waitingTokenRepository;
             _sectionRepository = sectionRepository;
             _context = context;
+            _dbConnection = dbConnection;
         }
 
         public async Task<(bool Success, string Message)> AddWaitingTokenAsync(WaitingTokenViewModel model)
@@ -68,19 +78,37 @@ namespace PizzaShopServices.Implementations
             }
         }
 
+        //   public async Task<List<WaitingToken>> GetAllWaitingTokensAsync()
+        // {
+        //     try
+        //     {
+        //         var waitingTokens = await _waitingTokenRepository.GetAllWaitingTokensAsync();
+        //         return waitingTokens.Where(t => !t.IsDeleted && !t.IsAssigned).ToList(); // Filter out deleted tokens
+        //     }
+        //     catch (Exception ex)
+        //     {
 
-        public async Task<List<WaitingToken>> GetAllWaitingTokensAsync()
+        //         Console.WriteLine($"Error fetching waiting tokens: {ex.Message}");
+        //         return new List<WaitingToken>(); // Return empty list on error
+        //     }
+        // }
+
+        public async Task<List<WaitingTokenListViewModel>> GetAllWaitingTokensAsync()
         {
             try
             {
-                var waitingTokens = await _waitingTokenRepository.GetAllWaitingTokensAsync();
-                return waitingTokens.Where(t => !t.IsDeleted && !t.IsAssigned).ToList(); // Filter out deleted tokens
+                // Use Dapper to call the PostgreSQL function
+                var waitingTokens = await _dbConnection.QueryAsync<WaitingTokenListViewModel>(
+                    "SELECT * FROM get_waiting_tokens_with_sections()",
+                    commandType: CommandType.Text
+                );
+
+                return waitingTokens.ToList();
             }
             catch (Exception ex)
             {
-
                 Console.WriteLine($"Error fetching waiting tokens: {ex.Message}");
-                return new List<WaitingToken>(); // Return empty list on error
+                return new List<WaitingTokenListViewModel>(); // Return empty list on error
             }
         }
 
@@ -106,11 +134,10 @@ namespace PizzaShopServices.Implementations
                 }
 
                 // Check if the new email exists in Customers table (excluding the current waiting token's customer)
-                if (await IsEmailExistsAsync(model.Email, model.Id))
-                {
-                    return (false, "This email already exists. Please choose a different email.");
-                }
-
+                // if (await IsEmailExistsAsync(model.Email, model.Id))
+                // {
+                //     return (false, "This email already exists. Please choose a different email.");
+                // }
                 // Update waiting token fields
                 waitingToken.CustomerName = model.CustomerName;
                 waitingToken.Email = model.Email;

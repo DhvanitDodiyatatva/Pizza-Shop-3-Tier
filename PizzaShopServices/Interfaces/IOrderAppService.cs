@@ -14,7 +14,8 @@ namespace PizzaShopServices.Interfaces
         Task<CustomerDetailsViewModel> PrepareCustomerDetailsOffcanvasAsync(string sectionIds, string sectionName, string selectedTableIds);
         Task<List<Category>> GetAllCategoriesAsync();
         Task<List<Item>> GetItemsAsync(string category, string search);
-        Task<(List<WaitingToken> WaitingTokens, List<SelectListItem> Sections)> GetWaitingListDataAsync();
+        // Task<(List<WaitingToken> WaitingTokens, List<SelectListItem> Sections)> GetWaitingListDataAsync();
+        Task<(List<WaitingTokenListViewModel> WaitingTokens, List<SelectListItem> Sections)> GetWaitingListDataAsync();
         Task<UpdateOrderItemStatusViewModel> PrepareKotDetailsModalAsync(int orderId, string status, string selectedCategory, string selectedStatus);
         Task<Order> GetOrderByIdAsync(int orderId);
         Task<(bool Success, string Message)> SaveOrderAsync(SaveOrderViewModel model);

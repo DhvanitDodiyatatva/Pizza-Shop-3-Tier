@@ -387,7 +387,19 @@ namespace PizzaShopServices.Implementations
             return items;
         }
 
-        public async Task<(List<WaitingToken> WaitingTokens, List<SelectListItem> Sections)> GetWaitingListDataAsync()
+        // public async Task<(List<WaitingToken> WaitingTokens, List<SelectListItem> Sections)> GetWaitingListDataAsync()
+        // {
+        //     var sections = await _sectionService.GetAllSectionsAsync();
+        //     var sectionSelectList = sections.Select(s => new SelectListItem
+        //     {
+        //         Value = s.Name,
+        //         Text = s.Name
+        //     }).ToList();
+        //     var waitingTokens = await _waitingTokenService.GetAllWaitingTokensAsync();
+        //     return (waitingTokens, sectionSelectList);
+        // }
+
+        public async Task<(List<WaitingTokenListViewModel> WaitingTokens, List<SelectListItem> Sections)> GetWaitingListDataAsync()
         {
             var sections = await _sectionService.GetAllSectionsAsync();
             var sectionSelectList = sections.Select(s => new SelectListItem

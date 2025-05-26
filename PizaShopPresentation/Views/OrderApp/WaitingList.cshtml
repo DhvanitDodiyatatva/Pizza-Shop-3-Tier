@@ -1,5 +1,4 @@
-@model List<PizzaShopRepository.Models.WaitingToken>
-
+@model List<PizzaShopRepository.ViewModels.WaitingTokenListViewModel>
 @{
     ViewData["Title"] = "Waiting List";
     Layout = "~/Views/Shared/_LayoutOrdApp.cshtml";
@@ -43,7 +42,7 @@
             @foreach (SelectListItem sec in ViewBag.Sections)
             {
                 var sectionId = sec.Text.ToLower().Replace(" ", "-");
-                var tokenCount = Model.Count(t => t.Section?.Name == sec.Text && !t.IsDeleted);
+                var tokenCount = Model.Count(t => t.SectionName == sec.Text && !t.IsDeleted);
                 <li class="nav-item">
                     <a class="nav-link custom-tag mx-3 @(sec.Text == ViewBag.SelectedSection ? "active" : "text-decoration-none text-black")"
                         id="@sectionId-tab" data-bs-toggle="tab" data-bs-target="#@sectionId-tab-pane" type="button"
@@ -143,7 +142,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var token in Model.Where(t => t.Section?.Name == sec.Text && !t.IsDeleted))
+                                @foreach (var token in Model.Where(t => t.SectionName == sec.Text && !t.IsDeleted))
                                 {
                                     <tr>
                                         <td class="text-nowrap">#@token.Id</td>
@@ -388,9 +387,9 @@
                     },
                     dataFilter: function (data) {
                         var json = JSON.parse(data);
-                        if (json === false) {
+                        @* if (json === false) {
                             return '"This email already exists. Please choose a different email."';
-                        }
+                        } *@
                         return true;
                     }
                 };
