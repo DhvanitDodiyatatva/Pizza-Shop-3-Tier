@@ -96,3 +96,43 @@ $BODY$;
 
 ALTER FUNCTION public.get_order_for_kot_details(integer)
     OWNER TO postgres;
+
+
+-- /////////////////////////////////////////////////////////////////////////WaitingList/////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+-- FUNCTION: public.get_waiting_tokens_with_sections()
+
+-- DROP FUNCTION IF EXISTS public.get_waiting_tokens_with_sections();
+
+CREATE OR REPLACE FUNCTION public.get_waiting_tokens_with_sections(
+	)
+    RETURNS TABLE(id integer, customername character varying, phonenumber character varying, email character varying, numofpersons integer, sectionid integer, status character varying, createdat timestamp without time zone, isdeleted boolean, isassigned boolean, sectionname character varying) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        wt.id AS "Id",
+        wt.customer_name AS "CustomerName",
+        wt.phone_number AS "PhoneNumber",
+        wt.email AS "Email",
+        wt.num_of_persons AS "NumOfPersons",
+        wt.section_id AS "SectionId",
+        wt.status AS "Status",
+        wt.created_at AS "CreatedAt",
+        wt.is_deleted AS "IsDeleted",
+        wt.is_assigned AS "IsAssigned",
+        s.name AS "SectionName"
+    FROM waiting_tokens wt
+    LEFT JOIN sections s ON wt.section_id = s.id
+    WHERE wt.is_deleted = FALSE AND wt.is_assigned = FALSE;
+END;
+$BODY$;
+
+ALTER FUNCTION public.get_waiting_tokens_with_sections()
+    OWNER TO postgres;
