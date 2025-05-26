@@ -84,20 +84,24 @@ namespace PizzaShopRepository.Repositories
 
                     var order = ordersDict[orderId];
 
-                    // Add order item
+                    // Add order item (only if not already added)
                     if (row.order_item_id != null)
                     {
-                        var orderItem = new KotOrderItemViewModel
+                        int orderItemId = row.order_item_id;
+                        if (!order.OrderItems.Any(oi => oi.Id == orderItemId)) // Check for duplicates
                         {
-                            Id = row.order_item_id,
-                            Quantity = row.order_item_quantity,
-                            ReadyQuantity = row.order_item_ready_quantity,
-                            SpecialInstructions = row.order_item_special_instructions,
-                            ItemName = row.item_name,
-                            CategoryName = row.category_name,
-                            ModifierNames = row.modifier_names != null ? ((string[])row.modifier_names).ToList() : new List<string>()
-                        };
-                        order.OrderItems.Add(orderItem);
+                            var orderItem = new KotOrderItemViewModel
+                            {
+                                Id = orderItemId,
+                                Quantity = row.order_item_quantity,
+                                ReadyQuantity = row.order_item_ready_quantity,
+                                SpecialInstructions = row.order_item_special_instructions,
+                                ItemName = row.item_name,
+                                CategoryName = row.category_name,
+                                ModifierNames = row.modifier_names != null ? ((string[])row.modifier_names).ToList() : new List<string>()
+                            };
+                            order.OrderItems.Add(orderItem);
+                        }
                     }
 
                     // Add order table (if not already added)
@@ -123,6 +127,7 @@ namespace PizzaShopRepository.Repositories
                 return new List<KotOrderViewModel>();
             }
         }
+
         //  public async Task<bool> UpdateOrderItemStatusesAsync(int orderId, List<(int OrderItemId, int AdjustedQuantity)> items, string newStatus)
         // {
         //     if (items == null || !items.Any())
