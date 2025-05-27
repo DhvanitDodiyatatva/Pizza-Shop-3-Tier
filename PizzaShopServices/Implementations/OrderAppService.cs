@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using System.Data;
 using Dapper;
 using PizzaShopRepository.Models;
+using Microsoft.AspNetCore.SignalR;
+using PizzaShopService.Hubs;
 
 namespace PizzaShopServices.Implementations
 {
@@ -23,6 +25,7 @@ namespace PizzaShopServices.Implementations
         private readonly IWaitingTokenService _waitingTokenService;
         private readonly PizzaShopRepository.Data.PizzaShopContext _context;
         private readonly IDbConnection _dbConnection;
+        private readonly IHubContext<KotHub> _hubContext;
 
         public OrderAppService(
             IOrderAppRepository orderAppRepository,
@@ -32,7 +35,8 @@ namespace PizzaShopServices.Implementations
             ICategoryService categoryService,
             IWaitingTokenService waitingTokenService,
             PizzaShopRepository.Data.PizzaShopContext context,
-            IDbConnection dbConnection)
+            IDbConnection dbConnection,
+            IHubContext<KotHub> hubContext)
         {
             _orderAppRepository = orderAppRepository;
             _sectionService = sectionService;
@@ -42,6 +46,7 @@ namespace PizzaShopServices.Implementations
             _waitingTokenService = waitingTokenService;
             _context = context;
             _dbConnection = dbConnection;
+            _hubContext = hubContext;
         }
 
         public async Task<(bool Success, string Message)> UpdateCustomerDetailsAsync(CustomerDetailsVM model)
@@ -198,6 +203,9 @@ namespace PizzaShopServices.Implementations
                         await _orderAppRepository.AddOrderTableAsync(orderTable);
                     }
                 }
+
+                // Broadcast new order to KOT clients
+                await _hubContext.Clients.All.SendAsync("ReceiveOrderUpdate", order.Id);
 
                 return (true, "Tables assigned successfully.", order.Id);
             }
@@ -676,6 +684,10 @@ namespace PizzaShopServices.Implementations
                 }
 
                 await _context.SaveChangesAsync();
+
+                // Broadcast order update to KOT clients
+                await _hubContext.Clients.All.SendAsync("ReceiveOrderUpdate", order.Id);
+
                 return (true, "Order saved successfully.");
             }
             catch (Exception ex)

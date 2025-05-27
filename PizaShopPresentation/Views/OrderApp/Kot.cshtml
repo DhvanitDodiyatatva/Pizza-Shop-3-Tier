@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
 <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.0/signalr.min.js"></script>
 
 <div class="Users-content mt-0 p-xl-5 p-lg-4 p-md-4 p-sm-4 p-4">
     <div class="d-flex align-items-center justify-content-start my-2">
@@ -67,6 +68,48 @@
     let selectedCategory = "All";
     let selectedStatus = 'in_progress';
 
+    // Initialize SignalR connection
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/kotHub", {
+            accessTokenFactory: () => {
+                return document.cookie.split('; ').find(row => row.startsWith('JWT='))?.split('=')[1];
+            }
+        })
+        .configureLogging(signalR.LogLevel.Information)
+        .withAutomaticReconnect()
+        .build();
+
+    // Handle SignalR connection events
+    connection.on("ReceiveOrderUpdate", function (orderId) {
+        console.log(`Order updated: ${orderId}`);
+        toastr.info(`Order #${orderId} has been updated.`);
+        loadKotData(selectedCategory, selectedStatus);
+    });
+
+    connection.on("ReceiveOrderStatusUpdate", function (orderId, newStatus) {
+        console.log(`Order ${orderId} status changed to: ${newStatus}`);
+        @* toastr.info(`Order #${orderId} status changed to ${newStatus}.`); *@
+        loadKotData(selectedCategory, selectedStatus);
+    });
+
+    connection.onreconnecting((error) => {
+        console.log(`Connection lost due to error "${error}". Reconnecting.`);
+        toastr.warning("Connection lost. Reconnecting...");
+    });
+
+    connection.onreconnected(() => {
+        console.log("Reconnected to SignalR hub.");
+        toastr.success("Reconnected to the server.");
+        loadKotData(selectedCategory, selectedStatus);
+    });
+
+    connection.start().then(function () {
+        console.log("SignalR connected.");
+    }).catch(function (err) {
+        console.error("SignalR connection error: ", err.toString());
+        toastr.error("Failed to connect to real-time updates.");
+    });
+
     function updateSliderWidth() {
         const container = document.querySelector('#kot-in-progress, #kot-ready:not(:empty)');
         if (!container) return;
@@ -119,6 +162,10 @@
                 $('#kot-ready').html(status === 'ready' ? data : '');
                 currentSlide = 0; // Reset slide position
                 updateSliderWidth();
+            },
+            error: function (xhr, status, error) {
+                console.error("AJAX Error:", error);
+                toastr.error("Failed to load KOT data.");
             }
         });
     }
@@ -147,6 +194,7 @@
             },
             error: function (xhr, status, error) {
                 console.error("AJAX Error:", error, "Status:", status, "Response:", xhr.responseText);
+                toastr.error("Failed to load KOT details.");
             }
         });
     }
@@ -246,7 +294,6 @@
         border-radius: 0.25rem;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         width: 350px;
-        /* Fixed width for consistency */
     }
 
     .btn-main {
@@ -272,7 +319,6 @@
         transition: transform 0.5s ease;
         display: flex;
         flex-wrap: nowrap;
-        /* Prevent wrapping */
     }
 
     .status-btn {
@@ -290,21 +336,9 @@
         color: #1f73ae;
     }
 
-    /* Ensure the container doesn't allow overflow */
     #kot-in-progress,
     #kot-ready {
         overflow: hidden;
         position: relative;
     }
-
-    /* Responsive adjustments */
-    @* @media (max-width: 576px) {
-        .kot-card {
-            width: 100%; /* Full width on small screens */
-            max-width: 350px;
-        }
-        .card-slider {
-            width: 100% !important; /* Override inline width on small screens */
-        }
-    } *@
 </style>

@@ -1,9 +1,12 @@
+using Microsoft.AspNetCore.SignalR;
 using PizzaShopRepository.Interfaces;
 using PizzaShopRepository.Models;
 using PizzaShopRepository.ViewModels;
 using PizzaShopServices.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using PizzaShopService.Hubs;
+
 
 
 namespace PizzaShopServices.Implementations
@@ -12,11 +15,13 @@ namespace PizzaShopServices.Implementations
     {
         private readonly IKotRepository _kotRepository;
         private readonly ICategoryService _categoryService;
+        private readonly IHubContext<KotHub> _hubContext;
 
-        public KotService(IKotRepository kotRepository, ICategoryService categoryService)
+        public KotService(IKotRepository kotRepository, ICategoryService categoryService, IHubContext<KotHub> hubContext)
         {
             _kotRepository = kotRepository;
             _categoryService = categoryService;
+            _hubContext = hubContext;
         }
 
         // public async Task<List<Order>> GetOrdersByCategoryAndStatusAsync(string categoryName, string status)
@@ -52,7 +57,13 @@ namespace PizzaShopServices.Implementations
                 return false;
             }
 
-            return await _kotRepository.UpdateOrderItemStatusesAsync(orderId, items, newStatus);
+            var result = await _kotRepository.UpdateOrderItemStatusesAsync(orderId, items, newStatus);
+            if (result)
+            {
+                // Broadcast the update to all clients
+                await _hubContext.Clients.All.SendAsync("ReceiveOrderStatusUpdate", orderId, newStatus);
+            }
+            return result;
         }
     }
 }

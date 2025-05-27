@@ -146,3 +146,4 @@ D:\PizzaShop 3-Tier\Pizza-Shop-3-Tier\PizaShopPresentation\bin\Debug\net7.0\Dapp
 D:\PizzaShop 3-Tier\Pizza-Shop-3-Tier\PizaShopPresentation\bin\Debug\net7.0\Microsoft.Bcl.AsyncInterfaces.dll
 D:\PizzaShop 3-Tier\PizaShopPresentation\bin\Debug\net7.0\Dapper.dll
 D:\PizzaShop 3-Tier\PizaShopPresentation\bin\Debug\net7.0\Microsoft.Bcl.AsyncInterfaces.dll
+D:\PizzaShop 3-Tier\PizaShopPresentation\bin\Debug\net7.0\System.Net.WebSockets.WebSocketProtocol.dll

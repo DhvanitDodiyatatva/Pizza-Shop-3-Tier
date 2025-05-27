@@ -123,7 +123,7 @@
 <div class="container-fluid p-0">
     <div class="row m-0 p-0">
         <!-- Category List Container -->
-        <div class="col-md-2 p-0">
+        <div class="col-xl-2 p-0">
             <div style="overflow: auto; height: 100%;" class="custom-scrollbar" id="categoryContainer">
                 <!-- Categories loaded here via AJAX -->
             </div>
@@ -141,7 +141,7 @@
         @if (string.IsNullOrEmpty(orderId))
         {
             <!-- No OrderId: Show only Item List Container -->
-            <div class="col-md-10 p-0">
+            <div class="col-xl-10 p-0">
                 <div style="overflow: auto; height: 91dvh;" class="custom-scrollbar" id="itemListContainer">
                     <!-- Items loaded here via AJAX -->
                 </div>
@@ -150,12 +150,12 @@
         else
         {
             <!-- OrderId Present: Show Item List and Cart Containers -->
-            <div class="col-md-5 p-0">
+            <div class="col-xl-5 p-0">
                 <div style="overflow: auto; height: 91dvh;" class="custom-scrollbar" id="itemListContainer">
                     <!-- Items loaded here via AJAX -->
                 </div>
             </div>
-            <div class="col-md-5 p-0">
+            <div class="col-xl-5 p-0">
                 <div id="cartContainer" class="custom-scrollbar" style="overflow: auto; height: 91dvh;">
                     <!-- Cart partial view loaded here via AJAX -->
                 </div>

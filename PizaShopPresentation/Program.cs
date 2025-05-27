@@ -14,6 +14,7 @@ using PizzaShopServices.Interfaces;
 using Npgsql;
 using System.Data;
 using PizzaShopService.Services;
+using PizzaShopService.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +30,9 @@ builder.Services.AddScoped<IDbConnection>(provider =>
     connection.Open();
     return connection;
 });
+
+// SignalR service
+builder.Services.AddSignalR();
 
 // Register services
 builder.Services.AddScoped<IUserService, UserService>();
@@ -95,6 +99,13 @@ builder.Services.AddAuthentication(options =>
             {
                 context.Token = context.Request.Cookies["JWT"];
             }
+            // Enable SignalR to access the JWT token
+            var accessToken = context.Request.Query["access_token"];
+            var path = context.HttpContext.Request.Path;
+            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+            {
+                context.Token = accessToken;
+            }
             return Task.CompletedTask;
         },
         OnChallenge = context =>
@@ -141,6 +152,9 @@ app.Use(async (context, next) =>
     context.Response.Headers["Cache-Control"] = "no-cache, no-store";
     await next();
 });
+
+// Map SignalR hub
+app.MapHub<KotHub>("/kotHub");
 
 app.MapControllerRoute(
     name: "default",
