@@ -197,3 +197,100 @@ END;
 $BODY$;
 ALTER PROCEDURE public.delete_waiting_token(integer)
     OWNER TO postgres;
+
+
+
+-- PROCEDURE: public.assign_table(integer[], integer, integer, character varying, character varying, character varying, integer)
+
+-- DROP PROCEDURE IF EXISTS public.assign_table(integer[], integer, integer, character varying, character varying, character varying, integer);
+
+CREATE OR REPLACE PROCEDURE public.assign_table(
+	IN p_selected_table_ids integer[],
+	IN p_section_id integer,
+	IN p_waiting_token_id integer,
+	IN p_email character varying,
+	IN p_name character varying,
+	IN p_phone_number character varying,
+	IN p_num_of_persons integer,
+	OUT p_order_id integer)
+LANGUAGE 'plpgsql'
+AS $BODY$
+DECLARE
+    v_customer_id INTEGER;
+    v_table_id INTEGER;
+    v_tax RECORD;
+BEGIN
+    -- Check if any of the selected tables are unavailable
+    IF EXISTS (
+        SELECT 1
+        FROM tables t
+        WHERE t.id = ANY(p_selected_table_ids)
+        AND t.status != 'available'
+    ) THEN
+        RAISE EXCEPTION 'One or more selected tables are no longer available.';
+    END IF;
+
+    -- Check if customer exists, if not create a new one
+    SELECT id INTO v_customer_id
+    FROM customers
+    WHERE email = p_email;
+
+    IF v_customer_id IS NULL THEN
+        INSERT INTO customers (name, email, phone_no, no_of_persons, date)
+        VALUES (p_name, p_email, p_phone_number, p_num_of_persons, CURRENT_DATE)
+        RETURNING id INTO v_customer_id;
+    END IF;
+
+    -- Create a new order
+    INSERT INTO orders (
+        customer_id, total_amount, invoice_no, order_type, order_status,
+        created_at, updated_at
+    )
+    VALUES (
+        v_customer_id, 0, CONCAT('DOM0', v_customer_id), 'DineIn', 'pending',
+        NOW() AT TIME ZONE 'Asia/Kolkata', NOW() AT TIME ZONE 'Asia/Kolkata'
+    )
+    RETURNING id INTO p_order_id;
+
+    -- Add applicable taxes to order_tax
+    FOR v_tax IN (
+        SELECT id, type, value
+        FROM taxes_fees
+        WHERE is_enabled = true AND is_deleted = false
+    ) LOOP
+        INSERT INTO order_tax (order_id, tax_id, tax_percentage, tax_flat, is_applied)
+        VALUES (
+            p_order_id,
+            v_tax.id,
+            CASE WHEN v_tax.type = 'percentage' THEN v_tax.value ELSE NULL END,
+            CASE WHEN v_tax.type = 'fixed' THEN v_tax.value ELSE NULL END,
+            true
+        );
+    END LOOP;
+
+    -- Update waiting token if provided
+    IF p_waiting_token_id IS NOT NULL THEN
+        UPDATE waiting_tokens
+        SET is_assigned = true
+        WHERE id = p_waiting_token_id;
+    END IF;
+
+    -- Update table statuses and create order_table entries
+    FOREACH v_table_id IN ARRAY p_selected_table_ids LOOP
+        -- Update table status to 'reserved'
+        UPDATE tables
+        SET status = 'reserved'
+        WHERE id = v_table_id;
+
+        -- Create order_table entry
+        INSERT INTO order_tables (order_id, table_id)
+        VALUES (p_order_id, v_table_id);
+    END LOOP;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE EXCEPTION '%', SQLERRM;
+END;
+$BODY$;
+ALTER PROCEDURE public.assign_table(integer[], integer, integer, character varying, character varying, character varying, integer)
+    OWNER TO postgres;

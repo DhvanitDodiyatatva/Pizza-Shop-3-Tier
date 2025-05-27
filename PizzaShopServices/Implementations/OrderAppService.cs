@@ -100,14 +100,129 @@ namespace PizzaShopServices.Implementations
             };
         }
 
+        // public async Task<(bool Success, string Message, int OrderId)> AssignTableAsync(
+        //     int[] selectedTableIds,
+        //     int sectionId,
+        //     int? waitingTokenId,
+        //     string email,
+        //     string name,
+        //     string phoneNumber,
+        //     int numOfPersons)
+        // {
+        //     if (selectedTableIds == null || !selectedTableIds.Any())
+        //     {
+        //         return (false, "No tables selected.", 0);
+        //     }
+
+        //     if (string.IsNullOrEmpty(phoneNumber) || numOfPersons <= 0)
+        //     {
+        //         return (false, "Invalid customer details.", 0);
+        //     }
+
+        //     if (string.IsNullOrEmpty(name))
+        //     {
+        //         return (false, "Customer name is required.", 0);
+        //     }
+
+        //     try
+        //     {
+        //         var tables = await _orderAppRepository.GetTablesByIdsAsync(selectedTableIds);
+        //         if (tables.Any(t => t.Status != "available"))
+        //         {
+        //             return (false, "One or more selected tables are no longer available.", 0);
+        //         }
+
+        //         var customer = await _orderAppRepository.GetCustomerByEmailAsync(email);
+        //         if (customer == null)
+        //         {
+        //             customer = new Customer
+        //             {
+        //                 Name = name,
+        //                 Email = email,
+        //                 PhoneNo = phoneNumber,
+        //                 NoOfPersons = numOfPersons,
+        //                 Date = DateOnly.FromDateTime(DateTime.Now)
+        //             };
+        //             await _orderAppRepository.AddCustomerAsync(customer);
+        //         }
+
+        //         var order = new Order
+        //         {
+        //             CustomerId = customer.Id,
+        //             TotalAmount = 0,
+        //             InvoiceNo = $"DOM0{customer.Id}",
+        //             OrderType = "DineIn",
+        //             OrderStatus = "pending",
+        //             CreatedAt = DateTime.Now,
+        //             UpdatedAt = DateTime.Now
+        //         };
+        //         await _orderAppRepository.AddOrderAsync(order);
+
+        //         // Add applicable taxes from TaxesFee to OrderTax
+        //         var applicableTaxes = await _context.TaxesFees
+        //             .Where(tf => tf.IsEnabled && !tf.IsDeleted)
+        //             .ToListAsync();
+
+        //         foreach (var tax in applicableTaxes)
+        //         {
+        //             var orderTax = new OrderTax
+        //             {
+        //                 OrderId = order.Id,
+        //                 TaxId = tax.Id,
+        //                 TaxPercentage = tax.Type == "percentage" ? tax.Value : null,
+        //                 TaxFlat = tax.Type == "fixed" ? tax.Value : null,
+        //                 IsApplied = true // Default to applied
+        //             };
+        //             _context.OrderTaxes.Add(orderTax);
+        //         }
+        //         await _context.SaveChangesAsync();
+
+        //         if (waitingTokenId.HasValue)
+        //         {
+        //             var waitingToken = await _orderAppRepository.GetWaitingTokenByIdAsync(waitingTokenId.Value);
+        //             if (waitingToken != null)
+        //             {
+        //                 waitingToken.IsAssigned = true;
+        //                 await _orderAppRepository.UpdateWaitingTokenAsync(waitingToken);
+        //             }
+        //         }
+
+        //         foreach (var tableId in selectedTableIds)
+        //         {
+        //             var table = await _orderAppRepository.GetTableByIdAsync(tableId);
+        //             if (table != null)
+        //             {
+        //                 table.Status = "reserved";
+        //                 await _orderAppRepository.UpdateTableAsync(table);
+
+        //                 var orderTable = new OrderTable
+        //                 {
+        //                     OrderId = order.Id,
+        //                     TableId = tableId
+        //                 };
+        //                 await _orderAppRepository.AddOrderTableAsync(orderTable);
+        //             }
+        //         }
+
+        //         // Broadcast new order to KOT clients
+        //         await _hubContext.Clients.All.SendAsync("ReceiveOrderUpdate", order.Id);
+
+        //         return (true, "Tables assigned successfully.", order.Id);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return (false, $"An error occurred: {ex.Message}", 0);
+        //     }
+        // }
+
         public async Task<(bool Success, string Message, int OrderId)> AssignTableAsync(
-            int[] selectedTableIds,
-            int sectionId,
-            int? waitingTokenId,
-            string email,
-            string name,
-            string phoneNumber,
-            int numOfPersons)
+    int[] selectedTableIds,
+    int sectionId,
+    int? waitingTokenId,
+    string email,
+    string name,
+    string phoneNumber,
+    int numOfPersons)
         {
             if (selectedTableIds == null || !selectedTableIds.Any())
             {
@@ -124,94 +239,60 @@ namespace PizzaShopServices.Implementations
                 return (false, "Customer name is required.", 0);
             }
 
-            try
+            if (_dbConnection.State != ConnectionState.Open)
             {
-                var tables = await _orderAppRepository.GetTablesByIdsAsync(selectedTableIds);
-                if (tables.Any(t => t.Status != "available"))
-                {
-                    return (false, "One or more selected tables are no longer available.", 0);
-                }
-
-                var customer = await _orderAppRepository.GetCustomerByEmailAsync(email);
-                if (customer == null)
-                {
-                    customer = new Customer
-                    {
-                        Name = name,
-                        Email = email,
-                        PhoneNo = phoneNumber,
-                        NoOfPersons = numOfPersons,
-                        Date = DateOnly.FromDateTime(DateTime.Now)
-                    };
-                    await _orderAppRepository.AddCustomerAsync(customer);
-                }
-
-                var order = new Order
-                {
-                    CustomerId = customer.Id,
-                    TotalAmount = 0,
-                    InvoiceNo = $"DOM0{customer.Id}",
-                    OrderType = "DineIn",
-                    OrderStatus = "pending",
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now
-                };
-                await _orderAppRepository.AddOrderAsync(order);
-
-                // Add applicable taxes from TaxesFee to OrderTax
-                var applicableTaxes = await _context.TaxesFees
-                    .Where(tf => tf.IsEnabled && !tf.IsDeleted)
-                    .ToListAsync();
-
-                foreach (var tax in applicableTaxes)
-                {
-                    var orderTax = new OrderTax
-                    {
-                        OrderId = order.Id,
-                        TaxId = tax.Id,
-                        TaxPercentage = tax.Type == "percentage" ? tax.Value : null,
-                        TaxFlat = tax.Type == "fixed" ? tax.Value : null,
-                        IsApplied = true // Default to applied
-                    };
-                    _context.OrderTaxes.Add(orderTax);
-                }
-                await _context.SaveChangesAsync();
-
-                if (waitingTokenId.HasValue)
-                {
-                    var waitingToken = await _orderAppRepository.GetWaitingTokenByIdAsync(waitingTokenId.Value);
-                    if (waitingToken != null)
-                    {
-                        waitingToken.IsAssigned = true;
-                        await _orderAppRepository.UpdateWaitingTokenAsync(waitingToken);
-                    }
-                }
-
-                foreach (var tableId in selectedTableIds)
-                {
-                    var table = await _orderAppRepository.GetTableByIdAsync(tableId);
-                    if (table != null)
-                    {
-                        table.Status = "reserved";
-                        await _orderAppRepository.UpdateTableAsync(table);
-
-                        var orderTable = new OrderTable
-                        {
-                            OrderId = order.Id,
-                            TableId = tableId
-                        };
-                        await _orderAppRepository.AddOrderTableAsync(orderTable);
-                    }
-                }
-
-                // Broadcast new order to KOT clients
-                await _hubContext.Clients.All.SendAsync("ReceiveOrderUpdate", order.Id);
-
-                return (true, "Tables assigned successfully.", order.Id);
+                _dbConnection.Open();
             }
-            catch (Exception ex)
+
+            // Start a transaction
+            using (var transaction = _dbConnection.BeginTransaction())
             {
-                return (false, $"An error occurred: {ex.Message}", 0);
+                try
+                {
+                    // Prepare parameters for the stored procedure
+                    var parameters = new DynamicParameters();
+                    parameters.Add("p_selected_table_ids", selectedTableIds);
+                    parameters.Add("p_section_id", sectionId);
+                    parameters.Add("p_waiting_token_id", waitingTokenId, dbType: DbType.Int32, direction: ParameterDirection.Input);
+                    parameters.Add("p_email", email);
+                    parameters.Add("p_name", name);
+                    parameters.Add("p_phone_number", phoneNumber);
+                    parameters.Add("p_num_of_persons", numOfPersons);
+                    parameters.Add("p_order_id", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                    // Call the stored procedure
+                    await _dbConnection.ExecuteAsync(
+                        "assign_table",
+                        parameters,
+                        commandType: CommandType.StoredProcedure,
+                        transaction: transaction
+                    );
+
+                    // Retrieve the output parameter
+                    int orderId = parameters.Get<int>("p_order_id");
+
+                    // Commit the transaction
+                    transaction.Commit();
+
+                    // Broadcast new order to KOT clients
+                    await _hubContext.Clients.All.SendAsync("ReceiveOrderUpdate", orderId);
+
+                    return (true, "Tables assigned successfully.", orderId);
+                }
+                catch (Exception ex)
+                {
+                    // Rollback the transaction on error
+                    transaction.Rollback();
+                    return (false, $"An error occurred: {ex.Message}", 0);
+                }
+                finally
+                {
+                    // Close the connection if it was opened in this method
+                    if (_dbConnection.State == ConnectionState.Open)
+                    {
+                        _dbConnection.Close();
+                    }
+                }
             }
         }
 
