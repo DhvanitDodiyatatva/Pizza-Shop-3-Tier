@@ -5,6 +5,8 @@ using PizzaShopRepository.ViewModels;
 using PizzaShopServices.Interfaces;
 using PizzaShopRepository.Data;
 using Microsoft.AspNetCore.Http;
+using System.Data;
+using Dapper;
 
 namespace PizzaShopServices.Implementations;
 
@@ -15,12 +17,15 @@ public class ItemService : IItemService
 
     private readonly IUserCrudService _userCrudService;
 
+    private readonly IDbConnection _dbConnection;
 
-    public ItemService(IItemRepository itemRepository, IItemModifierGroupService itemModifierGroupService, IUserCrudService userCrudService)
+
+    public ItemService(IItemRepository itemRepository, IItemModifierGroupService itemModifierGroupService, IUserCrudService userCrudService, IDbConnection dbConnection)
     {
         _itemRepository = itemRepository;
         _itemModifierGroupService = itemModifierGroupService;
         _userCrudService = userCrudService;
+        _dbConnection = dbConnection;
     }
 
     public async Task<List<Item>> GetItemsByCategoryAsync(int categoryId)
@@ -38,24 +43,75 @@ public class ItemService : IItemService
         return await _itemRepository.GetFavoriteItemsAsync();
     }
 
+    // public async Task<(bool Success, string Message)> ToggleFavoriteAsync(int itemId)
+    // {
+    //     var item = await _itemRepository.GetItemByIdAsync(itemId);
+    //     if (item == null)
+    //     {
+    //         return (false, "Item not found.");
+    //     }
+
+    //     item.IsFavourite = !item.IsFavourite;
+    //     item.UpdatedAt = DateTime.Now;
+
+    //     try
+    //     {
+    //         await _itemRepository.UpdateItemAsync(item);
+    //         return (true, item.IsFavourite ? "Item marked as favorite." : "Item removed from favorites.");
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         return (false, $"Failed to update favorite status: {ex.Message}");
+    //     }
+    // }
+
     public async Task<(bool Success, string Message)> ToggleFavoriteAsync(int itemId)
     {
-        var item = await _itemRepository.GetItemByIdAsync(itemId);
-        if (item == null)
-        {
-            return (false, "Item not found.");
-        }
-
-        item.IsFavourite = !item.IsFavourite;
-        item.UpdatedAt = DateTime.Now;
-
         try
         {
-            await _itemRepository.UpdateItemAsync(item);
-            return (true, item.IsFavourite ? "Item marked as favorite." : "Item removed from favorites.");
+            // Ensure the connection is open
+            if (_dbConnection.State != ConnectionState.Open)
+            {
+                _dbConnection.Open();
+            }
+
+            // Prepare parameters for the stored procedure
+            var parameters = new DynamicParameters();
+            parameters.Add("p_item_id", itemId);
+            parameters.Add("p_new_favorite_status", dbType: DbType.Boolean, direction: ParameterDirection.Output);
+
+            // Call the stored procedure
+            await _dbConnection.ExecuteAsync(
+                "toggle_favorite_item",
+                parameters,
+                commandType: CommandType.StoredProcedure
+            );
+
+            // Retrieve the new favorite status
+            bool newFavoriteStatus = parameters.Get<bool>("p_new_favorite_status");
+
+            // Close the connection
+            if (_dbConnection.State == ConnectionState.Open)
+            {
+                _dbConnection.Close();
+            }
+
+            return (true, newFavoriteStatus ? "Item marked as favorite." : "Item removed from favorites.");
         }
         catch (Exception ex)
         {
+            // Close the connection in case of an error
+            if (_dbConnection.State == ConnectionState.Open)
+            {
+                _dbConnection.Close();
+            }
+
+            // Map the exception message to the appropriate response
+            if (ex.Message.Contains("Item not found or has been deleted"))
+            {
+                return (false, "Item not found.");
+            }
+
             return (false, $"Failed to update favorite status: {ex.Message}");
         }
     }

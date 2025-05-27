@@ -294,3 +294,44 @@ END;
 $BODY$;
 ALTER PROCEDURE public.assign_table(integer[], integer, integer, character varying, character varying, character varying, integer)
     OWNER TO postgres;
+
+-- /////////////////////////////////////////////////////////////////////////Menu///////////////////////////////////////////////////////////////////////////////////////////////////
+
+-- PROCEDURE: public.toggle_favorite_item(integer)
+
+-- DROP PROCEDURE IF EXISTS public.toggle_favorite_item(integer);
+
+CREATE OR REPLACE PROCEDURE public.toggle_favorite_item(
+	IN p_item_id integer,
+	OUT p_new_favorite_status boolean)
+LANGUAGE 'plpgsql'
+AS $BODY$
+DECLARE
+    v_item_exists BOOLEAN;
+BEGIN
+    -- Check if the item exists and is not deleted
+    SELECT EXISTS (
+        SELECT 1
+        FROM items
+        WHERE id = p_item_id AND is_deleted = FALSE
+    ) INTO v_item_exists;
+
+    IF NOT v_item_exists THEN
+        RAISE EXCEPTION 'Item not found or has been deleted.';
+    END IF;
+
+    -- Toggle the favorite status and update the timestamp
+    UPDATE items
+    SET 
+        is_favourite = NOT is_favourite,
+        updated_at = NOW() AT TIME ZONE 'Asia/Kolkata'
+    WHERE id = p_item_id
+    RETURNING is_favourite INTO p_new_favorite_status;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE EXCEPTION '%', SQLERRM;
+END;
+$BODY$;
+ALTER PROCEDURE public.toggle_favorite_item(integer)
+    OWNER TO postgres;
