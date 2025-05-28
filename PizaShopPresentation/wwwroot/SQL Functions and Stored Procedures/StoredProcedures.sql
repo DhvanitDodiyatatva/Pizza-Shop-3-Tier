@@ -538,3 +538,71 @@ END;
 $BODY$;
 ALTER PROCEDURE public.save_order(integer, numeric, character varying, jsonb, jsonb)
     OWNER TO postgres;
+
+
+-- PROCEDURE: public.complete_order(integer)
+
+-- DROP PROCEDURE IF EXISTS public.complete_order(integer);
+
+CREATE OR REPLACE PROCEDURE public.complete_order(
+	IN p_order_id integer)
+LANGUAGE 'plpgsql'
+AS $BODY$
+DECLARE
+    v_customer_id INTEGER;
+    v_total_orders INTEGER;
+    v_all_items_ready BOOLEAN;
+BEGIN
+    -- 1. Validate the order exists and fetch customer_id
+    SELECT customer_id INTO v_customer_id
+    FROM orders
+    WHERE id = p_order_id;
+
+    IF v_customer_id IS NULL THEN
+        RAISE EXCEPTION 'Order not found.';
+    END IF;
+
+    -- 2. Check if all items are ready
+    SELECT BOOL_AND(item_status = 'ready') INTO v_all_items_ready
+    FROM order_items
+    WHERE order_id = p_order_id;
+
+    IF NOT v_all_items_ready THEN
+        RAISE EXCEPTION 'Cannot complete order: Some items are not ready.';
+    END IF;
+
+    -- 3. Fetch and update customer's TotalOrders
+    SELECT total_orders INTO v_total_orders
+    FROM customers
+    WHERE id = v_customer_id;
+
+    IF v_total_orders IS NULL THEN
+        RAISE EXCEPTION 'Customer not found.';
+    END IF;
+
+    UPDATE customers
+    SET total_orders = COALESCE(v_total_orders, 0) + 1
+    WHERE id = v_customer_id;
+
+    -- 4. Update Order table
+    UPDATE orders
+    SET order_status = 'completed',
+        payment_status = 'paid',
+        updated_at = NOW() AT TIME ZONE 'Asia/Kolkata'
+    WHERE id = p_order_id;
+
+    -- 5. Update Table table
+    UPDATE tables t
+    SET status = 'available'
+    FROM order_tables ot
+    WHERE ot.order_id = p_order_id
+    AND ot.table_id = t.id;
+
+    -- 6. Update OrderItem table
+    UPDATE order_items
+    SET item_status = 'served'
+    WHERE order_id = p_order_id;
+END;
+$BODY$;
+ALTER PROCEDURE public.complete_order(integer)
+    OWNER TO postgres;

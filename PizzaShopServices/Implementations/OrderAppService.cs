@@ -896,67 +896,120 @@ namespace PizzaShopServices.Implementations
             }
         }
 
+        // public async Task<(bool Success, string Message)> CompleteOrderAsync(int orderId)
+        // {
+        //     try
+        //     {
+        //         // Fetch the order with related data
+        //         var order = await _orderAppRepository.GetOrderByIdAsync(orderId);
+        //         if (order == null)
+        //         {
+        //             return (false, "Order not found.");
+        //         }
+
+        //         // Check if all items are ready (extra validation)
+        //         if (!order.OrderItems.All(oi => oi.ItemStatus == "ready"))
+        //         {
+        //             return (false, "Cannot complete order: Some items are not ready.");
+        //         }
+
+        //         // Fetch the customer to update TotalOrders
+        //         var customer = await _context.Customers.FindAsync(order.CustomerId);
+        //         if (customer == null)
+        //         {
+        //             return (false, "Customer not found.");
+        //         }
+
+        //         // Increment TotalOrders
+        //         customer.TotalOrders = (customer.TotalOrders ?? 0) + 1;
+        //         _context.Customers.Update(customer);
+
+        //         // 1. Update Order table
+        //         order.OrderStatus = "completed";
+        //         order.PaymentStatus = "paid";
+        //         order.UpdatedAt = DateTime.Now;
+        //         _context.Orders.Update(order);
+
+        //         // 2. Update Table table
+        //         foreach (var orderTable in order.OrderTables)
+        //         {
+        //             if (orderTable.TableId.HasValue) // Check if TableId is not null
+        //             {
+        //                 var table = await _orderAppRepository.GetTableByIdAsync(orderTable.TableId.Value); // Use .Value to get the int
+        //                 if (table != null)
+        //                 {
+        //                     table.Status = "available";
+        //                     await _orderAppRepository.UpdateTableAsync(table);
+        //                 }
+        //             }
+        //             else
+        //             {
+        //                 continue;
+        //             }
+        //         }
+
+        //         // 3. Update OrderItem table
+        //         foreach (var orderItem in order.OrderItems)
+        //         {
+        //             orderItem.ItemStatus = "served";
+        //             _context.OrderItems.Update(orderItem);
+        //         }
+
+        //         await _context.SaveChangesAsync();
+        //         return (true, "Order completed successfully.");
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return (false, $"An error occurred: {ex.Message}");
+        //     }
+        // }
+
         public async Task<(bool Success, string Message)> CompleteOrderAsync(int orderId)
         {
             try
             {
-                // Fetch the order with related data
-                var order = await _orderAppRepository.GetOrderByIdAsync(orderId);
-                if (order == null)
+                if (_dbConnection.State != ConnectionState.Open)
                 {
-                    return (false, "Order not found.");
+                    _dbConnection.Open();
                 }
 
-                // Check if all items are ready (extra validation)
-                if (!order.OrderItems.All(oi => oi.ItemStatus == "ready"))
+                // Start a transaction
+                using (var transaction = _dbConnection.BeginTransaction())
                 {
-                    return (false, "Cannot complete order: Some items are not ready.");
-                }
-
-                // Fetch the customer to update TotalOrders
-                var customer = await _context.Customers.FindAsync(order.CustomerId);
-                if (customer == null)
-                {
-                    return (false, "Customer not found.");
-                }
-
-                // Increment TotalOrders
-                customer.TotalOrders = (customer.TotalOrders ?? 0) + 1;
-                _context.Customers.Update(customer);
-
-                // 1. Update Order table
-                order.OrderStatus = "completed";
-                order.PaymentStatus = "paid";
-                order.UpdatedAt = DateTime.Now;
-                _context.Orders.Update(order);
-
-                // 2. Update Table table
-                foreach (var orderTable in order.OrderTables)
-                {
-                    if (orderTable.TableId.HasValue) // Check if TableId is not null
+                    try
                     {
-                        var table = await _orderAppRepository.GetTableByIdAsync(orderTable.TableId.Value); // Use .Value to get the int
-                        if (table != null)
+                        // Prepare parameters for the stored procedure
+                        var parameters = new DynamicParameters();
+                        parameters.Add("p_order_id", orderId);
+
+                        // Call the stored procedure
+                        await _dbConnection.ExecuteAsync(
+                            "CALL complete_order(:p_order_id)",
+                            parameters,
+                            commandType: CommandType.Text,
+                            transaction: transaction
+                        );
+
+                        // Commit the transaction
+                        transaction.Commit();
+
+                        return (true, "Order completed successfully.");
+                    }
+                    catch (Exception ex)
+                    {
+                        // Rollback the transaction on error
+                        transaction.Rollback();
+                        return (false, $"An error occurred: {ex.Message}");
+                    }
+                    finally
+                    {
+                        // Close the connection if it was opened in this method
+                        if (_dbConnection.State == ConnectionState.Open)
                         {
-                            table.Status = "available";
-                            await _orderAppRepository.UpdateTableAsync(table);
+                            _dbConnection.Close();
                         }
                     }
-                    else
-                    {
-                        continue;
-                    }
                 }
-
-                // 3. Update OrderItem table
-                foreach (var orderItem in order.OrderItems)
-                {
-                    orderItem.ItemStatus = "served";
-                    _context.OrderItems.Update(orderItem);
-                }
-
-                await _context.SaveChangesAsync();
-                return (true, "Order completed successfully.");
             }
             catch (Exception ex)
             {
