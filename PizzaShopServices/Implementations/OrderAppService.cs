@@ -12,6 +12,7 @@ using Dapper;
 using PizzaShopRepository.Models;
 using Microsoft.AspNetCore.SignalR;
 using PizzaShopService.Hubs;
+using System.Text.Json;
 
 namespace PizzaShopServices.Implementations
 {
@@ -612,11 +613,182 @@ namespace PizzaShopServices.Implementations
                 .FirstOrDefaultAsync(o => o.Id == orderId);
         }
 
+        // public async Task<(bool Success, string Message)> SaveOrderAsync(SaveOrderViewModel model)
+        // {
+        //     try
+        //     {
+        //         // Fetch the existing order
+        //         var order = await _context.Orders
+        //             .Include(o => o.OrderItems)
+        //             .ThenInclude(oi => oi.OrderItemModifiers)
+        //             .Include(o => o.OrderTables)
+        //             .Include(o => o.OrderTaxes)
+        //             .ThenInclude(ot => ot.Tax)
+        //             .FirstOrDefaultAsync(o => o.Id == model.OrderId);
+
+        //         if (order == null)
+        //         {
+        //             return (false, "Order not found.");
+        //         }
+
+        //         // 1. Update Order table
+        //         order.OrderStatus = "in_progress";
+        //         order.TotalAmount = model.TotalAmount;
+        //         order.PaymentMethod = model.PaymentMethod;
+        //         order.UpdatedAt = DateTime.Now;
+
+        //         // 2. Update OrderTax table
+        //         foreach (var orderTax in order.OrderTaxes)
+        //         {
+        //             if (orderTax.TaxPercentage.HasValue)
+        //             {
+        //                 orderTax.IsApplied = true;
+        //             }
+        //             else if (orderTax.TaxFlat.HasValue && model.TaxSettings.ContainsKey(orderTax.Tax.Name))
+        //             {
+        //                 orderTax.IsApplied = model.TaxSettings[orderTax.Tax.Name];
+        //             }
+        //         }
+        //         // 3. Update Table table
+        //         foreach (var orderTable in order.OrderTables)
+        //         {
+        //             var table = await _context.Tables.FindAsync(orderTable.TableId);
+        //             if (table != null)
+        //             {
+        //                 table.Status = "occupied";
+        //                 _context.Tables.Update(table);
+        //             }
+        //         }
+
+        //         // 4 & 5. Update OrderItem and OrderItemModifier tables
+        //         var incomingItems = model.CartItems.ToDictionary(
+        //             ci => ci.ItemId + "-" + string.Join(",", ci.Modifiers.OrderBy(m => m.ModifierId).Select(m => m.ModifierId)),
+        //             ci => ci
+        //         );
+
+        //         // Remove items that are no longer in the cart
+        //         var existingItems = order.OrderItems.ToList();
+        //         foreach (var existingItem in existingItems)
+        //         {
+        //             var key = existingItem.ItemId + "-" + string.Join(",", existingItem.OrderItemModifiers.OrderBy(oim => oim.ModifierId).Select(oim => oim.ModifierId));
+        //             if (!incomingItems.ContainsKey(key))
+        //             {
+        //                 _context.OrderItemModifiers.RemoveRange(existingItem.OrderItemModifiers);
+        //                 _context.OrderItems.Remove(existingItem);
+        //             }
+        //         }
+
+        //         // Add or update items
+        //         foreach (var cartItem in model.CartItems)
+        //         {
+        //             var key = cartItem.ItemId + "-" + string.Join(",", cartItem.Modifiers.OrderBy(m => m.ModifierId).Select(m => m.ModifierId));
+        //             var existingItem = order.OrderItems.FirstOrDefault(oi =>
+        //                 oi.ItemId == cartItem.ItemId &&
+        //                 string.Join(",", oi.OrderItemModifiers.OrderBy(oim => oim.ModifierId).Select(oim => oim.ModifierId)) ==
+        //                 string.Join(",", cartItem.Modifiers.OrderBy(m => m.ModifierId).Select(m => m.ModifierId)));
+
+        //             if (existingItem == null)
+        //             {
+        //                 // Add new OrderItem
+        //                 var orderItem = new OrderItem
+        //                 {
+        //                     OrderId = order.Id,
+        //                     ItemId = cartItem.ItemId,
+        //                     Quantity = cartItem.Quantity,
+        //                     UnitPrice = cartItem.UnitPrice,
+        //                     TotalPrice = cartItem.TotalPrice,
+        //                     ItemStatus = "in_progress",
+        //                     ReadyQuantity = 0,
+        //                     CreatedAt = DateTime.Now // Set CreatedAt
+        //                 };
+        //                 _context.OrderItems.Add(orderItem);
+        //                 await _context.SaveChangesAsync();
+
+        //                 // Add OrderItemModifiers
+        //                 foreach (var modifier in cartItem.Modifiers)
+        //                 {
+        //                     var orderItemModifier = new OrderItemModifier
+        //                     {
+        //                         OrderItemId = orderItem.Id,
+        //                         ModifierId = modifier.ModifierId,
+        //                         Quantity = modifier.Quantity,
+        //                         Price = modifier.Price
+        //                     };
+        //                     _context.OrderItemModifiers.Add(orderItemModifier);
+        //                 }
+        //             }
+        //             else
+        //             {
+        //                 // Update existing OrderItem
+        //                 bool quantityIncreased = cartItem.Quantity > existingItem.Quantity;
+        //                 existingItem.Quantity = cartItem.Quantity;
+        //                 existingItem.UnitPrice = cartItem.UnitPrice;
+        //                 existingItem.TotalPrice = cartItem.TotalPrice;
+        //                 if (quantityIncreased)
+        //                 {
+        //                     existingItem.ItemStatus = "in_progress";
+        //                 }
+        //                 _context.OrderItems.Update(existingItem);
+
+        //                 // Update OrderItemModifiers
+        //                 var existingModifiers = existingItem.OrderItemModifiers.ToList();
+        //                 foreach (var modifier in cartItem.Modifiers)
+        //                 {
+        //                     var existingModifier = existingModifiers.FirstOrDefault(oim => oim.ModifierId == modifier.ModifierId);
+        //                     if (existingModifier == null)
+        //                     {
+        //                         var orderItemModifier = new OrderItemModifier
+        //                         {
+        //                             OrderItemId = existingItem.Id,
+        //                             ModifierId = modifier.ModifierId,
+        //                             Quantity = modifier.Quantity,
+        //                             Price = modifier.Price
+        //                         };
+        //                         _context.OrderItemModifiers.Add(orderItemModifier);
+        //                     }
+        //                     else
+        //                     {
+        //                         existingModifier.Quantity = modifier.Quantity;
+        //                         existingModifier.Price = modifier.Price;
+        //                         _context.OrderItemModifiers.Update(existingModifier);
+        //                     }
+        //                 }
+
+        //                 // Remove modifiers that are no longer present
+        //                 foreach (var existingModifier in existingModifiers)
+        //                 {
+        //                     if (!cartItem.Modifiers.Any(m => m.ModifierId == existingModifier.ModifierId))
+        //                     {
+        //                         _context.OrderItemModifiers.Remove(existingModifier);
+        //                     }
+        //                 }
+        //             }
+        //         }
+
+        //         await _context.SaveChangesAsync();
+
+        //         // Broadcast order update to KOT clients
+        //         await _hubContext.Clients.All.SendAsync("ReceiveOrderUpdate", order.Id);
+
+        //         return (true, "Order saved successfully.");
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return (false, $"An error occurred: {ex.Message}");
+        //     }
+        // }
+
         public async Task<(bool Success, string Message)> SaveOrderAsync(SaveOrderViewModel model)
         {
             try
             {
-                // Fetch the existing order
+                // Validate the input
+                if (model == null || model.OrderId <= 0)
+                {
+                    return (false, "Invalid order data.");
+                }
+
+                // Ensure the order exists
                 var order = await _context.Orders
                     .Include(o => o.OrderItems)
                     .ThenInclude(oi => oi.OrderItemModifiers)
@@ -630,146 +802,55 @@ namespace PizzaShopServices.Implementations
                     return (false, "Order not found.");
                 }
 
-                // 1. Update Order table
-                order.OrderStatus = "in_progress";
-                order.TotalAmount = model.TotalAmount;
-                order.PaymentMethod = model.PaymentMethod;
-                order.UpdatedAt = DateTime.Now;
-
-                // 2. Update OrderTax table
-                foreach (var orderTax in order.OrderTaxes)
+                if (_dbConnection.State != ConnectionState.Open)
                 {
-                    if (orderTax.TaxPercentage.HasValue)
-                    {
-                        orderTax.IsApplied = true;
-                    }
-                    else if (orderTax.TaxFlat.HasValue && model.TaxSettings.ContainsKey(orderTax.Tax.Name))
-                    {
-                        orderTax.IsApplied = model.TaxSettings[orderTax.Tax.Name];
-                    }
-                }
-                // 3. Update Table table
-                foreach (var orderTable in order.OrderTables)
-                {
-                    var table = await _context.Tables.FindAsync(orderTable.TableId);
-                    if (table != null)
-                    {
-                        table.Status = "occupied";
-                        _context.Tables.Update(table);
-                    }
+                    _dbConnection.Open();
                 }
 
-                // 4 & 5. Update OrderItem and OrderItemModifier tables
-                var incomingItems = model.CartItems.ToDictionary(
-                    ci => ci.ItemId + "-" + string.Join(",", ci.Modifiers.OrderBy(m => m.ModifierId).Select(m => m.ModifierId)),
-                    ci => ci
-                );
-
-                // Remove items that are no longer in the cart
-                var existingItems = order.OrderItems.ToList();
-                foreach (var existingItem in existingItems)
+                // Start a transaction
+                using (var transaction = _dbConnection.BeginTransaction())
                 {
-                    var key = existingItem.ItemId + "-" + string.Join(",", existingItem.OrderItemModifiers.OrderBy(oim => oim.ModifierId).Select(oim => oim.ModifierId));
-                    if (!incomingItems.ContainsKey(key))
+                    try
                     {
-                        _context.OrderItemModifiers.RemoveRange(existingItem.OrderItemModifiers);
-                        _context.OrderItems.Remove(existingItem);
+                        // Prepare parameters for the stored procedure
+                        var parameters = new DynamicParameters();
+                        parameters.Add("p_order_id", model.OrderId);
+                        parameters.Add("p_total_amount", model.TotalAmount);
+                        parameters.Add("p_payment_method", model.PaymentMethod);
+                        parameters.Add("p_cart_items", JsonSerializer.Serialize(model.CartItems));
+                        parameters.Add("p_tax_settings", JsonSerializer.Serialize(model.TaxSettings));
+
+                        // Call the stored procedure with explicit JSONB casting
+                        await _dbConnection.ExecuteAsync(
+                            "CALL save_order(:p_order_id, :p_total_amount, :p_payment_method, :p_cart_items::jsonb, :p_tax_settings::jsonb)",
+                            parameters,
+                            commandType: CommandType.Text,
+                            transaction: transaction
+                        );
+
+                        // Commit the transaction
+                        transaction.Commit();
+
+                        // Broadcast order update to KOT clients
+                        await _hubContext.Clients.All.SendAsync("ReceiveOrderUpdate", model.OrderId);
+
+                        return (true, "Order saved successfully.");
                     }
-                }
-
-                // Add or update items
-                foreach (var cartItem in model.CartItems)
-                {
-                    var key = cartItem.ItemId + "-" + string.Join(",", cartItem.Modifiers.OrderBy(m => m.ModifierId).Select(m => m.ModifierId));
-                    var existingItem = order.OrderItems.FirstOrDefault(oi =>
-                        oi.ItemId == cartItem.ItemId &&
-                        string.Join(",", oi.OrderItemModifiers.OrderBy(oim => oim.ModifierId).Select(oim => oim.ModifierId)) ==
-                        string.Join(",", cartItem.Modifiers.OrderBy(m => m.ModifierId).Select(m => m.ModifierId)));
-
-                    if (existingItem == null)
+                    catch (Exception ex)
                     {
-                        // Add new OrderItem
-                        var orderItem = new OrderItem
-                        {
-                            OrderId = order.Id,
-                            ItemId = cartItem.ItemId,
-                            Quantity = cartItem.Quantity,
-                            UnitPrice = cartItem.UnitPrice,
-                            TotalPrice = cartItem.TotalPrice,
-                            ItemStatus = "in_progress",
-                            ReadyQuantity = 0,
-                            CreatedAt = DateTime.Now // Set CreatedAt
-                        };
-                        _context.OrderItems.Add(orderItem);
-                        await _context.SaveChangesAsync();
-
-                        // Add OrderItemModifiers
-                        foreach (var modifier in cartItem.Modifiers)
-                        {
-                            var orderItemModifier = new OrderItemModifier
-                            {
-                                OrderItemId = orderItem.Id,
-                                ModifierId = modifier.ModifierId,
-                                Quantity = modifier.Quantity,
-                                Price = modifier.Price
-                            };
-                            _context.OrderItemModifiers.Add(orderItemModifier);
-                        }
+                        // Rollback the transaction on error
+                        transaction.Rollback();
+                        return (false, $"An error occurred: {ex.Message}");
                     }
-                    else
+                    finally
                     {
-                        // Update existing OrderItem
-                        bool quantityIncreased = cartItem.Quantity > existingItem.Quantity;
-                        existingItem.Quantity = cartItem.Quantity;
-                        existingItem.UnitPrice = cartItem.UnitPrice;
-                        existingItem.TotalPrice = cartItem.TotalPrice;
-                        if (quantityIncreased)
+                        // Close the connection if it was opened in this method
+                        if (_dbConnection.State == ConnectionState.Open)
                         {
-                            existingItem.ItemStatus = "in_progress";
-                        }
-                        _context.OrderItems.Update(existingItem);
-
-                        // Update OrderItemModifiers
-                        var existingModifiers = existingItem.OrderItemModifiers.ToList();
-                        foreach (var modifier in cartItem.Modifiers)
-                        {
-                            var existingModifier = existingModifiers.FirstOrDefault(oim => oim.ModifierId == modifier.ModifierId);
-                            if (existingModifier == null)
-                            {
-                                var orderItemModifier = new OrderItemModifier
-                                {
-                                    OrderItemId = existingItem.Id,
-                                    ModifierId = modifier.ModifierId,
-                                    Quantity = modifier.Quantity,
-                                    Price = modifier.Price
-                                };
-                                _context.OrderItemModifiers.Add(orderItemModifier);
-                            }
-                            else
-                            {
-                                existingModifier.Quantity = modifier.Quantity;
-                                existingModifier.Price = modifier.Price;
-                                _context.OrderItemModifiers.Update(existingModifier);
-                            }
-                        }
-
-                        // Remove modifiers that are no longer present
-                        foreach (var existingModifier in existingModifiers)
-                        {
-                            if (!cartItem.Modifiers.Any(m => m.ModifierId == existingModifier.ModifierId))
-                            {
-                                _context.OrderItemModifiers.Remove(existingModifier);
-                            }
+                            _dbConnection.Close();
                         }
                     }
                 }
-
-                await _context.SaveChangesAsync();
-
-                // Broadcast order update to KOT clients
-                await _hubContext.Clients.All.SendAsync("ReceiveOrderUpdate", order.Id);
-
-                return (true, "Order saved successfully.");
             }
             catch (Exception ex)
             {

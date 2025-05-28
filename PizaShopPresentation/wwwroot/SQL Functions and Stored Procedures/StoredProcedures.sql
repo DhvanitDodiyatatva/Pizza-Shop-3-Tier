@@ -335,3 +335,206 @@ END;
 $BODY$;
 ALTER PROCEDURE public.toggle_favorite_item(integer)
     OWNER TO postgres;
+
+
+-- PROCEDURE: public.save_order(integer, numeric, character varying, jsonb, jsonb)
+
+-- DROP PROCEDURE IF EXISTS public.save_order(integer, numeric, character varying, jsonb, jsonb);
+
+CREATE OR REPLACE PROCEDURE public.save_order(
+	IN p_order_id integer,
+	IN p_total_amount numeric,
+	IN p_payment_method character varying,
+	IN p_cart_items jsonb,
+	IN p_tax_settings jsonb)
+LANGUAGE 'plpgsql'
+AS $BODY$
+DECLARE
+    v_cart_item JSONB;
+    v_modifier JSONB;
+    v_tax_name TEXT;
+    v_is_applied BOOLEAN;
+    v_existing_item RECORD;
+    v_key TEXT;
+    v_order_item_id INTEGER;
+    v_quantity_increased BOOLEAN;
+    v_item_exists BOOLEAN;
+BEGIN
+    -- 1. Update Order table
+    UPDATE orders
+    SET order_status = 'in_progress',
+        total_amount = p_total_amount,
+        payment_method = p_payment_method,
+        updated_at = NOW() AT TIME ZONE 'Asia/Kolkata'
+    WHERE id = p_order_id;
+
+    -- 2. Update OrderTax table
+    FOR v_tax_name, v_is_applied IN
+        SELECT key, value::BOOLEAN
+        FROM jsonb_each(p_tax_settings)
+    LOOP
+        UPDATE order_tax ot
+        SET is_applied = CASE
+            WHEN ot.tax_percentage IS NOT NULL THEN TRUE
+            ELSE v_is_applied
+        END
+        FROM taxes_fees tf
+        WHERE ot.order_id = p_order_id
+        AND ot.tax_id = tf.id
+        AND tf.name = v_tax_name;
+    END LOOP;
+
+    -- 3. Update Table table
+    UPDATE tables t
+    SET status = 'occupied'
+    FROM order_tables ot
+    WHERE ot.order_id = p_order_id
+    AND ot.table_id = t.id;
+
+    -- 4 & 5. Update OrderItem and OrderItemModifier tables
+    -- First, identify items to remove
+    FOR v_existing_item IN
+        SELECT oi.id, oi.item_id, 
+               STRING_AGG(oim.modifier_id::TEXT, ',' ORDER BY oim.modifier_id) AS modifier_key
+        FROM order_items oi
+        LEFT JOIN order_item_modifiers oim ON oi.id = oim.order_item_id
+        WHERE oi.order_id = p_order_id
+        GROUP BY oi.id, oi.item_id
+    LOOP
+        v_key := v_existing_item.item_id || '-' || COALESCE(v_existing_item.modifier_key, '');
+
+        -- Compute the modifier keys for cart items and check existence
+        WITH cart_item_modifiers AS (
+            SELECT (ci->>'ItemId')::INTEGER AS item_id,
+                   (ci->>'ItemId')::TEXT || '-' || COALESCE((
+                       SELECT STRING_AGG((m->>'ModifierId')::TEXT, ',' ORDER BY (m->>'ModifierId')::INTEGER)
+                       FROM jsonb_array_elements(ci->'Modifiers') m
+                   ), '') AS cart_key
+            FROM jsonb_array_elements(p_cart_items) ci
+        )
+        SELECT EXISTS (
+            SELECT 1
+            FROM cart_item_modifiers cim
+            WHERE cim.item_id = v_existing_item.item_id
+            AND cim.cart_key = v_key
+        ) INTO v_item_exists;
+
+        IF NOT v_item_exists THEN
+            -- Delete associated modifiers
+            DELETE FROM order_item_modifiers
+            WHERE order_item_id = v_existing_item.id;
+            
+            -- Delete the order item
+            DELETE FROM order_items
+            WHERE id = v_existing_item.id;
+        END IF;
+    END LOOP;
+
+    -- Add or update items
+    FOR v_cart_item IN SELECT * FROM jsonb_array_elements(p_cart_items)
+    LOOP
+        v_key := (v_cart_item->>'ItemId')::TEXT || '-' || COALESCE((
+            SELECT STRING_AGG((m->>'ModifierId')::TEXT, ',' ORDER BY (m->>'ModifierId')::INTEGER)
+            FROM jsonb_array_elements(v_cart_item->'Modifiers') m
+        ), '');
+
+        -- Check if item exists by computing the modifier key in a subquery
+        SELECT oi.id, oi.quantity
+        INTO v_existing_item
+        FROM order_items oi
+        LEFT JOIN (
+            SELECT oim2.order_item_id,
+                   STRING_AGG(oim2.modifier_id::TEXT, ',' ORDER BY oim2.modifier_id) AS modifier_key
+            FROM order_item_modifiers oim2
+            GROUP BY oim2.order_item_id
+        ) oim ON oi.id = oim.order_item_id
+        WHERE oi.order_id = p_order_id
+        AND oi.item_id = (v_cart_item->>'ItemId')::INTEGER
+        AND v_key = ((v_cart_item->>'ItemId')::TEXT || '-' || COALESCE(oim.modifier_key, ''));
+
+        IF v_existing_item IS NULL THEN
+            -- Add new OrderItem
+            INSERT INTO order_items (
+                order_id, item_id, quantity, unit_price, total_price,
+                item_status, ready_quantity, created_at
+            )
+            VALUES (
+                p_order_id,
+                (v_cart_item->>'ItemId')::INTEGER,
+                (v_cart_item->>'Quantity')::INTEGER,
+                (v_cart_item->>'UnitPrice')::DECIMAL,
+                (v_cart_item->>'TotalPrice')::DECIMAL,
+                'in_progress',
+                0,
+                NOW() AT TIME ZONE 'Asia/Kolkata'
+            );
+
+            -- Add OrderItemModifiers
+            INSERT INTO order_item_modifiers (
+                order_item_id, modifier_id, quantity, price
+            )
+            SELECT 
+                currval('order_items_id_seq'),
+                (modifier->>'ModifierId')::INTEGER,
+                (modifier->>'Quantity')::INTEGER,
+                (modifier->>'Price')::DECIMAL
+            FROM jsonb_array_elements(v_cart_item->'Modifiers') modifier;
+
+        ELSE
+            -- Update existing OrderItem
+            v_quantity_increased := (v_cart_item->>'Quantity')::INTEGER > v_existing_item.quantity;
+            
+            UPDATE order_items
+            SET quantity = (v_cart_item->>'Quantity')::INTEGER,
+                unit_price = (v_cart_item->>'UnitPrice')::DECIMAL,
+                total_price = (v_cart_item->>'TotalPrice')::DECIMAL,
+                item_status = CASE 
+                    WHEN v_quantity_increased THEN 'in_progress'
+                    ELSE item_status
+                END
+            WHERE id = v_existing_item.id;
+
+            -- Update OrderItemModifiers
+            FOR v_modifier IN
+                SELECT * FROM jsonb_array_elements(v_cart_item->'Modifiers')
+            LOOP
+                -- Check if modifier exists
+                IF NOT EXISTS (
+                    SELECT 1
+                    FROM order_item_modifiers oim
+                    WHERE oim.order_item_id = v_existing_item.id
+                    AND oim.modifier_id = (v_modifier->>'ModifierId')::INTEGER
+                ) THEN
+                    -- Add new modifier
+                    INSERT INTO order_item_modifiers (
+                        order_item_id, modifier_id, quantity, price
+                    )
+                    VALUES (
+                        v_existing_item.id,
+                        (v_modifier->>'ModifierId')::INTEGER,
+                        (v_modifier->>'Quantity')::INTEGER,
+                        (v_modifier->>'Price')::DECIMAL
+                    );
+                ELSE
+                    -- Update existing modifier
+                    UPDATE order_item_modifiers
+                    SET quantity = (v_modifier->>'Quantity')::INTEGER,
+                        price = (v_modifier->>'Price')::DECIMAL
+                    WHERE order_item_id = v_existing_item.id
+                    AND modifier_id = (v_modifier->>'ModifierId')::INTEGER;
+                END IF;
+            END LOOP;
+
+            -- Remove modifiers that are no longer present
+            DELETE FROM order_item_modifiers oim
+            WHERE oim.order_item_id = v_existing_item.id
+            AND oim.modifier_id NOT IN (
+                SELECT (modifier->>'ModifierId')::INTEGER
+                FROM jsonb_array_elements(v_cart_item->'Modifiers') modifier
+            );
+        END IF;
+    END LOOP;
+END;
+$BODY$;
+ALTER PROCEDURE public.save_order(integer, numeric, character varying, jsonb, jsonb)
+    OWNER TO postgres;
