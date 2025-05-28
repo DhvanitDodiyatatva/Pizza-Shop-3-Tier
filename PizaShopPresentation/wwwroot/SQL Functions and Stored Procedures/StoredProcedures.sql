@@ -606,3 +606,56 @@ END;
 $BODY$;
 ALTER PROCEDURE public.complete_order(integer)
     OWNER TO postgres;
+
+
+-- PROCEDURE: public.cancel_order(integer)
+
+-- DROP PROCEDURE IF EXISTS public.cancel_order(integer);
+
+CREATE OR REPLACE PROCEDURE public.cancel_order(
+	IN p_order_id integer)
+LANGUAGE 'plpgsql'
+AS $BODY$
+DECLARE
+    v_all_items_in_progress BOOLEAN;
+BEGIN
+    -- 1. Validate the order exists
+    IF NOT EXISTS (
+        SELECT 1
+        FROM orders
+        WHERE id = p_order_id
+    ) THEN
+        RAISE EXCEPTION 'Order not found.';
+    END IF;
+
+    -- 2. Check if all items are in_progress
+    SELECT BOOL_AND(item_status = 'in_progress') INTO v_all_items_in_progress
+    FROM order_items
+    WHERE order_id = p_order_id;
+
+    IF NOT v_all_items_in_progress THEN
+        RAISE EXCEPTION 'Cannot cancel order: Some items are not in progress.';
+    END IF;
+
+    -- 3. Update Order table
+    UPDATE orders
+    SET order_status = 'cancelled',
+        payment_status = 'failed',
+        updated_at = NOW() AT TIME ZONE 'Asia/Kolkata'
+    WHERE id = p_order_id;
+
+    -- 4. Update Table table
+    UPDATE tables t
+    SET status = 'available'
+    FROM order_tables ot
+    WHERE ot.order_id = p_order_id
+    AND ot.table_id = t.id;
+
+    -- 5. Update OrderItem table
+    UPDATE order_items
+    SET item_status = 'served'
+    WHERE order_id = p_order_id;
+END;
+$BODY$;
+ALTER PROCEDURE public.cancel_order(integer)
+    OWNER TO postgres;
