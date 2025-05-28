@@ -50,32 +50,89 @@ namespace PizzaShopServices.Implementations
             _hubContext = hubContext;
         }
 
+        // public async Task<(bool Success, string Message)> UpdateCustomerDetailsAsync(CustomerDetailsVM model)
+        // {
+        //     try
+        //     {
+        //         // Check if email already exists for a different customer
+        //         var existingCustomer = await _orderAppRepository.GetCustomerByEmailAsync(model.Email);
+        //         if (existingCustomer != null && existingCustomer.Id != model.Id)
+        //         {
+        //             return (false, "This email already exists.");
+        //         }
+
+        //         var customer = await _context.Customers.FindAsync(model.Id);
+        //         if (customer == null)
+        //         {
+        //             return (false, "Customer not found.");
+        //         }
+
+        //         customer.Name = model.Name;
+        //         customer.Email = model.Email;
+        //         customer.PhoneNo = model.PhoneNo;
+        //         customer.NoOfPersons = model.NoOfPersons;
+
+        //         _context.Customers.Update(customer);
+        //         await _context.SaveChangesAsync();
+
+        //         return (true, "Customer details updated successfully.");
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return (false, $"An error occurred: {ex.Message}");
+        //     }
+        // }
+
         public async Task<(bool Success, string Message)> UpdateCustomerDetailsAsync(CustomerDetailsVM model)
         {
             try
             {
-                // Check if email already exists for a different customer
-                var existingCustomer = await _orderAppRepository.GetCustomerByEmailAsync(model.Email);
-                if (existingCustomer != null && existingCustomer.Id != model.Id)
+                if (_dbConnection.State != ConnectionState.Open)
                 {
-                    return (false, "This email already exists.");
+                    _dbConnection.Open();
                 }
 
-                var customer = await _context.Customers.FindAsync(model.Id);
-                if (customer == null)
+                // Start a transaction
+                using (var transaction = _dbConnection.BeginTransaction())
                 {
-                    return (false, "Customer not found.");
+                    try
+                    {
+                        // Prepare parameters for the stored procedure
+                        var parameters = new DynamicParameters();
+                        parameters.Add("p_customer_id", model.Id);
+                        parameters.Add("p_name", model.Name);
+                        parameters.Add("p_email", model.Email);
+                        parameters.Add("p_phone_no", model.PhoneNo);
+                        parameters.Add("p_no_of_persons", model.NoOfPersons);
+
+                        // Call the stored procedure
+                        await _dbConnection.ExecuteAsync(
+                            "CALL update_customer_details(:p_customer_id, :p_name, :p_email, :p_phone_no, :p_no_of_persons)",
+                            parameters,
+                            commandType: CommandType.Text,
+                            transaction: transaction
+                        );
+
+                        // Commit the transaction
+                        transaction.Commit();
+
+                        return (true, "Customer details updated successfully.");
+                    }
+                    catch (Exception ex)
+                    {
+                        // Rollback the transaction on error
+                        transaction.Rollback();
+                        return (false, $"An error occurred: {ex.Message}");
+                    }
+                    finally
+                    {
+                        // Close the connection if it was opened in this method
+                        if (_dbConnection.State == ConnectionState.Open)
+                        {
+                            _dbConnection.Close();
+                        }
+                    }
                 }
-
-                customer.Name = model.Name;
-                customer.Email = model.Email;
-                customer.PhoneNo = model.PhoneNo;
-                customer.NoOfPersons = model.NoOfPersons;
-
-                _context.Customers.Update(customer);
-                await _context.SaveChangesAsync();
-
-                return (true, "Customer details updated successfully.");
             }
             catch (Exception ex)
             {

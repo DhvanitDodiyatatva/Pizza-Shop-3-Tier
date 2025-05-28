@@ -659,3 +659,49 @@ END;
 $BODY$;
 ALTER PROCEDURE public.cancel_order(integer)
     OWNER TO postgres;
+
+
+-- PROCEDURE: public.update_customer_details(integer, character varying, character varying, character varying, integer)
+
+-- DROP PROCEDURE IF EXISTS public.update_customer_details(integer, character varying, character varying, character varying, integer);
+
+CREATE OR REPLACE PROCEDURE public.update_customer_details(
+	IN p_customer_id integer,
+	IN p_name character varying,
+	IN p_email character varying,
+	IN p_phone_no character varying,
+	IN p_no_of_persons integer)
+LANGUAGE 'plpgsql'
+AS $BODY$
+BEGIN
+    -- 1. Check if email already exists for a different customer
+    IF EXISTS (
+        SELECT 1
+        FROM customers
+        WHERE email = p_email
+        AND id != p_customer_id
+    ) THEN
+        RAISE EXCEPTION 'This email already exists.';
+    END IF;
+
+    -- 2. Check if the customer exists
+    IF NOT EXISTS (
+        SELECT 1
+        FROM customers
+        WHERE id = p_customer_id
+    ) THEN
+        RAISE EXCEPTION 'Customer not found.';
+    END IF;
+
+    -- 3. Update the customer details
+    UPDATE customers
+    SET name = p_name,
+        email = p_email,
+        phone_no = p_phone_no,
+        no_of_persons = p_no_of_persons
+    WHERE id = p_customer_id;
+END;
+$BODY$;
+ALTER PROCEDURE public.update_customer_details(integer, character varying, character varying, character varying, integer)
+    OWNER TO postgres;
+

@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "T8ksaStm0sww4ACHuE5nPrMKxrLpTwiqnbw+tT7VJsA=",
+  "Hash": "8FiLZ+nv4l03ZupPuDfjRmqrWpFAxUqdYuV5Jqr6498=",
   "Source": "PizaShopPresentation",
   "BasePath": "_content/PizaShopPresentation",
   "Mode": "Default",
@@ -1494,6 +1494,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\uploadimages\\oliviam_047e1b18-b641-49bc-b17d-a9c489d47c37.jpg"
+    },
+    {
+      "Identity": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\Veggie Burger_e0856eb8-c457-4413-adb6-394d1061d522.jpg",
+      "SourceId": "PizaShopPresentation",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\",
+      "BasePath": "_content/PizaShopPresentation",
+      "RelativePath": "images/uploadimages/Veggie Burger_e0856eb8-c457-4413-adb6-394d1061d522.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\uploadimages\\Veggie Burger_e0856eb8-c457-4413-adb6-394d1061d522.jpg"
     },
     {
       "Identity": "D:\\PizzaShop 3-Tier\\PizaShopPresentation\\wwwroot\\images\\uploadimages\\Veggie Delight_c4ad5e5d-ee88-4ed2-aba3-073a86cd8660.png",
