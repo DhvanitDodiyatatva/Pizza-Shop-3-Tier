@@ -705,3 +705,120 @@ $BODY$;
 ALTER PROCEDURE public.update_customer_details(integer, character varying, character varying, character varying, integer)
     OWNER TO postgres;
 
+
+-- PROCEDURE: public.save_order_instructions(integer, character varying)
+
+-- DROP PROCEDURE IF EXISTS public.save_order_instructions(integer, character varying);
+
+CREATE OR REPLACE PROCEDURE public.save_order_instructions(
+	IN p_order_id integer,
+	IN p_order_instructions character varying)
+LANGUAGE 'plpgsql'
+AS $BODY$
+BEGIN
+    -- Check if the order exists
+    IF NOT EXISTS (
+        SELECT 1
+        FROM orders
+        WHERE id = p_order_id
+    ) THEN
+        RAISE EXCEPTION 'Order not found.';
+    END IF;
+
+    -- Update the order instructions and timestamp
+    UPDATE orders
+    SET order_instructions = NULLIF(p_order_instructions, ''),
+        updated_at = NOW() AT TIME ZONE 'Asia/Kolkata'
+    WHERE id = p_order_id;
+END;
+$BODY$;
+ALTER PROCEDURE public.save_order_instructions(integer, character varying)
+    OWNER TO postgres;
+
+
+
+-- PROCEDURE: public.save_special_instructions(integer, character varying)
+
+-- DROP PROCEDURE IF EXISTS public.save_special_instructions(integer, character varying);
+
+CREATE OR REPLACE PROCEDURE public.save_special_instructions(
+	IN p_order_item_id integer,
+	IN p_special_instructions character varying)
+LANGUAGE 'plpgsql'
+AS $BODY$
+BEGIN
+    -- Check if the order item exists
+    IF NOT EXISTS (
+        SELECT 1
+        FROM order_items
+        WHERE id = p_order_item_id
+    ) THEN
+        RAISE EXCEPTION 'Order item not found.';
+    END IF;
+
+    -- Update the special instructions
+    UPDATE order_items
+    SET special_instructions = NULLIF(p_special_instructions, '')
+    WHERE id = p_order_item_id;
+END;
+$BODY$;
+ALTER PROCEDURE public.save_special_instructions(integer, character varying)
+    OWNER TO postgres;
+
+
+
+-- PROCEDURE: public.save_customer_review(integer, integer, integer, integer, character varying)
+
+-- DROP PROCEDURE IF EXISTS public.save_customer_review(integer, integer, integer, integer, character varying);
+
+CREATE OR REPLACE PROCEDURE public.save_customer_review(
+	IN p_order_id integer,
+	IN p_food_rating integer,
+	IN p_service_rating integer,
+	IN p_ambience_rating integer,
+	IN p_comment character varying)
+LANGUAGE 'plpgsql'
+AS $BODY$
+DECLARE
+    v_average_rating DECIMAL;
+BEGIN
+    -- Check if the order exists
+    IF NOT EXISTS (
+        SELECT 1
+        FROM orders
+        WHERE id = p_order_id
+    ) THEN
+        RAISE EXCEPTION 'Order not found.';
+    END IF;
+
+    -- Calculate the average rating
+    v_average_rating := (p_food_rating + p_service_rating + p_ambience_rating) / 3.0;
+
+    -- Insert the customer review
+    INSERT INTO customer_reviews (
+        order_id,
+        food_rating,
+        service_rating,
+        ambience_rating,
+        comment,
+        created_at
+    )
+    VALUES (
+        p_order_id,
+        p_food_rating,
+        p_service_rating,
+        p_ambience_rating,
+        NULLIF(p_comment, ''),
+        NOW() AT TIME ZONE 'Asia/Kolkata'
+    );
+
+    -- Update the order with the average rating
+    UPDATE orders
+    SET rating = v_average_rating
+    WHERE id = p_order_id;
+END;
+$BODY$;
+ALTER PROCEDURE public.save_customer_review(integer, integer, integer, integer, character varying)
+    OWNER TO postgres;
+
+

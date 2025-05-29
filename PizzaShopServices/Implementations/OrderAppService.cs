@@ -1074,20 +1074,74 @@ namespace PizzaShopServices.Implementations
             }
         }
 
+        // public async Task<(bool Success, string Message)> SaveSpecialInstructionsAsync(int orderItemId, string specialInstructions)
+        // {
+        //     try
+        //     {
+        //         var orderItem = await _context.OrderItems.FindAsync(orderItemId);
+        //         if (orderItem == null)
+        //         {
+        //             return (false, "Order item not found.");
+        //         }
+
+        //         orderItem.SpecialInstructions = string.IsNullOrEmpty(specialInstructions) ? null : specialInstructions;
+        //         _context.OrderItems.Update(orderItem);
+        //         await _context.SaveChangesAsync();
+        //         return (true, "Special instructions saved successfully.");
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return (false, $"An error occurred: {ex.Message}");
+        //     }
+        // }
+
         public async Task<(bool Success, string Message)> SaveSpecialInstructionsAsync(int orderItemId, string specialInstructions)
         {
             try
             {
-                var orderItem = await _context.OrderItems.FindAsync(orderItemId);
-                if (orderItem == null)
+                if (_dbConnection.State != ConnectionState.Open)
                 {
-                    return (false, "Order item not found.");
+                    _dbConnection.Open();
                 }
 
-                orderItem.SpecialInstructions = string.IsNullOrEmpty(specialInstructions) ? null : specialInstructions;
-                _context.OrderItems.Update(orderItem);
-                await _context.SaveChangesAsync();
-                return (true, "Special instructions saved successfully.");
+                // Start a transaction
+                using (var transaction = _dbConnection.BeginTransaction())
+                {
+                    try
+                    {
+                        // Prepare parameters for the stored procedure
+                        var parameters = new DynamicParameters();
+                        parameters.Add("p_order_item_id", orderItemId);
+                        parameters.Add("p_special_instructions", specialInstructions);
+
+                        // Call the stored procedure
+                        await _dbConnection.ExecuteAsync(
+                            "CALL save_special_instructions(:p_order_item_id, :p_special_instructions)",
+                            parameters,
+                            commandType: CommandType.Text,
+                            transaction: transaction
+                        );
+
+                        // Commit the transaction
+                        transaction.Commit();
+
+                        return (true, "Special instructions saved successfully.");
+                    }
+                    catch (Exception ex)
+                    {
+                        // Rollback the transaction on error
+                        transaction.Rollback();
+                        return (false, $"An error occurred: {ex.Message}");
+                    }
+                    finally
+                    {
+                        // Close the connection if it was opened in this method
+                        if (_dbConnection.State == ConnectionState.Open)
+                        {
+                            _dbConnection.Close();
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -1095,21 +1149,76 @@ namespace PizzaShopServices.Implementations
             }
         }
 
+        // public async Task<(bool Success, string Message)> SaveOrderInstructionsAsync(int orderId, string orderInstructions)
+        // {
+        //     try
+        //     {
+        //         var order = await _context.Orders.FindAsync(orderId);
+        //         if (order == null)
+        //         {
+        //             return (false, "Order not found.");
+        //         }
+
+        //         order.OrderInstructions = string.IsNullOrEmpty(orderInstructions) ? null : orderInstructions;
+        //         order.UpdatedAt = DateTime.Now;
+        //         _context.Orders.Update(order);
+        //         await _context.SaveChangesAsync();
+        //         return (true, "Order instructions saved successfully.");
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return (false, $"An error occurred: {ex.Message}");
+        //     }
+        // }
+
+
         public async Task<(bool Success, string Message)> SaveOrderInstructionsAsync(int orderId, string orderInstructions)
         {
             try
             {
-                var order = await _context.Orders.FindAsync(orderId);
-                if (order == null)
+                if (_dbConnection.State != ConnectionState.Open)
                 {
-                    return (false, "Order not found.");
+                    _dbConnection.Open();
                 }
 
-                order.OrderInstructions = string.IsNullOrEmpty(orderInstructions) ? null : orderInstructions;
-                order.UpdatedAt = DateTime.Now;
-                _context.Orders.Update(order);
-                await _context.SaveChangesAsync();
-                return (true, "Order instructions saved successfully.");
+                // Start a transaction
+                using (var transaction = _dbConnection.BeginTransaction())
+                {
+                    try
+                    {
+                        // Prepare parameters for the stored procedure
+                        var parameters = new DynamicParameters();
+                        parameters.Add("p_order_id", orderId);
+                        parameters.Add("p_order_instructions", orderInstructions);
+
+                        // Call the stored procedure
+                        await _dbConnection.ExecuteAsync(
+                            "CALL save_order_instructions(:p_order_id, :p_order_instructions)",
+                            parameters,
+                            commandType: CommandType.Text,
+                            transaction: transaction
+                        );
+
+                        // Commit the transaction
+                        transaction.Commit();
+
+                        return (true, "Order instructions saved successfully.");
+                    }
+                    catch (Exception ex)
+                    {
+                        // Rollback the transaction on error
+                        transaction.Rollback();
+                        return (false, $"An error occurred: {ex.Message}");
+                    }
+                    finally
+                    {
+                        // Close the connection if it was opened in this method
+                        if (_dbConnection.State == ConnectionState.Open)
+                        {
+                            _dbConnection.Close();
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -1227,35 +1336,92 @@ namespace PizzaShopServices.Implementations
             }
         }
 
+        // public async Task<(bool Success, string Message)> SaveCustomerReviewAsync(CustomerReviewViewModel model)
+        // {
+        //     try
+        //     {
+        //         var order = await _context.Orders.FindAsync(model.OrderId);
+        //         if (order == null)
+        //         {
+        //             return (false, "Order not found.");
+        //         }
+
+        //         // Save customer review
+        //         var review = new CustomerReview
+        //         {
+        //             OrderId = model.OrderId,
+        //             FoodRating = model.FoodRating,
+        //             ServiceRating = model.ServiceRating,
+        //             AmbienceRating = model.AmbienceRating,
+        //             Comment = string.IsNullOrEmpty(model.Comment) ? null : model.Comment,
+        //             CreatedAt = DateTime.Now
+        //         };
+        //         _context.CustomerReviews.Add(review);
+
+        //         // Calculate average rating and update Order
+        //         decimal averageRating = (model.FoodRating + model.ServiceRating + model.AmbienceRating) / 3m;
+        //         order.Rating = averageRating;
+        //         _context.Orders.Update(order);
+
+        //         await _context.SaveChangesAsync();
+        //         return (true, "Review submitted successfully.");
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return (false, $"An error occurred: {ex.Message}");
+        //     }
+        // }
+
         public async Task<(bool Success, string Message)> SaveCustomerReviewAsync(CustomerReviewViewModel model)
         {
             try
             {
-                var order = await _context.Orders.FindAsync(model.OrderId);
-                if (order == null)
+                if (_dbConnection.State != ConnectionState.Open)
                 {
-                    return (false, "Order not found.");
+                    _dbConnection.Open();
                 }
 
-                // Save customer review
-                var review = new CustomerReview
+                // Start a transaction
+                using (var transaction = _dbConnection.BeginTransaction())
                 {
-                    OrderId = model.OrderId,
-                    FoodRating = model.FoodRating,
-                    ServiceRating = model.ServiceRating,
-                    AmbienceRating = model.AmbienceRating,
-                    Comment = string.IsNullOrEmpty(model.Comment) ? null : model.Comment,
-                    CreatedAt = DateTime.Now
-                };
-                _context.CustomerReviews.Add(review);
+                    try
+                    {
+                        // Prepare parameters for the stored procedure
+                        var parameters = new DynamicParameters();
+                        parameters.Add("p_order_id", model.OrderId);
+                        parameters.Add("p_food_rating", model.FoodRating);
+                        parameters.Add("p_service_rating", model.ServiceRating);
+                        parameters.Add("p_ambience_rating", model.AmbienceRating);
+                        parameters.Add("p_comment", model.Comment);
 
-                // Calculate average rating and update Order
-                decimal averageRating = (model.FoodRating + model.ServiceRating + model.AmbienceRating) / 3m;
-                order.Rating = averageRating;
-                _context.Orders.Update(order);
+                        // Call the stored procedure
+                        await _dbConnection.ExecuteAsync(
+                            "CALL save_customer_review(:p_order_id, :p_food_rating, :p_service_rating, :p_ambience_rating, :p_comment)",
+                            parameters,
+                            commandType: CommandType.Text,
+                            transaction: transaction
+                        );
 
-                await _context.SaveChangesAsync();
-                return (true, "Review submitted successfully.");
+                        // Commit the transaction
+                        transaction.Commit();
+
+                        return (true, "Review submitted successfully.");
+                    }
+                    catch (Exception ex)
+                    {
+                        // Rollback the transaction on error
+                        transaction.Rollback();
+                        return (false, $"An error occurred: {ex.Message}");
+                    }
+                    finally
+                    {
+                        // Close the connection if it was opened in this method
+                        if (_dbConnection.State == ConnectionState.Open)
+                        {
+                            _dbConnection.Close();
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {
