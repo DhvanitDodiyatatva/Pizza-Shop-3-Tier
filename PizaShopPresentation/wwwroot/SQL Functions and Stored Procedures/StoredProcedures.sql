@@ -18,6 +18,8 @@ DECLARE
     v_original_item_status VARCHAR;
     v_new_ready_quantity INTEGER;
     v_reduction INTEGER;
+    v_quantity INTEGER;
+    v_ready_at TIMESTAMP;
 BEGIN
     p_success := FALSE;
     p_rows_affected := 0;
@@ -34,9 +36,9 @@ BEGIN
         FROM jsonb_array_elements(p_items) AS elem
     )
     LOOP
-        -- Fetch the existing order item
-        SELECT ready_quantity, item_status
-        INTO v_original_ready_quantity, v_original_item_status
+        -- Fetch the existing order item details
+        SELECT ready_quantity, item_status, quantity, ready_at
+        INTO v_original_ready_quantity, v_original_item_status, v_quantity, v_ready_at
         FROM order_items
         WHERE id = v_item.order_item_id AND order_id = p_order_id
         FOR UPDATE;
@@ -45,26 +47,34 @@ BEGIN
             RAISE EXCEPTION 'No matching order item found for OrderItemId: %', v_item.order_item_id;
         END IF;
 
-        -- Update logic based on new_status
         IF p_new_status = 'ready' THEN
-            -- Calculate new ready quantity (cannot exceed total quantity)
-            v_new_ready_quantity := LEAST(v_original_ready_quantity + v_item.adjusted_quantity, (SELECT quantity FROM order_items WHERE id = v_item.order_item_id));
+            v_new_ready_quantity := LEAST(v_original_ready_quantity + v_item.adjusted_quantity, 
+                                        (SELECT quantity FROM order_items WHERE id = v_item.order_item_id));
             
             UPDATE order_items
             SET ready_quantity = v_new_ready_quantity,
                 item_status = CASE WHEN v_new_ready_quantity >= quantity THEN 'ready' ELSE 'in_progress' END,
-                ready_at = CASE WHEN v_new_ready_quantity > v_original_ready_quantity AND ready_at IS NULL THEN NOW() AT TIME ZONE 'Asia/Kolkata' END
+                ready_at = CASE 
+                            WHEN v_new_ready_quantity > v_original_ready_quantity THEN NOW() AT TIME ZONE 'Asia/Kolkata'
+                            ELSE ready_at
+                        END
             WHERE id = v_item.order_item_id AND order_id = p_order_id;
 
         ELSIF p_new_status = 'in_progress' THEN
-            -- Calculate reduction (cannot reduce below 0)
             v_reduction := LEAST(v_item.adjusted_quantity, v_original_ready_quantity);
             v_new_ready_quantity := v_original_ready_quantity - v_reduction;
 
             UPDATE order_items
-            SET ready_quantity = v_new_ready_quantity,
-                item_status = CASE WHEN v_new_ready_quantity < quantity THEN 'in_progress' ELSE 'ready' END,
-                ready_at = CASE WHEN v_new_ready_quantity = 0 THEN NULL ELSE ready_at END
+            SET 
+                ready_quantity = v_new_ready_quantity,
+                item_status = CASE 
+                    WHEN v_new_ready_quantity < v_quantity THEN 'in_progress' 
+                    ELSE 'ready' 
+                END,
+                ready_at = CASE 
+                    WHEN v_new_ready_quantity = 0 THEN NULL 
+                    ELSE v_ready_at 
+                END
             WHERE id = v_item.order_item_id AND order_id = p_order_id;
 
         END IF;
@@ -72,7 +82,7 @@ BEGIN
         p_rows_affected := p_rows_affected + 1;
     END LOOP;
 
-    -- If updates were made, set success to true
+    -- Set success flag
     IF p_rows_affected > 0 THEN
         p_success := TRUE;
     END IF;
@@ -86,6 +96,7 @@ END;
 $BODY$;
 ALTER PROCEDURE public.update_order_item_statuses(integer, jsonb, character varying)
     OWNER TO postgres;
+
 
 -- /////////////////////////////////////////////////////////////////////////WaitingList///////////////////////////////////////////////////////////////////////////////////////////////////
 
